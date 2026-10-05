@@ -1,0 +1,5 @@
+# Công Ty Luật TNHH Luật Sư Nam
+User-agent: *
+Allow: /
+
+Sitemap: https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/sitemap.xml

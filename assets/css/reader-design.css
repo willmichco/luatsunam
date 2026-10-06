@@ -51,3 +51,7 @@
 @media(prefers-reduced-motion:reduce){.tdl-page .tdl-toc,.tdl-page .tdl-toc summary::before,.tdl-page .tdl-toc summary::after{transition:none}}
 .tdl-page .tdl-toc__close svg{display:block;width:24px;height:24px;margin:auto}
 .tdl-page .tdl-toc__close:hover{background:#ffffff20;border-radius:4px}
+
+/* Thẻ "Cần luật sư" trên nền sáng: chữ mô tả đủ tương phản */
+.tdl-page .tdl-card--navy{color:var(--text)}
+.tdl-page .tdl-card--navy p{color:var(--text);margin:0}

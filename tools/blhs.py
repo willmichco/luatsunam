@@ -222,7 +222,7 @@ def fix_para(h, a, base, is_law):
 def law_html(a, base):
     out, k, opened = [], None, False
     seen = set()
-    for t, h in a["law"]:
+    for i, (t, h) in enumerate(a["law"]):
         txt = plain(h)
         if t == "k" and re.match(r"^(\d+)\.", txt):
             k = re.match(r"^(\d+)\.", txt).group(1)
@@ -230,7 +230,7 @@ def law_html(a, base):
             opened = True
             out.append(f'<div class="tdl-clause" id="k{k}"><span class="tdl-clause__number">{int(k):02d}</span><button class="tdl-clause__copy" type="button" data-copy-clause="k{k}" aria-label="Sao chép khoản {k}">⧉</button><div class="tdl-clause__text">')
             h = re.sub(r"^\d+\.\s*", "", h)
-            out.append(f'<p class="tdl-k">{fix_para(h, a, base, True)}</p>')
+            out.append(f'<p class="tdl-k" data-l="{i}">{fix_para(h, a, base, True)}</p>')
         else:
             pid = ""
             m = re.match(r"^([a-zđ])\)", txt) if t == "p" else None
@@ -239,7 +239,7 @@ def law_html(a, base):
             seen.add(pid)
             attr = f' id="{pid}"' if pid else ""
             cls = {"p": "tdl-p", "x": "tdl-x", "h": "tdl-h"}.get(t, "tdl-x")
-            out.append(f'<p class="{cls}"{attr}>{fix_para(h, a, base, True)}</p>')
+            out.append(f'<p class="{cls}"{attr} data-l="{i}">{fix_para(h, a, base, True)}</p>')
     if opened: out.append('</div></div>')
     return "\n".join(out)
 
@@ -247,22 +247,23 @@ def law_html(a, base):
 def cm_html(a, base):
     """Trả về (html, danh sách mục) của phần bình luận."""
     out, heads = [], []
-    for t, h in a["cm"]:
+    for i, (t, h) in enumerate(a["cm"]):
         body = fix_para(h, a, base, False)
+        di = f' data-c="{i}"'
         if t == "h":
             hid = f"bl-{len(heads) + 1}"
             m = re.match(r"^(\d+)\.\s*(.*?):?\s*$", plain(h))
             if m:
                 heads.append((hid, m.group(2)))
-                out.append(f'<h3 class="tdl-cm__h" id="{hid}"><span class="tdl-cm__num">{m.group(1)}</span>{esc(m.group(2))}</h3>')
+                out.append(f'<h3 class="tdl-cm__h" id="{hid}"{di}><span class="tdl-cm__num">{m.group(1)}</span>{esc(m.group(2))}</h3>')
             else:
                 heads.append((hid, plain(h).rstrip(":")))
-                out.append(f'<h3 class="tdl-cm__h" id="{hid}">{body}</h3>')
+                out.append(f'<h3 class="tdl-cm__h" id="{hid}"{di}>{body}</h3>')
         elif t == "s":
-            out.append(f'<h4 class="tdl-cm__s">{body}</h4>')
+            out.append(f'<h4 class="tdl-cm__s"{di}>{body}</h4>')
         else:
             cls = {"b": "tdl-cm__b", "q": "tdl-cm__q", "n": "tdl-cm__n"}.get(t, "")
-            out.append(f'<p{f" class={chr(34)}{cls}{chr(34)}" if cls else ""}>{body}</p>')
+            out.append(f'<p{f" class={chr(34)}{cls}{chr(34)}" if cls else ""}{di}>{body}</p>')
     return "\n".join(out), heads
 
 
@@ -441,10 +442,10 @@ class Renderer:
             pieces = re.split(r'(?=<h3 class="tdl-cm__h")', cm)
             grouped = [pieces[0]]
             for i, chunk in enumerate(pieces[1:]):
-                match = re.match(r'<h3[^>]*id="([^"]+)"[^>]*>(.*?)</h3>(.*)', chunk, re.S)
+                match = re.match(r'<h3[^>]*id="([^"]+)"([^>]*)>(.*?)</h3>(.*)', chunk, re.S)
                 if match:
-                    hid, title, text = match.groups()
-                    grouped.append(f'<details class="tdl-comment-section"{" open" if i == 0 else ""} id="{hid}"><summary>{title}</summary><div>{text}</div></details>')
+                    hid, attrs, title, text = match.groups()
+                    grouped.append(f'<details class="tdl-comment-section"{" open" if i == 0 else ""} id="{hid}"><summary{attrs}>{title}</summary><div>{text}</div></details>')
                 else: grouped.append(chunk)
             cm = "".join(grouped)
         tab_cm = (f'<h2 class="tdl-panel__title">Bình luận khoa học</h2><p class="tdl-panel__by">Tác giả phần bình luận: Đinh Văn Quế. '
@@ -612,11 +613,99 @@ class Renderer:
 
     # ---- Trang tổng quan ----
     def hub(self, r):
-        html = self.article(self.c.by_id["17"], r)
-        html = html.replace('<div class="tdl" ', '<div class="tdl tdl--hub" ', 1)
-        marker = '<nav class="tdl-bc"'
-        html = html.replace(marker, '<section class="tdl-results" id="tdl-results" aria-live="polite" hidden></section><div id="tdl-overview">' + marker, 1)
-        html = html.replace('    <aside class="tdl-side"', '    </div><aside class="tdl-side"', 1)
-        saved = '<section class="tdl-card" id="tdl-saved" hidden><h2 class="tdl-card__title">Điều đã lưu</h2><ul class="tdl-rel tdl-rel--compact"></ul></section>'
-        html = html.replace('</aside>\n  </div>\n</div>', saved + '</aside>\n  </div>\n</div>')
-        return html
+        c = self.c
+        base = r + HUB
+        st = c.toc["stats"]
+
+        def rng(arts):
+            return f'Điều {arts[0]["id"]}' + (f'–{arts[-1]["id"]}' if len(arts) > 1 else "")
+
+        # Cấu trúc: mỗi phần một bảng chương
+        parts = []
+        for pid, p in c.parts.items():
+            chs = [ch for ch in c.chapters if ch["part"] == pid]
+            arts = [a for ch in chs for a in ch["a"]]
+            nums = [ch["num"] for ch in chs if ch["num"]]
+            meta = [f'Chương {nums[0]}–{nums[-1]}' if len(nums) > 1 else ""] if nums else []
+            meta.append(rng(arts))
+            rows = "".join(
+                f'<li><a href="{base}{ch["slug"]}/"><span class="tdl-chs__n">{esc(ch["num"])}</span>'
+                f'<span class="tdl-chs__t"><b>{esc(ch["name"])}</b><small>{rng(ch["a"])} · {len(ch["a"])} điều</small></span></a></li>'
+                if ch["num"] else
+                # Phần không chia chương (Điều khoản thi hành): dẫn thẳng tới từng điều
+                "".join(f'<li><a href="{base}dieu-{a["id"]}/"><span class="tdl-chs__n">§</span>'
+                        f'<span class="tdl-chs__t"><b>{esc(a["t"])}</b><small>Điều {a["id"]}</small></span></a></li>' for a in ch["a"])
+                for ch in chs)
+            parts.append(
+                f'<section class="tdl-part" id="{pid}"><header class="tdl-part__head"><span class="tdl-part__label">{esc(p["label"])}</span>'
+                f'<h3>{esc(p["name"])}</h3><span class="tdl-part__meta">{" · ".join(m for m in meta if m)}</span></header>'
+                f'<ol class="tdl-chs">{rows}</ol></section>')
+
+        # Các điều thường gặp, xếp theo chủ đề (nhãn ngắn, bám theo tên chương)
+        topics = [
+            ("Tội phạm, trách nhiệm hình sự", ["8", "12", "17"]),
+            ("Quyết định hình phạt, án treo", ["51", "52", "54", "65"]),
+            ("Tính mạng, sức khỏe", ["123", "134"]),
+            ("Sở hữu", ["168", "173", "174", "175"]),
+            ("Ma túy", ["248", "249", "251"]),
+            ("An toàn, trật tự công cộng", ["260", "321"]),
+            ("Chức vụ", ["353", "354"]),
+        ]
+        topic_rows = []
+        for label, ids in topics:
+            arts = [c.by_id[x] for x in ids if x in c.by_id]
+            chs = list(OrderedDict((a["ch"]["id"], a["ch"]) for a in arts).values())
+            ch_links = ", ".join(f'<a href="{base}{ch["slug"]}/">{esc(ch["label"])}</a>' for ch in chs)
+            items = "".join(f'<li><a href="{base}dieu-{a["id"]}/"><b>Điều {a["id"]}</b><span>{esc(a["t"])}</span></a></li>' for a in arts)
+            topic_rows.append(f'<div class="tdl-row"><div class="tdl-row__k"><h3>{esc(label)}</h3><small>{ch_links}</small></div>'
+                              f'<ul class="tdl-arts">{items}</ul></div>')
+
+        def tries(*qs):
+            return "".join(f'<button class="tdl-try" type="button" data-try="{esc(q)}">{self.ico("i-search")}{esc(q)}</button>' for q in qs)
+        ways = [
+            ("Số điều", "Gõ số rồi nhấn Enter", tries("173", "điều 217a")),
+            ("Khoản, điểm", "Mở thẳng tới đoạn cần đọc", tries("điểm s khoản 1 điều 51")),
+            ("Từ khóa", "Có dấu hay không dấu đều được", tries("án treo", "trom cap tai san")),
+            ("Cụm từ chính xác", "Đặt trong ngoặc kép", tries("“tái phạm nguy hiểm”")),
+        ]
+        way_rows = "".join(f'<div class="tdl-row"><div class="tdl-row__k"><h3>{k}</h3><small>{hint}</small></div>'
+                           f'<div class="tdl-row__v">{v}</div></div>' for k, hint, v in ways)
+
+        main = f"""<nav class="tdl-bc" aria-label="Đường dẫn"><ol><li><a href="{r}">Trang chủ</a></li><li><a href="{r}kien-thuc-phap-ly/">Kiến thức pháp lý</a></li><li aria-current="page">Bộ luật Hình sự</li></ol></nav>
+<section class="tdl-results" id="tdl-results" aria-live="polite" hidden></section>
+<div class="tdl-overview" id="tdl-overview">
+  <header class="tdl-hub">
+    <p class="tdl-hub__eyebrow">Tra cứu toàn văn kèm bình luận khoa học</p>
+    <h1 class="tdl-hub__title">Bộ luật Hình sự 2015 <em>sửa đổi, bổ sung năm 2017 và 2025</em></h1>
+    <p class="tdl-hub__lead">Mỗi điều luật có trang riêng: văn bản điều luật, bình luận khoa học, điều liên quan và bản đồ tư duy.</p>
+    <ul class="tdl-kpis">
+      <li><b>{st["arts"]}</b><span>điều luật</span></li>
+      <li><b>{st["chapters"]}</b><span>chương</span></li>
+      <li><b>{st["am"]}</b><span>điều có sửa đổi, bổ sung (*)</span></li>
+      <li><b>{st["n25"]}</b><span>điều có điểm mới năm 2025</span></li>
+    </ul>
+  </header>
+
+  <section class="tdl-sec" id="huong-dan" aria-labelledby="h-tim">
+    <div class="tdl-sec__head"><span class="tdl-sec__num">1</span><div><h2 id="h-tim">Tìm kiếm</h2><p>Gõ vào ô tìm kiếm ở đầu trang, hoặc bấm một ví dụ để thử.</p></div></div>
+    <div class="tdl-rows">{way_rows}</div>
+    <p class="tdl-keys"><span><kbd>/</kbd> mở ô tìm kiếm</span><span><kbd>[</kbd> <kbd>]</kbd> sang điều trước, điều sau</span></p>
+  </section>
+
+  <section class="tdl-sec" aria-labelledby="h-nhanh">
+    <div class="tdl-sec__head"><span class="tdl-sec__num">2</span><div><h2 id="h-nhanh">Các điều thường gặp</h2><p>Lối tắt tới những điều hay được tra cứu, xếp theo chủ đề.</p></div></div>
+    <div class="tdl-rows">{"".join(topic_rows)}</div>
+  </section>
+
+  <section class="tdl-sec" aria-labelledby="h-cautruc">
+    <div class="tdl-sec__head"><span class="tdl-sec__num">3</span><div><h2 id="h-cautruc">Cấu trúc Bộ luật</h2><p>{len(c.parts)} phần · {st["chapters"]} chương · {st["arts"]} điều. Chọn một chương để xem danh sách điều kèm trích đoạn.</p></div></div>
+    {"".join(parts)}
+  </section>
+
+  <p class="tdl-notice">Văn bản điều luật được trình bày theo tài liệu gốc; khi trích dẫn chính thức, vui lòng đối chiếu văn bản hợp nhất và văn bản hướng dẫn hiện hành. Phần bình luận của tác giả Đinh Văn Quế thể hiện quan điểm khoa học, có giá trị tham khảo, không phải văn bản hướng dẫn áp dụng pháp luật. Xem <a href="{r}mien-tru-trach-nhiem/">Tuyên bố miễn trừ trách nhiệm</a>.</p>
+</div>"""
+        side = f"""<section class="tdl-card tdl-card--cream" id="tdl-saved" hidden>
+  <h2 class="tdl-card__title">{self.ico("i-bookmark", "tdl-card__icon")}Điều đã lưu</h2>
+  <ul class="tdl-rel tdl-rel--compact"></ul>
+</section>""" + self.side_docs(r) + self.side_cta(r)
+        return self.layout(r, self.toc(r), main, side, " tdl--hub")

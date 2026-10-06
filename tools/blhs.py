@@ -441,7 +441,7 @@ class Renderer:
   {self.ico("i-shield-check", "tdl-card__big")}
   <h2 class="tdl-card__title tdl-card__title--light">Cần luật sư {what}?</h2>
   <p>Bào chữa, bảo vệ bị hại và tư vấn khẩn cấp qua các giai đoạn điều tra, truy tố, xét xử.</p>
-  <a class="btn btn--primary btn--block btn--sm" href="{r}lien-he/#gui-yeu-cau" data-open-booking>Đặt lịch tư vấn {self.arrow}</a>
+  <a class="btn btn--primary btn--block btn--sm" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {self.arrow}</a>
   <a class="tdl-card__phone" href="tel:{self.firm["phone_tel"]}">{self.ico("i-phone")} {self.firm["phone"]}</a>
 </section>"""
 
@@ -517,7 +517,7 @@ class Renderer:
         def empty(title, text, extra_html=""):
             return (f'<h2 class="tdl-panel__title">{title}</h2><div class="tdl-empty">{self.ico("i-doc", "tdl-empty__icon")}'
                     f'<p>{text}</p>{extra_html}<div class="tdl-empty__actions">'
-                    f'<a class="btn btn--primary btn--sm" href="{r}lien-he/#gui-yeu-cau" data-open-booking>Hỏi luật sư về Điều {a["id"]} {self.arrow}</a>'
+                    f'<a class="btn btn--primary btn--sm" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {self.arrow}</a>'
                     f'<a class="btn btn--outline btn--sm" href="{r}dich-vu/hinh-su/">Dịch vụ luật sư hình sự</a></div></div>')
 
         tab_lawyer = (f'<h2 class="tdl-panel__title">Góc nhìn Luật sư Nam</h2><div class="tdl-cm">{extra["goc-nhin"]}</div>'

@@ -95,3 +95,8 @@
 
 /* Ảnh banner: mép phải thẳng hàng với khung nội dung, không dính sát mép màn hình */
 @media(min-width:1051px){.home-page .nam-hero{background-position:right max(32px,calc((100vw - 1280px)/2 + 32px)) center}}
+
+/* Mục "Về Luật Sư Nam": logo công ty trên nền kem chuyển sắc theo tông site */
+.home-about__image--logo{background:radial-gradient(ellipse at 50% 42%,#fffdf8 0%,#fbf5ea 55%,#f3e8d6 100%);border:1px solid #eadfcd;border-bottom:4px solid var(--gold);display:flex;align-items:center;justify-content:center}
+.home-about__image--logo img{width:auto;max-width:78%;height:360px;object-fit:contain;padding:28px 0}
+@media(max-width:800px){.home-about__image--logo img{height:auto;max-height:300px;aspect-ratio:auto;max-width:82%;padding:22px 0}}

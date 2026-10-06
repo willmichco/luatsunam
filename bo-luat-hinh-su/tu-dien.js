@@ -79,7 +79,7 @@
   // Cuộn mục lục tới điều đang xem
   var curLink = $('.tdl-toc__arts a[aria-current="page"]');
   var tocBody = $('.tdl-toc__body');
-  if (curLink && tocBody) tocBody.scrollTop = Math.max(0, curLink.offsetTop - tocBody.clientHeight / 3);
+  if (curLink && tocBody) tocBody.scrollTop = Math.max(0, curLink.getBoundingClientRect().top - tocBody.getBoundingClientRect().top + tocBody.scrollTop - tocBody.clientHeight / 3);
 
   // Ngăn kéo mục lục trên điện thoại
   var drawerTrigger = null;

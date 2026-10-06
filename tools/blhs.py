@@ -93,7 +93,26 @@ class Code:
         for a in self.arts:
             d = body[a["id"]]
             a["law"], a["cm"], a["fn"] = d["law"], d["cm"], d.get("fn", {})
+            self._renumber_fn(a)
+        KNOWN.update(a["id"] for a in self.arts)
         self._links()
+
+    @staticmethod
+    def _renumber_fn(a):
+        """Chú thích đánh số lại từ 1 trong từng điều (tệp gốc đánh số liên tục cả Bộ luật)
+        và ghi nhận chú thích nằm ở phần điều luật hay phần bình luận."""
+        local, where = {}, {}
+        def sub(m, part):
+            g = m.group(1)
+            if g not in local:
+                local[g] = str(len(local) + 1)
+                where[local[g]] = part
+            return f'<sup class="fn" data-fn="{local[g]}">{local[g]}</sup>'
+        for part in ("law", "cm"):
+            a[part] = [[k, re.sub(r'<sup class="fn" data-fn="(\d+)">.*?</sup>', lambda m: sub(m, part), h)]
+                       for k, h in a[part]]
+        a["fn"] = {local[g]: t for g, t in a["fn"].items() if g in local}
+        a["fn_where"] = where
 
     @staticmethod
     def roman_to_int(s):
@@ -171,10 +190,6 @@ class Code:
         for g in GLOSSARY:
             if g in text and not any(g in t.lower() for t in terms):
                 terms.append(g)
-        if len(terms) < 3:
-            terms.append(a["t"])
-            if a["ch"]["num"]:
-                terms.append(a["ch"]["name"])
         out = []
         for t in terms:
             if t.lower() not in [x.lower() for x in out]:
@@ -209,11 +224,56 @@ def art_url(a, base):
     return f"{base}dieu-{a['id']}/"
 
 
+KNOWN = set()  # số hiệu các điều hiện có, do Code nạp
+NUM = r"\d{1,3}[a-z]?(?![\d/])"
+SEP = r"(?:,\s*|\s+và\s+|\s+hoặc\s+)"
+# "điều 168, 169 và 290 của Bộ luật này" trong văn bản điều luật
+LAW_REF = re.compile(r"\b([Đđ]iều)\s+(" + NUM + "(?:" + SEP + NUM + ")*)(?=\s*(?:,\s*)?(?:của\s+)?Bộ luật này)")
+
+
+def link_lists(h, a, base):
+    """Gắn liên kết cho mọi số điều trong danh sách: số đầu đã có liên kết thì nối tiếp các số sau;
+    văn bản điều luật ghi "các điều …, … của Bộ luật này" thì gắn cho cả danh sách."""
+    def one(n):
+        if n not in KNOWN:
+            return n
+        href = f"{base}dieu-{n}/" if n != a["id"] else "#quy-dinh"
+        return f'<a class="xr" href="{href}">{n}</a>'
+
+    def nums(txt):
+        return re.sub(NUM, lambda m: one(m.group(0)), txt)
+
+    parts = re.split(r"(<[^>]+>)", h)
+    depth, after_xr = 0, False
+    for i, t in enumerate(parts):
+        if i % 2:
+            if t.startswith("<a"):
+                depth += 1
+                after_xr = False
+            elif t == "</a>":
+                depth -= 1
+                after_xr = parts[i - 2].startswith('<a class="xr"') if i >= 2 else False
+            else:
+                after_xr = False
+            continue
+        if depth:
+            continue
+        if after_xr:
+            m = re.match("(?:" + SEP + NUM + ")+", t)
+            if m:
+                t = nums(m.group(0)) + t[m.end():]
+        t = LAW_REF.sub(lambda m: f"{m.group(1)} {nums(m.group(2))}", t)
+        parts[i] = t
+        after_xr = False
+    return "".join(parts)
+
+
 def fix_para(h, a, base, is_law):
     h = re.sub(r'class="xr" href="#d(\w+)"',
                lambda m: f'class="xr" href="{base}dieu-{m.group(1)}/"' if m.group(1) != a["id"] else 'class="xr" href="#quy-dinh"', h)
     h = re.sub(r'<sup class="fn" data-fn="(\d+)">(.*?)</sup>',
                lambda m: f'<sup class="fn"><a href="#fn-{m.group(1)}" title="{esc(a["fn"].get(m.group(1), ""))}">{m.group(2)}</a></sup>', h)
+    h = link_lists(h, a, base)
     if is_law:
         h = re.sub(r"\*((?:</[a-z]+>)*)$", r'<span class="tdl-star" title="Được sửa đổi, bổ sung">*</span>\1', h)
     return h
@@ -267,10 +327,11 @@ def cm_html(a, base):
     return "\n".join(out), heads
 
 
-def footnotes_html(a):
-    if not a["fn"]:
+def footnotes_html(a, part):
+    notes = {n: t for n, t in a["fn"].items() if a.get("fn_where", {}).get(n, "law") == part}
+    if not notes:
         return ""
-    items = "".join(f'<li id="fn-{n}" value="{n}">{esc(t)}</li>' for n, t in a["fn"].items())
+    items = "".join(f'<li id="fn-{n}" value="{n}">{esc(t)}</li>' for n, t in sorted(notes.items(), key=lambda x: int(x[0])))
     return f'<ol class="tdl-fns" aria-label="Chú thích">{items}</ol>'
 
 
@@ -338,7 +399,7 @@ class Renderer:
                 if is_cur:
                     rows, last_m = [], None
                     rows.append(f'<li class="tdl-toc__overview"><a href="{base}{c["slug"]}/"'
-                                f'{AC if not cur_art else ""}>Tổng quan {esc(c["label"].lower())} {self.arrow}</a></li>')
+                                f'{AC if not cur_art else ""}>Tổng quan {esc(c["label"] if c["num"] else self.c.parts[c["part"]]["label"])} {self.arrow}</a></li>')
                     for a in c["a"]:
                         if a.get("m") and a["m"] != last_m:
                             last_m = a["m"]
@@ -349,8 +410,9 @@ class Renderer:
                     arts = "".join(rows)
                 rng = f'{c["a"][0]["id"]}–{c["a"][-1]["id"]}' if len(c["a"]) > 1 else c["a"][0]["id"]
                 items.append(
-                    f'<details class="tdl-toc__ch" data-ch="{c["id"]}"{" open" if is_cur else ""}>'
-                    f'<summary><span class="tdl-toc__chl">{esc(c["label"])}.</span> {esc(c["name"])}<small>Điều {rng}</small></summary>'
+                    f'<details class="tdl-toc__ch" data-ch="{c["id"]}"{" open" if is_cur else ""}>' +
+                    (f'<summary><span class="tdl-toc__chl">{esc(c["label"])}.</span> {esc(c["name"])}<small>Điều {rng}</small></summary>'
+                     if c["num"] else f'<summary>{esc(c["name"])}<small>Điều {rng}</small></summary>') +
                     f'<ol class="tdl-toc__arts"{"" if is_cur else " data-lazy"}>{arts}</ol></details>')
             out.append(
                 f'<details class="tdl-toc__part" id="{pid}"{open_p}><summary>{self.ico("i-bookmark", "tdl-toc__picon")}'
@@ -449,7 +511,7 @@ class Renderer:
                 else: grouped.append(chunk)
             cm = "".join(grouped)
         tab_cm = (f'<h2 class="tdl-panel__title">Bình luận khoa học</h2><p class="tdl-panel__by">Tác giả phần bình luận: Đinh Văn Quế. '
-                  f'Phần bình luận thể hiện quan điểm khoa học của tác giả, có giá trị tham khảo.</p>{cm_toc}<div class="tdl-cm">{cm}</div>'
+                  f'Phần bình luận thể hiện quan điểm khoa học của tác giả, có giá trị tham khảo.</p>{cm_toc}<div class="tdl-cm">{cm}</div>{footnotes_html(a, "cm")}'
                   if cm else '<h2 class="tdl-panel__title">Bình luận khoa học</h2><p class="tdl-empty">Điều này chưa có phần bình luận.</p>')
 
         def empty(title, text, extra_html=""):
@@ -530,7 +592,7 @@ class Renderer:
     <div class="tdl-law__body">
 {law_html(a, base)}
     </div>
-    {footnotes_html(a)}
+    {footnotes_html(a, "law")}
   </section>
   <div class="tdl-tabs">
     <div class="tdl-tabs__list" role="tablist" aria-label="Nội dung phân tích Điều {a["id"]}">{tab_btns}</div>

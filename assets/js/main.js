@@ -1,15 +1,6 @@
 /* =====================================================================
    LSN LAW FIRM – Công Ty Luật TNHH Luật Sư Nam
-   ---------------------------------------------------------------------
-   CẤU HÌNH BIỂU MẪU
-   WEB3FORMS_KEY: lấy miễn phí tại https://web3forms.com (nhập email công ty,
-   nhận access key qua email rồi dán vào đây). Khi chưa có key, biểu mẫu tự
-   chuyển sang mở ứng dụng email của khách nên website vẫn hoạt động.
    ===================================================================== */
-var WEB3FORMS_KEY = 'DAN_ACCESS_KEY_WEB3FORMS_VAO_DAY';
-var CONTACT_EMAIL = 'luatsunam.hcm@gmail.com';
-var CONTACT_PHONE = '0983 498 499';
-
 (function () {
   'use strict';
 
@@ -172,7 +163,7 @@ var CONTACT_PHONE = '0983 498 499';
     reveals.forEach(function (el) { el.classList.add('is-in'); });
   }
 
-  /* ---------- Cửa sổ: tìm kiếm + đặt lịch ---------- */
+  /* ---------- Cửa sổ tìm kiếm ---------- */
   var lastFocus = null;
   function openOverlay(el) {
     lastFocus = document.activeElement;
@@ -187,15 +178,7 @@ var CONTACT_PHONE = '0983 498 499';
     if (lastFocus) lastFocus.focus();
   }
   var search = $('#search');
-  var booking = $('#booking');
   $$('[data-open-search]').forEach(function (b) { b.addEventListener('click', function () { closeSubs(); if (nav && nav.classList.contains('is-open')) setNav(false); openOverlay(search); loadIndex(); }); });
-  $$('[data-open-booking]').forEach(function (b) {
-    b.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (nav && nav.classList.contains('is-open')) setNav(false);
-      openOverlay(booking);
-    });
-  });
   $$('.overlay').forEach(function (ov) {
     ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('[data-close]')) closeOverlay(ov); });
   });
@@ -249,94 +232,6 @@ var CONTACT_PHONE = '0983 498 499';
       if (first) window.location.href = first.getAttribute('href');
     });
   }
-
-  /* ---------- Biểu mẫu tư vấn ---------- */
-  function buildMailto(d) {
-    var subject = 'Yêu cầu tư vấn pháp lý - ' + (d.service || 'Chưa chọn lĩnh vực');
-    var body = [
-      'Họ và tên: ' + d.name,
-      'Số điện thoại: ' + d.phone,
-      'Email: ' + (d.email || 'Không cung cấp'),
-      'Lĩnh vực: ' + (d.service || 'Chưa chọn'),
-      d.date ? 'Ngày mong muốn: ' + d.date : '',
-      d.mode ? 'Hình thức: ' + d.mode : '',
-      '',
-      'Nội dung cần tư vấn:',
-      d.message
-    ].filter(function (x, i) { return x !== '' || i === 6; }).join('\n');
-    return 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  }
-
-  $$('[data-form]').forEach(function (form) {
-    var status = $('.form__status', form);
-    var btn = $('button[type="submit"]', form);
-    var label = btn ? btn.innerHTML : '';
-    function setStatus(text, ok) { status.textContent = text; status.className = 'form__status ' + (ok ? 'is-ok' : 'is-err'); }
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var fd = new FormData(form);
-      if ((fd.get('botcheck') || '').toString().trim()) return; // bẫy chống spam
-
-      var ok = true;
-      $$('input, textarea, select', form).forEach(function (f) {
-        if (f.name === 'botcheck') return;
-        var bad = !f.checkValidity();
-        if (f.type === 'checkbox') f.closest('.consent').classList.toggle('is-invalid', bad);
-        else f.classList.toggle('is-invalid', bad);
-        if (bad && ok) { ok = false; f.focus(); }
-      });
-      if (!ok) {
-        setStatus('Vui lòng kiểm tra lại các trường bắt buộc (*) và xác nhận đồng ý xử lý dữ liệu cá nhân.', false);
-        return;
-      }
-
-      var d = {};
-      ['name', 'phone', 'email', 'service', 'message', 'date', 'mode'].forEach(function (k) { d[k] = (fd.get(k) || '').toString().trim(); });
-
-      if (!WEB3FORMS_KEY || WEB3FORMS_KEY.indexOf('DAN_') === 0) {
-        setStatus('Cảm ơn ' + (d.name || 'bạn') + '. Ứng dụng email sẽ mở để bạn kiểm tra và gửi yêu cầu.', true);
-        window.location.href = buildMailto(d);
-        return;
-      }
-
-      if (btn) { btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Đang gửi…'; }
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: '[Website] ' + (form.id === 'booking-form' ? 'Đặt lịch tư vấn' : 'Yêu cầu tư vấn') + ' - ' + (d.service || 'Chưa chọn lĩnh vực'),
-          from_name: 'Website Luật Sư Nam',
-          'Họ và tên': d.name,
-          'Số điện thoại': d.phone,
-          Email: d.email || 'Không cung cấp',
-          'Lĩnh vực': d.service || 'Chưa chọn',
-          'Ngày mong muốn': d.date || '—',
-          'Hình thức': d.mode || '—',
-          'Nội dung': d.message,
-          'Đồng ý xử lý dữ liệu': 'Có',
-          'Trang gửi': window.location.pathname
-        })
-      }).then(function (res) {
-        return res.json().catch(function () { return {}; }).then(function (json) {
-          if (!res.ok || json.success === false) throw new Error(json.message || 'Gửi không thành công');
-          form.reset();
-          setStatus('Cảm ơn ' + (d.name || 'bạn') + '. Chúng tôi đã nhận được yêu cầu và sẽ liên hệ lại trong giờ làm việc, thường trong vòng 24 giờ làm việc.', true);
-        });
-      }).catch(function () {
-        setStatus('Chưa gửi được yêu cầu. Vui lòng gọi ' + CONTACT_PHONE + ' hoặc email ' + CONTACT_EMAIL + ' để được hỗ trợ ngay.', false);
-      }).then(function () {
-        if (btn) { btn.removeAttribute('aria-busy'); btn.innerHTML = label; }
-      });
-    });
-
-    form.addEventListener('input', function (e) {
-      if (e.target.classList) e.target.classList.remove('is-invalid');
-      var c = e.target.closest && e.target.closest('.consent');
-      if (c) c.classList.remove('is-invalid');
-    });
-  });
 
   /* ---------- Bản đồ: chỉ tải khi người dùng bấm ---------- */
   $$('.map[data-map]').forEach(function (box) {

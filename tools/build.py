@@ -196,7 +196,7 @@ def header_html(page, r):
         {nav_html(page, r)}
       </ul>
       <div class="nav__mobile-extra">
-        <a class="btn btn--primary btn--block" href="{r}lien-he/#gui-yeu-cau" data-open-booking>Đặt lịch tư vấn {ARROW}</a>
+        <a class="btn btn--primary btn--block" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a>
         <a class="nav__hotline" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a>
       </div>
     </nav>
@@ -267,40 +267,6 @@ def footer_html(r):
 </footer>"""
 
 
-# ---------------------------------------------------------------------------
-# Biểu mẫu tư vấn (dùng chung trang Liên hệ và cửa sổ Đặt lịch)
-# ---------------------------------------------------------------------------
-def form_html(fid, r, booking=False):
-    opts = "".join(f"<option>{esc(s['name'])}</option>" for s in SERVICES)
-    extra = ""
-    if booking:
-        extra = f"""
-  <div class="form__row">
-    <div class="field"><label for="{fid}-date">Ngày mong muốn</label><input id="{fid}-date" name="date" type="date"></div>
-    <div class="field"><label for="{fid}-mode">Hình thức</label>
-      <select id="{fid}-mode" name="mode"><option>Tại văn phòng</option><option>Qua điện thoại</option><option>Họp trực tuyến</option></select>
-    </div>
-  </div>"""
-    return f"""<form class="form" id="{fid}" data-form novalidate>
-  <div class="form__hp" aria-hidden="true"><label>Để trống ô này<input type="text" name="botcheck" tabindex="-1" autocomplete="off"></label></div>
-  <div class="form__row">
-    <div class="field"><label for="{fid}-name">Họ và tên <b>*</b></label><input id="{fid}-name" name="name" type="text" autocomplete="name" required placeholder="Nguyễn Văn A"></div>
-    <div class="field"><label for="{fid}-phone">Số điện thoại <b>*</b></label><input id="{fid}-phone" name="phone" type="tel" autocomplete="tel" required pattern="^(\\+84|0)[0-9 .]{{8,12}}$" placeholder="0900 000 000"></div>
-  </div>
-  <div class="form__row">
-    <div class="field"><label for="{fid}-email">Email</label><input id="{fid}-email" name="email" type="email" autocomplete="email" placeholder="email@cuaban.vn"></div>
-    <div class="field"><label for="{fid}-service">Lĩnh vực cần tư vấn</label>
-      <select id="{fid}-service" name="service"><option value="">Chọn lĩnh vực</option>{opts}<option>Chưa rõ / Khác</option></select>
-    </div>
-  </div>{extra}
-  <div class="field"><label for="{fid}-message">Nội dung cần tư vấn <b>*</b></label><textarea id="{fid}-message" name="message" rows="4" required placeholder="Mô tả ngắn gọn sự việc, mốc thời gian quan trọng và điều bạn mong muốn…"></textarea></div>
-  <label class="consent" for="{fid}-consent"><input id="{fid}-consent" type="checkbox" name="consent" required> <span>Tôi đồng ý để {FIRM["legal_name"]} xử lý dữ liệu cá nhân nêu trên nhằm liên hệ và tư vấn theo <a href="{r}chinh-sach-bao-mat/">Chính sách bảo mật</a>.</span></label>
-  <button class="btn btn--primary btn--block" type="submit">{"Xác nhận đặt lịch" if booking else "Gửi yêu cầu tư vấn"} {ARROW}</button>
-  <p class="form__note">Biểu mẫu mở thư nháp trong ứng dụng email; bạn cần bấm gửi tại đó. Gửi yêu cầu chưa làm phát sinh quan hệ luật sư – khách hàng. Vui lòng không gửi tài liệu mật qua biểu mẫu; với vụ việc khẩn cấp, hãy gọi <a href="tel:{FIRM["phone_tel"]}">{FIRM["phone"]}</a>.</p>
-  <p class="form__status" role="status" aria-live="polite"></p>
-</form>"""
-
-
 def overlays_html(r):
     return f"""<div class="floating">
   <a class="floating__btn floating__btn--zalo" href="{FIRM["zalo"]}" target="_blank" rel="noopener" aria-label="Nhắn Zalo {FIRM["phone"]}">Zalo</a>
@@ -322,20 +288,6 @@ def overlays_html(r):
       <a href="{r}dich-vu/dat-dai-bat-dong-san/">Tranh chấp đất đai</a>
       <a href="{r}bo-luat-hinh-su/">Bộ luật Hình sự</a>
     </p>
-  </div>
-</div>
-
-<div class="overlay modal" id="booking" hidden>
-  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="booking-title">
-    <button class="icon-btn overlay__close" type="button" aria-label="Đóng" data-close>{ico("i-close", "")}</button>
-    <div class="modal__head">
-      {ico("i-calendar", "modal__icon")}
-      <div>
-        <h2 id="booking-title">Đặt lịch tư vấn</h2>
-        <p>Chọn thời gian phù hợp, luật sư sẽ gọi lại xác nhận lịch hẹn trong giờ làm việc.</p>
-      </div>
-    </div>
-    {form_html("booking-form", r, booking=True)}
   </div>
 </div>"""
 
@@ -392,7 +344,7 @@ def cta_band(r, eyebrow="Tư vấn pháp lý", title="Bạn cần tư vấn phá
       <p class="cta__text">{text}</p>
     </div>
     <div class="cta__actions">
-      <a class="btn btn--primary btn--lg btn--outline-gold" href="{r}lien-he/#gui-yeu-cau" data-open-booking>Đặt lịch tư vấn {ARROW}</a>
+      <a class="btn btn--primary btn--lg btn--outline-gold" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a>
       <a class="cta__phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a>
     </div>
   </div>
@@ -463,8 +415,6 @@ def render_tokens(body, page, r):
         if name in ("phone", "phone_tel", "email", "zalo", "address", "hours", "hours_note", "maps_query",
                     "legal_name", "street", "ward", "city"):
             return FIRM[name]
-        if name == "form":
-            return form_html(arg or "contact-form", r)
         if name == "cta":
             return ""
         if name == "services_grid":
@@ -686,7 +636,7 @@ def service_page(s):
 <section class="sv-hero">
  <div class="container">
   <nav class="sv-crumb" aria-label="Đường dẫn"><a href="{{{{root}}}}">Trang chủ</a><span>/</span><a href="{{{{root}}}}dich-vu/">Dịch vụ</a><span>/</span><span aria-current="page">{esc(s["name"])}</span></nav>
-  <div class="sv-hero__grid"><div class="sv-hero__copy"><p class="eyebrow">{esc(s["eyebrow"])}</p><h1>{esc(s["name"])}</h1><p class="sv-lead">{esc(s["lead"])}</p><ul class="sv-tags" aria-label="Nội dung dịch vụ">{tags}</ul><div class="sv-actions"><a class="btn btn--primary" href="{{{{root}}}}lien-he/#gui-yeu-cau" data-open-booking>Đặt lịch tư vấn</a><a class="sv-phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a></div></div>
+  <div class="sv-hero__grid"><div class="sv-hero__copy"><p class="eyebrow">{esc(s["eyebrow"])}</p><h1>{esc(s["name"])}</h1><p class="sv-lead">{esc(s["lead"])}</p><ul class="sv-tags" aria-label="Nội dung dịch vụ">{tags}</ul><div class="sv-actions"><a class="btn btn--primary" href="{{{{root}}}}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a><a class="sv-phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a></div></div>
   <figure class="sv-image"><img src="{{{{root}}}}{asset_ref(f'assets/img/dich-vu/{s["slug"]}.webp')}" alt="{esc(s["image_alt"])}" width="600" height="400" fetchpriority="high"></figure></div>
   <div class="sv-focus"><p class="eyebrow">Trọng tâm tư vấn</p><div><h2>{esc(s["focus_title"])}</h2><p>{esc(s["focus_text"])}</p></div></div>
  </div>
@@ -697,7 +647,7 @@ def service_page(s):
 <section class="sv-section" id="ho-so"><div class="container"><div class="sv-heading"><div><p class="eyebrow">03 / Hồ sơ &amp; kết quả</p><h2>Chuẩn bị rõ ràng. Phối hợp hiệu quả.</h2></div></div><div class="sv-docs"><article><h3>{ico("i-doc")}{esc(s.get("docs_title", "Hồ sơ nên chuẩn bị"))}</h3>{check_list(s["docs"])}<a class="sv-text-link" href="{{{{root}}}}quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ</a></article><article><h3>{ico("i-diamond")}Khách hàng nhận được</h3>{check_list(s["deliverables"])}</article></div><div class="sv-context"><article><p class="eyebrow">Nguyên tắc làm việc</p><h3>{esc(s["principle_title"])}</h3><p>{esc(s["principle_text"])}</p></article><article><h3>Căn cứ pháp lý chủ yếu</h3><ul>{laws}</ul><p class="sv-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p></article></div></div></section>
 <section class="sv-section sv-section--soft" id="tham-khao"><div class="container"><div class="sv-heading"><div><p class="eyebrow">04 / Tài liệu tham khảo</p><h2>Thông tin hữu ích cho bạn</h2></div><a class="sv-text-link" href="{{{{root}}}}kien-thuc-phap-ly/">Xem thư viện kiến thức</a></div><div class="sv-resources">{cards}</div></div></section>
 <section class="sv-section sv-related-section"><div class="container"><div class="sv-heading"><div><p class="eyebrow">Lĩnh vực liên quan</p><h2>Hỗ trợ các vấn đề có liên quan</h2></div><a class="sv-text-link" href="{{{{root}}}}dich-vu/">Tất cả dịch vụ</a></div><div class="sv-related-grid">{related}</div></div></section>
-<section class="sv-contact"><div class="container"><div><p class="eyebrow">{esc(s["cta_eyebrow"])}</p><h2>{esc(s["cta_title"])}</h2><p>{esc(s["cta_text"])}</p></div><div class="sv-contact__actions"><a class="btn btn--primary" href="{{{{root}}}}lien-he/#gui-yeu-cau" data-open-booking>Đặt lịch tư vấn</a><a class="sv-phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a></div></div></section>
+<section class="sv-contact"><div class="container"><div><p class="eyebrow">{esc(s["cta_eyebrow"])}</p><h2>{esc(s["cta_title"])}</h2><p>{esc(s["cta_text"])}</p></div><div class="sv-contact__actions"><a class="btn btn--primary" href="{{{{root}}}}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a><a class="sv-phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a></div></div></section>
 """
     url = abs_url(path)
     return {
@@ -948,8 +898,8 @@ def faq_page():
       <div class="aside-card aside-card--cta">
         {ico("i-chat", "aside-card__icon")}
         <p class="aside-card__title">Chưa thấy câu trả lời?</p>
-        <p>Gửi câu hỏi cho luật sư. Chúng tôi phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc.</p>
-        <a class="btn btn--primary btn--block btn--sm" href="{{{{root}}}}lien-he/#gui-yeu-cau">Gửi câu hỏi {ARROW}</a>
+        <p>Gọi điện hoặc nhắn Zalo để trao đổi trực tiếp với luật sư trong giờ làm việc.</p>
+        <a class="btn btn--primary btn--block btn--sm" href="{{{{root}}}}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a>
         <a class="aside-card__phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a>
       </div>
       <div class="aside-card">

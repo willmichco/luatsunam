@@ -26,7 +26,7 @@ FIRM = {
     "ward": "Phường Bình Lợi Trung",
     "city": "Thành phố Hồ Chí Minh",
     "hours": "Thứ 2 – Thứ 6: 08:00 – 17:30",
-    "hours_note": "Ngoài giờ và cuối tuần: tiếp nhận theo lịch hẹn trước",
+    "hours_note": "Ngoài giờ và cuối tuần: vui lòng liên hệ trước qua hotline hoặc Zalo",
     "maps_query": "22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh",
 }
 FIRM["address"] = f'{FIRM["street"]}, {FIRM["ward"]}, {FIRM["city"]}'
@@ -409,11 +409,11 @@ SERVICES = [
         "eyebrow": "Hỗ trợ hồ sơ & giao dịch",
         "lead": "Rà soát điều kiện giao dịch, chuẩn bị giấy tờ, dự thảo văn bản và phối hợp với tổ chức hành nghề công chứng để khách hàng thực hiện thủ tục thuận lợi, đúng quy định.",
         "image_alt": "Bút ký đặt trên văn bản hợp đồng",
-        "focus_title": "Đủ hồ sơ trước khi đặt lịch",
+        "focus_title": "Đủ hồ sơ trước khi công chứng",
         "focus_text": "Kiểm tra chủ thể, tài sản, nội dung giao dịch và giấy tờ cần thiết nhằm hạn chế việc bổ sung nhiều lần hoặc phát sinh rủi ro.",
         "tags": ["Hợp đồng", "Ủy quyền", "Di chúc", "Nhà đất"],
         "scope_title": "Chuẩn bị giao dịch công chứng rõ ràng và an toàn",
-        "scope_intro": "Luật Sư Nam hỗ trợ kiểm tra hồ sơ, giải thích quyền và nghĩa vụ, đề xuất điều khoản và phối hợp đặt lịch. Việc chứng nhận công chứng được thực hiện bởi công chứng viên tại tổ chức hành nghề công chứng có thẩm quyền.",
+        "scope_intro": "Luật Sư Nam hỗ trợ kiểm tra hồ sơ, giải thích quyền và nghĩa vụ, đề xuất điều khoản và phối hợp với tổ chức hành nghề công chứng. Việc chứng nhận công chứng được thực hiện bởi công chứng viên tại tổ chức hành nghề công chứng có thẩm quyền.",
         "scope": [
             ("Nhà đất và tài sản đăng ký", "Rà soát hồ sơ mua bán, tặng cho, thế chấp, góp vốn, thuê và các giao dịch cần công chứng liên quan đến tài sản."),
             ("Văn bản ủy quyền", "Làm rõ phạm vi, thời hạn, quyền và nghĩa vụ; dự thảo giấy ủy quyền hoặc hợp đồng ủy quyền phù hợp với mục đích sử dụng."),
@@ -442,7 +442,7 @@ SERVICES = [
             ("Xác định giao dịch", "Làm rõ chủ thể, tài sản, mục đích và thời gian dự kiến."),
             ("Kiểm tra điều kiện", "Rà soát giấy tờ, quyền định đoạt và hạn chế pháp lý."),
             ("Hoàn thiện văn bản", "Đề xuất điều khoản và chuẩn hóa hồ sơ cần nộp."),
-            ("Phối hợp công chứng", "Hỗ trợ đặt lịch và bổ sung theo yêu cầu hợp lệ."),
+            ("Phối hợp công chứng", "Hỗ trợ chuẩn bị và bổ sung hồ sơ theo yêu cầu hợp lệ."),
             ("Hướng dẫn sau ký", "Lưu hồ sơ, thanh toán, đăng ký và nghĩa vụ tiếp theo."),
         ],
         "note_title": "Lưu ý",
@@ -564,10 +564,10 @@ FAQ = [
     },
     {
         "id": "thoi-gian-phan-hoi",
-        "q": "Gửi yêu cầu qua website thì bao lâu được phản hồi?",
+        "q": "Liên hệ luật sư bằng cách nào và bao lâu được phản hồi?",
         "a": [
-            "Chúng tôi phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc kể từ khi nhận được yêu cầu. Với vụ việc khẩn cấp, đặc biệt là <a href=\"{{root}}dich-vu/hinh-su/\">vụ án hình sự</a> hoặc sắp hết thời hạn kháng cáo, bạn nên gọi trực tiếp hotline <a href=\"tel:0983498499\">0983 498 499</a>.",
-            "Lưu ý: việc gửi yêu cầu qua website chưa làm phát sinh quan hệ luật sư – khách hàng. Quan hệ này chỉ hình thành khi hai bên ký kết hợp đồng dịch vụ pháp lý.",
+            "Website chỉ cung cấp thông tin pháp lý tham khảo, không nhận yêu cầu tư vấn trực tuyến. Bạn liên hệ trực tiếp qua hotline hoặc Zalo <a href=\"https://zalo.me/0983498499\">0983 498 499</a>; tin nhắn Zalo và email được phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc. Với vụ việc khẩn cấp, đặc biệt là <a href=\"{{root}}dich-vu/hinh-su/\">vụ án hình sự</a> hoặc sắp hết thời hạn kháng cáo, bạn nên gọi trực tiếp hotline <a href=\"tel:0983498499\">0983 498 499</a>.",
+            "Lưu ý: việc trao đổi ban đầu qua điện thoại, Zalo hoặc email chưa làm phát sinh quan hệ luật sư – khách hàng. Quan hệ này chỉ hình thành khi hai bên ký kết hợp đồng dịch vụ pháp lý.",
         ],
     },
 ]

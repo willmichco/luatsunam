@@ -92,3 +92,6 @@
 
 /* Content remains visible while scrolling; cards share a stable baseline. */
 .home-page .reveal{opacity:1;transform:none;transition:none}
+
+/* Ảnh banner: mép phải thẳng hàng với khung nội dung, không dính sát mép màn hình */
+@media(min-width:1051px){.home-page .nam-hero{background-position:right max(32px,calc((100vw - 1280px)/2 + 32px)) center}}

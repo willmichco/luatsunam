@@ -249,6 +249,8 @@
     if (!el) return;
     var panel = el.closest('.tdl-panel');
     if (panel && panel.hidden) selectTab($('#' + panel.getAttribute('aria-labelledby')));
+    // Mở mục bình luận đang thu gọn chứa đoạn cần tới
+    for (var d = el.closest('details'); d; d = d.parentElement && d.parentElement.closest('details')) d.open = true;
     el.classList.add('tdl-flash');
     el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
     setTimeout(function () { el.classList.remove('tdl-flash'); }, 2600);
@@ -258,8 +260,7 @@
     if (!h || !article) return;
     var m = h.match(/^([lc])(\d+)$/);
     if (m) {
-      var list = m[1] === 'l' ? $$('.tdl-law__body p') : $$('#panel-binh-luan .tdl-cm > *');
-      return flash(list[+m[2]]);
+      return flash($(m[1] === 'l' ? '.tdl-law__body [data-l="' + m[2] + '"]' : '#panel-binh-luan [data-c="' + m[2] + '"]'));
     }
     var el = document.getElementById(h);
     if (el && el.closest('.tdl-panel')) flash(el);
@@ -273,7 +274,7 @@
   if (article && hlq) {
     var cq = LX.compile(LX.parseQuery(hlq));
     if (!cq.empty) {
-      $$('.tdl-law__body p, #panel-binh-luan .tdl-cm > *').forEach(function (p) {
+      $$('.tdl-law__body [data-l], #panel-binh-luan [data-c]').forEach(function (p) {
         var walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT), nodes = [], n;
         while ((n = walker.nextNode())) nodes.push(n);
         nodes.forEach(function (node) {
@@ -289,7 +290,7 @@
           node.parentNode.replaceChild(frag, node);
         });
       });
-      if (!location.hash) { var first = $('.tdl-hl'); if (first) setTimeout(function () { flash(first.closest('p, h3, h4')); }, 60); }
+      if (!location.hash) { var first = $('.tdl-hl'); if (first) setTimeout(function () { flash(first.closest('[data-l], [data-c]')); }, 60); }
     }
   }
 

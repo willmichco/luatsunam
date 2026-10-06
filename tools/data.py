@@ -8,9 +8,12 @@ Sửa nội dung tại đây rồi chạy:  python3 tools/build.py
 # ---------------------------------------------------------------------------
 # Cấu hình tên miền. Khi có tên miền riêng: đổi SITE_URL thành https://tenmien.vn
 # và BASE_PATH thành "/".
+# BASE_PATH là thư mục gốc của website trên máy chủ, dùng cho trang 404.html
+# (GitHub Pages phục vụ trang này ở mọi độ sâu đường dẫn nên không dùng được
+# đường dẫn tương đối). Website đang chạy tại https://willmichco.github.io/luatsunam/
 # ---------------------------------------------------------------------------
 SITE_URL = "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site"
-BASE_PATH = "/"
+BASE_PATH = "/luatsunam/"
 
 FIRM = {
     "legal_name": "Công Ty Luật TNHH Luật Sư Nam",

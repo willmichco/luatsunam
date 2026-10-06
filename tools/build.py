@@ -1019,7 +1019,7 @@ def all_pages():
     pages = []
     meta, body = load_src("pages/home.html")
     home = {"path": "", "section": "home", "crumbs": [HOME], "body": body, "page_hero": False,
-            "preload_images": ["assets/img/nam-hero.webp"]}
+            "preload_images": ["assets/img/nam-hero-luat-su.webp"]}
     home.update(meta)
     pages.append(home)
 

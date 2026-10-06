@@ -25,7 +25,7 @@ main :where(.container,.split,.cards-3,.cards-2,.service,.post,.profile__body,.p
  .header .logo__tag{font-size:8px;line-height:1.4;margin-top:4px;white-space:normal;max-width:210px}
  .header__actions{gap:0}.header .icon-btn{width:40px;height:44px;padding:10px}
  .header__cta{display:none}
- .nam-hero{min-height:0;background-position:65% center;background-image:linear-gradient(90deg,#fcf8f1f5,#fcf8f1dc),url('../img/nam-hero.webp?v=20260925a')}
+ .nam-hero{min-height:0;background-position:65% center;background-image:linear-gradient(90deg,#fcf8f1f5,#fcf8f1dc),url('../img/nam-hero-luat-su.webp?v=20261006b')}
  .nam-hero-copy{width:100%;padding:30px 0}.nam-hero h1{font-size:clamp(25px,6.5vw,34px);line-height:1.25;letter-spacing:-.3px}
  .nam-hero-copy>p:not(.eyebrow){font-size:16px;line-height:1.65;margin-top:16px}
  .nam-hero .hero__buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}

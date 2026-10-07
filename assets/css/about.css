@@ -3,3 +3,86 @@
 @media(max-width:1050px){.about-page .container{width:calc(100% - 56px)}.ab-intro__grid,.ab-profile{gap:32px}.ab-profile h2{font-size:34px}.ab-profile__lead{font-size:18px}.ab-portrait img{aspect-ratio:4/5.6}.ab-colleague{grid-template-columns:1fr 2fr;gap:24px}.ab-colleague>a{grid-column:2}.about-page .about-timeline{grid-template-columns:1fr 1fr;gap:32px}.ab-section-head{gap:28px}.ab-section-head>p{max-width:320px}.ab-section-head h2,.ab-office h2{font-size:30px}}
 @media(max-width:700px){.about-page .container{width:calc(100% - 40px)}.ab-intro{padding-top:22px}.ab-crumb{margin-bottom:30px}.ab-intro__grid,.ab-profile,.ab-office__grid{grid-template-columns:1fr;gap:28px}.ab-intro h1{font-size:36px}.ab-intro .eyebrow{font-size:13px;margin-bottom:18px}.ab-index{gap:0;justify-content:space-between;margin-top:26px;padding:14px 0}.ab-index a{font-size:12px;max-width:32%;line-height:1.5}.ab-index span{display:block;font-size:12px;margin:0 0 4px}.ab-team{padding:28px 0 40px}.ab-portrait img{aspect-ratio:4/4.5}.ab-profile__copy .eyebrow{margin-bottom:22px}.ab-profile h2{font-size:36px}.ab-colleague{grid-template-columns:1fr;gap:16px;margin-top:26px;padding:22px 0}.ab-colleague__label{display:none}.ab-colleague>a{grid-column:auto}.ab-colleague h3{font-size:22px}.ab-career,.ab-values{padding:48px 0}.ab-section-head{display:block;margin-bottom:30px}.ab-section-head>p,.ab-section-head>a{margin-top:22px;max-width:none}.about-page .about-timeline{grid-template-columns:1fr;gap:26px}.about-page .about-timeline li{padding:20px 0 0}.about-page .about-timeline h3{margin:12px 0 10px;font-size:20px}.about-page .about-timeline p{font-size:16px}.ab-values__grid{grid-template-columns:1fr;gap:26px}.ab-values h3{font-size:23px;margin-top:10px}.ab-office{padding:44px 0}.ab-office dl>div{grid-template-columns:1fr;gap:6px;padding:15px 0}.ab-portrait figcaption{padding-inline:20px}.ab-section-head h2{font-size:29px}}
 @media(prefers-reduced-motion:reduce){.about-page{scroll-behavior:auto}}
+
+/* =====================================================================
+   Trang Giới thiệu – bố cục gần gũi (2026-10)
+   ===================================================================== */
+.about-page .gt-hero{background:#fcf8f1;border-bottom:1px solid #eee3d2;padding:26px 0 0}
+.gt-hero__grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:center;padding:26px 0 40px}
+.gt-hero h1{font:600 clamp(30px,3vw,44px)/1.2 var(--font-heading);color:var(--ink);margin:10px 0 18px;letter-spacing:-.4px}
+.gt-hero h1 span{color:var(--burgundy)}
+.gt-hero__copy>p:not(.eyebrow){font-size:17px;line-height:1.75;color:#4f4547;margin:0 0 12px;max-width:600px}
+.gt-hero__buttons{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.gt-hero__buttons .btn{gap:10px}
+.gt-hero__buttons svg{width:20px;height:20px}
+.gt-portrait{margin:0;position:relative;border-radius:10px;overflow:hidden;box-shadow:0 18px 40px rgba(60,30,20,.16);border-bottom:5px solid var(--gold)}
+.gt-portrait img{display:block;width:100%;height:auto;aspect-ratio:800/812;object-fit:cover}
+.gt-portrait figcaption{position:absolute;left:0;right:0;bottom:0;padding:44px 22px 18px;background:linear-gradient(transparent,rgba(30,12,12,.85));color:#fff;display:flex;flex-direction:column;gap:2px}
+.gt-portrait figcaption strong{font-size:19px}
+.gt-portrait figcaption span{font-size:14px;color:#f3e3c8}
+.gt-facts{list-style:none;margin:0;padding:22px 0;border-top:1px solid #eadfcd;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.gt-facts li{display:flex;flex-direction:column;gap:2px}
+.gt-facts b{font-size:26px;color:var(--burgundy);line-height:1.2}
+.gt-facts span{font-size:14.5px;color:#5f5557}
+
+.gt-section{padding-block:72px}
+.gt-lawyer__grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:56px;align-items:center}
+.gt-lawyer__photo{margin:0;border-radius:10px;overflow:hidden;border-bottom:4px solid var(--gold)}
+.gt-lawyer__photo img{display:block;width:100%;height:auto}
+.gt-lawyer__copy .h2{margin:6px 0 4px}
+.gt-lawyer__copy>p:not(.eyebrow):not(.gt-role){font-size:16.5px;line-height:1.75;color:#4f4547;margin:12px 0 0}
+.gt-role{margin:0;font-size:15px;font-weight:600;color:var(--gold-600)}
+.gt-profile{margin:22px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;border-top:1px solid #eadfcd}
+.gt-profile div{padding:12px 0;border-bottom:1px solid #eadfcd}
+.gt-profile dt{font-size:13px;color:#7a6a6c;text-transform:uppercase;letter-spacing:.5px}
+.gt-profile dd{margin:3px 0 0;font-size:16px;font-weight:600;color:var(--ink)}
+
+.gt-journey{background:#f8f2e8}
+.gt-timeline{list-style:none;margin:0;padding:0;position:relative;max-width:900px}
+.gt-timeline:before{content:"";position:absolute;left:111px;top:8px;bottom:8px;width:2px;background:#e3cfae}
+.gt-timeline li{display:grid;grid-template-columns:100px minmax(0,1fr);gap:42px;padding:0 0 30px;position:relative}
+.gt-timeline li:last-child{padding-bottom:0}
+.gt-timeline li:before{content:"";position:absolute;left:105px;top:6px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--gold)}
+.gt-timeline li.is-now:before{background:var(--burgundy);border-color:var(--burgundy)}
+.gt-timeline time{font-weight:700;font-size:18px;color:var(--burgundy);text-align:right}
+.gt-timeline h3{margin:0 0 6px;font-size:18px;color:var(--ink)}
+.gt-timeline p{margin:0;font-size:15.5px;line-height:1.7;color:#5f5557}
+.gt-timeline li.is-now>div{background:#fff;border:1px solid #ecdfcb;border-left:4px solid var(--burgundy);border-radius:8px;padding:16px 18px;margin-top:-14px}
+
+.gt-team__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.gt-member{display:flex;gap:16px;padding:22px;background:#fff;border:1px solid #ecdfcb;border-radius:8px}
+.gt-member__ico svg{width:46px;height:46px;padding:10px;border-radius:50%;background:#fbecec;color:var(--burgundy)}
+.gt-member h3{margin:0 0 2px;font-size:18px;color:var(--ink)}
+.gt-member p:not(.gt-role){margin:8px 0 0;font-size:15px;line-height:1.65;color:#5f5557}
+
+.gt-values{background:#f8f2e8}
+.gt-values__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.gt-values__grid article{background:#fff;border:1px solid #ecdfcb;border-radius:8px;padding:24px 22px}
+.gt-values__grid svg{width:42px;height:42px;padding:9px;border-radius:10px;background:#fbecec;color:var(--burgundy);margin-bottom:12px}
+.gt-values__grid h3{margin:0 0 8px;font-size:18px;color:var(--ink)}
+.gt-values__grid p{margin:0;font-size:15px;line-height:1.65;color:#5f5557}
+.gt-values__more{margin:24px 0 0;display:flex;flex-wrap:wrap;gap:12px 32px}
+
+@media(max-width:1050px){
+  .gt-hero__grid,.gt-lawyer__grid{grid-template-columns:minmax(0,1fr);gap:28px}
+  .gt-portrait{max-width:460px}
+  .gt-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gt-values__grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:650px){
+  .gt-section{padding-block:44px}
+  .gt-hero__copy>p:not(.eyebrow){font-size:16px}
+  .gt-hero__buttons{display:grid;grid-template-columns:1fr 1fr}
+  .gt-hero__buttons .btn{padding:14px 10px;font-size:15px;justify-content:center}
+  .gt-team__grid,.gt-profile{grid-template-columns:minmax(0,1fr)}
+  .gt-timeline:before{left:6px}
+  .gt-timeline li{grid-template-columns:minmax(0,1fr);gap:4px;padding-left:30px}
+  .gt-timeline li:before{left:0}
+  .gt-timeline time{text-align:left}
+  .gt-timeline li.is-now>div{margin-top:4px}
+}
+@media(max-width:380px){.gt-hero__buttons{grid-template-columns:1fr}}
+
+/* Tiêu đề cột footer bị quy tắc màu tiêu đề của trang Giới thiệu đè thành màu tối trên nền tối */
+.about-page .footer__title{color:#fff}
+.about-page .hm-head--light .h2{color:#fff}

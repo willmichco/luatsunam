@@ -785,3 +785,20 @@ a.tag:hover { background: var(--burgundy); color: #fff; }
   .page-hero__title, .breadcrumb a, .page-hero__lead { color: #000; }
   .js .reveal { opacity: 1; transform: none; }
 }
+
+/* Khối tiêu đề và liên hệ dùng chung (trang chủ, giới thiệu) */
+.hm-head{max-width:760px;margin-bottom:34px}
+.hm-head .h2{margin:0 0 10px}
+.hm-head p{margin:0;font-size:16.5px;line-height:1.7;color:#5f5557}
+.hm-head .link-arrow{margin-top:16px}
+.hm-contact{background:linear-gradient(120deg,#8f0007,#5b0d12);color:#fff;padding-block:64px}
+.hm-head--light .h2{color:#fff}
+.hm-head--light p{color:#f3dede}
+.hm-contact__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.hm-contact__card{display:flex;flex-direction:column;gap:4px;padding:24px;border-radius:10px;background:#fffaf2;color:var(--ink);text-decoration:none;border:1px solid #f0d9b0;transition:transform .2s,box-shadow .2s}
+.hm-contact__card:hover,.hm-contact__card:focus-visible{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.hm-contact__card svg{width:40px;height:40px;padding:9px;border-radius:50%;background:var(--burgundy);color:#fff;margin-bottom:8px}
+.hm-contact__card span{font-size:14px;color:#7a6a6c;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.hm-contact__card strong{font-size:22px;color:var(--burgundy);line-height:1.3}
+.hm-contact__card small{font-size:14px;color:#5f5557;line-height:1.5}
+@media(max-width:650px){.hm-contact__grid{grid-template-columns:minmax(0,1fr)}.hm-contact{padding-block:44px}.hm-head p{font-size:15.5px}}

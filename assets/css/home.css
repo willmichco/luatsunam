@@ -100,3 +100,84 @@
 .home-about__image--logo{background:radial-gradient(ellipse at 50% 42%,#fffdf8 0%,#fbf5ea 55%,#f3e8d6 100%);border:1px solid #eadfcd;border-bottom:4px solid var(--gold);display:flex;align-items:center;justify-content:center}
 .home-about__image--logo img{width:auto;max-width:78%;height:360px;object-fit:contain;padding:28px 0}
 @media(max-width:800px){.home-about__image--logo img{height:auto;max-height:300px;aspect-ratio:auto;max-width:82%;padding:22px 0}}
+
+/* =====================================================================
+   Trang chủ – bố cục gần gũi (2026-10): lời lẽ đời thường, tình huống cụ thể,
+   gọi điện / Zalo luôn trong tầm tay
+   ===================================================================== */
+.hm-hero h1{text-transform:none;font-size:clamp(32px,3.2vw,48px);line-height:1.18;letter-spacing:-.4px}
+.hm-hero h1 span{color:#34212b}
+.hm-hero .nam-hero-copy>p:not(.eyebrow){max-width:560px;font-size:18px;line-height:1.7}
+.hm-hero__buttons{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.hm-hero__buttons .btn{gap:10px}
+.hm-hero__buttons svg{width:20px;height:20px}
+.hm-hero__info{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;color:#5b4d4f;font-size:14.5px}
+.hm-hero__info li{display:flex;align-items:center;gap:7px}
+.hm-hero__info svg{width:17px;height:17px;color:var(--burgundy);flex:none}
+
+.hm-promise{background:#fffefa;border-bottom:1px solid #eee3d2}
+.hm-promise__list{list-style:none;margin:0;padding:26px 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.hm-promise__list li{display:flex;gap:12px;align-items:flex-start}
+.hm-promise__list svg{width:34px;height:34px;flex:none;padding:7px;border-radius:50%;background:#fbecec;color:var(--burgundy)}
+.hm-promise__list strong{display:block;font-size:15.5px;color:var(--ink);margin-bottom:3px}
+.hm-promise__list span{display:block;font-size:14px;line-height:1.55;color:#5f5557}
+
+.hm-head{max-width:760px;margin-bottom:34px}
+.hm-head .h2{margin:0 0 10px}
+.hm-head p{margin:0;font-size:16.5px;line-height:1.7;color:#5f5557}
+.hm-head .link-arrow{margin-top:16px}
+.hm-sub{margin:8px 0 0;color:#5f5557;font-size:16px}
+
+.hm-problems{background:#f8f2e8}
+.hm-problems__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.hm-problem{display:flex;flex-direction:column;gap:10px;padding:22px 22px 20px;background:#fff;border:1px solid #ecdfcb;border-radius:8px;color:inherit;text-decoration:none;transition:border-color .2s,box-shadow .2s,transform .2s}
+.hm-problem:hover,.hm-problem:focus-visible{border-color:#d9b98a;box-shadow:0 10px 26px rgba(60,30,20,.08);transform:translateY(-2px)}
+.hm-problem__ico svg{width:42px;height:42px;padding:9px;border-radius:10px;background:#fbecec;color:var(--burgundy)}
+.hm-problem h3{margin:2px 0 0;font-size:17.5px;line-height:1.35;color:var(--ink)}
+.hm-problem p{margin:0;font-size:14.5px;line-height:1.6;color:#5f5557;flex:1}
+.hm-problem__more{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--burgundy)}
+.hm-problem__more svg{width:16px;height:16px}
+
+.hm-steps{background:#f8f2e8}
+.hm-steps__list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;counter-reset:none}
+.hm-steps__list li{position:relative;background:#fff;border:1px solid #ecdfcb;border-radius:8px;padding:24px 22px}
+.hm-steps__list b{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--burgundy);color:#fff;font-size:18px;margin-bottom:14px}
+.hm-steps__list h3{margin:0 0 8px;font-size:17.5px;line-height:1.35;color:var(--ink)}
+.hm-steps__list p{margin:0;font-size:15px;line-height:1.65;color:#5f5557}
+.hm-steps__more{margin:24px 0 0}
+
+.hm-faq__grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:48px;align-items:start}
+.home-knowledge{background:#f8f2e8}
+
+.hm-contact{background:linear-gradient(120deg,#8f0007,#5b0d12);color:#fff;padding-block:64px}
+.hm-head--light .h2{color:#fff}
+.hm-head--light p{color:#f3dede}
+.hm-contact__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.hm-contact__card{display:flex;flex-direction:column;gap:4px;padding:24px;border-radius:10px;background:#fffaf2;color:var(--ink);text-decoration:none;border:1px solid #f0d9b0;transition:transform .2s,box-shadow .2s}
+.hm-contact__card:hover,.hm-contact__card:focus-visible{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.hm-contact__card svg{width:40px;height:40px;padding:9px;border-radius:50%;background:var(--burgundy);color:#fff;margin-bottom:8px}
+.hm-contact__card span{font-size:14px;color:#7a6a6c;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.hm-contact__card strong{font-size:22px;color:var(--burgundy);line-height:1.3}
+.hm-contact__card small{font-size:14px;color:#5f5557;line-height:1.5}
+
+@media(max-width:1050px){
+  .hm-promise__list,.hm-problems__grid,.hm-steps__list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hm-faq__grid{grid-template-columns:minmax(0,1fr);gap:20px}
+}
+@media(max-width:650px){
+  .hm-hero h1{font-size:clamp(28px,8vw,36px)}
+  .hm-hero .nam-hero-copy>p:not(.eyebrow){font-size:16px}
+  .hm-hero__buttons{display:grid;grid-template-columns:1fr 1fr}
+  .hm-hero__buttons .btn{padding:14px 10px;font-size:15px;justify-content:center}
+  .hm-promise__list{grid-template-columns:minmax(0,1fr);gap:16px;padding:22px 0}
+  .hm-problems__grid,.hm-steps__list,.hm-contact__grid{grid-template-columns:minmax(0,1fr)}
+  .hm-problem{padding:18px}
+  .hm-head p{font-size:15.5px}
+  .hm-contact{padding-block:44px}
+}
+@media(max-width:380px){.hm-hero__buttons{grid-template-columns:1fr}}
+.hm-hero__photo{display:none}
+@media(max-width:650px){
+  .home-page .hm-hero{background-image:none}
+  .hm-hero__photo{display:block;width:100%;height:auto;margin-top:22px;border-radius:10px;border-bottom:4px solid var(--gold)}
+}

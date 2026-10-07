@@ -178,10 +178,16 @@ def nav_html(page, r):
     return "\n        ".join(items)
 
 
-def logo_html(r, tag):
+def logo_html(r, tag=None):
+    """Logo kèm chữ. Thanh menu (tag=None): "Công Ty Luật TNHH" / "Luật Sư Nam";
+    footer: "Luật Sư Nam" / khẩu hiệu."""
+    if tag is None:
+        text = '<span class="logo__pre">Công Ty Luật TNHH</span><span class="logo__name">Luật Sư Nam</span>'
+    else:
+        text = f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>'
     return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
-      <img class="logo__img" src="{r}assets/img/logo-provided.png" width="52" height="52" alt="">
-      <span class="logo__text"><span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span></span>
+      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="">
+      <span class="logo__text">{text}</span>
     </a>"""
 
 
@@ -201,7 +207,7 @@ def header_html(page, r):
 
 <header class="header site-header" id="site-header">
   <div class="container header__inner">
-    {logo_html(r, "Công ty Luật TNHH Luật Sư Nam")}
+    {logo_html(r)}
 
     <nav class="nav" id="nav" aria-label="Điều hướng chính">
       <ul class="nav__list">
@@ -606,7 +612,7 @@ def layout(page):
 <meta name="description" content="{esc(page["description"])}">
 <meta name="robots" content="{robots}">{canonical}
 <meta name="author" content="{FIRM["legal_name"]}">
-<meta name="theme-color" content="#041b2e">
+<meta name="theme-color" content="#fffefa">
 <meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="{FIRM["legal_name"]}">
@@ -1135,7 +1141,7 @@ def main():
     write("site.webmanifest", json.dumps({
         "name": FIRM["legal_name"], "short_name": "LSN Law Firm", "description": "Tư vấn pháp lý và tham gia tố tụng tại Thành phố Hồ Chí Minh.",
         "lang": "vi", "start_url": "./", "scope": "./", "display": "standalone",
-        "background_color": "#041b2e", "theme_color": "#041b2e",
+        "background_color": "#fffefa", "theme_color": "#c50008",
         "icons": [{"src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png"},
                   {"src": "assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"}],

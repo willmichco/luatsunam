@@ -47,6 +47,8 @@ Toàn bộ website (trừ Từ điển Bộ luật Hình sự) dùng chung một
 | `{{contact}}` | Khối liên hệ cuối trang |
 | `{{breadcrumb}}` | Đường dẫn của trang |
 
+**Khung bề ngang và màu dùng chung cho toàn site** (kể cả Từ điển Bộ luật Hình sự) nằm cuối `assets/css/navigation.css`: mọi khối nội dung, header, footer cùng khung 1280px; chữ cạnh logo trên menu là “Công Ty Luật TNHH / Luật Sư Nam”. Logo menu dùng `assets/img/logo-mark.webp` (10 KB), mục “Về chúng tôi” ở trang chủ dùng `assets/img/logo-emblem.webp` kèm tên công ty viết bằng chữ thật; cả hai được xuất từ `assets/img/logo-provided.png` (ảnh gốc 1254px, không nạp trực tiếp lên trang).
+
 Trang Từ điển Bộ luật Hình sự giữ nguyên bộ giao diện riêng (`reader-design.css`, `bo-luat-hinh-su/tu-dien.css`); `pages.css` và các biểu tượng bổ sung không được nạp vào các trang này.
 
 ## Liên kết nội bộ

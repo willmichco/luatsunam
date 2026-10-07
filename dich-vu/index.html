@@ -34,9 +34,7 @@
 <link rel="stylesheet" href="../assets/css/nam-theme.css?v=020d165c">
 <link rel="stylesheet" href="../assets/css/mobile.css?v=79ecbf48">
 <link rel="stylesheet" href="../assets/css/navigation.css?v=e8161ad4">
-<link rel="stylesheet" href="../assets/css/reader-design.css?v=05081dca">
-
-
+<link rel="stylesheet" href="../assets/css/pages.css?v=587d1fef">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -175,7 +173,7 @@
 }
 </script>
 </head>
-<body>
+<body class="site-page">
 <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -216,6 +214,10 @@
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
 </svg>
 <div class="topbar">
   <div class="container topbar__inner">
@@ -260,137 +262,45 @@
 </header>
 
 <main id="main">
-<section class="page-hero">
-  <div class="page-hero__bg" style="background-image:url('../assets/img/hero.webp?v=20260925a')" aria-hidden="true"></div>
-  <div class="container page-hero__inner">
-    <div class="page-hero__copy">
+<section class="ls-hero">
+  <div class="container ls-hero__grid">
+    <div class="ls-hero__copy">
       <nav class="breadcrumb" aria-label="Đường dẫn"><ol><li><a href="../">Trang chủ</a></li><li aria-current="page">Lĩnh vực hoạt động</li></ol></nav>
-      <p class="eyebrow eyebrow--light">Lĩnh vực hoạt động</p>
-      <h1 class="page-hero__title">Dịch vụ pháp lý cho <em>cá nhân và doanh nghiệp</em></h1>
-      <p class="page-hero__lead">Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực hành nghề chính. Mỗi lĩnh vực có trang riêng mô tả phạm vi hỗ trợ, hồ sơ cần chuẩn bị và quy trình thực hiện.</p>
+      <p class="eyebrow">Lĩnh vực hoạt động</p>
+      <h1 class="ls-hero__title">Anh chị cần luật sư <em>giúp việc gì?</em></h1>
+      <p class="ls-hero__lead">Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực gắn với đời sống hằng ngày của người dân.</p>
       
       
     </div>
-    
+    <aside class="ls-help" aria-label="Liên hệ luật sư">
+      <div class="ls-help__who"><img src="../assets/img/luat-su-nam-avatar.webp?v=20260925a" alt="" width="64" height="64"><p><strong>Luật sư Nguyễn Trọng Nam</strong><span>Trực tiếp nghe anh chị trình bày</span></p></div>
+      <p class="ls-help__title">Anh chị cần hỏi ngay?</p>
+      <div class="ls-actions ls-actions--stack"><a class="btn btn--primary btn--lg" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> Gọi 0983 498 499</a><a class="btn btn--outline btn--lg" href="https://zalo.me/0983498499" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg> Nhắn Zalo</a></div>
+      <ul class="ls-help__meta"><li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>Thứ 2 – Thứ 6: 08:00 – 17:30</li><li><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg>Thông tin được giữ kín theo Luật Luật sư</li></ul>
+    </aside>
   </div>
 </section>
 
-<section class="section section--cream">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Tám lĩnh vực</p>
-        <h2 class="h2">Chuyên môn pháp lý toàn diện</h2>
-      </div>
-      <p class="section-head__text">Chọn lĩnh vực gần nhất với vụ việc của bạn để xem phạm vi hỗ trợ, tài liệu cần chuẩn bị và các bước luật sư sẽ thực hiện.</p>
-    </div>
-    <div class="services__grid"><article class="service reveal">
-  <a class="service__img" href="../dich-vu/thua-ke/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/thua-ke.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-inherit"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/thua-ke/">Thừa kế</a></h3>
-    <p>Tư vấn lập di chúc, phân chia di sản, khai nhận thừa kế và giải quyết tranh chấp giữa các bên liên quan.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/tranh-tung-giai-quyet-tranh-chap/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/tranh-tung-giai-quyet-tranh-chap.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-gavel"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/tranh-tung-giai-quyet-tranh-chap/">Tranh tụng &amp; Giải quyết tranh chấp</a></h3>
-    <p>Đại diện, thương lượng và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp thương mại, hợp đồng và lao động.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/hon-nhan-gia-dinh/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/hon-nhan-gia-dinh.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-heart"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/hon-nhan-gia-dinh/">Hôn nhân &amp; Gia đình</a></h3>
-    <p>Tư vấn ly hôn, quyền nuôi con, cấp dưỡng, phân chia tài sản chung và các thỏa thuận gia đình một cách kín đáo.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/dat-dai-bat-dong-san/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/dat-dai-bat-dong-san.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-house"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/dat-dai-bat-dong-san/">Đất đai &amp; Bất động sản</a></h3>
-    <p>Rà soát pháp lý dự án, giao dịch, cấp giấy chứng nhận và giải quyết tranh chấp đất đai, nhà ở.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/lao-dong-viec-lam/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/lao-dong-viec-lam.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-network"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/lao-dong-viec-lam/">Lao động &amp; Việc làm</a></h3>
-    <p>Xây dựng quy chế, hợp đồng lao động, xử lý kỷ luật, chấm dứt hợp đồng và tranh chấp lao động.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/hinh-su/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/hinh-su.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-shield-check"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/hinh-su/">Hình sự</a></h3>
-    <p>Bào chữa, bảo vệ người bị hại và đồng hành cùng khách hàng trong các giai đoạn điều tra, truy tố, xét xử.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/dan-su/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/dan-su.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-scale"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/dan-su/">Dân sự</a></h3>
-    <p>Tư vấn hợp đồng, nghĩa vụ, bồi thường, tài sản và đại diện giải quyết tranh chấp dân sự theo đúng trình tự.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article><article class="service reveal">
-  <a class="service__img" href="../dich-vu/cong-chung/" tabindex="-1" aria-hidden="true"><img src="../assets/img/dich-vu/cong-chung.webp?v=20260925a" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    <svg class="service__icon" aria-hidden="true"><use href="#i-doc"/></svg>
-    <h3 class="service__title"><a href="../dich-vu/cong-chung/">Công chứng</a></h3>
-    <p>Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng, di chúc, ủy quyền, mua bán, tặng cho.</p>
-    <span class="circle-link" aria-hidden="true"><svg class="" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-  </div>
-</article></div>
-  </div>
-</section>
+<section class="ls-promise" aria-label="Cam kết khi làm việc"><div class="container"><ul class="ls-promise__list"><li><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg><div><strong>Luật sư trực tiếp tiếp nhận</strong><span>Anh chị trao đổi thẳng với luật sư phụ trách, không qua trung gian.</span></div></li><li><svg class="ico" aria-hidden="true"><use href="#i-scale"/></svg><div><strong>Nói rõ được – mất</strong><span>Phân tích thẳng thắn điểm mạnh, điểm yếu; không hứa hẹn bảo đảm kết quả.</span></div></li><li><svg class="ico" aria-hidden="true"><use href="#i-coin"/></svg><div><strong>Chi phí thỏa thuận trước</strong><span>Phạm vi công việc và thù lao ghi rõ trong hợp đồng trước khi làm.</span></div></li><li><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg><div><strong>Giữ kín thông tin</strong><span>Bảo mật theo Luật Luật sư, ngay từ buổi trao đổi đầu tiên.</span></div></li></ul></div></section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head section-head--center reveal">
-      <div class="heading-block heading-block--center">
-        <p class="eyebrow">Hình thức hỗ trợ</p>
-        <h2 class="h2">Ba cách luật sư đồng hành</h2>
-      </div>
-      <p class="section-head__text">Tùy tính chất vụ việc, khách hàng có thể lựa chọn một hoặc kết hợp nhiều hình thức dưới đây, theo phạm vi quy định tại Luật Luật sư.</p>
-    </div>
-    <div class="pillars"><article class="pillar reveal">
-  <span class="pillar__num">I</span>
-  <h3>Tư vấn pháp luật</h3>
-  <p>Phân tích quy định, trả lời câu hỏi pháp lý bằng lời nói hoặc bằng văn bản; soạn thảo, rà soát hợp đồng, đơn từ và các tài liệu pháp lý khác.</p>
-</article><article class="pillar reveal">
-  <span class="pillar__num">II</span>
-  <h3>Đại diện ngoài tố tụng</h3>
-  <p>Thay mặt khách hàng làm việc, thương lượng, hòa giải với các bên liên quan và thực hiện thủ tục tại cơ quan nhà nước trong phạm vi được ủy quyền.</p>
-</article><article class="pillar reveal">
-  <span class="pillar__num">III</span>
-  <h3>Tham gia tố tụng</h3>
-  <p>Bào chữa, bảo vệ quyền và lợi ích hợp pháp hoặc đại diện cho đương sự trong các vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài.</p>
-</article></div>
-  </div>
-</section>
+<section class="ls-section ls-section--cream" aria-labelledby="tinh-huong-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="tinh-huong-title">Chọn tình huống gần giống với anh chị</h2><p>Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.</p></div>
+  <div class="ls-problems"><a class="ls-problem" href="../dich-vu/thua-ke/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-inherit"/></svg></span><span class="ls-problem__tag">Thừa kế</span><h3>Chia đất, chia nhà sau khi cha mẹ mất</h3><p>Anh em tranh chấp di sản, không có di chúc hoặc di chúc chưa rõ ràng, cần làm thủ tục khai nhận thừa kế.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/dat-dai-bat-dong-san/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-house"/></svg></span><span class="ls-problem__tag">Đất đai &amp; Bất động sản</span><h3>Mua bán, đặt cọc nhà đất</h3><p>Lo bị lừa khi đặt cọc, tranh chấp ranh giới, chậm sang tên hoặc chưa được cấp sổ.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/hon-nhan-gia-dinh/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-heart"/></svg></span><span class="ls-problem__tag">Hôn nhân &amp; Gia đình</span><h3>Ly hôn, giành quyền nuôi con</h3><p>Muốn ly hôn thuận tình hay đơn phương, chia tài sản chung, cấp dưỡng và quyền nuôi con.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/hinh-su/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="ls-problem__tag">Hình sự</span><h3>Người nhà bị công an mời, bị bắt</h3><p>Cần luật sư bào chữa, gặp người bị tạm giữ, tạm giam, hoặc bảo vệ quyền lợi cho người bị hại.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/dan-su/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-scale"/></svg></span><span class="ls-problem__tag">Dân sự</span><h3>Cho vay không trả, hợp đồng bị bội tín</h3><p>Đòi nợ, đòi bồi thường thiệt hại, tranh chấp hợp đồng mua bán, thuê nhà, hợp tác làm ăn.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/lao-dong-viec-lam/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-team"/></svg></span><span class="ls-problem__tag">Lao động &amp; Việc làm</span><h3>Bị cho nghỉ việc, nợ lương, bảo hiểm</h3><p>Người lao động bị chấm dứt hợp đồng trái luật; doanh nghiệp cần xử lý kỷ luật, nội quy đúng quy định.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/tranh-tung-giai-quyet-tranh-chap/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-gavel"/></svg></span><span class="ls-problem__tag">Tranh tụng &amp; Giải quyết tranh chấp</span><h3>Bị kiện hoặc cần khởi kiện ra Tòa</h3><p>Soạn đơn, chuẩn bị chứng cứ, đại diện và tranh luận tại Tòa án, Trọng tài qua các cấp xét xử.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="ls-problem" href="../dich-vu/cong-chung/"><span class="ls-problem__ico"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg></span><span class="ls-problem__tag">Công chứng</span><h3>Công chứng hợp đồng, di chúc, ủy quyền</h3><p>Kiểm tra giấy tờ, soạn nội dung đúng ý trước khi ký mua bán, tặng cho, lập di chúc, ủy quyền.</p><span class="ls-problem__more">Xem cách giải quyết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></div>
+</div></section>
 
-<section class="cta">
-  <div class="container cta__inner">
-    <div>
-      <p class="eyebrow eyebrow--gold">Chưa rõ lĩnh vực</p>
-      <h2 class="cta__title">Chưa rõ vụ việc thuộc lĩnh vực nào?</h2>
-      
-      <p class="cta__text">Hãy mô tả ngắn gọn sự việc và tài liệu đang có. Luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp.</p>
-    </div>
-    <div class="cta__actions">
-      <a class="btn btn--primary btn--lg btn--outline-gold" href="../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="cta__phone" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> 0983 498 499</a>
-    </div>
-  </div>
-</section>
+<section class="ls-section" aria-labelledby="hinh-thuc-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="hinh-thuc-title">Luật sư có thể giúp anh chị theo ba cách</h2><p>Tùy vụ việc, anh chị chọn một hoặc kết hợp nhiều cách, theo phạm vi hành nghề quy định tại Luật Luật sư.</p></div>
+  <div class="ls-grid ls-grid--3"><article class="ls-card ls-card--icon"><svg class="ls-card__ico" aria-hidden="true"><use href="#i-chat"/></svg><h3>Tư vấn, giải đáp</h3><p>Luật sư nghe anh chị trình bày, giải thích quy định và hướng xử lý; soạn hoặc kiểm tra hợp đồng, đơn từ, giấy tờ trước khi anh chị ký, nộp.</p></article><article class="ls-card ls-card--icon"><svg class="ls-card__ico" aria-hidden="true"><use href="#i-user"/></svg><h3>Thay mặt anh chị làm việc</h3><p>Trong phạm vi được ủy quyền, luật sư thay anh chị làm việc, thương lượng, hòa giải với bên kia và làm thủ tục tại cơ quan nhà nước.</p></article><article class="ls-card ls-card--icon"><svg class="ls-card__ico" aria-hidden="true"><use href="#i-gavel"/></svg><h3>Cùng anh chị ra Tòa</h3><p>Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài.</p></article></div>
+</div></section>
+
+<section class="ls-contact" aria-labelledby="lien-he-ngay"><div class="container">
+<div class="ls-head ls-head--light"><h2 class="h2" id="lien-he-ngay">Chưa biết vụ việc thuộc lĩnh vực nào?</h2><p>Không sao cả. Anh chị cứ gọi điện hoặc nhắn Zalo kể ngắn gọn sự việc – luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp.</p></div>
+<div class="ls-contact__grid">
+<a class="ls-contact__card" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>Gọi điện</span><strong>0983 498 499</strong><small>Thứ 2 – Thứ 6: 08:00 – 17:30</small></a>
+<a class="ls-contact__card" href="https://zalo.me/0983498499" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>Nhắn Zalo</span><strong>0983 498 499</strong><small>Kể ngắn gọn sự việc của anh chị</small></a>
+<a class="ls-contact__card" href="https://www.google.com/maps/dir/?api=1&amp;destination=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><span>Đến văn phòng</span><strong>22c Vũ Ngọc Phan</strong><small>Phường Bình Lợi Trung, TP.HCM · Gọi trước để luật sư sắp xếp thời gian</small></a>
+</div>
+</div></section>
 
 </main>
 

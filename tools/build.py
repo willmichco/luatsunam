@@ -9,6 +9,10 @@ Nguồn nội dung:
     src/bai-viet/*.html      Nội dung bài viết
     src/bo-luat-hinh-su.html Nội dung trang tra cứu Bộ luật Hình sự
 
+Giao diện: mọi trang dùng chung assets/css/pages.css (thành phần tiền tố ls-, sinh bởi các hàm
+page_hero_html, help_card, call_buttons, contact_band, problems_grid... dưới đây), trừ Từ điển
+Bộ luật Hình sự giữ bộ giao diện riêng (reader-design.css, bo-luat-hinh-su/tu-dien.css).
+
 Kết quả: <duong-dan>/index.html cho mọi trang, 404.html, sitemap.xml, robots.txt,
 site.webmanifest, assets/search-index.json.
 """
@@ -22,8 +26,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import blhs  # noqa: E402
-from data import (ARTICLE_BY_SLUG, ARTICLES, BASE_PATH, FAQ, FIRM, SERVICE_BY_SLUG,  # noqa: E402
-                  SERVICES, SITE_URL, articles_for_service)
+from data import (ARTICLE_BY_SLUG, ARTICLES, BASE_PATH, FAQ, FIRM, PROBLEM_ORDER,  # noqa: E402
+                  SERVICE_BY_SLUG, SERVICES, SITE_URL, articles_for_service)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "src")
@@ -97,6 +101,14 @@ SPRITE = """<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hi
   <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
 </svg>"""
+
+
+# Biểu tượng bổ sung cho các trang dùng pages.css (không chèn vào trang Từ điển Bộ luật Hình sự)
+EXTRA_SYMBOLS = """  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
+"""
 
 
 def ico(name, cls="ico"):
@@ -305,67 +317,101 @@ def breadcrumb_html(crumbs, r):
     return f'<nav class="breadcrumb" aria-label="Đường dẫn"><ol>{"".join(parts)}</ol></nav>'
 
 
+# ---------------------------------------------------------------------------
+# Thành phần giao diện dùng chung cho mọi trang (trừ Từ điển Bộ luật Hình sự).
+# Kiểu hiển thị: assets/css/pages.css (tiền tố ls-).
+# ---------------------------------------------------------------------------
+PROMISES = [
+    ("i-user", "Luật sư trực tiếp tiếp nhận", "Anh chị trao đổi thẳng với luật sư phụ trách, không qua trung gian."),
+    ("i-scale", "Nói rõ được – mất", "Phân tích thẳng thắn điểm mạnh, điểm yếu; không hứa hẹn bảo đảm kết quả."),
+    ("i-coin", "Chi phí thỏa thuận trước", "Phạm vi công việc và thù lao ghi rõ trong hợp đồng trước khi làm."),
+    ("i-lock", "Giữ kín thông tin", "Bảo mật theo Luật Luật sư, ngay từ buổi trao đổi đầu tiên."),
+]
+
+
+def call_buttons(r, cls=""):
+    """Hai nút liên hệ chính: gọi điện và nhắn Zalo."""
+    return (f'<div class="ls-actions{(" " + cls) if cls else ""}">'
+            f'<a class="btn btn--primary btn--lg" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>'
+            f'<a class="btn btn--outline btn--lg" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")} Nhắn Zalo</a></div>')
+
+
+def help_card(r, title="Anh chị cần hỏi ngay?"):
+    """Thẻ "hỏi luật sư" bên phải tiêu đề trang: ảnh luật sư, nút gọi, nút Zalo."""
+    return f"""<aside class="ls-help" aria-label="Liên hệ luật sư">
+      <div class="ls-help__who"><img src="{r}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="64" height="64"><p><strong>{FIRM["lawyer"]}</strong><span>Trực tiếp nghe anh chị trình bày</span></p></div>
+      <p class="ls-help__title">{title}</p>
+      {call_buttons(r, "ls-actions--stack")}
+      <ul class="ls-help__meta"><li>{ico("i-clock")}{FIRM["hours"]}</li><li>{ico("i-lock")}Thông tin được giữ kín theo Luật Luật sư</li></ul>
+    </aside>"""
+
+
 def page_hero_html(page, r):
+    """Đầu trang thống nhất: đường dẫn, nhãn, tiêu đề, đoạn mở đầu và thẻ liên hệ."""
     h = page.get("hero") or {}
-    bg = h.get("image", "assets/img/hero.webp")
-    bg = asset_ref(bg)
-    actions = h.get("actions", "")
-    extra = h.get("extra", "")
-    aside = h.get("aside", "")
-    lead = f'<p class="page-hero__lead">{page["lead"]}</p>' if page.get("lead") else ""
-    eyebrow = f'<p class="eyebrow eyebrow--light">{esc(page["eyebrow"])}</p>' if page.get("eyebrow") else ""
-    grid = " page-hero__inner--split" if aside else ""
-    return f"""<section class="page-hero">
-  <div class="page-hero__bg" style="background-image:url('{r}{bg}')" aria-hidden="true"></div>
-  <div class="container page-hero__inner{grid}">
-    <div class="page-hero__copy">
+    kind = h.get("aside", "help")
+    aside = help_card(r) if kind == "help" else ""
+    lead = f'<p class="ls-hero__lead">{page["lead"]}</p>' if page.get("lead") else ""
+    eyebrow = f'<p class="eyebrow">{esc(page["eyebrow"])}</p>' if page.get("eyebrow") else ""
+    actions = call_buttons(r) if h.get("actions") else ""
+    cls = "ls-hero" if aside else "ls-hero ls-hero--plain"
+    return f"""<section class="{cls}">
+  <div class="container ls-hero__grid">
+    <div class="ls-hero__copy">
       {breadcrumb_html(page["crumbs"], r)}
       {eyebrow}
-      <h1 class="page-hero__title">{page["h1"]}</h1>
+      <h1 class="ls-hero__title">{page["h1"]}</h1>
       {lead}
-      {extra}
-      {f'<div class="page-hero__actions">{actions}</div>' if actions else ''}
+      {h.get("extra", "")}
+      {actions}
     </div>
     {aside}
   </div>
 </section>"""
 
 
-def cta_band(r, eyebrow="Tư vấn pháp lý", title="Bạn cần tư vấn pháp lý?",
-             text="Liên hệ ngay để được luật sư trực tiếp lắng nghe, đánh giá hồ sơ và đề xuất hướng xử lý phù hợp.",
-             sub="Hãy để LSN Law Firm đồng hành cùng bạn!"):
-    sub_html = f'<p class="cta__sub">{sub}</p>' if sub else ""
-    return f"""<section class="cta">
-  <div class="container cta__inner">
-    <div>
-      <p class="eyebrow eyebrow--gold">{esc(eyebrow)}</p>
-      <h2 class="cta__title">{title}</h2>
-      {sub_html}
-      <p class="cta__text">{text}</p>
-    </div>
-    <div class="cta__actions">
-      <a class="btn btn--primary btn--lg btn--outline-gold" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a>
-      <a class="cta__phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a>
-    </div>
-  </div>
-</section>"""
+def promise_html(cls=""):
+    items = "".join(f'<li>{ico(i)}<div><strong>{esc(t)}</strong><span>{esc(d)}</span></div></li>' for i, t, d in PROMISES)
+    return f'<section class="ls-promise{(" " + cls) if cls else ""}" aria-label="Cam kết khi làm việc"><div class="container"><ul class="ls-promise__list">{items}</ul></div></section>'
 
 
-def service_card(s, r, heading="h3"):
-    return f"""<article class="service reveal">
-  <a class="service__img" href="{r}dich-vu/{s["slug"]}/" tabindex="-1" aria-hidden="true"><img src="{r}assets/img/dich-vu/{s["slug"]}.webp?v={ASSET_VERSION}" alt="" loading="lazy" width="600" height="300"></a>
-  <div class="service__body">
-    {ico(s["icon"], "service__icon")}
-    <{heading} class="service__title"><a href="{r}dich-vu/{s["slug"]}/">{esc(s["name"])}</a></{heading}>
-    <p>{esc(s["short"])}</p>
-    <span class="circle-link" aria-hidden="true">{ico("i-arrow", "")}</span>
-  </div>
-</article>"""
+def contact_band(r, title="Cần hỏi luật sư? Liên hệ ngay",
+                 text="Vụ việc càng sớm được xem xét, anh chị càng có nhiều lựa chọn. Với việc gấp như người thân bị tạm giữ hoặc sắp hết thời hạn kháng cáo, hãy gọi điện trực tiếp.",
+                 hid="lien-he-ngay"):
+    """Khối liên hệ cuối trang, giống nhau trên mọi trang: gọi điện, Zalo, đến văn phòng."""
+    return f"""<section class="ls-contact" aria-labelledby="{hid}"><div class="container">
+<div class="ls-head ls-head--light"><h2 class="h2" id="{hid}">{title}</h2><p>{text}</p></div>
+<div class="ls-contact__grid">
+<a class="ls-contact__card" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")}<span>Gọi điện</span><strong>{FIRM["phone"]}</strong><small>{FIRM["hours"]}</small></a>
+<a class="ls-contact__card" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")}<span>Nhắn Zalo</span><strong>{FIRM["phone"]}</strong><small>Kể ngắn gọn sự việc của anh chị</small></a>
+<a class="ls-contact__card" href="https://www.google.com/maps/dir/?api=1&amp;destination={FIRM["maps_query"]}" target="_blank" rel="noopener">{ico("i-pin")}<span>Đến văn phòng</span><strong>{FIRM["street"]}</strong><small>{FIRM["ward"]}, TP.HCM · Gọi trước để luật sư sắp xếp thời gian</small></a>
+</div>
+</div></section>"""
 
 
-def services_grid(r, exclude=None, only=None, cls="services__grid"):
-    items = [SERVICE_BY_SLUG[x] for x in only] if only else [s for s in SERVICES if s["slug"] != exclude]
-    return f'<div class="{cls}">' + "".join(service_card(s, r) for s in items) + "</div>"
+def problem_card(s, r):
+    return (f'<a class="ls-problem" href="{r}dich-vu/{s["slug"]}/">'
+            f'<span class="ls-problem__ico">{ico(s.get("problem_icon", s["icon"]))}</span>'
+            f'<span class="ls-problem__tag">{esc(s["name"])}</span>'
+            f'<h3>{esc(s["problem_title"])}</h3><p>{esc(s["problem_text"])}</p>'
+            f'<span class="ls-problem__more">Xem cách giải quyết {ARROW}</span></a>')
+
+
+def problems_grid(r):
+    return '<div class="ls-problems">' + "".join(problem_card(SERVICE_BY_SLUG[x], r) for x in PROBLEM_ORDER) + "</div>"
+
+
+def field_links(r, anchor=""):
+    """Danh sách 8 lĩnh vực dạng thẻ nhỏ; anchor dẫn tới một mục trong trang lĩnh vực."""
+    note = "Xem giấy tờ cần chuẩn bị" if anchor == "ho-so" else "Xem lĩnh vực"
+    frag = f"#{anchor}" if anchor else ""
+    items = "".join(f'<li><a href="{r}dich-vu/{x}/{frag}">{ico(SERVICE_BY_SLUG[x]["icon"])}<span><strong>{esc(SERVICE_BY_SLUG[x]["name"])}</strong><small>{note}</small></span>{ARROW}</a></li>'
+                    for x in PROBLEM_ORDER)
+    return f'<ul class="ls-fields">{items}</ul>'
+
+
+def steps_html(steps):
+    return '<ol class="ls-steps">' + "".join(f'<li><b>{i}</b><h3>{esc(h)}</h3><p>{esc(p)}</p></li>' for i, (h, p) in enumerate(steps, 1)) + "</ol>"
 
 
 def vi_date(iso):
@@ -374,17 +420,18 @@ def vi_date(iso):
 
 
 def article_card(a, r, heading="h3"):
-    return f"""<article class="post reveal">
+    return f"""<article class="post">
   <a class="post__img" href="{r}kien-thuc-phap-ly/{a["slug"]}/" tabindex="-1" aria-hidden="true"><img src="{r}assets/img/bai-viet/{a["slug"]}.webp?v={ASSET_VERSION}" alt="" loading="lazy" width="720" height="240"></a>
   <div class="post__body">
     <p class="post__meta"><a class="tag" href="{r}dich-vu/{a["service"]}/">{esc(a["category"])}</a><time datetime="{a["published"]}">{ico("i-clock")}{vi_date(a["published"])}</time></p>
     <{heading} class="post__title"><a href="{r}kien-thuc-phap-ly/{a["slug"]}/">{esc(a["card_title"])}</a></{heading}>
     <p>{esc(a["excerpt"])}</p>
+    <a class="post__more" href="{r}kien-thuc-phap-ly/{a["slug"]}/" aria-hidden="true" tabindex="-1">Đọc bài {ARROW}</a>
   </div>
 </article>"""
 
 
-def articles_grid(r, items=None, cls="cards-3"):
+def articles_grid(r, items=None, cls="ls-posts"):
     items = items if items is not None else ARTICLES
     return f'<div class="{cls}">' + "".join(article_card(a, r) for a in items) + "</div>"
 
@@ -400,8 +447,8 @@ def faq_list(r, items=None):
     return '<div class="faq">' + "".join(out) + "</div>"
 
 
-def check_list(items):
-    return '<ul class="check-list">' + "".join(f"<li>{ico('i-check')}<span>{esc(i)}</span></li>" for i in items) + "</ul>"
+def check_list(items, cls="ls-check"):
+    return f'<ul class="{cls}">' + "".join(f"<li>{ico('i-check')}<span>{esc(i)}</span></li>" for i in items) + "</ul>"
 
 
 TOKEN_RE = re.compile(r"\{\{(\w+)(?::([^}]*))?\}\}")
@@ -413,12 +460,22 @@ def render_tokens(body, page, r):
         if name == "root":
             return r
         if name in ("phone", "phone_tel", "email", "zalo", "address", "hours", "hours_note", "maps_query",
-                    "legal_name", "street", "ward", "city"):
+                    "legal_name", "street", "ward", "city", "lawyer"):
             return FIRM[name]
-        if name == "cta":
-            return ""
-        if name == "services_grid":
-            return services_grid(r)
+        if name in ("cta", "contact"):
+            return contact_band(r)
+        if name == "breadcrumb":
+            return breadcrumb_html(page["crumbs"], r)
+        if name == "promise":
+            return promise_html()
+        if name == "call_buttons":
+            return call_buttons(r)
+        if name == "help_card":
+            return help_card(r)
+        if name in ("problems_grid", "services_grid"):
+            return problems_grid(r)
+        if name == "field_links":
+            return field_links(r, arg or "")
         if name == "articles_grid":
             return articles_grid(r)
         if name == "faq_list":
@@ -431,7 +488,6 @@ def render_tokens(body, page, r):
             return ico(nm, cls or "ico")
         raise KeyError(f"Token không xác định: {name} ({page['path']})")
     return TOKEN_RE.sub(rep, body)
-
 
 # ---------------------------------------------------------------------------
 # Dữ liệu có cấu trúc (JSON-LD)
@@ -525,12 +581,22 @@ def layout(page):
     extra_head = page.get("extra_head", "").replace("{{root}}", r)
     hero = render_tokens(page_hero_html(page, r), page, r) if page.get("page_hero", True) else ""
     body = render_tokens(page["body"], page, r)
-    if page.get("body_class") == "home-page":
-        body = body.replace('v=' + ASSET_VERSION, 'v=home-20260927')
     body = re.sub(r"\s*<!--\s*(GHI CHÚ CHO NGƯỜI QUẢN TRỊ|Nội dung trang tra cứu).*?-->", "", body, flags=re.S)
     scripts = "".join(f'\n<script src="{r}{s}" defer></script>' for s in page.get("scripts", []))
-    body_cls = f' class="{page["body_class"]}"' if page.get("body_class") else ""
     canonical = "" if page.get("noindex") else f'\n<link rel="canonical" href="{url}">'
+    # Từ điển Bộ luật Hình sự giữ nguyên bộ giao diện riêng (reader-design.css, tu-dien.css).
+    # Mọi trang còn lại dùng chung một hệ giao diện: pages.css.
+    reader = page.get("body_class") == "tdl-page"
+    sheets = ("nam-theme", "mobile", "navigation", "reader-design") if reader else ("nam-theme", "mobile", "navigation", "pages")
+    styles = f'<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{extra_head}\n' + "\n".join(
+        f'<link rel="stylesheet" href="{r}assets/css/{n}.css?v={file_hash(f"assets/css/{n}.css")}">' for n in sheets)
+    if reader:
+        styles += "\n\n"
+        body_cls = f' class="{page["body_class"]}"'
+        sprite = SPRITE
+    else:
+        body_cls = f' class="{" ".join(c for c in ("site-page", page.get("body_class")) if c)}"'
+        sprite = SPRITE.replace("</svg>", EXTRA_SYMBOLS + "</svg>")
     return f"""<!doctype html>
 <html lang="vi" data-root="{r}">
 <head>
@@ -562,20 +628,14 @@ def layout(page):
 <link rel="manifest" href="{r}site.webmanifest">
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>{preload}
-<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{extra_head}
-<link rel="stylesheet" href="{r}assets/css/nam-theme.css?v={file_hash("assets/css/nam-theme.css")}">
-<link rel="stylesheet" href="{r}assets/css/mobile.css?v={file_hash("assets/css/mobile.css")}">
-<link rel="stylesheet" href="{r}assets/css/navigation.css?v={file_hash("assets/css/navigation.css")}">
-<link rel="stylesheet" href="{r}assets/css/reader-design.css?v={file_hash("assets/css/reader-design.css")}">{('<link rel="stylesheet" href="' + r + 'assets/css/home.css?v=' + file_hash('assets/css/home.css') + '\">') if page.get('body_class') == 'home-page' else ''}
-{('<link rel="stylesheet" href="' + r + 'assets/css/about.css?v=' + file_hash('assets/css/about.css') + '\">') if page.get('body_class') == 'about-page' else ''}
-{('<link rel="stylesheet" href="' + r + 'assets/css/service-detail.css?v=' + file_hash('assets/css/service-detail.css') + '">') if page.get('body_class') == 'service-detail' else ''}
+{styles}
 <script type="application/ld+json">
 {jsonld(page)}
 </script>
 </head>
 <body{body_cls}>
 <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
-{SPRITE}
+{sprite}
 {header_html(page, r)}
 
 <main id="main">
@@ -591,7 +651,6 @@ def layout(page):
 </body>
 </html>
 """
-
 
 # ---------------------------------------------------------------------------
 # Đọc trang nguồn
@@ -619,43 +678,107 @@ def crumbs_for(*items):
 # ---------------------------------------------------------------------------
 def service_page(s):
     path = f"dich-vu/{s['slug']}/"
+    name_lc = s["name"].lower()
     arts = articles_for_service(s["slug"])
-    scope = "".join(f'<article class="sv-scope"><span>{i:02d}</span><div><h3>{esc(h)}</h3><p>{esc(p)}</p></div></article>' for i, (h, p) in enumerate(s["scope"], 1))
-    steps = "".join(f'<li><span>{i:02d}</span><h3>{esc(h)}</h3><p>{esc(p)}</p></li>' for i, (h, p) in enumerate(s["steps"], 1))
-    laws = "".join(f'<li>{esc(x)}</li>' for x in s["laws"])
-    tags = "".join(f'<li>{esc(t)}</li>' for t in s["tags"])
+    image = s.get("image", f'assets/img/dich-vu/{s["slug"]}.webp')
+    iw, ih = s.get("image_size", (1200, 600))
+    situations = "".join(f'<li>{ico("i-check-circle")}<span>{esc(x)}</span></li>' for x in s["situations"])
+    scope = "".join(f'<article class="ls-card"><span class="ls-card__num">{i:02d}</span><h3>{esc(h)}</h3><p>{esc(p)}</p></article>'
+                    for i, (h, p) in enumerate(s["scope"], 1))
+    tips = "".join(f"<li>{esc(t)}</li>" for t in s["tips"])
+    faq = "".join(f"""<details class="faq__item" id="hoi-dap-{i}">
+  <summary><span>{esc(q)}</span>{ico("i-chevron", "faq__chev")}</summary>
+  <div class="faq__answer"><p>{a}</p></div>
+</details>""" for i, (q, a) in enumerate(s["faq"], 1))
+    laws = "".join(f"<li>{esc(x)}</li>" for x in s["laws"])
     resources = [(f'kien-thuc-phap-ly/{a["slug"]}/', "Bài viết", a["card_title"], a["excerpt"]) for a in arts[:3]]
-    extras = [("cau-hoi-thuong-gap/", "Hỏi đáp", "Câu hỏi thường gặp khi thuê luật sư", "Thông tin về chi phí, bảo mật và cách làm việc với luật sư."),
-              ("quy-trinh-lam-viec/#ho-so-can-chuan-bi", "Chuẩn bị", "Trước buổi tư vấn đầu tiên", "Tìm hiểu giấy tờ cần mang theo và cách chuẩn bị thông tin vụ việc.")]
+    extras = [("cau-hoi-thuong-gap/", "Hỏi đáp", "Câu hỏi thường gặp khi thuê luật sư", "Chi phí, bảo mật và cách bắt đầu làm việc với luật sư."),
+              ("quy-trinh-lam-viec/#ho-so-can-chuan-bi", "Chuẩn bị", "Trước buổi gặp luật sư đầu tiên", "Giấy tờ nên mang theo và cách ghi lại diễn biến sự việc.")]
     if s["slug"] == "hinh-su":
         extras.insert(0, ("bo-luat-hinh-su/", "Tra cứu", "Bộ luật Hình sự và bình luận", "Tra cứu nội dung theo điều, khoản, điểm và từ khóa."))
-    resources += extras[:max(0, 3-len(resources))]
-    cards = "".join(f'<a class="sv-resource" href="{{{{root}}}}{href}"><span class="eyebrow">{label}</span><h3>{esc(title)}</h3><p>{esc(text)}</p><span class="sv-resource__link">Xem chi tiết</span></a>' for href, label, title, text in resources)
-    related = "".join(f'<a class="sv-related" href="{{{{root}}}}dich-vu/{x["slug"]}/">{ico(x["icon"])}<span><h3>{esc(x["name"])}</h3><p>{esc(x["short"])}</p></span></a>' for x in SERVICES if x["slug"] in s["related"])
+    resources += extras[:max(0, 3 - len(resources))]
+    cards = "".join(f'<a class="ls-resource" href="{{{{root}}}}{href}"><span class="ls-resource__label">{label}</span><h3>{esc(title)}</h3><p>{esc(text)}</p><span class="ls-resource__more">Xem chi tiết {ARROW}</span></a>'
+                    for href, label, title, text in resources)
+    related = "".join(f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"])}{esc(SERVICE_BY_SLUG[x]["name"])}</a></li>' for x in s["related"])
+    urgent = ""
+    if s.get("urgent"):
+        urgent = (f'<p class="ls-urgent">{ico("i-alert")}<span><strong>Việc gấp?</strong> Người thân vừa bị bắt, tạm giữ hoặc sắp phải làm việc với cơ quan điều tra: '
+                  f'hãy gọi ngay <a href="tel:{FIRM["phone_tel"]}">{FIRM["phone"]}</a>. {FIRM["hours_note"]}.</span></p>')
     body = f"""
-<section class="sv-hero">
- <div class="container">
-  <nav class="sv-crumb" aria-label="Đường dẫn"><a href="{{{{root}}}}">Trang chủ</a><span>/</span><a href="{{{{root}}}}dich-vu/">Dịch vụ</a><span>/</span><span aria-current="page">{esc(s["name"])}</span></nav>
-  <div class="sv-hero__grid"><div class="sv-hero__copy"><p class="eyebrow">{esc(s["eyebrow"])}</p><h1>{esc(s["name"])}</h1><p class="sv-lead">{esc(s["lead"])}</p><ul class="sv-tags" aria-label="Nội dung dịch vụ">{tags}</ul><div class="sv-actions"><a class="btn btn--primary" href="{{{{root}}}}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a><a class="sv-phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a></div></div>
-  <figure class="sv-image"><img src="{{{{root}}}}{asset_ref(f'assets/img/dich-vu/{s["slug"]}.webp')}" alt="{esc(s["image_alt"])}" width="600" height="400" fetchpriority="high"></figure></div>
-  <div class="sv-focus"><p class="eyebrow">Trọng tâm tư vấn</p><div><h2>{esc(s["focus_title"])}</h2><p>{esc(s["focus_text"])}</p></div></div>
- </div>
+<section class="ls-hero ls-hero--service">
+  <div class="container ls-hero__grid">
+    <div class="ls-hero__copy">
+      {{{{breadcrumb}}}}
+      <p class="eyebrow">Luật sư {esc(name_lc if s["slug"] != "cong-chung" else "hỗ trợ công chứng")}</p>
+      <h1 class="ls-hero__title">{s["hero_title"]}</h1>
+      <p class="ls-hero__lead">{esc(s["lead"])}</p>
+      {call_buttons("{{root}}")}
+      {urgent}
+    </div>
+    <figure class="ls-hero__media{" ls-hero__media--portrait" if s.get("image") else ""}"><img src="{{{{root}}}}{asset_ref(image)}" alt="{esc(s["image_alt"])}" width="{iw}" height="{ih}" fetchpriority="high"></figure>
+  </div>
 </section>
-<nav class="sv-index" aria-label="Nội dung dịch vụ"><div class="container"><a href="#pham-vi">Phạm vi hỗ trợ</a><a href="#quy-trinh">Quy trình thực hiện</a><a href="#ho-so">Hồ sơ &amp; kết quả</a><a href="#tham-khao">Tài liệu tham khảo</a></div></nav>
-<section class="sv-section" id="pham-vi"><div class="container"><div class="sv-heading"><div><p class="eyebrow">01 / Phạm vi hỗ trợ</p><h2>{esc(s["scope_title"])}</h2></div><p>{esc(s["scope_intro"])}</p></div><div class="sv-scope-grid">{scope}</div></div></section>
-<section class="sv-section sv-section--soft" id="quy-trinh"><div class="container"><div class="sv-heading"><div><p class="eyebrow">02 / Quy trình thực hiện</p><h2>Các bước luật sư đồng hành cùng bạn</h2></div><a class="sv-text-link" href="{{{{root}}}}quy-trinh-lam-viec/">Tìm hiểu quy trình làm việc</a></div><ol class="sv-steps">{steps}</ol><div class="sv-note">{ico("i-alert")}<p><strong>{esc(s["note_title"])}:</strong> {esc(s["note_text"])}</p></div></div></section>
-<section class="sv-section" id="ho-so"><div class="container"><div class="sv-heading"><div><p class="eyebrow">03 / Hồ sơ &amp; kết quả</p><h2>Chuẩn bị rõ ràng. Phối hợp hiệu quả.</h2></div></div><div class="sv-docs"><article><h3>{ico("i-doc")}{esc(s.get("docs_title", "Hồ sơ nên chuẩn bị"))}</h3>{check_list(s["docs"])}<a class="sv-text-link" href="{{{{root}}}}quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ</a></article><article><h3>{ico("i-diamond")}Khách hàng nhận được</h3>{check_list(s["deliverables"])}</article></div><div class="sv-context"><article><p class="eyebrow">Nguyên tắc làm việc</p><h3>{esc(s["principle_title"])}</h3><p>{esc(s["principle_text"])}</p></article><article><h3>Căn cứ pháp lý chủ yếu</h3><ul>{laws}</ul><p class="sv-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p></article></div></div></section>
-<section class="sv-section sv-section--soft" id="tham-khao"><div class="container"><div class="sv-heading"><div><p class="eyebrow">04 / Tài liệu tham khảo</p><h2>Thông tin hữu ích cho bạn</h2></div><a class="sv-text-link" href="{{{{root}}}}kien-thuc-phap-ly/">Xem thư viện kiến thức</a></div><div class="sv-resources">{cards}</div></div></section>
-<section class="sv-section sv-related-section"><div class="container"><div class="sv-heading"><div><p class="eyebrow">Lĩnh vực liên quan</p><h2>Hỗ trợ các vấn đề có liên quan</h2></div><a class="sv-text-link" href="{{{{root}}}}dich-vu/">Tất cả dịch vụ</a></div><div class="sv-related-grid">{related}</div></div></section>
-<section class="sv-contact"><div class="container"><div><p class="eyebrow">{esc(s["cta_eyebrow"])}</p><h2>{esc(s["cta_title"])}</h2><p>{esc(s["cta_text"])}</p></div><div class="sv-contact__actions"><a class="btn btn--primary" href="{{{{root}}}}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a><a class="sv-phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a></div></div></section>
+{promise_html("ls-promise--line")}
+
+<section class="ls-section" id="tinh-huong" aria-labelledby="tinh-huong-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="tinh-huong-title">Anh chị có đang gặp chuyện này?</h2><p>Đây là những trường hợp về {esc(name_lc)} mà người dân thường tìm đến luật sư.</p></div>
+  <ul class="ls-situations">{situations}</ul>
+  <p class="ls-situations__foot">Trường hợp của anh chị khác? Cứ <a href="tel:{FIRM["phone_tel"]}">gọi {FIRM["phone"]}</a> hoặc <a href="{FIRM["zalo"]}" target="_blank" rel="noopener">nhắn Zalo</a> kể ngắn gọn – luật sư sẽ cho biết có giúp được hay không.</p>
+</div></section>
+
+<section class="ls-section ls-section--cream" id="pham-vi" aria-labelledby="pham-vi-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="pham-vi-title">Luật sư giúp được anh chị những gì</h2><p>{esc(s["scope_intro"])}</p></div>
+  <div class="ls-grid ls-grid--3">{scope}</div>
+</div></section>
+
+<section class="ls-section" id="viec-nen-lam" aria-labelledby="viec-nen-lam-title"><div class="container ls-split">
+  <div>
+    <div class="ls-head"><h2 class="h2" id="viec-nen-lam-title">Việc nên làm ngay</h2><p>Trong lúc chờ gặp luật sư, những việc nhỏ dưới đây giúp anh chị giữ được quyền lợi.</p></div>
+    <ol class="ls-tips">{tips}</ol>
+  </div>
+  <div class="ls-stack">
+    <div class="ls-note">{ico("i-alert")}<p><strong>{esc(s["note_title"])}:</strong> {esc(s["note_text"])}</p></div>
+    <article class="ls-card ls-card--accent"><p class="eyebrow">Cách luật sư làm việc</p><h3>{esc(s["principle_title"])}</h3><p>{esc(s["principle_text"])}</p></article>
+  </div>
+</div></section>
+
+<section class="ls-section ls-section--cream" id="quy-trinh" aria-labelledby="quy-trinh-title"><div class="container">
+  <div class="ls-head ls-head--row"><div><h2 class="h2" id="quy-trinh-title">Làm việc với luật sư diễn ra thế nào?</h2><p>Năm bước rõ ràng. Ở mỗi bước, anh chị đều biết việc gì đang được làm.</p></div><a class="link-arrow" href="{{{{root}}}}quy-trinh-lam-viec/">Quy trình làm việc chung {ARROW}</a></div>
+  {steps_html(s["steps"])}
+</div></section>
+
+<section class="ls-section" id="ho-so" aria-labelledby="ho-so-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="ho-so-title">Cần chuẩn bị gì và anh chị nhận được gì</h2><p>Chưa đủ giấy tờ cũng không sao: cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.</p></div>
+  <div class="ls-grid ls-grid--2">
+    <article class="ls-card ls-card--list"><h3>{ico("i-doc", "ls-card__ico")}{esc(s.get("docs_title", "Giấy tờ nên mang theo"))}</h3>{check_list(s["docs"])}<a class="link-arrow" href="{{{{root}}}}quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ {ARROW}</a></article>
+    <article class="ls-card ls-card--list"><h3>{ico("i-check-circle", "ls-card__ico")}Anh chị sẽ nhận được</h3>{check_list(s["deliverables"])}<a class="link-arrow" href="{{{{root}}}}cau-hoi-thuong-gap/#chi-phi-thue-luat-su">Chi phí được tính thế nào {ARROW}</a></article>
+  </div>
+</div></section>
+
+<section class="ls-section ls-section--cream" id="hoi-dap" aria-labelledby="hoi-dap-title"><div class="container ls-split ls-split--faq">
+  <div class="ls-head"><h2 class="h2" id="hoi-dap-title">Câu hỏi hay gặp về {esc(name_lc)}</h2><p>Giải đáp ngắn gọn, có dẫn điều luật. Mỗi vụ việc có tình tiết riêng, anh chị nên hỏi luật sư trước khi quyết định.</p><a class="link-arrow" href="{{{{root}}}}cau-hoi-thuong-gap/">Câu hỏi chung khi thuê luật sư {ARROW}</a></div>
+  <div class="faq">{faq}</div>
+</div></section>
+
+<section class="ls-section" id="tham-khao" aria-labelledby="tham-khao-title"><div class="container">
+  <div class="ls-head ls-head--row"><div><h2 class="h2" id="tham-khao-title">Đọc thêm trước khi gặp luật sư</h2></div><a class="link-arrow" href="{{{{root}}}}kien-thuc-phap-ly/">Thư viện pháp lý {ARROW}</a></div>
+  <div class="ls-grid ls-grid--3">{cards}</div>
+  <div class="ls-split ls-split--even ls-more">
+    <div><h3 class="ls-more__title">Căn cứ pháp luật chủ yếu</h3><ul class="ls-laws">{laws}</ul><p class="ls-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p></div>
+    <div><h3 class="ls-more__title">Lĩnh vực liên quan</h3><ul class="ls-chips">{related}</ul></div>
+  </div>
+</div></section>
+
+{contact_band("{{root}}", esc(s["cta_title"]), esc(s["cta_text"]))}
 """
     url = abs_url(path)
     return {
-        "path": path, "section": "services", "body_class": "service-detail", "page_hero": False,
+        "path": path, "section": "services", "body_class": "service-page", "page_hero": False,
         "title": f'{s["title"]} | {FIRM["short_name"]}', "description": s["description"],
         "crumbs": crumbs_for(("Dịch vụ", "dich-vu/"), (s["name"], path)),
-        "image": f'assets/img/dich-vu/{s["slug"]}.webp', "image_alt": s["image_alt"],
-        "preload_images": [f'assets/img/dich-vu/{s["slug"]}.webp'], "body": body,
+        "h1": strip_tags(s["hero_title"]),
+        "image": image, "image_alt": s["image_alt"],
+        "preload_images": [image], "body": body,
         "schema": [{
             "@type": "Service", "@id": url + "#service", "name": s["name"], "serviceType": s["title"],
             "description": s["description"], "url": url, "provider": {"@id": ORG_ID},
@@ -669,54 +792,34 @@ def service_page(s):
 def services_hub():
     path = "dich-vu/"
     modes = [
-        ("I", "Tư vấn pháp luật", "Phân tích quy định, trả lời câu hỏi pháp lý bằng lời nói hoặc bằng văn bản; soạn thảo, rà soát hợp đồng, đơn từ và các tài liệu pháp lý khác."),
-        ("II", "Đại diện ngoài tố tụng", "Thay mặt khách hàng làm việc, thương lượng, hòa giải với các bên liên quan và thực hiện thủ tục tại cơ quan nhà nước trong phạm vi được ủy quyền."),
-        ("III", "Tham gia tố tụng", "Bào chữa, bảo vệ quyền và lợi ích hợp pháp hoặc đại diện cho đương sự trong các vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài."),
+        ("i-chat", "Tư vấn, giải đáp", "Luật sư nghe anh chị trình bày, giải thích quy định và hướng xử lý; soạn hoặc kiểm tra hợp đồng, đơn từ, giấy tờ trước khi anh chị ký, nộp."),
+        ("i-user", "Thay mặt anh chị làm việc", "Trong phạm vi được ủy quyền, luật sư thay anh chị làm việc, thương lượng, hòa giải với bên kia và làm thủ tục tại cơ quan nhà nước."),
+        ("i-gavel", "Cùng anh chị ra Tòa", "Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài."),
     ]
-    mode_html = "".join(f"""<article class="pillar reveal">
-  <span class="pillar__num">{n}</span>
-  <h3>{h}</h3>
-  <p>{p}</p>
-</article>""" for n, h, p in modes)
+    mode_html = "".join(f'<article class="ls-card ls-card--icon">{ico(i, "ls-card__ico")}<h3>{h}</h3><p>{p}</p></article>' for i, h, p in modes)
     body = f"""
-<section class="section section--cream">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Tám lĩnh vực</p>
-        <h2 class="h2">Chuyên môn pháp lý toàn diện</h2>
-      </div>
-      <p class="section-head__text">Chọn lĩnh vực gần nhất với vụ việc của bạn để xem phạm vi hỗ trợ, tài liệu cần chuẩn bị và các bước luật sư sẽ thực hiện.</p>
-    </div>
-    {{{{services_grid}}}}
-  </div>
-</section>
+{{{{promise}}}}
 
-<section class="section">
-  <div class="container">
-    <div class="section-head section-head--center reveal">
-      <div class="heading-block heading-block--center">
-        <p class="eyebrow">Hình thức hỗ trợ</p>
-        <h2 class="h2">Ba cách luật sư đồng hành</h2>
-      </div>
-      <p class="section-head__text">Tùy tính chất vụ việc, khách hàng có thể lựa chọn một hoặc kết hợp nhiều hình thức dưới đây, theo phạm vi quy định tại Luật Luật sư.</p>
-    </div>
-    <div class="pillars">{mode_html}</div>
-  </div>
-</section>
+<section class="ls-section ls-section--cream" aria-labelledby="tinh-huong-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="tinh-huong-title">Chọn tình huống gần giống với anh chị</h2><p>Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.</p></div>
+  {{{{problems_grid}}}}
+</div></section>
 
-{cta_band("{{root}}", "Chưa rõ lĩnh vực", "Chưa rõ vụ việc thuộc lĩnh vực nào?", "Hãy mô tả ngắn gọn sự việc và tài liệu đang có. Luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp.", sub="")}
+<section class="ls-section" aria-labelledby="hinh-thuc-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="hinh-thuc-title">Luật sư có thể giúp anh chị theo ba cách</h2><p>Tùy vụ việc, anh chị chọn một hoặc kết hợp nhiều cách, theo phạm vi hành nghề quy định tại Luật Luật sư.</p></div>
+  <div class="ls-grid ls-grid--3">{mode_html}</div>
+</div></section>
+
+{contact_band("{{root}}", "Chưa biết vụ việc thuộc lĩnh vực nào?", "Không sao cả. Anh chị cứ gọi điện hoặc nhắn Zalo kể ngắn gọn sự việc – luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp.")}
 """
-    url = abs_url(path)
     return {
         "path": path, "section": "services", "schema_type": "CollectionPage",
         "title": f'Lĩnh vực hoạt động – Dịch vụ pháp lý | {FIRM["short_name"]}',
         "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 8 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng.",
         "eyebrow": "Lĩnh vực hoạt động",
-        "h1": "Dịch vụ pháp lý cho <em>cá nhân và doanh nghiệp</em>",
-        "lead": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực hành nghề chính. Mỗi lĩnh vực có trang riêng mô tả phạm vi hỗ trợ, hồ sơ cần chuẩn bị và quy trình thực hiện.",
+        "h1": "Anh chị cần luật sư <em>giúp việc gì?</em>",
+        "lead": "Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực gắn với đời sống hằng ngày của người dân.",
         "crumbs": crumbs_for(("Lĩnh vực hoạt động", path)),
-        "hero": {"image": "assets/img/hero.webp"},
         "body": body,
         "webpage_extra": {"mainEntity": {
             "@type": "ItemList", "numberOfItems": len(SERVICES),
@@ -742,20 +845,23 @@ def article_page(a):
     related_svcs = "".join(
         f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"], "rel-list__icon")}<span>{esc(SERVICE_BY_SLUG[x]["name"])}</span>{ARROW}</a></li>'
         for x in a["related_services"])
+    points = "".join(f"<li>{esc(p)}</li>" for p in a.get("key_points", []))
+    keypoints = f'<div class="ls-keypoints"><p class="ls-keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
     extra = f"""<p class="article-meta">
         <span>{ico("i-user")}Ban biên tập {FIRM["short_name"]}</span>
         <span>{ico("i-calendar")}Đăng <time datetime="{a["published"]}">{vi_date(a["published"])}</time></span>
         <span>{ico("i-clock")}Cập nhật <time datetime="{a["modified"]}">{vi_date(a["modified"])}</time> · {minutes} phút đọc</span>
       </p>"""
     body = f"""
-<div class="section section--article">
+<section class="ls-section ls-section--article">
   <div class="container article-layout">
     <article class="prose" id="noi-dung-bai-viet">
       <img class="prose__cover" src="{{{{root}}}}assets/img/bai-viet/{a["slug"]}.webp?v={ASSET_VERSION}" alt="{esc(a["image_alt"])}" width="720" height="240" fetchpriority="high">
+      {keypoints}
       {content}
       <div class="article-disclaimer">
         {ico("i-alert", "note__icon")}
-        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="{{{{root}}}}lien-he/">liên hệ luật sư</a> trước khi quyết định.</p>
+        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="{{{{root}}}}lien-he/">hỏi luật sư</a> trước khi quyết định.</p>
       </div>
     </article>
     <aside class="article-aside">
@@ -763,12 +869,10 @@ def article_page(a):
         <p class="aside-card__title">Nội dung bài viết</p>
         <ol class="toc">{toc}</ol>
       </div>
-      <div class="aside-card aside-card--cta">
-        {ico(svc["icon"], "aside-card__icon")}
-        <p class="aside-card__title">Cần luật sư về {esc(svc["name"].lower())}?</p>
-        <p>{esc(svc["short"])}</p>
-        <a class="btn btn--primary btn--block btn--sm" href="{{{{root}}}}dich-vu/{svc["slug"]}/">Xem dịch vụ {esc(svc["name"])} {ARROW}</a>
-        <a class="aside-card__phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a>
+      <div class="aside-card ls-ask">
+        <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="56" height="56" loading="lazy"><p><strong>Cần hỏi về {esc(svc["name"].lower())}?</strong><span>{FIRM["lawyer"]} trực tiếp nghe anh chị trình bày</span></p></div>
+        {call_buttons("{{root}}", "ls-actions--stack ls-actions--sm")}
+        <a class="link-arrow" href="{{{{root}}}}dich-vu/{svc["slug"]}/">Xem dịch vụ {esc(svc["name"])} {ARROW}</a>
       </div>
       <div class="aside-card">
         <p class="aside-card__title">Lĩnh vực liên quan</p>
@@ -776,26 +880,18 @@ def article_page(a):
       </div>
     </aside>
   </div>
-</div>
-
-<section class="section section--cream">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Đọc tiếp</p>
-        <h2 class="h2">Bài viết khác</h2>
-      </div>
-      <a class="link-arrow" href="{{{{root}}}}kien-thuc-phap-ly/">Tất cả bài viết {ARROW}</a>
-    </div>
-    {articles_grid("{{root}}", others, cls="cards-2")}
-  </div>
 </section>
 
-{cta_band("{{root}}", svc["cta_eyebrow"], esc(svc["cta_title"]), esc(svc["cta_text"]), sub="")}
+<section class="ls-section ls-section--cream" aria-labelledby="doc-tiep-title"><div class="container">
+  <div class="ls-head ls-head--row"><div><h2 class="h2" id="doc-tiep-title">Bài viết khác</h2></div><a class="link-arrow" href="{{{{root}}}}kien-thuc-phap-ly/">Tất cả bài viết {ARROW}</a></div>
+  {articles_grid("{{root}}", others, cls="ls-posts ls-posts--2")}
+</div></section>
+
+{contact_band("{{root}}", esc(svc["cta_title"]), esc(svc["cta_text"]))}
 """
     url = abs_url(path)
     return {
-        "path": path, "section": "knowledge", "og_type": "article",
+        "path": path, "section": "knowledge", "og_type": "article", "body_class": "article-page",
         "published": a["published"], "modified": a["modified"], "article_section": a["category"],
         "title": f'{a["seo_title"]} | {FIRM["short_name"]}',
         "og_title": a["title"],
@@ -804,7 +900,7 @@ def article_page(a):
         "h1": esc(a["title"]),
         "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), (a["card_title"], path)),
         "image": f'assets/img/bai-viet/{a["slug"]}.webp', "image_alt": a["image_alt"],
-        "hero": {"image": "assets/img/hero.webp", "extra": extra},
+        "hero": {"aside": "none", "extra": extra},
         "body": body, "modified": a["modified"],
         "schema": [{
             "@type": "Article", "@id": url + "#article", "headline": a["title"], "description": a["description"],
@@ -820,64 +916,34 @@ def article_page(a):
 def knowledge_hub():
     path = "kien-thuc-phap-ly/"
     body = f"""
-<section class="section section--cream">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Bài viết mới</p>
-        <h2 class="h2">Phân tích và hướng dẫn pháp lý</h2>
-      </div>
-      <p class="section-head__text">Mỗi bài viết gắn với một lĩnh vực hành nghề, trích dẫn điều luật cụ thể và ghi rõ ngày cập nhật.</p>
-    </div>
-    {{{{articles_grid}}}}
-  </div>
-</section>
+<section class="ls-section ls-section--cream" aria-labelledby="bai-viet-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="bai-viet-title">Bài viết mới</h2><p>Mỗi bài giải thích một tình huống người dân hay gặp, có trích điều luật cụ thể và ghi rõ ngày cập nhật.</p></div>
+  {{{{articles_grid}}}}
+</div></section>
 
-<section class="section">
-  <div class="container tools-grid">
-    <a class="tool-card tool-card--navy reveal" href="{{{{root}}}}bo-luat-hinh-su/">
-      {ico("i-book", "tool-card__icon")}
-      <span class="eyebrow eyebrow--gold">Công cụ tra cứu</span>
-      <h2 class="tool-card__title">Bộ luật Hình sự 2015 (sửa đổi 2017, 2025)</h2>
-      <p>Toàn văn 428 điều kèm bình luận từng điều; tìm kiếm có dấu, không dấu, tra nhanh theo điều, khoản, điểm.</p>
-      <span class="link-arrow link-arrow--light">Mở công cụ tra cứu {ARROW}</span>
-    </a>
-    <a class="tool-card reveal" href="{{{{root}}}}cau-hoi-thuong-gap/">
-      {ico("i-question", "tool-card__icon")}
-      <span class="eyebrow">Hỏi đáp</span>
-      <h2 class="tool-card__title">Câu hỏi thường gặp khi làm việc với luật sư</h2>
-      <p>Chi phí thuê luật sư, bảo mật thông tin, thời hiệu, thời gian phản hồi và phạm vi hoạt động.</p>
-      <span class="link-arrow">Xem câu hỏi thường gặp {ARROW}</span>
-    </a>
+<section class="ls-section" aria-labelledby="cong-cu-title"><div class="container">
+  <div class="ls-head"><h2 class="h2" id="cong-cu-title">Tự tra cứu</h2><p>Công cụ và giải đáp giúp anh chị hiểu vấn đề trước khi gặp luật sư.</p></div>
+  <div class="ls-grid ls-grid--2">
+    <a class="ls-tool" href="{{{{root}}}}bo-luat-hinh-su/">{ico("i-book", "ls-tool__ico")}<span class="ls-resource__label">Công cụ tra cứu</span><h3>Bộ luật Hình sự 2015 (sửa đổi 2017, 2025)</h3><p>Toàn văn 428 điều kèm bình luận từng điều; tìm theo số điều hoặc từ khóa, gõ có dấu hay không dấu đều được.</p><span class="ls-resource__more">Mở công cụ tra cứu {ARROW}</span></a>
+    <a class="ls-tool" href="{{{{root}}}}cau-hoi-thuong-gap/">{ico("i-question", "ls-tool__ico")}<span class="ls-resource__label">Hỏi đáp</span><h3>Câu hỏi thường gặp khi làm việc với luật sư</h3><p>Chi phí thuê luật sư, giữ bí mật thông tin, thời hạn cần lưu ý, thời gian phản hồi và vụ việc ở tỉnh khác.</p><span class="ls-resource__more">Xem câu hỏi thường gặp {ARROW}</span></a>
   </div>
-</section>
+</div></section>
 
-<section class="section section--cream">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Theo lĩnh vực</p>
-        <h2 class="h2">Tìm hiểu dịch vụ theo vấn đề của bạn</h2>
-      </div>
-      <a class="link-arrow" href="{{{{root}}}}dich-vu/">Xem tất cả lĩnh vực {ARROW}</a>
-    </div>
-    <ul class="topic-links">
-      {"".join(f'<li><a href="{{{{root}}}}dich-vu/{s["slug"]}/">{ico(s["icon"], "topic-links__icon")}{esc(s["name"])}</a></li>' for s in SERVICES)}
-    </ul>
-  </div>
-</section>
+<section class="ls-section ls-section--cream" aria-labelledby="linh-vuc-title"><div class="container">
+  <div class="ls-head ls-head--row"><div><h2 class="h2" id="linh-vuc-title">Tìm theo vấn đề của anh chị</h2><p>Mỗi lĩnh vực có giải đáp ngắn, việc nên làm ngay và giấy tờ cần chuẩn bị.</p></div><a class="link-arrow" href="{{{{root}}}}dich-vu/">Tất cả lĩnh vực {ARROW}</a></div>
+  {{{{field_links}}}}
+</div></section>
 
-{{{{cta}}}}
+{{{{contact}}}}
 """
     return {
         "path": path, "section": "knowledge", "schema_type": "CollectionPage",
         "title": f'Kiến thức pháp lý – Bài viết, tra cứu luật | {FIRM["short_name"]}',
         "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai; tra cứu Bộ luật Hình sự kèm bình luận và giải đáp thắc mắc khi làm việc với luật sư.",
         "eyebrow": "Kiến thức pháp lý",
-        "h1": "Thông tin pháp lý <em>rõ ràng, có căn cứ</em>",
-        "lead": "Phân tích, hướng dẫn và công cụ tra cứu do đội ngũ Luật Sư Nam biên soạn, giúp bạn hiểu quyền và nghĩa vụ trước khi đưa ra quyết định.",
+        "h1": "Hiểu đúng quyền lợi của mình <em>trước khi quyết định</em>",
+        "lead": "Bài viết, công cụ tra cứu và giải đáp do Luật Sư Nam biên soạn bằng lời lẽ dễ hiểu, có dẫn điều luật cụ thể. Đọc để nắm vấn đề – còn vụ việc của anh chị, hãy hỏi trực tiếp luật sư.",
         "crumbs": crumbs_for(("Kiến thức pháp lý", path)),
-        "hero": {"image": "assets/img/hero.webp"},
         "body": body,
         "webpage_extra": {"mainEntity": {
             "@type": "ItemList", "numberOfItems": len(ARTICLES),
@@ -889,49 +955,43 @@ def knowledge_hub():
 def faq_page():
     path = "cau-hoi-thuong-gap/"
     body = f"""
-<section class="section section--cream">
-  <div class="container faq-layout">
-    <div class="reveal">{{{{faq_list}}}}
-      <p class="faq__foot">Các giải đáp trên mang tính thông tin chung, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Xem thêm <a href="{{{{root}}}}mien-tru-trach-nhiem/">Tuyên bố miễn trừ trách nhiệm</a>.</p>
-    </div>
-    <aside class="faq-aside">
-      <div class="aside-card aside-card--cta">
-        {ico("i-chat", "aside-card__icon")}
-        <p class="aside-card__title">Chưa thấy câu trả lời?</p>
-        <p>Gọi điện hoặc nhắn Zalo để trao đổi trực tiếp với luật sư trong giờ làm việc.</p>
-        <a class="btn btn--primary btn--block btn--sm" href="{{{{root}}}}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {ARROW}</a>
-        <a class="aside-card__phone" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} {FIRM["phone"]}</a>
-      </div>
-      <div class="aside-card">
-        <p class="aside-card__title">Tìm hiểu thêm</p>
-        <ul class="rel-list">
-          <li><a href="{{{{root}}}}quy-trinh-lam-viec/">{ico("i-steps", "rel-list__icon")}<span>Quy trình làm việc</span>{ARROW}</a></li>
-          <li><a href="{{{{root}}}}vi-sao-chon-chung-toi/">{ico("i-diamond", "rel-list__icon")}<span>Vì sao chọn chúng tôi</span>{ARROW}</a></li>
-          <li><a href="{{{{root}}}}kien-thuc-phap-ly/">{ico("i-book", "rel-list__icon")}<span>Kiến thức pháp lý</span>{ARROW}</a></li>
-        </ul>
-      </div>
-    </aside>
+<section class="ls-section ls-section--cream"><div class="container faq-layout">
+  <div>{{{{faq_list}}}}
+    <p class="faq__foot">Các giải đáp trên mang tính thông tin chung, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Xem thêm <a href="{{{{root}}}}mien-tru-trach-nhiem/">Tuyên bố miễn trừ trách nhiệm</a>.</p>
   </div>
-</section>
-{{{{cta}}}}
+  <aside class="faq-aside">
+    <div class="aside-card ls-ask">
+      <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="56" height="56" loading="lazy"><p><strong>Chưa thấy câu trả lời?</strong><span>Gọi điện hoặc nhắn Zalo để hỏi trực tiếp luật sư</span></p></div>
+      {call_buttons("{{root}}", "ls-actions--stack ls-actions--sm")}
+    </div>
+    <div class="aside-card">
+      <p class="aside-card__title">Tìm hiểu thêm</p>
+      <ul class="rel-list">
+        <li><a href="{{{{root}}}}quy-trinh-lam-viec/">{ico("i-steps", "rel-list__icon")}<span>Quy trình làm việc</span>{ARROW}</a></li>
+        <li><a href="{{{{root}}}}vi-sao-chon-chung-toi/">{ico("i-diamond", "rel-list__icon")}<span>Vì sao chọn chúng tôi</span>{ARROW}</a></li>
+        <li><a href="{{{{root}}}}dich-vu/">{ico("i-scale", "rel-list__icon")}<span>Lĩnh vực hoạt động</span>{ARROW}</a></li>
+        <li><a href="{{{{root}}}}kien-thuc-phap-ly/">{ico("i-book", "rel-list__icon")}<span>Kiến thức pháp lý</span>{ARROW}</a></li>
+      </ul>
+    </div>
+  </aside>
+</div></section>
+
+{{{{contact}}}}
 """
-    url = abs_url(path)
     return {
         "path": path, "section": "knowledge", "schema_type": "FAQPage",
         "title": f'Câu hỏi thường gặp khi thuê luật sư | {FIRM["short_name"]}',
         "description": "Giải đáp về chi phí thuê luật sư theo Điều 55 Luật Luật sư, bảo mật thông tin, cam kết kết quả, thời hiệu, thời gian phản hồi và vụ việc ngoài TP.HCM.",
         "eyebrow": "Câu hỏi thường gặp",
-        "h1": "Những điều khách hàng <em>hay hỏi nhất</em>",
-        "lead": "Chi phí, bảo mật, thời hạn và cách bắt đầu làm việc với luật sư, giải đáp ngắn gọn và có dẫn chiếu quy định.",
+        "h1": "Những điều anh chị <em>hay băn khoăn nhất</em>",
+        "lead": "Thuê luật sư tốn bao nhiêu, thông tin có được giữ kín không, có cần gấp không – giải đáp ngắn gọn, có dẫn quy định cụ thể.",
         "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), ("Câu hỏi thường gặp", path)),
-        "hero": {"image": "assets/img/van-phong.webp"},
         "body": body,
         "webpage_extra": {"mainEntity": [{
             "@type": "Question", "name": f["q"],
             "acceptedAnswer": {"@type": "Answer", "text": " ".join(strip_tags(p.replace("{{root}}", "")) for p in f["a"])},
         } for f in FAQ]},
     }
-
 
 # ---------------------------------------------------------------------------
 # Trang đơn lẻ từ src/pages
@@ -1040,7 +1100,8 @@ def all_pages():
     pages.append(simple_page("lien-he", "lien-he/", "contact", crumbs_for(("Liên hệ", "lien-he/")), schema_type="ContactPage"))
     for name, label in [("chinh-sach-bao-mat", "Chính sách bảo mật"), ("dieu-khoan-su-dung", "Điều khoản sử dụng"),
                         ("mien-tru-trach-nhiem", "Miễn trừ trách nhiệm")]:
-        pages.append(simple_page(name, f"{name}/", "", crumbs_for((label, f"{name}/"))))
+        pages.append(simple_page(name, f"{name}/", "", crumbs_for((label, f"{name}/")),
+                                 hero={"aside": "none"}, body_class="legal-page"))
 
     nf = simple_page("404", "404.html", "", [HOME], noindex=True, root_override=BASE_PATH, page_hero=False)
     pages.append(nf)

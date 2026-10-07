@@ -34,9 +34,7 @@
 <link rel="stylesheet" href="../assets/css/nam-theme.css?v=020d165c">
 <link rel="stylesheet" href="../assets/css/mobile.css?v=79ecbf48">
 <link rel="stylesheet" href="../assets/css/navigation.css?v=e8161ad4">
-<link rel="stylesheet" href="../assets/css/reader-design.css?v=05081dca">
-
-
+<link rel="stylesheet" href="../assets/css/pages.css?v=587d1fef">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -208,7 +206,7 @@
 }
 </script>
 </head>
-<body>
+<body class="site-page">
 <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -249,6 +247,10 @@
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
 </svg>
 <div class="topbar">
   <div class="container topbar__inner">
@@ -293,94 +295,83 @@
 </header>
 
 <main id="main">
-<section class="page-hero">
-  <div class="page-hero__bg" style="background-image:url('../assets/img/van-phong.webp?v=20260925a')" aria-hidden="true"></div>
-  <div class="container page-hero__inner">
-    <div class="page-hero__copy">
+<section class="ls-hero ls-hero--plain">
+  <div class="container ls-hero__grid">
+    <div class="ls-hero__copy">
       <nav class="breadcrumb" aria-label="Đường dẫn"><ol><li><a href="../">Trang chủ</a></li><li aria-current="page">Liên hệ</li></ol></nav>
-      <p class="eyebrow eyebrow--light">Kết nối với luật sư</p>
-      <h1 class="page-hero__title">Trao đổi vấn đề của bạn <em>ngay hôm nay</em></h1>
-      <p class="page-hero__lead">Nhiều vụ việc pháp lý phụ thuộc vào thời hạn. Liên hệ sớm giúp luật sư kịp thời xác định việc cần ưu tiên và bảo toàn quyền lợi của bạn.</p>
+      <p class="eyebrow">Liên hệ</p>
+      <h1 class="ls-hero__title">Anh chị cứ kể, <em>luật sư lắng nghe</em></h1>
+      <p class="ls-hero__lead">Gọi điện, nhắn Zalo hoặc ghé văn phòng – cách nào thuận tiện nhất với anh chị. Nhiều vụ việc phụ thuộc vào thời hạn, liên hệ sớm giúp luật sư kịp thời xác định việc cần ưu tiên.</p>
       
       
     </div>
     
   </div>
 </section>
-<section class="section section--cream">
-  <div class="container contact__grid">
-    <div class="contact__info reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Thông tin liên hệ</p>
-        <h2 class="h2">Văn phòng Luật Sư Nam</h2>
-      </div>
-      <ul class="contact__list">
-        <li><span class="contact__ico"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg></span><div><strong>Địa chỉ văn phòng</strong>22c Vũ Ngọc Phan, Phường Bình Lợi Trung, Thành phố Hồ Chí Minh</div></li>
-        <li><span class="contact__ico"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg></span><div><strong>Hotline tư vấn</strong><a href="tel:0983498499">0983 498 499</a><small>Ưu tiên gọi trực tiếp với vụ việc khẩn cấp</small></div></li>
-        <li><span class="contact__ico"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg></span><div><strong>Zalo</strong><a href="https://zalo.me/0983498499" target="_blank" rel="noopener">0983 498 499</a><small>Nhắn tin trao đổi nhanh</small></div></li>
-        <li><span class="contact__ico"><svg class="ico" aria-hidden="true"><use href="#i-mail"/></svg></span><div><strong>Email</strong><a href="mailto:luatsunam.hcm@gmail.com">luatsunam.hcm@gmail.com</a><small>Phản hồi trong 24 giờ làm việc</small></div></li>
-        <li><span class="contact__ico"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg></span><div><strong>Giờ làm việc</strong>Thứ 2 – Thứ 6: 08:00 – 17:30<small>Ngoài giờ và cuối tuần: vui lòng liên hệ trước qua hotline hoặc Zalo</small></div></li>
-      </ul>
-    </div>
+<section class="ls-section ls-contact-main" id="lien-he-truc-tiep" aria-label="Cách liên hệ luật sư"><div class="container">
+  <div class="ls-contact__grid">
+    <a class="ls-contact__card" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>Gọi điện</span><strong>0983 498 499</strong><small>Thứ 2 – Thứ 6: 08:00 – 17:30. Việc gấp, hãy gọi trực tiếp.</small></a>
+    <a class="ls-contact__card" href="https://zalo.me/0983498499" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>Nhắn Zalo</span><strong>0983 498 499</strong><small>Kể ngắn gọn sự việc; thường phản hồi trong 24 giờ làm việc.</small></a>
+    <a class="ls-contact__card" href="mailto:luatsunam.hcm@gmail.com"><svg class="ico" aria-hidden="true"><use href="#i-mail"/></svg><span>Gửi email</span><strong class="ls-contact__email">luatsunam.hcm@gmail.com</strong><small>Thường phản hồi trong 24 giờ làm việc.</small></a>
+  </div>
+  <p class="ls-urgent ls-urgent--wide"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span><strong>Việc gấp?</strong> Người thân vừa bị bắt, tạm giữ; sắp hết thời hạn kháng cáo; sắp ký hợp đồng, đặt cọc lớn – xin gọi ngay <a href="tel:0983498499">0983 498 499</a> thay vì nhắn tin. Ngoài giờ và cuối tuần: vui lòng liên hệ trước qua hotline hoặc Zalo.</span></p>
+</div></section>
 
-    <div class="card card--form reveal" id="lien-he-truc-tiep">
-      <p class="eyebrow">Liên hệ trực tiếp</p>
-      <h2 class="h3">Trao đổi với luật sư qua điện thoại hoặc Zalo</h2>
-      <p class="split__text">Website chỉ cung cấp thông tin pháp lý tham khảo. Để được tư vấn cho vụ việc cụ thể, vui lòng gọi hotline hoặc nhắn Zalo cho luật sư; với vụ việc khẩn cấp, hãy gọi trực tiếp.</p>
-      <div class="contact__direct">
-        <a class="btn btn--primary btn--block" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> Gọi 0983 498 499</a>
-        <a class="btn btn--outline btn--block" href="https://zalo.me/0983498499" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg> Nhắn Zalo 0983 498 499</a>
-      </div>
-      <p class="form__note">Trao đổi ban đầu chưa làm phát sinh quan hệ luật sư – khách hàng. Vui lòng chưa gửi tài liệu mật trước khi được luật sư hướng dẫn phương thức phù hợp.</p>
+<section class="ls-section ls-section--cream" aria-labelledby="khi-goi-title"><div class="container ls-split">
+  <div>
+    <div class="ls-head"><h2 class="h2" id="khi-goi-title">Khi gọi, anh chị chỉ cần nói</h2><p>Không cần chuẩn bị cầu kỳ. Ba điều dưới đây giúp luật sư hiểu nhanh việc của anh chị.</p></div>
+    <ol class="ls-tips">
+      <li><strong>Chuyện gì đang xảy ra</strong> – kể ngắn gọn, theo thứ tự trước sau.</li>
+      <li><strong>Đang có giấy tờ gì</strong> – hợp đồng, giấy mời, quyết định, tin nhắn…</li>
+      <li><strong>Có hạn chót nào không</strong> – ngày phải lên làm việc, ngày hết hạn kháng cáo, ngày ký hợp đồng.</li>
+    </ol>
+  </div>
+  <div class="ls-stack">
+    <div class="ls-note"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg><p><strong>Thông tin được giữ kín:</strong> luật sư có nghĩa vụ giữ bí mật thông tin của anh chị ngay từ cuộc trao đổi đầu tiên (Điều 25 Luật Luật sư).</p></div>
+    <div class="ls-note"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>Lưu ý:</strong> trao đổi ban đầu chưa làm phát sinh quan hệ luật sư – khách hàng. Vui lòng chưa gửi tài liệu mật trước khi được luật sư hướng dẫn cách gửi phù hợp.</p></div>
+  </div>
+</div></section>
+
+<section class="ls-section" id="ban-do" aria-labelledby="van-phong-title"><div class="container ls-office">
+  <div class="ls-office__info">
+    <div class="ls-head"><h2 class="h2" id="van-phong-title">Văn phòng Luật Sư Nam</h2><p>Anh chị vui lòng gọi điện hoặc nhắn Zalo trước khi đến để luật sư sắp xếp thời gian tiếp chu đáo.</p></div>
+    <ul class="ls-office__list">
+      <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><div><strong>Địa chỉ</strong><p>22c Vũ Ngọc Phan, Phường Bình Lợi Trung, Thành phố Hồ Chí Minh</p></div></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><div><strong>Hotline, Zalo</strong><p><a href="tel:0983498499">0983 498 499</a></p><small>Ưu tiên gọi trực tiếp với việc gấp</small></div></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-mail"/></svg><div><strong>Email</strong><p><a href="mailto:luatsunam.hcm@gmail.com">luatsunam.hcm@gmail.com</a></p></div></li>
+      <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><div><strong>Giờ làm việc</strong><p>Thứ 2 – Thứ 6: 08:00 – 17:30</p><small>Ngoài giờ và cuối tuần: vui lòng liên hệ trước qua hotline hoặc Zalo</small></div></li>
+    </ul>
+    <div class="map-links">
+      <a class="btn btn--primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg> Chỉ đường</a>
+      <a class="btn btn--outline" href="https://www.google.com/maps/search/?api=1&amp;query=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener">Mở Google Maps</a>
     </div>
   </div>
-</section>
-
-<section class="section" id="ban-do">
-  <div class="container map-wrap">
-    <div class="map-wrap__copy reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Đường đến văn phòng</p>
-        <h2 class="h2">Bản đồ vị trí</h2>
-      </div>
-      <p class="split__text">Vui lòng gọi điện hoặc nhắn Zalo trước khi đến để luật sư phụ trách bố trí thời gian tiếp bạn chu đáo.</p>
-      <div class="map-links">
-        <a class="btn btn--primary btn--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener">Chỉ đường <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        <a class="btn btn--outline btn--sm" href="https://www.google.com/maps/search/?api=1&amp;query=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener">Mở trong Google Maps</a>
-      </div>
-    </div>
-    <div class="map reveal" data-map="https://www.google.com/maps?q=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh&amp;hl=vi&amp;z=17&amp;output=embed">
-      <button class="map__load" type="button">
-        <svg class="map__pin" aria-hidden="true"><use href="#i-pin"/></svg>
-        <strong>Hiển thị bản đồ Google Maps</strong>
-        <small>22c Vũ Ngọc Phan, Phường Bình Lợi Trung, Thành phố Hồ Chí Minh</small>
-        <span class="map__note">Bản đồ chỉ tải khi bạn bấm, để hạn chế chia sẻ dữ liệu với bên thứ ba.</span>
-      </button>
-    </div>
+  <div class="map" data-map="https://www.google.com/maps?q=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh&amp;hl=vi&amp;z=17&amp;output=embed">
+    <button class="map__load" type="button">
+      <svg class="map__pin" aria-hidden="true"><use href="#i-pin"/></svg>
+      <strong>Bấm để xem bản đồ</strong>
+      <small>22c Vũ Ngọc Phan, Phường Bình Lợi Trung, Thành phố Hồ Chí Minh</small>
+      <span class="map__note">Bản đồ chỉ tải khi anh chị bấm, để hạn chế chia sẻ dữ liệu với bên thứ ba.</span>
+    </button>
   </div>
-</section>
+</div></section>
 
-<section class="section section--cream">
-  <div class="container split">
-    <div class="split__intro reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Trước khi liên hệ</p>
-        <h2 class="h2">Một số điều khách hàng thường hỏi</h2>
-      </div>
-      <a class="link-arrow" href="../cau-hoi-thuong-gap/">Xem tất cả câu hỏi thường gặp <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-    </div>
-    <div class="reveal"><div class="faq"><details class="faq__item" id="bao-mat-thong-tin">
+<section class="ls-section ls-section--cream" aria-labelledby="hoi-dap-title"><div class="container ls-split ls-split--faq">
+  <div class="ls-head"><h2 class="h2" id="hoi-dap-title">Trước khi liên hệ, anh chị thường hỏi</h2><p>Thời gian phản hồi, giữ bí mật và việc cần chuẩn bị.</p><a class="link-arrow" href="../cau-hoi-thuong-gap/">Tất cả câu hỏi thường gặp <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+  <div><div class="faq"><details class="faq__item" id="bao-mat-thong-tin">
   <summary><span>Thông tin tôi cung cấp có được giữ bí mật không?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
   <div class="faq__answer"><p>Có. Luật sư không được tiết lộ thông tin về vụ việc, về khách hàng mà mình biết được trong khi hành nghề, trừ trường hợp được khách hàng đồng ý bằng văn bản hoặc pháp luật có quy định khác, theo <strong>Điều 25 Luật Luật sư</strong> và <strong>Quy tắc 7</strong> Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam.</p><p>Nghĩa vụ bảo mật áp dụng ngay từ buổi trao đổi đầu tiên, kể cả khi sau đó hai bên không ký hợp đồng dịch vụ, và vẫn tiếp tục có hiệu lực sau khi vụ việc kết thúc.</p></div>
 </details><details class="faq__item" id="chuan-bi-buoi-dau">
   <summary><span>Buổi trao đổi đầu tiên tôi cần chuẩn bị những gì?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-  <div class="faq__answer"><p>Bạn nên mang theo bản sao các tài liệu đang có: hợp đồng, giấy tờ về tài sản, thông báo hoặc quyết định đã nhận từ cơ quan nhà nước, tin nhắn và email trao đổi giữa các bên.</p><p>Quan trọng không kém là một bản tóm tắt diễn biến theo trình tự thời gian và câu trả lời cho câu hỏi: bạn mong muốn đạt được điều gì. Danh mục chi tiết có tại trang <a href="../quy-trinh-lam-viec/">Quy trình làm việc</a> và trang của từng <a href="../dich-vu/">lĩnh vực dịch vụ</a>.</p></div>
+  <div class="faq__answer"><p>Anh chị nên mang theo bản sao các giấy tờ đang có: hợp đồng, giấy tờ về tài sản, thông báo hoặc quyết định đã nhận từ cơ quan nhà nước, tin nhắn và email trao đổi giữa các bên.</p><p>Quan trọng không kém là một bản tóm tắt diễn biến theo thứ tự thời gian và câu trả lời cho câu hỏi: anh chị mong muốn đạt được điều gì. Danh mục chi tiết có tại trang <a href="../quy-trinh-lam-viec/">Quy trình làm việc</a> và trang của từng <a href="../dich-vu/">lĩnh vực dịch vụ</a>.</p></div>
+</details><details class="faq__item" id="vu-viec-ngoai-tphcm">
+  <summary><span>Công ty có nhận vụ việc ngoài Thành phố Hồ Chí Minh không?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+  <div class="faq__answer"><p>Có. Luật sư Việt Nam được hành nghề trên phạm vi toàn quốc, nên chúng tôi nhận tư vấn và tham gia tố tụng tại các tỉnh, thành phố khác.</p><p>Với vụ việc ở xa, phần lớn công đoạn tư vấn và chuẩn bị hồ sơ có thể thực hiện trực tuyến; chi phí đi lại (nếu có) được thông báo và thống nhất trước khi phát sinh.</p></div>
 </details><details class="faq__item" id="thoi-gian-phan-hoi">
   <summary><span>Liên hệ luật sư bằng cách nào và bao lâu được phản hồi?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-  <div class="faq__answer"><p>Website chỉ cung cấp thông tin pháp lý tham khảo, không nhận yêu cầu tư vấn trực tuyến. Bạn liên hệ trực tiếp qua hotline hoặc Zalo <a href="https://zalo.me/0983498499">0983 498 499</a>; tin nhắn Zalo và email được phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc. Với vụ việc khẩn cấp, đặc biệt là <a href="../dich-vu/hinh-su/">vụ án hình sự</a> hoặc sắp hết thời hạn kháng cáo, bạn nên gọi trực tiếp hotline <a href="tel:0983498499">0983 498 499</a>.</p><p>Lưu ý: việc trao đổi ban đầu qua điện thoại, Zalo hoặc email chưa làm phát sinh quan hệ luật sư – khách hàng. Quan hệ này chỉ hình thành khi hai bên ký kết hợp đồng dịch vụ pháp lý.</p></div>
+  <div class="faq__answer"><p>Website chỉ cung cấp thông tin pháp lý tham khảo, không nhận yêu cầu tư vấn trực tuyến. Anh chị liên hệ trực tiếp qua hotline hoặc Zalo <a href="https://zalo.me/0983498499">0983 498 499</a>; tin nhắn Zalo và email được phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc. Với việc gấp, đặc biệt là <a href="../dich-vu/hinh-su/">vụ án hình sự</a> hoặc sắp hết thời hạn kháng cáo, anh chị nên gọi trực tiếp hotline <a href="tel:0983498499">0983 498 499</a>.</p><p>Lưu ý: việc trao đổi ban đầu qua điện thoại, Zalo hoặc email chưa làm phát sinh quan hệ luật sư – khách hàng. Quan hệ này chỉ hình thành khi hai bên ký kết hợp đồng dịch vụ pháp lý.</p></div>
 </details></div></div>
-  </div>
-</section>
+</div></section>
 
 </main>
 

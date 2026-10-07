@@ -37,9 +37,7 @@
 <link rel="stylesheet" href="../../assets/css/nam-theme.css?v=020d165c">
 <link rel="stylesheet" href="../../assets/css/mobile.css?v=79ecbf48">
 <link rel="stylesheet" href="../../assets/css/navigation.css?v=e8161ad4">
-<link rel="stylesheet" href="../../assets/css/reader-design.css?v=05081dca">
-
-
+<link rel="stylesheet" href="../../assets/css/pages.css?v=587d1fef">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -154,7 +152,7 @@
 }
 </script>
 </head>
-<body>
+<body class="site-page article-page">
 <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -195,6 +193,10 @@
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
 </svg>
 <div class="topbar">
   <div class="container topbar__inner">
@@ -239,13 +241,12 @@
 </header>
 
 <main id="main">
-<section class="page-hero">
-  <div class="page-hero__bg" style="background-image:url('../../assets/img/hero.webp?v=20260925a')" aria-hidden="true"></div>
-  <div class="container page-hero__inner">
-    <div class="page-hero__copy">
+<section class="ls-hero ls-hero--plain">
+  <div class="container ls-hero__grid">
+    <div class="ls-hero__copy">
       <nav class="breadcrumb" aria-label="Đường dẫn"><ol><li><a href="../../">Trang chủ</a></li><li><a href="../../kien-thuc-phap-ly/">Kiến thức pháp lý</a></li><li aria-current="page">Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền</li></ol></nav>
-      <p class="eyebrow eyebrow--light">Đất đai &amp; Bất động sản</p>
-      <h1 class="page-hero__title">Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền</h1>
+      <p class="eyebrow">Đất đai &amp; Bất động sản</p>
+      <h1 class="ls-hero__title">Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền</h1>
       
       <p class="article-meta">
         <span><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg>Ban biên tập Luật Sư Nam</span>
@@ -258,10 +259,11 @@
   </div>
 </section>
 
-<div class="section section--article">
+<section class="ls-section ls-section--article">
   <div class="container article-layout">
     <article class="prose" id="noi-dung-bai-viet">
       <img class="prose__cover" src="../../assets/img/bai-viet/dat-coc-mua-ban-nha-dat.webp?v=20260925a" alt="Khu cao ốc và nhà ở tại đô thị" width="720" height="240" fetchpriority="high">
+      <div class="ls-keypoints"><p class="ls-keypoints__title"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg>Tóm tắt nhanh</p><ul><li>Bên bán từ chối thực hiện: trả lại cọc và thêm một khoản tương đương; bên mua từ chối: mất cọc – trừ khi có thỏa thuận khác.</li><li>Kiểm tra người ký có đủ quyền định đoạt, nhất là nhà đất là tài sản chung vợ chồng.</li><li>Thửa đất phải đủ điều kiện chuyển nhượng theo Luật Đất đai 2024.</li><li>Ưu tiên chuyển khoản, ghi rõ nội dung; không đặt cọc lớn khi hồ sơ chưa rõ ràng.</li></ul></div>
       <p class="prose__lead">Trong giao dịch nhà đất, tiền đặt cọc thường được chuyển trước khi các bên ký hợp đồng chuyển nhượng có công chứng, đôi khi trước cả khi bên mua được xem bản chính giấy tờ. Đây là giai đoạn phát sinh nhiều tranh chấp nhất. Bài viết giải thích cơ chế đặt cọc theo Bộ luật Dân sự 2015 và 6 điểm nên kiểm tra trước khi xuống tiền.</p>
 
 <h2 id="dat-coc-la-gi">Đặt cọc và hậu quả khi một bên không thực hiện</h2>
@@ -313,7 +315,7 @@
 
       <div class="article-disclaimer">
         <svg class="note__icon" aria-hidden="true"><use href="#i-alert"/></svg>
-        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="../../lien-he/">liên hệ luật sư</a> trước khi quyết định.</p>
+        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="../../lien-he/">hỏi luật sư</a> trước khi quyết định.</p>
       </div>
     </article>
     <aside class="article-aside">
@@ -321,12 +323,10 @@
         <p class="aside-card__title">Nội dung bài viết</p>
         <ol class="toc"><li><a href="#dat-coc-la-gi">Đặt cọc và hậu quả khi một bên không thực hiện</a></li><li><a href="#diem-1">1. Người ký có đủ quyền định đoạt không?</a></li><li><a href="#diem-2">2. Thửa đất có đủ điều kiện chuyển nhượng?</a></li><li><a href="#diem-3">3. Quy hoạch, thế chấp và các hạn chế khác</a></li><li><a href="#diem-4">4. Nội dung hợp đồng đặt cọc</a></li><li><a href="#diem-5">5. Hình thức và công chứng</a></li><li><a href="#diem-6">6. Thanh toán và lưu giữ chứng cứ</a></li><li><a href="#tranh-chap">Khi đã phát sinh tranh chấp</a></li></ol>
       </div>
-      <div class="aside-card aside-card--cta">
-        <svg class="aside-card__icon" aria-hidden="true"><use href="#i-house"/></svg>
-        <p class="aside-card__title">Cần luật sư về đất đai &amp; bất động sản?</p>
-        <p>Rà soát pháp lý dự án, giao dịch, cấp giấy chứng nhận và giải quyết tranh chấp đất đai, nhà ở.</p>
-        <a class="btn btn--primary btn--block btn--sm" href="../../dich-vu/dat-dai-bat-dong-san/">Xem dịch vụ Đất đai &amp; Bất động sản <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        <a class="aside-card__phone" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> 0983 498 499</a>
+      <div class="aside-card ls-ask">
+        <div class="ls-help__who"><img src="../../assets/img/luat-su-nam-avatar.webp?v=20260925a" alt="" width="56" height="56" loading="lazy"><p><strong>Cần hỏi về đất đai &amp; bất động sản?</strong><span>Luật sư Nguyễn Trọng Nam trực tiếp nghe anh chị trình bày</span></p></div>
+        <div class="ls-actions ls-actions--stack ls-actions--sm"><a class="btn btn--primary btn--lg" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> Gọi 0983 498 499</a><a class="btn btn--outline btn--lg" href="https://zalo.me/0983498499" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg> Nhắn Zalo</a></div>
+        <a class="link-arrow" href="../../dich-vu/dat-dai-bat-dong-san/">Xem dịch vụ Đất đai &amp; Bất động sản <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
       <div class="aside-card">
         <p class="aside-card__title">Lĩnh vực liên quan</p>
@@ -334,49 +334,37 @@
       </div>
     </aside>
   </div>
-</div>
+</section>
 
-<section class="section section--cream">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="heading-block">
-        <p class="eyebrow">Đọc tiếp</p>
-        <h2 class="h2">Bài viết khác</h2>
-      </div>
-      <a class="link-arrow" href="../../kien-thuc-phap-ly/">Tất cả bài viết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-    </div>
-    <div class="cards-2"><article class="post reveal">
+<section class="ls-section ls-section--cream" aria-labelledby="doc-tiep-title"><div class="container">
+  <div class="ls-head ls-head--row"><div><h2 class="h2" id="doc-tiep-title">Bài viết khác</h2></div><a class="link-arrow" href="../../kien-thuc-phap-ly/">Tất cả bài viết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+  <div class="ls-posts ls-posts--2"><article class="post">
   <a class="post__img" href="../../kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/" tabindex="-1" aria-hidden="true"><img src="../../assets/img/bai-viet/thoi-hieu-chia-di-san-thua-ke.webp?v=20260925a" alt="" loading="lazy" width="720" height="240"></a>
   <div class="post__body">
     <p class="post__meta"><a class="tag" href="../../dich-vu/thua-ke/">Thừa kế</a><time datetime="2026-09-15"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>15 Tháng 9, 2026</time></p>
     <h3 class="post__title"><a href="../../kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/">Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm</a></h3>
     <p>Mốc tính thời hiệu, ba loại thời hiệu tại Điều 623 Bộ luật Dân sự 2015 và điều gì xảy ra với di sản khi hết thời hạn.</p>
+    <a class="post__more" href="../../kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/" aria-hidden="true" tabindex="-1">Đọc bài <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
   </div>
-</article><article class="post reveal">
+</article><article class="post">
   <a class="post__img" href="../../kien-thuc-phap-ly/ly-hon-don-phuong/" tabindex="-1" aria-hidden="true"><img src="../../assets/img/bai-viet/ly-hon-don-phuong.webp?v=20260925a" alt="" loading="lazy" width="720" height="240"></a>
   <div class="post__body">
     <p class="post__meta"><a class="tag" href="../../dich-vu/hon-nhan-gia-dinh/">Hôn nhân &amp; Gia đình</a><time datetime="2026-09-10"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>10 Tháng 9, 2026</time></p>
     <h3 class="post__title"><a href="../../kien-thuc-phap-ly/ly-hon-don-phuong/">Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con</a></h3>
     <p>Căn cứ ly hôn theo Điều 56 Luật Hôn nhân và Gia đình 2014, hồ sơ khởi kiện, quyền nuôi con và chia tài sản chung.</p>
+    <a class="post__more" href="../../kien-thuc-phap-ly/ly-hon-don-phuong/" aria-hidden="true" tabindex="-1">Đọc bài <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
   </div>
 </article></div>
-  </div>
-</section>
+</div></section>
 
-<section class="cta">
-  <div class="container cta__inner">
-    <div>
-      <p class="eyebrow eyebrow--gold">Rà soát nhà đất</p>
-      <h2 class="cta__title">Kiểm tra trước khi ký để giảm rủi ro sau giao dịch.</h2>
-      
-      <p class="cta__text">Gửi hồ sơ hiện có để luật sư xác định các điểm cần xác minh và điều kiện cần bổ sung.</p>
-    </div>
-    <div class="cta__actions">
-      <a class="btn btn--primary btn--lg btn--outline-gold" href="../../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="cta__phone" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> 0983 498 499</a>
-    </div>
-  </div>
-</section>
+<section class="ls-contact" aria-labelledby="lien-he-ngay"><div class="container">
+<div class="ls-head ls-head--light"><h2 class="h2" id="lien-he-ngay">Kiểm tra trước khi ký để không mất tiền oan</h2><p>Chuẩn bị sẵn giấy tờ nhà đất đang có rồi gọi điện hoặc nhắn Zalo cho luật sư. Luật sư sẽ cho biết cần xác minh thêm điều gì trước khi anh chị xuống tiền.</p></div>
+<div class="ls-contact__grid">
+<a class="ls-contact__card" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>Gọi điện</span><strong>0983 498 499</strong><small>Thứ 2 – Thứ 6: 08:00 – 17:30</small></a>
+<a class="ls-contact__card" href="https://zalo.me/0983498499" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>Nhắn Zalo</span><strong>0983 498 499</strong><small>Kể ngắn gọn sự việc của anh chị</small></a>
+<a class="ls-contact__card" href="https://www.google.com/maps/dir/?api=1&amp;destination=22c%20V%C5%A9%20Ng%E1%BB%8Dc%20Phan%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20L%E1%BB%A3i%20Trung%2C%20Th%C3%A0nh%20ph%E1%BB%91%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><span>Đến văn phòng</span><strong>22c Vũ Ngọc Phan</strong><small>Phường Bình Lợi Trung, TP.HCM · Gọi trước để luật sư sắp xếp thời gian</small></a>
+</div>
+</div></section>
 
 </main>
 

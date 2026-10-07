@@ -15,17 +15,41 @@ Website tĩnh nhiều trang (HTML, CSS, JavaScript thuần), dùng giao diện m
 | `/vi-sao-chon-chung-toi/` | Bốn nguyên tắc làm việc | WebPage |
 | `/quy-trinh-lam-viec/` | Quy trình 4 bước, hồ sơ cần chuẩn bị | WebPage |
 | `/dich-vu/` | Tổng quan 8 lĩnh vực | CollectionPage, ItemList |
-| `/dich-vu/<lĩnh-vực>/` | 8 trang dịch vụ: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng | Service |
+| `/dich-vu/<lĩnh-vực>/` | 8 trang dịch vụ: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng. Mỗi trang: tình huống thường gặp, luật sư giúp gì, việc nên làm ngay, các bước, giấy tờ, hỏi đáp có dẫn điều luật | Service |
 | `/kien-thuc-phap-ly/` | Danh mục bài viết và công cụ | CollectionPage, ItemList |
-| `/kien-thuc-phap-ly/<bài-viết>/` | 3 bài viết pháp lý | Article |
+| `/kien-thuc-phap-ly/<bài-viết>/` | 3 bài viết pháp lý, mở đầu bằng khung “Tóm tắt nhanh” | Article |
 | `/bo-luat-hinh-su/` | Từ điển Bộ luật Hình sự: cách tìm kiếm, các điều thường gặp theo chủ đề, cấu trúc Bộ luật | CollectionPage (about: Legislation) |
 | `/bo-luat-hinh-su/chuong-<số>/` | 27 trang chương: danh sách điều kèm trích đoạn | CollectionPage |
 | `/bo-luat-hinh-su/dieu-<số>/` | 428 trang điều luật: quy định, bình luận, điều liên quan, bản đồ tư duy | WebPage (about: Legislation) |
 | `/cau-hoi-thuong-gap/` | 7 câu hỏi thường gặp | FAQPage |
-| `/lien-he/` | Liên hệ, biểu mẫu, bản đồ | ContactPage |
+| `/lien-he/` | Gọi điện, Zalo, email, việc gấp, văn phòng và bản đồ | ContactPage |
 | `/chinh-sach-bao-mat/`, `/dieu-khoan-su-dung/`, `/mien-tru-trach-nhiem/` | Văn bản pháp lý của website | WebPage |
 
 Mọi trang có: `title` và `description` riêng, `canonical`, Open Graph, Twitter Card, breadcrumb hiển thị kèm `BreadcrumbList`. Đường dẫn giữ nguyên như website cũ để không mất thứ hạng khi chuyển tên miền.
+
+## Giao diện thống nhất
+
+Toàn bộ website (trừ Từ điển Bộ luật Hình sự) dùng chung một hệ giao diện trong `assets/css/pages.css`, hướng tới người dân đang gặp chuyện cần luật sư:
+
+- **Giọng văn:** gọi người đọc là “anh chị”, câu ngắn, tiêu đề viết như lời nói hằng ngày (“Anh chị đang gặp chuyện gì?”); khẳng định pháp lý luôn kèm điều luật.
+- **Khung trang giống nhau:** đầu trang nền kem (đường dẫn, tiêu đề, đoạn mở đầu, thẻ “Anh chị cần hỏi ngay?” có ảnh luật sư) → các mục nội dung xen kẽ nền trắng/kem → khối liên hệ đỏ cuối trang (Gọi điện, Nhắn Zalo, Đến văn phòng).
+- **Thành phần dùng chung** (tiền tố `ls-`), sinh bởi các hàm trong `tools/build.py` và gọi được từ `src/pages/*.html` bằng token:
+
+| Token | Hiển thị |
+|---|---|
+| `{{call_buttons}}` | Nút Gọi điện + Nhắn Zalo |
+| `{{help_card}}` | Thẻ “Anh chị cần hỏi ngay?” |
+| `{{promise}}` | Dải 4 cam kết (luật sư trực tiếp, nói rõ được – mất, chi phí trước, giữ kín) |
+| `{{problems_grid}}` | 8 thẻ “Anh chị đang gặp chuyện gì?” (thứ tự: `PROBLEM_ORDER` trong `tools/data.py`) |
+| `{{field_links}}`, `{{field_links:ho-so}}` | 8 lĩnh vực dạng thẻ nhỏ (kèm neo tới mục giấy tờ) |
+| `{{faq_list:id1,id2}}` | Câu hỏi thường gặp chọn lọc |
+| `{{articles_grid}}` | Thẻ bài viết |
+| `{{contact}}` | Khối liên hệ cuối trang |
+| `{{breadcrumb}}` | Đường dẫn của trang |
+
+**Khung bề ngang và màu dùng chung cho toàn site** (kể cả Từ điển Bộ luật Hình sự) nằm cuối `assets/css/navigation.css`: mọi khối nội dung, header, footer cùng khung 1280px; chữ cạnh logo trên menu là “Công Ty Luật TNHH / Luật Sư Nam”. Logo menu dùng `assets/img/logo-mark.webp` (10 KB), mục “Về chúng tôi” ở trang chủ dùng `assets/img/logo-emblem.webp` kèm tên công ty viết bằng chữ thật; cả hai được xuất từ `assets/img/logo-provided.png` (ảnh gốc 1254px, không nạp trực tiếp lên trang).
+
+Trang Từ điển Bộ luật Hình sự giữ nguyên bộ giao diện riêng (`reader-design.css`, `bo-luat-hinh-su/tu-dien.css`); `pages.css` và các biểu tượng bổ sung không được nạp vào các trang này.
 
 ## Liên kết nội bộ
 
@@ -47,8 +71,9 @@ src/brand/goc/             Ảnh gốc chưa xử lý của banner và 8 lĩnh v
 src/pages/*.html           Nội dung các trang đơn lẻ (khối <!--meta {...} --> ở đầu là tiêu đề, mô tả)
 src/bai-viet/*.html        Nội dung bài viết
 src/bo-luat-hinh-su.html   Nội dung trang tra cứu BLHS
-assets/css/style.css       Giao diện (biến màu, phông chữ ở :root)
-assets/js/main.js          Menu, tìm kiếm, biểu mẫu (dòng đầu: WEB3FORMS_KEY), bản đồ
+assets/css/style.css       Giao diện nền (biến màu, phông chữ ở :root, header, footer)
+assets/css/pages.css       Hệ giao diện chung của mọi trang trừ Từ điển Bộ luật Hình sự
+assets/js/main.js          Menu, tìm kiếm, bản đồ, mục lục bài viết
 assets/fonts/              Be Vietnam Pro, phông sans-serif duy nhất của website (tự lưu trữ, SIL OFL 1.1)
 assets/img/                Ảnh
 bo-luat-hinh-su/           Trình đọc và dữ liệu Bộ luật Hình sự
@@ -60,9 +85,9 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 
 | Muốn sửa | Sửa tại |
 |---|---|
-| Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` (và `CONTACT_*` đầu tệp `assets/js/main.js`) |
-| Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`) |
-| Thêm bài viết | Thêm mục vào `ARTICLES`, tạo `src/bai-viet/<slug>.html`, thêm ảnh `assets/img/bai-viet/<slug>.webp` (720×240) |
+| Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` |
+| Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`); ý nghĩa từng trường ghi ở đầu danh sách. Câu trả lời trong `faq` phải dẫn điều luật cụ thể |
+| Thêm bài viết | Thêm mục vào `ARTICLES` (kèm 3–4 ý `key_points` cho khung “Tóm tắt nhanh”), tạo `src/bai-viet/<slug>.html`, thêm ảnh `assets/img/bai-viet/<slug>.webp` (720×240) |
 | Câu hỏi thường gặp | `FAQ` trong `tools/data.py` |
 | Hồ sơ luật sư | `src/pages/doi-ngu-luat-su.html` (xem ghi chú cho người quản trị trong tệp) |
 | Tên miền | `SITE_URL`, `BASE_PATH` đầu tệp `tools/data.py` |
@@ -118,7 +143,6 @@ Liên kết cũ dạng `#d173` và `#tim=…` tự chuyển sang địa chỉ m�
 ## Việc cần làm trước khi chạy chính thức
 
 - [ ] **Bật GitHub Pages**: Settings → Pages → *Deploy from a branch* → `gh-pages` / `(root)`.
-- [ ] **Kích hoạt biểu mẫu**: lấy Access Key miễn phí tại <https://web3forms.com> (nhập `luatsunam.hcm@gmail.com`), dán vào `WEB3FORMS_KEY` ở đầu `assets/js/main.js`. Khi chưa có key, biểu mẫu mở ứng dụng email của khách.
 - [ ] **Luật sư phụ trách rà soát 3 bài viết** trong `src/bai-viet/` trước khi công bố chính thức.
 - [ ] Bổ sung số Thẻ luật sư, Đoàn Luật sư tại trang Đội ngũ (chỉ công bố thông tin đã được luật sư đồng ý).
 - [ ] Thay ảnh minh họa lấy từ bản mockup (`assets/img/hero.webp`, `assets/img/dich-vu/*`, `assets/img/bai-viet/*`) bằng ảnh thật độ phân giải cao; ảnh gốc đặt trong `src/brand/goc/` rồi chạy lại `tools/make_images.py`.

@@ -1,23 +1,17 @@
 <!--meta {
   "title": "Không tìm thấy trang",
-  "description": "Trang bạn tìm không tồn tại hoặc đã được chuyển sang địa chỉ khác.",
-  "h1": "Trang bạn tìm không còn ở đây"
+  "description": "Trang anh chị tìm không tồn tại hoặc đã được chuyển sang địa chỉ khác.",
+  "h1": "Trang anh chị tìm không còn ở đây"
 } -->
-<section class="notfound">
-  <div class="container notfound__inner">
-    <p class="notfound__code">404</p>
-    <h1 class="notfound__title">Trang bạn tìm không còn ở đây</h1>
-    <p class="notfound__text">Đường dẫn có thể đã thay đổi hoặc bị nhập sai. Bạn có thể quay về trang chủ, xem các lĩnh vực hoạt động hoặc liên hệ trực tiếp để được hỗ trợ.</p>
-    <div class="notfound__actions">
-      <a class="btn btn--primary" href="{{root}}">Về trang chủ {{arrow}}</a>
-      <a class="btn btn--ghost" href="{{root}}dich-vu/">Xem lĩnh vực hoạt động</a>
-      <a class="btn btn--ghost" href="{{root}}lien-he/">Liên hệ luật sư</a>
+<section class="ls-404">
+  <div class="container">
+    <p class="ls-404__code">404</p>
+    <h1 class="ls-hero__title">Trang anh chị tìm không còn ở đây</h1>
+    <p class="ls-hero__lead">Đường dẫn có thể đã thay đổi hoặc bị gõ nhầm. Anh chị có thể chọn lĩnh vực gần với việc của mình bên dưới, hoặc gọi thẳng cho luật sư.</p>
+    <div class="ls-actions">
+      <a class="btn btn--primary btn--lg" href="tel:{{phone_tel}}">{{ico:i-phone}} Gọi {{phone}}</a>
+      <a class="btn btn--outline btn--lg" href="{{root}}">Về trang chủ</a>
     </div>
-    <ul class="notfound__links">
-      <li><a href="{{root}}kien-thuc-phap-ly/">Kiến thức pháp lý</a></li>
-      <li><a href="{{root}}bo-luat-hinh-su/">Tra cứu Bộ luật Hình sự</a></li>
-      <li><a href="{{root}}cau-hoi-thuong-gap/">Câu hỏi thường gặp</a></li>
-      <li><a href="tel:{{phone_tel}}">Gọi {{phone}}</a></li>
-    </ul>
+    {{field_links}}
   </div>
 </section>

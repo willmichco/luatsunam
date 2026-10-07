@@ -8,7 +8,7 @@
    Trang Giới thiệu – bố cục gần gũi (2026-10)
    ===================================================================== */
 .about-page .gt-hero{background:#fcf8f1;border-bottom:1px solid #eee3d2;padding:26px 0 0}
-.gt-hero__grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:center;padding:26px 0 40px}
+.gt-hero__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;padding:26px 0 40px}
 .gt-hero h1{font:600 clamp(30px,3vw,44px)/1.2 var(--font-heading);color:var(--ink);margin:10px 0 18px;letter-spacing:-.4px}
 .gt-hero h1 span{color:var(--burgundy)}
 .gt-hero__copy>p:not(.eyebrow){font-size:17px;line-height:1.75;color:#4f4547;margin:0 0 12px;max-width:600px}
@@ -16,7 +16,7 @@
 .gt-hero__buttons .btn{gap:10px}
 .gt-hero__buttons svg{width:20px;height:20px}
 .gt-portrait{margin:0;position:relative;border-radius:10px;overflow:hidden;box-shadow:0 18px 40px rgba(60,30,20,.16);border-bottom:5px solid var(--gold)}
-.gt-portrait img{display:block;width:100%;height:auto;aspect-ratio:800/812;object-fit:cover}
+.gt-portrait img{display:block;width:100%;height:auto;aspect-ratio:784/651;object-fit:cover}
 .gt-portrait figcaption{position:absolute;left:0;right:0;bottom:0;padding:44px 22px 18px;background:linear-gradient(transparent,rgba(30,12,12,.85));color:#fff;display:flex;flex-direction:column;gap:2px}
 .gt-portrait figcaption strong{font-size:19px}
 .gt-portrait figcaption span{font-size:14px;color:#f3e3c8}
@@ -65,7 +65,7 @@
 
 @media(max-width:1050px){
   .gt-hero__grid,.gt-lawyer__grid{grid-template-columns:minmax(0,1fr);gap:28px}
-  .gt-portrait{max-width:460px}
+  .gt-portrait{max-width:620px}
   .gt-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   .gt-values__grid{grid-template-columns:minmax(0,1fr)}
 }
@@ -86,3 +86,4 @@
 /* Tiêu đề cột footer bị quy tắc màu tiêu đề của trang Giới thiệu đè thành màu tối trên nền tối */
 .about-page .footer__title{color:#fff}
 .about-page .hm-head--light .h2{color:#fff}
+@media(max-width:650px){.gt-portrait{background:#fff}.gt-portrait figcaption{position:static;padding:10px 14px;background:none}.gt-portrait figcaption strong{color:var(--burgundy);font-size:16px}.gt-portrait figcaption span{color:#5f5557;font-size:13.5px}}

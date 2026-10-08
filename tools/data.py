@@ -10,11 +10,19 @@ Không hứa hẹn kết quả (Quy tắc 9.1.6 Bộ Quy tắc Đạo đức và
 """
 
 # ---------------------------------------------------------------------------
-# Cấu hình tên miền. Khi có tên miền riêng: đổi SITE_URL thành https://tenmien.vn
-# và BASE_PATH thành "/".
-# BASE_PATH là thư mục gốc của website trên máy chủ, dùng cho trang 404.html
-# (GitHub Pages phục vụ trang này ở mọi độ sâu đường dẫn nên không dùng được
-# đường dẫn tương đối). Website đang chạy tại https://willmichco.github.io/luatsunam/
+# Cấu hình tên miền.
+# SITE_URL là tên miền chính (canonical): mọi canonical, og:url, sitemap, robots.txt, schema
+# đều sinh từ đây. Website hiện chạy song song ở hai nơi:
+#   - https://luat-su-nam-phap-ly.willmich-co.chatgpt.site  (bản chính, canonical)
+#   - https://willmichco.github.io/luatsunam/               (bản sao; canonical trỏ về bản chính)
+# BASE_PATH là thư mục gốc của website trên máy chủ, chỉ dùng cho trang 404.html
+# (GitHub Pages phục vụ trang này ở mọi độ sâu đường dẫn nên không dùng được đường dẫn tương đối).
+#
+# Khi đã mua và trỏ DNS tên miền lsn.vn (CHƯA đổi trước khi lsn.vn truy cập được, vì canonical
+# trỏ tới tên miền không hoạt động sẽ khiến Google bỏ qua hoặc gỡ trang khỏi kết quả):
+#   1. SITE_URL = "https://lsn.vn", BASE_PATH = "/"
+#   2. python3 tools/build.py && python3 tools/check_seo.py
+#   3. Xem README, mục "Chuyển sang tên miền lsn.vn".
 # ---------------------------------------------------------------------------
 SITE_URL = "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site"
 BASE_PATH = "/luatsunam/"

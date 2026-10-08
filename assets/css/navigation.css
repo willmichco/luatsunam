@@ -1,0 +1,94 @@
+/* Navigation and actions only; the supplied brand lockup remains unchanged. */
+.header .header__inner{gap:24px}
+.header .nav{margin-left:auto}
+.header .nav__list{gap:4px}
+.header .nav__item{position:relative}
+.header .nav__link{display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:12px 11px;border:0;border-radius:6px;background:transparent;color:#50474b;font:500 15px/1.5 var(--font-sans);white-space:nowrap;cursor:pointer;transition:color .18s,background .18s}
+.header .nav__link::after{left:11px;right:11px;bottom:4px;height:2px;background:var(--burgundy)}
+.header .nav__link:hover,.header .nav__link.is-active,.header .nav__item.is-open>.nav__link{color:var(--burgundy)}
+.header .nav__link:hover,.header .nav__item.is-open>.nav__link{background:#f8f1e9}
+.header .nav__toggle{width:auto;height:auto;margin:0}
+.header .nav__toggle>.ico{width:14px;height:14px;flex-shrink:0}
+.header .nav__sub{top:calc(100% + 10px);left:0;min-width:320px;padding:12px;border:1px solid #e5d8c8;border-top:3px solid #b98a48;border-radius:8px;background:#fffefa;box-shadow:0 16px 40px #3420271c}
+.header .nav__sub::before{content:"";position:absolute;inset:-14px 0 auto;height:14px}
+.header .nav__sub--mega{width:590px;left:50%;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}
+.header .nav__sublink{font-size:15px;line-height:1.5;padding:14px 12px;gap:12px;border-radius:5px;min-height:50px;align-items:center}
+.header .nav__sublink small{font-size:13px;line-height:1.6;margin-top:5px;color:#756b70}
+.header .nav__subicon{width:25px;height:25px;flex-shrink:0;color:#ac1520}
+.header .nav__sublink:hover,.header .nav__sublink[aria-current=page]{background:#f6eee4;color:#a90008}
+.header .nav__suball{padding:14px 12px 4px;margin-top:6px}.header .nav__suball a{font-size:14px;min-height:30px}
+.header .nav__item:last-of-type .nav__sub{left:auto;right:0}
+.header #sub-knowledge{left:auto;right:0;width:350px}
+.js .header .nav__item.has-sub:not(.is-open)>.nav__sub{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px)}
+.js .header .nav__item.has-sub:not(.is-open)>.nav__sub--mega{transform:translate(-50%,8px)}
+.header .nav__item.is-open>.nav__sub{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.header .nav__item.is-open>.nav__sub--mega{transform:translateX(-50%)}
+.header .header__actions{gap:10px;padding-left:18px;border-left:1px solid #e6d9c9;flex-shrink:0}
+.header__search{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:10px;border:1px solid #e5dbce;background:#fffefa;color:#554b4e;border-radius:7px;font:500 14px/1.4 var(--font-sans);cursor:pointer;transition:background .18s,border-color .18s}
+.header__search .ico{width:21px;height:21px;flex-shrink:0}.header__search span{display:none}
+.header__search:hover{background:#f8f1e9;border-color:#c29c66;color:#a90008}
+.header__call{display:flex;align-items:center;justify-content:center;gap:10px;padding:9px 14px;min-height:48px;background:#bd0008;color:#fff;border:1px solid #bd0008;border-radius:7px;line-height:1.25;white-space:nowrap;transition:background .18s}
+.header__call:hover{background:#9f0007;color:#fff}.header__call>.ico{width:22px;height:22px;flex-shrink:0}
+.header__call small{display:block;font-size:12px;font-weight:400;line-height:1.3;margin-bottom:3px;color:#ffe9dd}
+.header__call strong{display:block;font-size:15px;font-weight:600;letter-spacing:.02em}
+.header :is(a,button):focus-visible{outline:2px solid #aa741f;outline-offset:4px}
+@media(min-width:1440px){.header__search span{display:inline}.header__search{padding-inline:13px}.header .nav__list{gap:6px}}
+@media(min-width:1081px) and (max-width:1240px){.header .header__inner{gap:12px}.header .nav__link{padding-inline:8px;font-size:14px;gap:5px}.header .nav__list{gap:0}.header .header__actions{padding-left:12px;gap:8px}.header__call{padding-inline:10px}.header__call>.ico{display:none}.header__call strong{font-size:14px}}
+@media(max-width:1080px){
+ .header .nav{margin-left:0;width:min(420px,100vw);padding:92px 24px 28px;background:#fffefa}
+ .header .nav__list{gap:4px}.header .nav__item{border-bottom:1px solid #e9dfd2}
+ .header .nav__link{justify-content:space-between;width:100%;padding:16px 12px;font-size:17px;min-height:56px;text-align:left;border-radius:5px}
+ .header .nav__link.is-active{background:#f8f1e9}.header .nav__toggle>.ico{width:18px;height:18px}
+ .header .nav__sub,.header .nav__sub--mega,.header #sub-knowledge{position:static;width:100%;min-width:0;margin:4px 0 12px;padding:6px;background:#f9f6f0;border:0;border-radius:6px;box-shadow:none;grid-template-columns:1fr;gap:0;transform:none!important}
+ .header .nav__sub::before{display:none}.header .nav__item:not(.is-open)>.nav__sub{display:none}.header .nav__item.is-open>.nav__sub{display:grid}
+ .header .nav__sublink{font-size:15px;min-height:48px;padding:12px}.header .nav__sublink small{font-size:13px}
+ .header .header__actions{padding-left:12px;gap:8px;margin-left:auto}.header__call{min-height:44px;padding:10px}.header__call span{display:none}
+ .header .burger{width:44px;height:44px;border:1px solid #e5dbce;border-radius:7px;background:#fffefa}
+ .header .nav__mobile-extra{border-top:1px solid #e9dfd2;margin-top:auto;padding-top:24px;gap:18px}
+ .header .nav__hotline{min-height:44px;font-size:19px;color:#a90008}.header .nav__mobile-extra .btn{min-height:48px}
+}
+@media(max-width:480px){.header .header__inner{gap:4px}.header .header__actions{padding-left:0;border:0;gap:2px}.header__call{display:none}.header__search{border:0;width:40px;padding:9px}.header .burger{width:40px;border:0}.header .nav{padding-inline:20px}}
+@media(prefers-reduced-motion:reduce){.header .nav,.header .nav__sub,.header .nav__link,.header__search,.header__call{transition:none}}
+
+.header .nav__sub{transition:none}
+
+.header .nav__sub--mega{width:620px}
+.nav__group-title{font-size:13px;font-weight:600;line-height:1.5;letter-spacing:.025em;color:#8b652e;padding:8px 12px 10px;margin:0;text-transform:uppercase}
+.header .nav__group>ul{list-style:none;margin:0;padding:0}
+@media(max-width:1080px){.header .nav__sub--mega{width:100%}.header .nav__group+.nav__group{border-top:1px solid #e6d9c9;margin-top:8px;padding-top:8px}}
+@media(min-width:1241px){.header .header__inner{gap:16px}.header .nav__link{padding-inline:9px}.header .nav__list{gap:4px}.header .header__actions{padding-left:12px}}
+@media(min-width:1081px){.header .nav__group .nav__sublink{min-height:72px;padding-block:12px}}
+
+/* =====================================================================
+   Khung bề ngang thống nhất toàn website: header, nội dung, footer và
+   Từ điển Bộ luật Hình sự cùng một khung 1280px (nội dung 1216px).
+   ===================================================================== */
+@media(min-width:769px){
+ .container,body.tdl-page .container,body.tdl-page .tdl-wrap{max-width:1280px;padding-inline:32px}
+}
+@media(max-width:380px){.container{padding-inline:16px}}
+
+/* Chữ cạnh logo trên thanh menu: "Công Ty Luật TNHH" / "Luật Sư Nam" */
+.header .logo__text{display:flex;flex-direction:column;justify-content:center}
+.header .logo__pre{display:block;font:600 13px/1.2 var(--font-heading);letter-spacing:.06em;text-transform:uppercase;color:#806253;white-space:nowrap;margin-bottom:5px}
+.header .logo__name{text-transform:uppercase}
+@media(min-width:1051px) and (max-width:1300px){.header .logo__pre{font-size:11px;margin-bottom:4px}}
+@media(max-width:768px){.header .logo__pre{font-size:10px;letter-spacing:.04em;margin-bottom:3px}}
+@media(max-width:359px){.header .logo__pre{font-size:8.5px}}
+
+
+/* =====================================================================
+   Đồng bộ màu toàn website: bỏ các tông xám xanh / navy còn sót từ
+   giao diện cũ, thay bằng tông kem – nâu đỏ của thương hiệu.
+   ===================================================================== */
+.footer{color:#d8c8c0}
+.footer__about{color:#cdbbb3}
+.footer__about strong{color:#f3e6dc}
+.footer__links a,.footer__contact{color:#e3d4cc}
+.footer__disclaimer p{color:#bba79f}
+.footer__disclaimer strong{color:#e3d4cc}
+.footer__bottom{color:#bba79f}
+.footer__legal a{color:#cdbbb3}
+.overlay{background:rgba(40,18,20,.72)}
+.nam-hero-copy>p:not(.eyebrow){color:#4f4547}
+body.tdl-page .tdl-mm__nodes{border-left-color:#d6ab69}

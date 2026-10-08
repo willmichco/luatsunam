@@ -215,8 +215,11 @@ def logo_html(r, tag=None):
     else:
         text = f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>'
         lazy = ' loading="lazy" decoding="async"'
-    return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
-      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="Logo {FIRM["legal_name"]}"{lazy}>
+    # Ảnh logo để alt rỗng: liên kết đã có aria-label và chữ hiển thị, alt thêm vào làm tên đọc
+    # của liên kết lệch với chữ nhìn thấy (WCAG 2.5.3). Logo cho Google khai báo trong schema.
+    label = FIRM["legal_name"] if tag is None else f'{FIRM["short_name"]} – {tag}'  # chứa đúng chữ hiển thị
+    return f"""<a class="logo" href="{r or './'}" aria-label="{label} – Trang chủ">
+      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt=""{lazy}>
       <span class="logo__text">{text}</span>
     </a>"""
 
@@ -621,9 +624,34 @@ def jsonld(page):
 # ---------------------------------------------------------------------------
 # Khung trang
 # ---------------------------------------------------------------------------
+_BUNDLES = {}
+REL_URL_RE = re.compile(r"""url\((?!\s*["']?data:)""")
+
+
+def css_bundle(name, files):
+    """Gộp các tệp CSS (giữ nguyên thứ tự cascade) thành assets/css/bundle-<name>.css: trình duyệt chỉ
+    tải một tệp chặn hiển thị thay vì 5–6. Tệp gộp nằm trong assets/css nên url(../img/…) của các tệp
+    cùng thư mục vẫn đúng; tệp nguồn ở thư mục khác (tu-dien.css) không được chứa url() tương đối."""
+    key = (name, tuple(files))
+    if key not in _BUNDLES:
+        parts = []
+        for f in files:
+            with open(os.path.join(ROOT, f), encoding="utf-8") as fh:
+                css = fh.read()
+            if not f.startswith("assets/css/") and REL_URL_RE.search(css):
+                raise ValueError(f"{f}: url() tương đối sẽ sai đường dẫn khi gộp vào assets/css/")
+            parts.append(f"/* ---- {f} ---- */\n{css.strip()}\n")
+        text = ("/* Tệp sinh tự động bởi tools/build.py, không sửa trực tiếp. Sửa các tệp nguồn: "
+                + ", ".join(files) + " */\n" + "".join(parts))
+        out = f"assets/css/bundle-{name}.css"
+        write(out, text)
+        _BUNDLES[key] = (out, hashlib.md5(text.encode("utf-8")).hexdigest()[:8])
+    return _BUNDLES[key]
+
+
 def layout(page):
     r = page.get("root_override", "../" * page["path"].count("/"))
-    css_v, js_v = file_hash("assets/css/style.css"), file_hash("assets/js/main.js")
+    js_v = file_hash("assets/js/main.js")
     url = abs_url(page["path"])
     # Ảnh chia sẻ luôn dùng JPG 1200×630 để tương thích Facebook, Zalo, LinkedIn
     image = abs_url(asset_ref("assets/img/og-image.jpg"))
@@ -647,8 +675,9 @@ def layout(page):
     # Mọi trang còn lại dùng chung một hệ giao diện: pages.css.
     reader = page.get("body_class") == "tdl-page"
     sheets = ("nam-theme", "mobile", "navigation", "reader-design") if reader else ("nam-theme", "mobile", "navigation", "pages")
-    styles = f'<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{extra_head}\n' + "\n".join(
-        f'<link rel="stylesheet" href="{r}assets/css/{n}.css?v={file_hash(f"assets/css/{n}.css")}">' for n in sheets)
+    bundle, bundle_v = css_bundle("reader" if reader else "site",
+                                  ["assets/css/style.css"] + page.get("extra_css", []) + [f"assets/css/{n}.css" for n in sheets])
+    styles = f'<link rel="stylesheet" href="{r}{bundle}?v={bundle_v}">{extra_head}'
     if reader:
         styles += "\n\n"
         body_cls = f' class="{page["body_class"]}"'
@@ -1160,7 +1189,9 @@ def blhs_pages():
             rd.refs.setdefault(i, {}).setdefault("services", []).append((f'dich-vu/{s["slug"]}/', label))
     common = {
         "section": "knowledge", "page_hero": False, "body_class": "tdl-page", "index_k": False,
-        "extra_head": '\n<link rel="stylesheet" href="{{root}}bo-luat-hinh-su/tu-dien.css?v=' + file_hash("bo-luat-hinh-su/tu-dien.css") + '">',
+        "extra_css": ["bo-luat-hinh-su/tu-dien.css"],
+        # Ảnh nền dải tiêu đề là phần tử LCP; khai báo trong reader-design.css nên phải nạp trước (cùng ?v=)
+        "preload_images": ["assets/img/reader-banner.webp?v=20260925a"],
         "scripts": ["bo-luat-hinh-su/lx-core.js?v=" + file_hash("bo-luat-hinh-su/lx-core.js"),
                     "bo-luat-hinh-su/tu-dien.js?v=" + file_hash("bo-luat-hinh-su/tu-dien.js")],
     }

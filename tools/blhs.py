@@ -432,7 +432,7 @@ class Renderer:
       {self.ico("i-search", "tdl-search__icon")}
       <input id="tdl-q" name="q" type="search" placeholder="Tìm điều luật, tội danh, từ khóa…" role="combobox" aria-expanded="false" aria-controls="tdl-sug" aria-autocomplete="list" enterkeyhint="search">
       <kbd class="tdl-search__key" aria-hidden="true">/</kbd>
-      <button class="btn btn--primary tdl-search__btn" type="submit">{self.ico("i-search")} <span>Tìm kiếm</span></button>
+      <button class="btn btn--primary tdl-search__btn" type="submit" aria-label="Tìm kiếm">{self.ico("i-search")} <span>Tìm kiếm</span></button>
       <div class="tdl-sug" id="tdl-sug" role="listbox" aria-label="Gợi ý" hidden></div>
     </form>
     <div class="tdl-band__examples"><span>Ví dụ:</span><a href="{r}{HUB}dieu-17/">Điều 17</a><a href="{r}{HUB}?q=đồng%20phạm">đồng phạm</a><a href="{r}{HUB}?q=người%20giúp%20sức">người giúp sức</a><a href="{r}{HUB}?q=phạm%20tội%20có%20tổ%20chức">phạm tội có tổ chức</a><a href="{r}{HUB}?q=lừa%20đảo">lừa đảo</a><a href="{r}{HUB}?q=tham%20ô">tham ô</a></div>

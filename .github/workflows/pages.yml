@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Chặn xuất bản khi trang đã sinh có lỗi SEO: canonical sai tên miền, liên kết nội bộ hỏng,
+      # JSON-LD hỏng, thiếu title/description/H1, sitemap lệch. Xem tools/check_seo.py.
+      - name: Check SEO
+        run: python3 tools/check_seo.py
       - name: Publish static site to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:

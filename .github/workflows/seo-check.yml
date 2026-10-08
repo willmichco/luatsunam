@@ -1,0 +1,18 @@
+name: SEO check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Trang đã sinh phải khớp mã nguồn: build lại rồi so sánh, sau đó kiểm tra SEO
+      - name: Rebuild and compare
+        run: |
+          python3 tools/build.py
+          git diff --stat --exit-code -- . ':!tools/lastmod.json' || { echo "::error::Trang đã sinh chưa khớp mã nguồn: chạy python3 tools/build.py rồi commit"; exit 1; }
+      - name: Check SEO
+        run: python3 tools/check_seo.py

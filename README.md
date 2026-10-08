@@ -75,13 +75,14 @@ src/bai-viet/*.html        Nội dung bài viết
 src/bo-luat-hinh-su.html   Nội dung trang tra cứu BLHS
 assets/css/style.css       Giao diện nền (biến màu, phông chữ ở :root, header, footer)
 assets/css/pages.css       Hệ giao diện chung của mọi trang trừ Từ điển Bộ luật Hình sự
+assets/css/bundle-*.css    Tệp CSS gộp (build.py sinh từ các tệp CSS nguồn): mỗi trang chỉ tải một tệp CSS
 assets/js/main.js          Menu, tìm kiếm, bản đồ, mục lục bài viết
 assets/fonts/              Be Vietnam Pro, phông sans-serif duy nhất của website (tự lưu trữ, SIL OFL 1.1)
 assets/img/                Ảnh
 bo-luat-hinh-su/           Trình đọc và dữ liệu Bộ luật Hình sự
 ```
 
-Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanifest`, `assets/search-index.json` do `tools/build.py` sinh ra. **Không sửa trực tiếp các tệp này**, sửa nguồn rồi chạy lại script.
+Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanifest`, `assets/search-index.json`, `assets/css/bundle-*.css`, `tools/lastmod.json` do `tools/build.py` sinh ra. **Không sửa trực tiếp các tệp này**, sửa nguồn rồi chạy lại script.
 
 ## Sửa nội dung thường gặp
 
@@ -155,6 +156,12 @@ Liên kết cũ dạng `#d173` và `#tim=…` tự chuyển sang địa chỉ m�
 - [ ] Thay ảnh minh họa lấy từ bản mockup (`assets/img/hero.webp`, `assets/img/dich-vu/*`, `assets/img/bai-viet/*`) bằng ảnh thật độ phân giải cao; ảnh gốc đặt trong `src/brand/goc/` rồi chạy lại `tools/make_images.py`.
 - [ ] Chuyển sang tên miền lsn.vn: xem mục dưới.
 - [ ] Chuyển hướng hoặc đặt `noindex` cho website cũ (`willmichco.github.io/Website/`) để tránh trùng lặp nội dung với website mới.
+- [ ] **Google Search Console**: xác minh tên miền, nộp `sitemap.xml`, theo dõi mục *Trang* (lập chỉ mục) và *Trải nghiệm trên trang* (Core Web Vitals) sau 2–4 tuần.
+- [ ] **Google Business Profile** (Google Maps): tạo hoặc nhận hồ sơ công ty, tên, địa chỉ, số điện thoại ghi đúng như trên website; quan trọng nhất cho tìm kiếm "luật sư gần đây", "luật sư TP.HCM".
+- [ ] Kiểm tra dữ liệu có cấu trúc trên bản chạy thật bằng [Rich Results Test](https://search.google.com/test/rich-results) và [Schema Validator](https://validator.schema.org/) (trang chủ, một trang dịch vụ, một bài viết, một trang điều luật).
+- [ ] Đo tốc độ bản chạy thật bằng [PageSpeed Insights](https://pagespeed.web.dev/).
+- [ ] Luật sư soát lại mô tả "khung hình phạt, mức cao nhất" tự sinh trên trang điều luật (`penalty_summary` trong `tools/blhs.py`).
+- [ ] Viết nội dung tab "Thực tiễn áp dụng" (góc nhìn luật sư, bản án, tình huống) cho các điều được tìm nhiều: 173, 174, 134, 260, 51, 65.
 
 > ⚖️ Khi sửa nội dung, không thêm cụm cam kết kết quả (“cam kết thắng kiện”…) và không đăng số liệu chưa kiểm chứng. Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam nghiêm cấm luật sư hứa hẹn bảo đảm kết quả vụ việc (Quy tắc 9.1.6).
 
@@ -171,4 +178,6 @@ Chỉ làm khi lsn.vn đã mua và truy cập được. Trước đó giữ nguy
 
 ## Triển khai
 
-Mỗi lần push vào `main`, GitHub Actions (`.github/workflows/pages.yml`) xuất bản website sang nhánh `gh-pages` (bỏ qua `src/`, `tools/`, README).
+Mỗi lần push vào `main`, GitHub Actions (`.github/workflows/pages.yml`) chạy `tools/check_seo.py` rồi xuất bản website sang nhánh `gh-pages` (bỏ qua `src/`, `tools/`, README). Còn LỖI SEO thì không xuất bản.
+
+Mỗi pull request được `.github/workflows/seo-check.yml` kiểm tra: build lại phải ra đúng các tệp đã commit (tránh quên chạy build), và `check_seo.py` không có LỖI.

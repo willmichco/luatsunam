@@ -118,7 +118,7 @@ def main():
             n_img += 1
             if " alt=" not in tag:
                 errors["ảnh thiếu thuộc tính alt"].append(rel)
-            elif 'alt=""' in tag:
+            elif 'alt=""' in tag and "logo__img" not in tag:  # logo trong liên kết có aria-label: trang trí
                 warns["ảnh alt rỗng (ảnh trang trí)"].append(rel)
             if "width=" not in tag or "height=" not in tag:
                 warns["ảnh thiếu width/height (gây xô lệch bố cục)"].append(rel)

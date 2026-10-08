@@ -58,3 +58,37 @@
 @media(max-width:1080px){.header .nav__sub--mega{width:100%}.header .nav__group+.nav__group{border-top:1px solid #e6d9c9;margin-top:8px;padding-top:8px}}
 @media(min-width:1241px){.header .header__inner{gap:16px}.header .nav__link{padding-inline:9px}.header .nav__list{gap:4px}.header .header__actions{padding-left:12px}}
 @media(min-width:1081px){.header .nav__group .nav__sublink{min-height:72px;padding-block:12px}}
+
+/* =====================================================================
+   Khung bề ngang thống nhất toàn website: header, nội dung, footer và
+   Từ điển Bộ luật Hình sự cùng một khung 1280px (nội dung 1216px).
+   ===================================================================== */
+@media(min-width:769px){
+ .container,body.tdl-page .container,body.tdl-page .tdl-wrap{max-width:1280px;padding-inline:32px}
+}
+@media(max-width:380px){.container{padding-inline:16px}}
+
+/* Chữ cạnh logo trên thanh menu: "Công Ty Luật TNHH" / "Luật Sư Nam" */
+.header .logo__text{display:flex;flex-direction:column;justify-content:center}
+.header .logo__pre{display:block;font:600 13px/1.2 var(--font-heading);letter-spacing:.06em;text-transform:uppercase;color:#806253;white-space:nowrap;margin-bottom:5px}
+.header .logo__name{text-transform:uppercase}
+@media(min-width:1051px) and (max-width:1300px){.header .logo__pre{font-size:11px;margin-bottom:4px}}
+@media(max-width:768px){.header .logo__pre{font-size:10px;letter-spacing:.04em;margin-bottom:3px}}
+@media(max-width:359px){.header .logo__pre{font-size:8.5px}}
+
+
+/* =====================================================================
+   Đồng bộ màu toàn website: bỏ các tông xám xanh / navy còn sót từ
+   giao diện cũ, thay bằng tông kem – nâu đỏ của thương hiệu.
+   ===================================================================== */
+.footer{color:#d8c8c0}
+.footer__about{color:#cdbbb3}
+.footer__about strong{color:#f3e6dc}
+.footer__links a,.footer__contact{color:#e3d4cc}
+.footer__disclaimer p{color:#bba79f}
+.footer__disclaimer strong{color:#e3d4cc}
+.footer__bottom{color:#bba79f}
+.footer__legal a{color:#cdbbb3}
+.overlay{background:rgba(40,18,20,.72)}
+.nam-hero-copy>p:not(.eyebrow){color:#4f4547}
+body.tdl-page .tdl-mm__nodes{border-left-color:#d6ab69}

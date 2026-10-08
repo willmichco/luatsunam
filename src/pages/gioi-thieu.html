@@ -1,12 +1,7 @@
 <!--meta {
   "title": "Giới thiệu công ty và đội ngũ – Luật Sư Nam",
   "description": "Công Ty Luật TNHH Luật Sư Nam do Luật sư Nguyễn Trọng Nam điều hành, thành lập 01/2019 tại TP.HCM. Chặng đường nghề nghiệp, đội ngũ và cách làm việc với khách hàng.",
-  "eyebrow": "Về chúng tôi",
-  "h1": "Công Ty Luật TNHH <em>Luật Sư Nam</em>",
-  "lead": "Đồng hành cùng cá nhân và doanh nghiệp bằng sự cẩn trọng, trách nhiệm và giải pháp pháp lý phù hợp với từng vụ việc.",
-  "hero": {
-    "image": "assets/img/van-phong.webp"
-  },
+  "h1": "Văn phòng luật do Luật sư Nguyễn Trọng Nam trực tiếp điều hành",
   "image": "assets/img/luat-su-nam-van-phong.webp",
   "page_hero": false,
   "body_class": "about-page",
@@ -14,18 +9,15 @@
     "assets/img/luat-su-nam-van-phong.webp"
   ]
 } -->
-<section class="gt-hero" id="cong-ty"><div class="container">
-<nav class="ab-crumb" aria-label="Đường dẫn"><a href="{{root}}">Trang chủ</a><span>/</span><span>Giới thiệu</span></nav>
+<section class="ls-hero" id="cong-ty"><div class="container">
+{{breadcrumb}}
 <div class="gt-hero__grid">
 <div class="gt-hero__copy">
 <p class="eyebrow">Giới thiệu Luật Sư Nam</p>
-<h1>Văn phòng luật do<br><span>Luật sư Nguyễn Trọng Nam</span><br>trực tiếp điều hành</h1>
+<h1 class="ls-hero__title">Văn phòng luật do<br><em>Luật sư Nguyễn Trọng Nam</em><br>trực tiếp điều hành</h1>
 <p>Công Ty Luật TNHH Luật Sư Nam thành lập tháng 01 năm 2019 tại Thành phố Hồ Chí Minh. Chúng tôi tư vấn pháp luật, tham gia tố tụng và đại diện theo ủy quyền cho người dân và doanh nghiệp.</p>
 <p>Luật sư Nguyễn Trọng Nam (sinh năm 1976, quê Hà Nội) là Giám đốc, người đại diện theo pháp luật của công ty, gắn bó với TP. Hồ Chí Minh từ năm 1999. Nhiều năm trực tiếp làm thủ tục và giải quyết tranh chấp đất đai, thừa kế giúp luật sư hiểu rõ những vướng mắc thực tế mà người dân thường gặp.</p>
-<div class="gt-hero__buttons">
-<a class="btn btn--primary btn--lg" href="tel:{{phone_tel}}">{{ico:i-phone}} Gọi {{phone}}</a>
-<a class="btn btn--outline btn--lg" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}} Nhắn Zalo</a>
-</div>
+{{call_buttons}}
 </div>
 <figure class="gt-portrait"><img src="{{root}}assets/img/luat-su-nam-van-phong.webp?v=20261007a" alt="Luật sư Nguyễn Trọng Nam làm việc tại văn phòng Luật Sư Nam" width="784" height="651" fetchpriority="high"><figcaption><strong>Luật sư Nguyễn Trọng Nam</strong><span>Giám đốc · Tư vấn, bào chữa, tranh tụng</span></figcaption></figure>
 </div>
@@ -37,8 +29,8 @@
 </ul>
 </div></section>
 
-<section class="gt-section gt-journey" id="hanh-trinh" aria-labelledby="career-title"><div class="container">
-<div class="hm-head"><h2 class="h2" id="career-title">Chặng đường hơn 25 năm tại TP. Hồ Chí Minh</h2><p>Những dấu mốc trong quá trình làm việc của Luật sư Nguyễn Trọng Nam và sự ra đời của Công Ty Luật TNHH Luật Sư Nam.</p></div>
+<section class="ls-section ls-section--cream" id="hanh-trinh" aria-labelledby="career-title"><div class="container">
+<div class="ls-head"><h2 class="h2" id="career-title">Chặng đường hơn 25 năm tại TP. Hồ Chí Minh</h2><p>Những dấu mốc trong quá trình làm việc của Luật sư Nguyễn Trọng Nam và sự ra đời của Công Ty Luật TNHH Luật Sư Nam.</p></div>
 <ol class="gt-timeline">
 <li><time>09/1999</time><div><h3>Bắt đầu công tác tại TP. Hồ Chí Minh</h3><p>Từ Hà Nội vào Thành phố Hồ Chí Minh, làm nhân viên giao nhận hàng hóa xuất nhập khẩu tại Công ty TNHH Thương mại Dịch vụ Bình Thiên.</p></div></li>
 <li><time>02/2001</time><div><h3>Công ty TNHH Tư vấn Nhân Quyền</h3><p>Làm việc trong lĩnh vực tư vấn chính sách thuế, xuất nhập khẩu; trải qua các vị trí giao nhận, trưởng phòng, quản lý và điều hành công ty.</p></div></li>
@@ -47,9 +39,9 @@
 </ol>
 </div></section>
 
-<section class="gt-section gt-people" id="doi-ngu-luat-su" aria-labelledby="team-title"><div class="container">
-<div class="hm-head"><h2 class="h2" id="team-title">Đội ngũ Luật Sư Nam</h2><p>Một văn phòng gọn nhẹ, hai người cùng theo một hồ sơ: luật sư lo phần chuyên môn, chuyên viên pháp lý lo giấy tờ và tiến độ.</p></div>
-<div class="gt-team__grid">
+<section class="ls-section gt-people" id="doi-ngu-luat-su" aria-labelledby="team-title"><div class="container">
+<div class="ls-head"><h2 class="h2" id="team-title">Đội ngũ Luật Sư Nam</h2><p>Một văn phòng gọn nhẹ, hai người cùng theo một hồ sơ: luật sư lo phần chuyên môn, chuyên viên pháp lý lo giấy tờ và tiến độ.</p></div>
+<div class="ls-grid ls-grid--2">
 <article class="gt-card"><span class="gt-mark" aria-hidden="true">N</span><span class="gt-card__label">Giám đốc · Luật sư điều hành</span><h3>Luật sư Nguyễn Trọng Nam</h3><p>Trực tiếp nghe sự việc, tư vấn phương án, bào chữa và tranh tụng; chịu trách nhiệm chuyên môn với từng hồ sơ.</p></article>
 <article class="gt-card" id="nguyen-trong-nam-minh"><span class="gt-mark" aria-hidden="true">M</span><span class="gt-card__label">Chuyên viên pháp lý</span><h3 id="minh-title">Nguyễn Trọng Nam Minh</h3><p>Hỗ trợ luật sư chuẩn bị, rà soát giấy tờ; theo dõi tiến độ hồ sơ và giữ liên lạc với anh chị.</p></article>
 </div>
@@ -57,18 +49,18 @@
 <h3 class="gt-promise__title" id="values-title">Khi làm việc với chúng tôi, anh chị sẽ được</h3>
 <div class="gt-promise__grid">
 <div class="gt-promise__item"><span class="gt-mark gt-mark--line">{{ico:i-chat}}</span><div><h4>Lắng nghe và làm rõ</h4><p>Luật sư nghe anh chị kể sự việc, xem hồ sơ và cùng xác định điều anh chị thật sự cần ngay từ buổi đầu.</p></div></div>
-<div class="gt-promise__item"><span class="gt-mark gt-mark--line">{{ico:i-shield-check}}</span><div><h4>Minh bạch và bảo mật</h4><p>Được nói rõ phương án, rủi ro và thù lao trước khi làm; thông tin của anh chị được giữ kín theo Luật Luật sư.</p></div></div>
+<div class="gt-promise__item"><span class="gt-mark gt-mark--line">{{ico:i-lock}}</span><div><h4>Minh bạch và bảo mật</h4><p>Được nói rõ phương án, rủi ro và thù lao trước khi làm; thông tin của anh chị được giữ kín theo Luật Luật sư.</p></div></div>
 <div class="gt-promise__item"><span class="gt-mark gt-mark--line">{{ico:i-steps}}</span><div><h4>Theo sát từng hồ sơ</h4><p>Luật sư phụ trách chuyên môn từ đầu đến cuối; chuyên viên pháp lý theo dõi từng mốc và báo tiến độ cho anh chị.</p></div></div>
 </div>
-<p class="gt-promise__more"><a class="link-arrow" href="{{root}}vi-sao-chon-chung-toi/">Nguyên tắc làm việc {{arrow}}</a> <a class="link-arrow" href="{{root}}quy-trinh-lam-viec/">Quy trình và giấy tờ cần chuẩn bị {{arrow}}</a></p>
+<p class="ls-links"><a class="link-arrow" href="{{root}}vi-sao-chon-chung-toi/">Nguyên tắc làm việc {{arrow}}</a> <a class="link-arrow" href="{{root}}quy-trinh-lam-viec/">Quy trình và giấy tờ cần chuẩn bị {{arrow}}</a></p>
 </div>
 </div></section>
 
-<section class="hm-contact" aria-labelledby="contact-title"><div class="container">
-<div class="hm-head hm-head--light"><h2 class="h2" id="contact-title">Gặp Luật sư Nguyễn Trọng Nam</h2><p>Anh chị gọi điện hoặc nhắn Zalo trước khi đến để luật sư sắp xếp thời gian tiếp tại văn phòng Công Ty Luật TNHH Luật Sư Nam.</p></div>
-<div class="hm-contact__grid">
-<a class="hm-contact__card" href="tel:{{phone_tel}}">{{ico:i-phone}}<span>Gọi điện</span><strong>{{phone}}</strong><small>{{hours}}</small></a>
-<a class="hm-contact__card" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}}<span>Nhắn Zalo</span><strong>{{phone}}</strong><small>Kể ngắn gọn sự việc của anh chị</small></a>
-<a class="hm-contact__card" href="https://www.google.com/maps/dir/?api=1&amp;destination={{maps_query}}" target="_blank" rel="noopener">{{ico:i-pin}}<span>Văn phòng</span><strong>{{street}}</strong><small>{{ward}}, {{city}}</small></a>
+<section class="ls-contact" aria-labelledby="contact-title"><div class="container">
+<div class="ls-head ls-head--light"><h2 class="h2" id="contact-title">Gặp Luật sư Nguyễn Trọng Nam</h2><p>Anh chị gọi điện hoặc nhắn Zalo trước khi đến để luật sư sắp xếp thời gian tiếp tại văn phòng Công Ty Luật TNHH Luật Sư Nam.</p></div>
+<div class="ls-contact__grid">
+<a class="ls-contact__card" href="tel:{{phone_tel}}">{{ico:i-phone}}<span>Gọi điện</span><strong>{{phone}}</strong><small>{{hours}}</small></a>
+<a class="ls-contact__card" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}}<span>Nhắn Zalo</span><strong>{{phone}}</strong><small>Kể ngắn gọn sự việc của anh chị</small></a>
+<a class="ls-contact__card" href="https://www.google.com/maps/dir/?api=1&amp;destination={{maps_query}}" target="_blank" rel="noopener">{{ico:i-pin}}<span>Văn phòng</span><strong>{{street}}</strong><small>{{ward}}, {{city}}</small></a>
 </div>
 </div></section>

@@ -216,7 +216,7 @@ def logo_html(r, tag=None):
         text = f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>'
         lazy = ' loading="lazy" decoding="async"'
     return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
-      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt=""{lazy}>
+      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="Logo {FIRM["legal_name"]}"{lazy}>
       <span class="logo__text">{text}</span>
     </a>"""
 
@@ -375,7 +375,7 @@ def call_buttons(r, cls=""):
 def help_card(r, title="Anh chị cần hỏi ngay?"):
     """Thẻ "hỏi luật sư" bên phải tiêu đề trang: ảnh luật sư, nút gọi, nút Zalo."""
     return f"""<aside class="ls-help" aria-label="Liên hệ luật sư">
-      <div class="ls-help__who"><img src="{r}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="64" height="64"><p><strong>{FIRM["lawyer"]}</strong><span>Trực tiếp nghe anh chị trình bày</span></p></div>
+      <div class="ls-help__who"><img src="{r}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="Chân dung {FIRM["lawyer"]}" width="64" height="64"><p><strong>{FIRM["lawyer"]}</strong><span>Trực tiếp nghe anh chị trình bày</span></p></div>
       <p class="ls-help__title">{title}</p>
       {call_buttons(r, "ls-actions--stack")}
       <ul class="ls-help__meta"><li>{ico("i-clock")}{FIRM["hours"]}</li><li>{ico("i-lock")}Thông tin được giữ kín theo Luật Luật sư</li></ul>
@@ -457,7 +457,7 @@ def vi_date(iso):
 
 def article_card(a, r, heading="h3"):
     return f"""<article class="post">
-  <a class="post__img" href="{r}kien-thuc-phap-ly/{a["slug"]}/" tabindex="-1" aria-hidden="true"><img src="{r}assets/img/bai-viet/{a["slug"]}.webp?v={ASSET_VERSION}" alt="" loading="lazy" width="720" height="240"></a>
+  <a class="post__img" href="{r}kien-thuc-phap-ly/{a["slug"]}/" tabindex="-1" aria-hidden="true"><img src="{r}assets/img/bai-viet/{a["slug"]}.webp?v={ASSET_VERSION}" alt="{esc(a["image_alt"])}" loading="lazy" width="720" height="240"></a>
   <div class="post__body">
     <p class="post__meta"><a class="tag" href="{r}dich-vu/{a["service"]}/">{esc(a["category"])}</a><time datetime="{a["published"]}">{ico("i-clock")}{vi_date(a["published"])}</time></p>
     <{heading} class="post__title"><a href="{r}kien-thuc-phap-ly/{a["slug"]}/">{esc(a["card_title"])}</a></{heading}>
@@ -925,7 +925,7 @@ def article_page(a):
         <ol class="toc">{toc}</ol>
       </div>
       <div class="aside-card ls-ask">
-        <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="56" height="56" loading="lazy"><p><strong>Cần hỏi về {esc(svc["name"].lower())}?</strong><span>{FIRM["lawyer"]} trực tiếp nghe anh chị trình bày</span></p></div>
+        <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="Chân dung {FIRM["lawyer"]}" width="56" height="56" loading="lazy"><p><strong>Cần hỏi về {esc(svc["name"].lower())}?</strong><span>{FIRM["lawyer"]} trực tiếp nghe anh chị trình bày</span></p></div>
         {call_buttons("{{root}}", "ls-actions--stack ls-actions--sm")}
         <a class="link-arrow" href="{{{{root}}}}dich-vu/{svc["slug"]}/">Xem dịch vụ {esc(svc["name"])} {ARROW}</a>
       </div>
@@ -1016,7 +1016,7 @@ def faq_page():
   </div>
   <aside class="faq-aside">
     <div class="aside-card ls-ask">
-      <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="56" height="56" loading="lazy"><p><strong>Chưa thấy câu trả lời?</strong><span>Gọi điện hoặc nhắn Zalo để hỏi trực tiếp luật sư</span></p></div>
+      <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="Chân dung {FIRM["lawyer"]}" width="56" height="56" loading="lazy"><p><strong>Chưa thấy câu trả lời?</strong><span>Gọi điện hoặc nhắn Zalo để hỏi trực tiếp luật sư</span></p></div>
       {call_buttons("{{root}}", "ls-actions--stack ls-actions--sm")}
     </div>
     <div class="aside-card">

@@ -51,7 +51,8 @@
 
 .gt-team__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .gt-member{display:flex;gap:16px;padding:22px;background:#fff;border:1px solid #ecdfcb;border-radius:8px}
-.gt-member__ico svg{width:46px;height:46px;padding:10px;border-radius:50%;background:#fbecec;color:var(--burgundy)}
+.gt-member__avatar{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--burgundy);color:#fff;font-size:21px;font-weight:600;box-shadow:0 0 0 3px #fff,0 0 0 4px var(--gold)}
+.gt-member__avatar--alt{background:#fbf3e6;color:var(--gold-600)}
 .gt-member h3{margin:0 0 2px;font-size:18px;color:var(--ink)}
 .gt-member p:not(.gt-role){margin:8px 0 0;font-size:15px;line-height:1.65;color:#5f5557}
 

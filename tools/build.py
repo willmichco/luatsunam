@@ -731,6 +731,23 @@ def crumbs_for(*items):
 # ---------------------------------------------------------------------------
 # Trang dịch vụ
 # ---------------------------------------------------------------------------
+_CODE = []
+
+
+def code():
+    """Bộ luật Hình sự (nạp một lần, dùng chung cho các trang dẫn chiếu điều luật)."""
+    if not _CODE:
+        _CODE.append(blhs.Code())
+    return _CODE[0]
+
+
+def blhs_link_items(ids, r):
+    """Liên kết tới trang điều luật, anchor là số điều kèm tên tội danh."""
+    c = code()
+    items = "".join(f'<li><a href="{r}bo-luat-hinh-su/dieu-{i}/">Điều {i}: {esc(c.by_id[i]["t"])}</a></li>' for i in ids)
+    return f'<ul class="ls-laws ls-laws--links">{items}</ul>'
+
+
 def service_page(s):
     path = f"dich-vu/{s['slug']}/"
     name_lc = s["name"].lower()
@@ -755,6 +772,11 @@ def service_page(s):
     cards = "".join(f'<a class="ls-resource" href="{{{{root}}}}{href}"><span class="ls-resource__label">{label}</span><h3>{esc(title)}</h3><p>{esc(text)}</p><span class="ls-resource__more">Xem chi tiết {ARROW}</span></a>'
                     for href, label, title, text in resources)
     related = "".join(f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"])}{esc(SERVICE_BY_SLUG[x]["name"])}</a></li>' for x in s["related"])
+    blhs_block = ""
+    if s.get("blhs"):
+        blhs_block = (f'<div class="ls-more__blhs"><h3 class="ls-more__title">{"Tội danh thường gặp trong Bộ luật Hình sự" if s["slug"] == "hinh-su" else "Điều luật hình sự liên quan"}</h3>'
+                      f'{blhs_link_items(s["blhs"], "{{root}}")}'
+                      f'<a class="link-arrow" href="{{{{root}}}}bo-luat-hinh-su/">Tra cứu toàn văn Bộ luật Hình sự {ARROW}</a></div>')
     urgent = ""
     if s.get("urgent"):
         urgent = (f'<p class="ls-urgent">{ico("i-alert")}<span><strong>Việc gấp?</strong> Người thân vừa bị bắt, tạm giữ hoặc sắp phải làm việc với cơ quan điều tra: '
@@ -819,7 +841,7 @@ def service_page(s):
   <div class="ls-head ls-head--row"><div><h2 class="h2" id="tham-khao-title">Đọc thêm trước khi gặp luật sư</h2></div><a class="link-arrow" href="{{{{root}}}}kien-thuc-phap-ly/">Thư viện pháp lý {ARROW}</a></div>
   <div class="ls-grid ls-grid--3">{cards}</div>
   <div class="ls-split ls-split--even ls-more">
-    <div><h3 class="ls-more__title">Căn cứ pháp luật chủ yếu</h3><ul class="ls-laws">{laws}</ul><p class="ls-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p></div>
+    <div><h3 class="ls-more__title">Căn cứ pháp luật chủ yếu</h3><ul class="ls-laws">{laws}</ul><p class="ls-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p>{blhs_block}</div>
     <div><h3 class="ls-more__title">Lĩnh vực liên quan</h3><ul class="ls-chips">{related}</ul></div>
   </div>
 </div></section>
@@ -900,6 +922,10 @@ def article_page(a):
     related_svcs = "".join(
         f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"], "rel-list__icon")}<span>{esc(SERVICE_BY_SLUG[x]["name"])}</span>{ARROW}</a></li>'
         for x in a["related_services"])
+    blhs_aside = ""
+    if a.get("blhs"):
+        blhs_aside = (f'\n      <div class="aside-card">\n        <p class="aside-card__title">Điều luật hình sự liên quan</p>\n'
+                      f'        {blhs_link_items(a["blhs"], "{{root}}")}\n      </div>')
     points = "".join(f"<li>{esc(p)}</li>" for p in a.get("key_points", []))
     keypoints = f'<div class="ls-keypoints"><p class="ls-keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
     extra = f"""<p class="article-meta">
@@ -932,7 +958,7 @@ def article_page(a):
       <div class="aside-card">
         <p class="aside-card__title">Lĩnh vực liên quan</p>
         <ul class="rel-list">{related_svcs}</ul>
-      </div>
+      </div>{blhs_aside}
     </aside>
   </div>
 </section>
@@ -1099,12 +1125,12 @@ def chapter_desc(ch):
     return best
 
 
-def article_desc(code, a):
+def article_desc(c, a):
     """Mô tả trang điều luật. Điều quy định tội danh: số khung và mức hình phạt cao nhất
     (trích tự động từ văn bản điều luật, xem blhs.penalty_summary). Điều khác: trích đoạn đầu."""
     head = f'Điều {a["id"]} BLHS 2015 – {a["t"]}'
     if a.get("repealed"):
-        return fit_desc(f"{head}: " + code.excerpt(a, 300))
+        return fit_desc(f"{head}: " + c.excerpt(a, 300))
     pen = blhs.penalty_summary(a)
     if pen:
         n, top = pen
@@ -1114,12 +1140,20 @@ def article_desc(code, a):
                 return f"{head}: {body}{tail}"
         return fit_desc(f'Điều {a["id"]} BLHS 2015 quy định {body}: {a["t"].lower()}.')
     head += ": "
-    return fit_desc(head + code.excerpt(a, max(60, DESC_MAX - len(head) + 20)))
+    return fit_desc(head + c.excerpt(a, max(60, DESC_MAX - len(head) + 20)))
 
 
 def blhs_pages():
-    code = blhs.Code()
-    rd = blhs.Renderer(code, ico, ARROW, FIRM)
+    code_ = code()
+    rd = blhs.Renderer(code_, ico, ARROW, FIRM)
+    # Dẫn ngược từ trang điều luật về bài viết, trang dịch vụ có nhắc tới điều đó
+    for a in ARTICLES:
+        for i in a.get("blhs", []):
+            rd.refs.setdefault(i, {}).setdefault("articles", []).append((f'kien-thuc-phap-ly/{a["slug"]}/', a["card_title"]))
+    for s in SERVICES:
+        label = "Hỗ trợ thủ tục công chứng" if s["slug"] == "cong-chung" else f'Luật sư {s["name"]}'
+        for i in s.get("blhs", []):
+            rd.refs.setdefault(i, {}).setdefault("services", []).append((f'dich-vu/{s["slug"]}/', label))
     common = {
         "section": "knowledge", "page_hero": False, "body_class": "tdl-page", "index_k": False,
         "extra_head": '\n<link rel="stylesheet" href="{{root}}bo-luat-hinh-su/tu-dien.css?v=' + file_hash("bo-luat-hinh-su/tu-dien.css") + '">',
@@ -1128,7 +1162,7 @@ def blhs_pages():
     }
     hub_crumb = ("Bộ luật Hình sự", "bo-luat-hinh-su/")
     pages = []
-    st = code.toc["stats"]
+    st = code_.toc["stats"]
     hub = dict(common)
     hub.update({
         "path": "bo-luat-hinh-su/", "h1": "Bộ luật Hình sự",
@@ -1143,7 +1177,7 @@ def blhs_pages():
                     "legislationChanges": {"@id": CODE_LEGISLATION["@id"]}} for ident, date, name in CODE_AMENDMENTS],
     })
     pages.append(hub)
-    for ch in code.chapters:
+    for ch in code_.chapters:
         path = f"bo-luat-hinh-su/{ch['slug']}/"
         pg = dict(common)
         pg.update({
@@ -1157,9 +1191,9 @@ def blhs_pages():
             "webpage_extra": {"about": CODE_LEGISLATION},
         })
         pages.append(pg)
-    for a in code.arts:
+    for a in code_.arts:
         path = f"bo-luat-hinh-su/dieu-{a['id']}/"
-        a["repealed"] = code.excerpt(a, 60).startswith("Tội này đã được bãi bỏ")
+        a["repealed"] = code_.excerpt(a, 60).startswith("Tội này đã được bãi bỏ")
         name = a["t"] + (" (đã bãi bỏ)" if a["repealed"] else "")
         pg = dict(common)
         pg.update({
@@ -1167,11 +1201,11 @@ def blhs_pages():
             "title": seo_title(f'Điều {a["id"]} Bộ luật Hình sự: {name}', f'Điều {a["id"]} BLHS 2015: {name}',
                                f'Điều {a["id"]} BLHS: {name}'),
             "og_title": f'Điều {a["id"]} Bộ luật Hình sự: {name} | {FIRM["short_name"]}',
-            "description": article_desc(code, a),
+            "description": article_desc(code_, a),
             "crumbs": crumbs_for(hub_crumb, (a["ch"]["label"], f'bo-luat-hinh-su/{a["ch"]["slug"]}/'), (f'Điều {a["id"]}', path)),
             "body": rd.article(a, "../../"),
             "search_title": f'Điều {a["id"]}. {a["t"]}',
-            "search_desc": code.excerpt(a, 150),
+            "search_desc": code_.excerpt(a, 150),
             "webpage_extra": {"about": {
                 "@type": "Legislation", "name": f'Điều {a["id"]}. {a["t"]}', "legislationJurisdiction": "VN", "inLanguage": "vi",
                 "legislationIdentifier": f'Điều {a["id"]} Bộ luật Hình sự số 100/2015/QH13',

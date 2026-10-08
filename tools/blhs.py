@@ -416,6 +416,8 @@ class Renderer:
         self.ico = ico
         self.arrow = arrow
         self.firm = firm
+        # refs[id điều] = {"articles": [(đường dẫn, tiêu đề)], "services": [...]}: do build.py điền
+        self.refs = {}
 
     # ---- Khung chung ----
     def band(self, r):
@@ -489,10 +491,13 @@ class Renderer:
 
     def side_cta(self, r, aid=None):
         what = f"về Điều {aid}" if aid else "về vụ án hình sự"
+        # Lĩnh vực khác (ngoài hình sự) có dẫn chiếu điều này, ví dụ Điều 186 với Hôn nhân & Gia đình
+        others = [(u, t) for u, t in self.refs.get(aid, {}).get("services", []) if u != "dich-vu/hinh-su/"]
+        more = "".join(f'<a class="link-arrow link-arrow--light" href="{r}{u}">{esc(t)} {self.arrow}</a>' for u, t in others)
         return f"""<section class="tdl-card tdl-card--navy">
   {self.ico("i-shield-check", "tdl-card__big")}
   <h2 class="tdl-card__title tdl-card__title--light">Cần luật sư {what}?</h2>
-  <p>Bào chữa, bảo vệ bị hại và tư vấn khẩn cấp qua các giai đoạn điều tra, truy tố, xét xử.</p>
+  <p>Bào chữa, bảo vệ bị hại và tư vấn khẩn cấp qua các giai đoạn điều tra, truy tố, xét xử.</p>{more}
   <a class="btn btn--primary btn--block btn--sm" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {self.arrow}</a>
   <a class="tdl-card__phone" href="tel:{self.firm["phone_tel"]}">{self.ico("i-phone")} {self.firm["phone"]}</a>
 </section>"""
@@ -679,8 +684,18 @@ class Renderer:
                 f"""<section class="tdl-card tdl-card--rose">
   <h2 class="tdl-card__title">{self.ico("i-link", "tdl-card__icon")}Điều liên quan</h2>
   <ul class="tdl-rel tdl-rel--compact">{rel_html}</ul>
-</section>""" + mm + self.side_docs(r))
+</section>""" + self.side_articles(r, a["id"]) + mm + self.side_docs(r) + self.side_cta(r, a["id"]))
         return self.layout(r, self.toc(r, cur_art=a), main, side)
+
+    def side_articles(self, r, aid):
+        arts = self.refs.get(aid, {}).get("articles", [])
+        if not arts:
+            return ""
+        items = "".join(f'<li><a href="{r}{u}"><b>Bài viết</b><span>{esc(t)}</span></a></li>' for u, t in arts)
+        return f"""<section class="tdl-card tdl-card--rose">
+  <h2 class="tdl-card__title">{self.ico("i-doc", "tdl-card__icon")}Bài viết liên quan</h2>
+  <ul class="tdl-rel tdl-rel--compact">{items}</ul>
+</section>"""
 
     # ---- Trang một chương ----
     def chapter(self, ch, r):

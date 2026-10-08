@@ -207,6 +207,7 @@ SERVICES = [
     },
     {
         "slug": "hon-nhan-gia-dinh",
+        "blhs": ["182", "185", "186"],
         "name": "Hôn nhân & Gia đình",
         "icon": "i-heart",
         "short": "Tư vấn ly hôn, quyền nuôi con, cấp dưỡng, phân chia tài sản chung và các thỏa thuận gia đình một cách kín đáo.",
@@ -279,6 +280,7 @@ SERVICES = [
     },
     {
         "slug": "dat-dai-bat-dong-san",
+        "blhs": ["174", "228", "229"],
         "name": "Đất đai & Bất động sản",
         "icon": "i-house",
         "short": "Rà soát pháp lý dự án, giao dịch, cấp giấy chứng nhận và giải quyết tranh chấp đất đai, nhà ở.",
@@ -351,6 +353,7 @@ SERVICES = [
     },
     {
         "slug": "lao-dong-viec-lam",
+        "blhs": ["162", "216"],
         "name": "Lao động & Việc làm",
         "icon": "i-network",
         "problem_icon": "i-team",
@@ -422,6 +425,7 @@ SERVICES = [
     },
     {
         "slug": "hinh-su",
+        "blhs": ["123", "134", "168", "173", "174", "175", "178", "249", "251", "260", "318", "321", "353", "354", "51", "65"],
         "name": "Hình sự",
         "icon": "i-shield-check",
         "problem_icon": "i-shield",
@@ -497,6 +501,7 @@ SERVICES = [
     },
     {
         "slug": "dan-su",
+        "blhs": ["174", "175", "201"],
         "name": "Dân sự",
         "icon": "i-scale",
         "short": "Tư vấn hợp đồng, nghĩa vụ, bồi thường, tài sản và đại diện giải quyết tranh chấp dân sự theo đúng trình tự.",
@@ -568,6 +573,7 @@ SERVICES = [
     },
     {
         "slug": "cong-chung",
+        "blhs": ["341", "174"],
         "name": "Công chứng",
         "icon": "i-doc",
         "short": "Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng, di chúc, ủy quyền, mua bán, tặng cho.",
@@ -671,6 +677,7 @@ ARTICLES = [
     },
     {
         "slug": "ly-hon-don-phuong",
+        "blhs": ["186", "182"],
         "title": "Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con",
         "card_title": "Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con",
         "seo_title": "Ly hôn đơn phương: căn cứ, hồ sơ, quyền nuôi con",
@@ -691,6 +698,7 @@ ARTICLES = [
     },
     {
         "slug": "dat-coc-mua-ban-nha-dat",
+        "blhs": ["174", "175"],
         "title": "Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền",
         "card_title": "Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền",
         "seo_title": "Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra",

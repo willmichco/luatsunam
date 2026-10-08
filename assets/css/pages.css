@@ -483,3 +483,9 @@
   .ls-help,.ls-contact,.ls-actions,.article-aside,.faq-aside,.legal-aside,.floating{display:none!important}
   .ls-section{padding-block:16px}
 }
+
+/* Liên kết tới trang điều luật Bộ luật Hình sự (trang dịch vụ, bài viết) */
+.ls-more__blhs{margin-top:28px}
+.ls-laws--links a{color:inherit;text-decoration:underline;text-decoration-color:#d8b9a3;text-underline-offset:3px}
+.ls-laws--links a:hover{color:var(--ls-red);text-decoration-color:currentColor}
+.ls-more__blhs .link-arrow{margin-top:12px}

@@ -217,6 +217,58 @@ class Code:
         return cut + "…"
 
 
+PEN_RE = re.compile(r"thì bị ((?:phạt|tù|cảnh cáo)[^:;]*?)(?::|;|\.\s*$|$)")
+
+
+def penalty_summary(a):
+    """(số khung hình phạt, mức cao nhất) của điều luật quy định tội danh, hoặc None.
+
+    Chỉ tính các khoản áp dụng cho cá nhân có câu "thì bị phạt/tù/cảnh cáo …". Bỏ qua khoản
+    hình phạt bổ sung ("còn có thể bị") và khoản dành cho pháp nhân thương mại. Mức cao nhất
+    xếp theo thứ tự: tử hình > tù chung thân > tù có thời hạn (năm, tháng) > cải tạo không
+    giam giữ > phạt tiền, cảnh cáo. Dùng cho meta description nên trả về câu chữ ngắn."""
+    frames, best = 0, None
+    # Điều không chia khoản: toàn bộ quy định nằm trong một đoạn (loại "x")
+    kinds = ("k",) if any(t == "k" for t, _ in a["law"]) else ("x",)
+    for t, h in a["law"]:
+        if t not in kinds:
+            continue
+        body = re.sub(r"^\d+\.\s*", "", plain(h).rstrip("*").strip())
+        if "còn có thể bị" in body or body.startswith("Pháp nhân thương mại"):
+            continue
+        m = PEN_RE.search(body)
+        if not m:
+            continue
+        found = False
+        for opt in re.split(r",|\bhoặc\b", m.group(1)):
+            opt = opt.strip().lower()
+            if "tử hình" in opt:
+                rank = (5, 0, "tử hình")
+            elif "chung thân" in opt:
+                rank = (4, 0, "tù chung thân")
+            elif "tù" in opt and re.search(r"\d+\s*(năm|tháng)", opt):
+                y = [int(n) for n in re.findall(r"(\d+)\s*năm", opt)]
+                if y:
+                    rank = (3, max(y), f"{max(y)} năm tù")
+                else:
+                    mo = max(int(n) for n in re.findall(r"(\d+)\s*tháng", opt))
+                    rank = (2, mo, f"{mo} tháng tù")
+            elif "cải tạo không giam giữ" in opt:
+                y = [int(n) for n in re.findall(r"(\d+)\s*năm", opt)]
+                rank = (1, max(y), f"{max(y)} năm cải tạo không giam giữ") if y else (1, 0, "cải tạo không giam giữ")
+            elif "phạt tiền" in opt or "cảnh cáo" in opt:
+                rank = (0, 0, "phạt tiền" if "tiền" in opt else "cảnh cáo")
+            else:
+                continue
+            found = True
+            if best is None or rank[:2] > best[:2]:
+                best = rank
+        frames += found
+    if not frames or best[0] < 1:
+        return None
+    return frames, best[2]
+
+
 # ---------------------------------------------------------------------------
 # Dựng HTML
 # ---------------------------------------------------------------------------
@@ -364,6 +416,8 @@ class Renderer:
         self.ico = ico
         self.arrow = arrow
         self.firm = firm
+        # refs[id điều] = {"articles": [(đường dẫn, tiêu đề)], "services": [...]}: do build.py điền
+        self.refs = {}
 
     # ---- Khung chung ----
     def band(self, r):
@@ -378,7 +432,7 @@ class Renderer:
       {self.ico("i-search", "tdl-search__icon")}
       <input id="tdl-q" name="q" type="search" placeholder="Tìm điều luật, tội danh, từ khóa…" role="combobox" aria-expanded="false" aria-controls="tdl-sug" aria-autocomplete="list" enterkeyhint="search">
       <kbd class="tdl-search__key" aria-hidden="true">/</kbd>
-      <button class="btn btn--primary tdl-search__btn" type="submit">{self.ico("i-search")} <span>Tìm kiếm</span></button>
+      <button class="btn btn--primary tdl-search__btn" type="submit" aria-label="Tìm kiếm">{self.ico("i-search")} <span>Tìm kiếm</span></button>
       <div class="tdl-sug" id="tdl-sug" role="listbox" aria-label="Gợi ý" hidden></div>
     </form>
     <div class="tdl-band__examples"><span>Ví dụ:</span><a href="{r}{HUB}dieu-17/">Điều 17</a><a href="{r}{HUB}?q=đồng%20phạm">đồng phạm</a><a href="{r}{HUB}?q=người%20giúp%20sức">người giúp sức</a><a href="{r}{HUB}?q=phạm%20tội%20có%20tổ%20chức">phạm tội có tổ chức</a><a href="{r}{HUB}?q=lừa%20đảo">lừa đảo</a><a href="{r}{HUB}?q=tham%20ô">tham ô</a></div>
@@ -437,10 +491,13 @@ class Renderer:
 
     def side_cta(self, r, aid=None):
         what = f"về Điều {aid}" if aid else "về vụ án hình sự"
+        # Lĩnh vực khác (ngoài hình sự) có dẫn chiếu điều này, ví dụ Điều 186 với Hôn nhân & Gia đình
+        others = [(u, t) for u, t in self.refs.get(aid, {}).get("services", []) if u != "dich-vu/hinh-su/"]
+        more = "".join(f'<a class="link-arrow link-arrow--light" href="{r}{u}">{esc(t)} {self.arrow}</a>' for u, t in others)
         return f"""<section class="tdl-card tdl-card--navy">
   {self.ico("i-shield-check", "tdl-card__big")}
   <h2 class="tdl-card__title tdl-card__title--light">Cần luật sư {what}?</h2>
-  <p>Bào chữa, bảo vệ bị hại và tư vấn khẩn cấp qua các giai đoạn điều tra, truy tố, xét xử.</p>
+  <p>Bào chữa, bảo vệ bị hại và tư vấn khẩn cấp qua các giai đoạn điều tra, truy tố, xét xử.</p>{more}
   <a class="btn btn--primary btn--block btn--sm" href="{r}lien-he/#lien-he-truc-tiep">Liên hệ tư vấn {self.arrow}</a>
   <a class="tdl-card__phone" href="tel:{self.firm["phone_tel"]}">{self.ico("i-phone")} {self.firm["phone"]}</a>
 </section>"""
@@ -548,9 +605,20 @@ class Renderer:
   <section><h3>Được nhắc tới trong phần bình luận</h3>{rel_list(a["out_cm"], "Phần bình luận không dẫn chiếu điều khác.")}</section>
   <section><h3>Cùng {esc(ch["label"].lower())}</h3>{rel_list(same_ch, "")}</section>
 </div>"""
-        tabs = [("binh-luan", "Bình luận khoa học", "i-scale", tab_cm), ("goc-nhin", "Góc nhìn Luật sư Nam", "i-user", tab_lawyer),
-                ("ban-an", "Bản án liên quan", "i-doc", tab_cases), ("tinh-huong", "Tình huống thực tiễn", "i-question", tab_sit),
-                ("dieu-lien-quan", "Điều liên quan", "i-link", tab_rel)]
+        # Ba phần thực tiễn chỉ thành tab riêng khi đã có nội dung (src/blhs/<số điều>.html).
+        # Chưa có phần nào thì gộp thành một tab ngắn, tránh lặp ba khối trống trên hàng trăm trang.
+        practice = [(tid, label, icn, body) for tid, label, icn, body in (
+            ("goc-nhin", "Góc nhìn Luật sư Nam", "i-user", tab_lawyer), ("ban-an", "Bản án liên quan", "i-doc", tab_cases),
+            ("tinh-huong", "Tình huống thực tiễn", "i-question", tab_sit)) if tid in extra]
+        if not practice:
+            practice = [("thuc-tien", "Thực tiễn áp dụng", "i-question", empty(
+                "Thực tiễn áp dụng",
+                f"Góc nhìn của Luật sư Nam, bản án và tình huống thực tiễn về Điều {a['id']} đang được biên soạn. "
+                "Nếu anh chị đang gặp vụ việc liên quan, luật sư có thể trao đổi trực tiếp để đánh giá hồ sơ cụ thể.",
+                '<p>Tra cứu bản án, quyết định đã công bố tại <a href="https://congbobanan.toaan.gov.vn/" target="_blank" rel="noopener">'
+                'Cổng công bố bản án của Tòa án nhân dân</a> và án lệ tại <a href="https://anle.toaan.gov.vn/" target="_blank" rel="noopener">'
+                'Trang thông tin án lệ</a>.</p>'))]
+        tabs = [("binh-luan", "Bình luận khoa học", "i-scale", tab_cm)] + practice + [("dieu-lien-quan", "Điều liên quan", "i-link", tab_rel)]
         tab_btns = "".join(
             f'<button class="tdl-tab" type="button" role="tab" id="tab-{tid}" aria-controls="panel-{tid}" aria-selected="{"true" if k == 0 else "false"}"'
             f'{"" if k == 0 else TI}>{self.ico(icn)}<span>{label}</span></button>' for k, (tid, label, icn, _) in enumerate(tabs))
@@ -588,7 +656,7 @@ class Renderer:
     </div>
   </header>
   <section class="tdl-law" aria-labelledby="quy-dinh">
-    <div class="tdl-law__head"><h2 id="quy-dinh">{self.ico("i-scale", "tdl-law__icon")}Quy định của luật</h2><span>({LAW_NAME})</span></div>
+    <div class="tdl-law__head"><h2 id="quy-dinh">{self.ico("i-scale", "tdl-law__icon")}Quy định của luật</h2><span>({LAW_NAME}) · Trang cập nhật {{{{modified}}}}</span></div>
     <div class="tdl-law__body">
 {law_html(a, base)}
     </div>
@@ -627,8 +695,18 @@ class Renderer:
                 f"""<section class="tdl-card tdl-card--rose">
   <h2 class="tdl-card__title">{self.ico("i-link", "tdl-card__icon")}Điều liên quan</h2>
   <ul class="tdl-rel tdl-rel--compact">{rel_html}</ul>
-</section>""" + mm + self.side_docs(r))
+</section>""" + self.side_articles(r, a["id"]) + mm + self.side_docs(r) + self.side_cta(r, a["id"]))
         return self.layout(r, self.toc(r, cur_art=a), main, side)
+
+    def side_articles(self, r, aid):
+        arts = self.refs.get(aid, {}).get("articles", [])
+        if not arts:
+            return ""
+        items = "".join(f'<li><a href="{r}{u}"><b>Bài viết</b><span>{esc(t)}</span></a></li>' for u, t in arts)
+        return f"""<section class="tdl-card tdl-card--rose">
+  <h2 class="tdl-card__title">{self.ico("i-doc", "tdl-card__icon")}Bài viết liên quan</h2>
+  <ul class="tdl-rel tdl-rel--compact">{items}</ul>
+</section>"""
 
     # ---- Trang một chương ----
     def chapter(self, ch, r):

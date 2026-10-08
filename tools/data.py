@@ -10,11 +10,19 @@ Không hứa hẹn kết quả (Quy tắc 9.1.6 Bộ Quy tắc Đạo đức và
 """
 
 # ---------------------------------------------------------------------------
-# Cấu hình tên miền. Khi có tên miền riêng: đổi SITE_URL thành https://tenmien.vn
-# và BASE_PATH thành "/".
-# BASE_PATH là thư mục gốc của website trên máy chủ, dùng cho trang 404.html
-# (GitHub Pages phục vụ trang này ở mọi độ sâu đường dẫn nên không dùng được
-# đường dẫn tương đối). Website đang chạy tại https://willmichco.github.io/luatsunam/
+# Cấu hình tên miền.
+# SITE_URL là tên miền chính (canonical): mọi canonical, og:url, sitemap, robots.txt, schema
+# đều sinh từ đây. Website hiện chạy song song ở hai nơi:
+#   - https://luat-su-nam-phap-ly.willmich-co.chatgpt.site  (bản chính, canonical)
+#   - https://willmichco.github.io/luatsunam/               (bản sao; canonical trỏ về bản chính)
+# BASE_PATH là thư mục gốc của website trên máy chủ, chỉ dùng cho trang 404.html
+# (GitHub Pages phục vụ trang này ở mọi độ sâu đường dẫn nên không dùng được đường dẫn tương đối).
+#
+# Khi đã mua và trỏ DNS tên miền lsn.vn (CHƯA đổi trước khi lsn.vn truy cập được, vì canonical
+# trỏ tới tên miền không hoạt động sẽ khiến Google bỏ qua hoặc gỡ trang khỏi kết quả):
+#   1. SITE_URL = "https://lsn.vn", BASE_PATH = "/"
+#   2. python3 tools/build.py && python3 tools/check_seo.py
+#   3. Xem README, mục "Chuyển sang tên miền lsn.vn".
 # ---------------------------------------------------------------------------
 SITE_URL = "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site"
 BASE_PATH = "/luatsunam/"
@@ -62,7 +70,7 @@ SERVICES = [
         "short": "Tư vấn lập di chúc, phân chia di sản, khai nhận thừa kế và giải quyết tranh chấp giữa các bên liên quan.",
         "title": "Luật sư tư vấn Thừa kế tại TP.HCM",
         "description": "Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản thừa kế, giải quyết tranh chấp thừa kế theo Bộ luật Dân sự. Liên hệ 0983 498 499.",
-        "image_alt": "Luật sư trao đổi hồ sơ thừa kế với khách hàng tại văn phòng",
+        "image_alt": "Di chúc niêm phong sáp đỏ và cân công lý trên bàn luật sư tư vấn thừa kế",
         "problem_title": "Chia đất, chia nhà sau khi cha mẹ mất",
         "problem_text": "Anh em tranh chấp di sản, không có di chúc hoặc di chúc chưa rõ ràng, cần làm thủ tục khai nhận thừa kế.",
         "hero_title": "Chia di sản thừa kế đúng luật, <em>giữ được tình thân</em>",
@@ -132,8 +140,9 @@ SERVICES = [
         "icon": "i-gavel",
         "short": "Đại diện, thương lượng và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp thương mại, hợp đồng và lao động.",
         "title": "Luật sư Tranh tụng & Giải quyết tranh chấp",
+        "seo_title": "Luật sư tranh tụng, giải quyết tranh chấp tại TP.HCM",
         "description": "Đại diện, thương lượng, hòa giải và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp hợp đồng, thương mại, dân sự và lao động.",
-        "image_alt": "Búa phán quyết trên bàn xét xử",
+        "image_alt": "Búa phán quyết và cân công lý trên bàn, minh họa tranh tụng giải quyết tranh chấp",
         "problem_title": "Bị kiện hoặc cần khởi kiện ra Tòa",
         "problem_text": "Soạn đơn, chuẩn bị chứng cứ, đại diện và tranh luận tại Tòa án, Trọng tài qua các cấp xét xử.",
         "hero_title": "Bị kiện hay cần khởi kiện, <em>có luật sư cùng chuẩn bị</em>",
@@ -198,12 +207,14 @@ SERVICES = [
     },
     {
         "slug": "hon-nhan-gia-dinh",
+        "blhs": ["182", "185", "186"],
         "name": "Hôn nhân & Gia đình",
         "icon": "i-heart",
         "short": "Tư vấn ly hôn, quyền nuôi con, cấp dưỡng, phân chia tài sản chung và các thỏa thuận gia đình một cách kín đáo.",
         "title": "Luật sư Hôn nhân & Gia đình, tư vấn ly hôn",
+        "seo_title": "Luật sư ly hôn, hôn nhân gia đình tại TP.HCM",
         "description": "Tư vấn ly hôn thuận tình và đơn phương, quyền nuôi con, cấp dưỡng, phân chia tài sản chung vợ chồng. Thông tin khách hàng được bảo mật theo Luật Luật sư.",
-        "image_alt": "Gia đình cha mẹ và con nhỏ lúc hoàng hôn",
+        "image_alt": "Vợ chồng trao đổi với luật sư hôn nhân gia đình tại văn phòng",
         "problem_title": "Ly hôn, giành quyền nuôi con",
         "problem_text": "Muốn ly hôn thuận tình hay đơn phương, chia tài sản chung, cấp dưỡng và quyền nuôi con.",
         "hero_title": "Ly hôn, nuôi con, chia tài sản – <em>kín đáo và tôn trọng</em>",
@@ -269,12 +280,14 @@ SERVICES = [
     },
     {
         "slug": "dat-dai-bat-dong-san",
+        "blhs": ["174", "228", "229"],
         "name": "Đất đai & Bất động sản",
         "icon": "i-house",
         "short": "Rà soát pháp lý dự án, giao dịch, cấp giấy chứng nhận và giải quyết tranh chấp đất đai, nhà ở.",
         "title": "Luật sư Đất đai & Bất động sản",
+        "seo_title": "Luật sư đất đai, bất động sản tại TP.HCM",
         "description": "Rà soát pháp lý dự án và giao dịch bất động sản, thủ tục cấp Giấy chứng nhận, giải quyết tranh chấp đất đai, nhà ở theo Luật Đất đai hiện hành.",
-        "image_alt": "Ngôi nhà và khuôn viên sân vườn",
+        "image_alt": "Hồ sơ nhà đất trên bàn làm việc, nhìn ra khu nhà ở",
         "problem_title": "Mua bán, đặt cọc nhà đất",
         "problem_text": "Lo bị lừa khi đặt cọc, tranh chấp ranh giới, chậm sang tên hoặc chưa được cấp sổ.",
         "hero_title": "Nhà đất là tài sản lớn – <em>kiểm tra kỹ trước khi xuống tiền</em>",
@@ -340,13 +353,15 @@ SERVICES = [
     },
     {
         "slug": "lao-dong-viec-lam",
+        "blhs": ["162", "216"],
         "name": "Lao động & Việc làm",
         "icon": "i-network",
         "problem_icon": "i-team",
         "short": "Xây dựng quy chế, hợp đồng lao động, xử lý kỷ luật, chấm dứt hợp đồng và tranh chấp lao động.",
         "title": "Luật sư Lao động & Việc làm",
+        "seo_title": "Luật sư lao động, tranh chấp lao động TP.HCM",
         "description": "Xây dựng hợp đồng lao động, nội quy, quy chế; tư vấn xử lý kỷ luật, chấm dứt hợp đồng và giải quyết tranh chấp lao động theo Bộ luật Lao động.",
-        "image_alt": "Hai doanh nhân bắt tay trong văn phòng",
+        "image_alt": "Hai bên ký văn bản thỏa thuận lao động tại văn phòng luật sư",
         "problem_title": "Bị cho nghỉ việc, nợ lương, bảo hiểm",
         "problem_text": "Người lao động bị chấm dứt hợp đồng trái luật; doanh nghiệp cần xử lý kỷ luật, nội quy đúng quy định.",
         "hero_title": "Quyền lợi người lao động, <em>quy trình đúng cho doanh nghiệp</em>",
@@ -410,11 +425,13 @@ SERVICES = [
     },
     {
         "slug": "hinh-su",
+        "blhs": ["123", "134", "168", "173", "174", "175", "178", "249", "251", "260", "318", "321", "353", "354", "51", "65"],
         "name": "Hình sự",
         "icon": "i-shield-check",
         "problem_icon": "i-shield",
         "short": "Bào chữa, bảo vệ người bị hại và đồng hành cùng khách hàng trong các giai đoạn điều tra, truy tố, xét xử.",
         "title": "Luật sư bào chữa vụ án Hình sự",
+        "seo_title": "Luật sư bào chữa vụ án hình sự tại TP.HCM",
         "description": "Luật sư bào chữa cho người bị buộc tội và bảo vệ quyền lợi bị hại qua các giai đoạn điều tra, truy tố, xét xử, kháng cáo. Hỗ trợ khẩn cấp 0983 498 499.",
         "image": "assets/img/luat-su-nam.webp",
         "image_size": (800, 812),
@@ -484,12 +501,14 @@ SERVICES = [
     },
     {
         "slug": "dan-su",
+        "blhs": ["174", "175", "201"],
         "name": "Dân sự",
         "icon": "i-scale",
         "short": "Tư vấn hợp đồng, nghĩa vụ, bồi thường, tài sản và đại diện giải quyết tranh chấp dân sự theo đúng trình tự.",
         "title": "Luật sư tư vấn Dân sự",
+        "seo_title": "Luật sư dân sự, tranh chấp hợp đồng tại TP.HCM",
         "description": "Tư vấn hợp đồng, nghĩa vụ dân sự, bồi thường thiệt hại, quyền tài sản và đại diện giải quyết tranh chấp dân sự đúng trình tự tố tụng.",
-        "image_alt": "Khu cao ốc văn phòng tại thành phố",
+        "image_alt": "Khách hàng trao đổi với luật sư về tranh chấp dân sự tại văn phòng",
         "problem_title": "Cho vay không trả, hợp đồng bị bội tín",
         "problem_text": "Đòi nợ, đòi bồi thường thiệt hại, tranh chấp hợp đồng mua bán, thuê nhà, hợp tác làm ăn.",
         "hero_title": "Đòi nợ, đòi bồi thường, tranh chấp hợp đồng – <em>đúng cách, có căn cứ</em>",
@@ -554,12 +573,13 @@ SERVICES = [
     },
     {
         "slug": "cong-chung",
+        "blhs": ["341", "174"],
         "name": "Công chứng",
         "icon": "i-doc",
         "short": "Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng, di chúc, ủy quyền, mua bán, tặng cho.",
         "title": "Hỗ trợ thủ tục Công chứng hợp đồng, di chúc",
         "description": "Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng mua bán, tặng cho, di chúc, văn bản ủy quyền đúng quy định pháp luật.",
-        "image_alt": "Bút ký đặt trên văn bản hợp đồng",
+        "image_alt": "Văn bản đóng dấu đỏ, con dấu và bút ký, minh họa thủ tục công chứng",
         "problem_title": "Công chứng hợp đồng, di chúc, ủy quyền",
         "problem_text": "Kiểm tra giấy tờ, soạn nội dung đúng ý trước khi ký mua bán, tặng cho, lập di chúc, ủy quyền.",
         "hero_title": "Giấy tờ công chứng <em>đủ và đúng ngay từ lần đầu</em>",
@@ -640,7 +660,7 @@ ARTICLES = [
         "title": "Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm theo Bộ luật Dân sự 2015",
         "card_title": "Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm",
         "seo_title": "Thời hiệu chia di sản thừa kế theo Bộ luật Dân sự 2015",
-        "description": "Thời hiệu yêu cầu chia di sản là 30 năm với bất động sản, 10 năm với động sản. Phân tích Điều 623 Bộ luật Dân sự 2015, hệ quả khi hết thời hiệu và việc cần làm sớm.",
+        "description": "Thời hiệu chia di sản: 30 năm với bất động sản, 10 năm với động sản (Điều 623 Bộ luật Dân sự 2015). Hệ quả khi hết thời hiệu và việc cần làm sớm.",
         "excerpt": "Mốc tính thời hiệu, ba loại thời hiệu tại Điều 623 Bộ luật Dân sự 2015 và điều gì xảy ra với di sản khi hết thời hạn.",
         "key_points": [
             "Mọi thời hiệu thừa kế tính từ thời điểm mở thừa kế, tức ngày người để lại di sản chết.",
@@ -652,11 +672,12 @@ ARTICLES = [
         "category": "Thừa kế",
         "published": "2026-09-15",
         "modified": "2026-09-24",
-        "image_alt": "Luật sư ký văn bản thỏa thuận phân chia di sản",
+        "image_alt": "Đồng hồ, di chúc niêm phong và cân công lý, minh họa thời hiệu chia di sản",
         "related_services": ["thua-ke", "cong-chung", "tranh-tung-giai-quyet-tranh-chap"],
     },
     {
         "slug": "ly-hon-don-phuong",
+        "blhs": ["186", "182"],
         "title": "Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con",
         "card_title": "Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con",
         "seo_title": "Ly hôn đơn phương: căn cứ, hồ sơ, quyền nuôi con",
@@ -672,11 +693,12 @@ ARTICLES = [
         "category": "Hôn nhân & Gia đình",
         "published": "2026-09-10",
         "modified": "2026-10-07",
-        "image_alt": "Búa phán quyết trên bàn xét xử của Tòa án",
+        "image_alt": "Đôi nhẫn cưới đặt cạnh hồ sơ trên bàn luật sư, minh họa ly hôn đơn phương",
         "related_services": ["hon-nhan-gia-dinh", "tranh-tung-giai-quyet-tranh-chap", "cong-chung"],
     },
     {
         "slug": "dat-coc-mua-ban-nha-dat",
+        "blhs": ["174", "175"],
         "title": "Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền",
         "card_title": "Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền",
         "seo_title": "Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra",
@@ -692,7 +714,7 @@ ARTICLES = [
         "category": "Đất đai & Bất động sản",
         "published": "2026-09-05",
         "modified": "2026-09-24",
-        "image_alt": "Khu cao ốc và nhà ở tại đô thị",
+        "image_alt": "Chìa khóa nhà, tiền đặt cọc và hợp đồng trên bàn, minh họa đặt cọc mua bán nhà đất",
         "related_services": ["dat-dai-bat-dong-san", "cong-chung", "dan-su"],
     },
 ]

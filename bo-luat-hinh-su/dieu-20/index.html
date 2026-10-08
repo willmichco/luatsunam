@@ -30,12 +30,8 @@
 <link rel="manifest" href="../../site.webmanifest">
 <link rel="preload" href="../../assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/css/style.css?v=569eec09">
-<link rel="stylesheet" href="../../bo-luat-hinh-su/tu-dien.css?v=6e197b7e">
-<link rel="stylesheet" href="../../assets/css/nam-theme.css?v=020d165c">
-<link rel="stylesheet" href="../../assets/css/mobile.css?v=79ecbf48">
-<link rel="stylesheet" href="../../assets/css/navigation.css?v=de96ce66">
-<link rel="stylesheet" href="../../assets/css/reader-design.css?v=05081dca">
+<link rel="preload" as="image" href="../../assets/img/reader-banner.webp?v=20260925a" fetchpriority="high">
+<link rel="stylesheet" href="../../assets/css/bundle-reader.css?v=09c3cf91">
 
 
 <script type="application/ld+json">
@@ -48,7 +44,8 @@
    "name": "Công Ty Luật TNHH Luật Sư Nam",
    "alternateName": [
     "Luật Sư Nam",
-    "LSN Law Firm"
+    "LSN Law Firm",
+    "NamLawyerCo., LTD"
    ],
    "url": "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/",
    "logo": {
@@ -124,19 +121,29 @@
     "legislationJurisdiction": "VN",
     "inLanguage": "vi",
     "legislationIdentifier": "Điều 20 Bộ luật Hình sự số 100/2015/QH13",
+    "legislationLegalForce": "https://schema.org/InForce",
     "isPartOf": {
      "@type": "Legislation",
+     "@id": "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/bo-luat-hinh-su/#bo-luat",
      "name": "Bộ luật Hình sự",
      "legislationIdentifier": "100/2015/QH13",
+     "legislationType": "Bộ luật",
      "legislationJurisdiction": "VN",
-     "inLanguage": "vi"
+     "inLanguage": "vi",
+     "legislationDate": "2015-11-27",
+     "legislationDateOfApplicability": "2018-01-01",
+     "legislationLegalForce": "https://schema.org/InForce",
+     "legislationPassedBy": {
+      "@type": "GovernmentOrganization",
+      "name": "Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam"
+     }
     }
    },
    "primaryImageOfPage": {
     "@type": "ImageObject",
     "url": "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/og-image.jpg?v=20260925a"
    },
-   "dateModified": "2026-10-07",
+   "dateModified": "2026-10-08",
    "breadcrumb": {
     "@id": "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/bo-luat-hinh-su/dieu-20/#breadcrumb"
    }
@@ -242,7 +249,7 @@
       <svg class="tdl-search__icon" aria-hidden="true"><use href="#i-search"/></svg>
       <input id="tdl-q" name="q" type="search" placeholder="Tìm điều luật, tội danh, từ khóa…" role="combobox" aria-expanded="false" aria-controls="tdl-sug" aria-autocomplete="list" enterkeyhint="search">
       <kbd class="tdl-search__key" aria-hidden="true">/</kbd>
-      <button class="btn btn--primary tdl-search__btn" type="submit"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg> <span>Tìm kiếm</span></button>
+      <button class="btn btn--primary tdl-search__btn" type="submit" aria-label="Tìm kiếm"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg> <span>Tìm kiếm</span></button>
       <div class="tdl-sug" id="tdl-sug" role="listbox" aria-label="Gợi ý" hidden></div>
     </form>
     <div class="tdl-band__examples"><span>Ví dụ:</span><a href="../../bo-luat-hinh-su/dieu-17/">Điều 17</a><a href="../../bo-luat-hinh-su/?q=đồng%20phạm">đồng phạm</a><a href="../../bo-luat-hinh-su/?q=người%20giúp%20sức">người giúp sức</a><a href="../../bo-luat-hinh-su/?q=phạm%20tội%20có%20tổ%20chức">phạm tội có tổ chức</a><a href="../../bo-luat-hinh-su/?q=lừa%20đảo">lừa đảo</a><a href="../../bo-luat-hinh-su/?q=tham%20ô">tham ô</a></div>
@@ -282,14 +289,14 @@
     </div>
   </header>
   <section class="tdl-law" aria-labelledby="quy-dinh">
-    <div class="tdl-law__head"><h2 id="quy-dinh"><svg class="tdl-law__icon" aria-hidden="true"><use href="#i-scale"/></svg>Quy định của luật</h2><span>(Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017, 2025))</span></div>
+    <div class="tdl-law__head"><h2 id="quy-dinh"><svg class="tdl-law__icon" aria-hidden="true"><use href="#i-scale"/></svg>Quy định của luật</h2><span>(Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017, 2025)) · Trang cập nhật <time datetime="2026-10-08">08/10/2026</time></span></div>
     <div class="tdl-law__body">
 <p class="tdl-x" data-l="0">Người thực hiện hành vi gây hậu quả nguy hại cho xã hội trong trường hợp không thể thấy trước hoặc không buộc phải thấy trước hậu quả của hành vi đó, thì không phải chịu trách nhiệm hình sự.</p>
     </div>
     
   </section>
   <div class="tdl-tabs">
-    <div class="tdl-tabs__list" role="tablist" aria-label="Nội dung phân tích Điều 20"><button class="tdl-tab" type="button" role="tab" id="tab-binh-luan" aria-controls="panel-binh-luan" aria-selected="true"><svg class="ico" aria-hidden="true"><use href="#i-scale"/></svg><span>Bình luận khoa học</span></button><button class="tdl-tab" type="button" role="tab" id="tab-goc-nhin" aria-controls="panel-goc-nhin" aria-selected="false" tabindex="-1"><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg><span>Góc nhìn Luật sư Nam</span></button><button class="tdl-tab" type="button" role="tab" id="tab-ban-an" aria-controls="panel-ban-an" aria-selected="false" tabindex="-1"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg><span>Bản án liên quan</span></button><button class="tdl-tab" type="button" role="tab" id="tab-tinh-huong" aria-controls="panel-tinh-huong" aria-selected="false" tabindex="-1"><svg class="ico" aria-hidden="true"><use href="#i-question"/></svg><span>Tình huống thực tiễn</span></button><button class="tdl-tab" type="button" role="tab" id="tab-dieu-lien-quan" aria-controls="panel-dieu-lien-quan" aria-selected="false" tabindex="-1"><svg class="ico" aria-hidden="true"><use href="#i-link"/></svg><span>Điều liên quan</span></button></div>
+    <div class="tdl-tabs__list" role="tablist" aria-label="Nội dung phân tích Điều 20"><button class="tdl-tab" type="button" role="tab" id="tab-binh-luan" aria-controls="panel-binh-luan" aria-selected="true"><svg class="ico" aria-hidden="true"><use href="#i-scale"/></svg><span>Bình luận khoa học</span></button><button class="tdl-tab" type="button" role="tab" id="tab-thuc-tien" aria-controls="panel-thuc-tien" aria-selected="false" tabindex="-1"><svg class="ico" aria-hidden="true"><use href="#i-question"/></svg><span>Thực tiễn áp dụng</span></button><button class="tdl-tab" type="button" role="tab" id="tab-dieu-lien-quan" aria-controls="panel-dieu-lien-quan" aria-selected="false" tabindex="-1"><svg class="ico" aria-hidden="true"><use href="#i-link"/></svg><span>Điều liên quan</span></button></div>
     <section class="tdl-panel" role="tabpanel" id="panel-binh-luan" aria-labelledby="tab-binh-luan"><h2 class="tdl-panel__title">Bình luận khoa học</h2><p class="tdl-panel__by">Tác giả phần bình luận: Đinh Văn Quế. Phần bình luận thể hiện quan điểm khoa học của tác giả, có giá trị tham khảo.</p><div class="tdl-cm"><p data-c="0">Trong Bộ luận hình sự 1999, quy định về sự kiện bất ngờ được xếp chung với nhóm quy định về lỗi. Bởi lẽ đây là trường hợp được coi là không có lỗi. Bộ luật hình sự 2015, thiết kế một Chương riêng về các trường hợp loại trừ trách nhiệm hình sự, quy định về sự kiện bất ngờ được xếp vào Chương này cũng với các trường hợp được loại trừ trách nhiệm hình sự khác.</p>
 <p data-c="1">Sự kiện bất ngờ (nói đầy đủ phải là gây thiệt hại trong trường hợp có sự kiện bất ngờ) là: Một người thực hiện hành vi gây hậu quả nguy hại cho xã hội trong trường hợp không thể thấy trước hoặc không buộc phải thấy trước hậu quả của hành vi đó.</p>
 <p data-c="2">Gây thiệt hại trong trường hợp sự kiện bất ngờ có những đặc điểm rất giống với một tội phạm cụ thể về mặt khách quan như có hành vi và có gây thiệt hại cho nhà nước, cá nhân, tổ chức nào đó. Cũng có mối quan hệ nhân quả giữa hành vi và hậu quả. Điểm khác biệt quan trọng nhất và cũng là do đặc điểm này mà một người gây thiệt hại trong trường hợp sự kiện bất ngờ không phải là tội phạm và không phải chịu trách nhiệm hình sự đó là người thực hiện hành vi gây thiệt hại trong sự bất ngờ không có lỗi (không cố ý và cũng không vô ý). Bởi lẽ họ không có tự do để lựa chọn cách xử sự (hành vi) của mình.</p>
@@ -298,7 +305,7 @@
 <p data-c="5">Để xác định không thể thấy trước cần đặt vụ việc trong điều kiện hoàn cảnh cụ thể, nhân thân của từng người cụ thể. Ví dụ: trong đêm tối thì người bình thường có thể thấy trước nhưng đối với người bị cận thị nặng thì họ lại không thể thấy trước.</p>
 <p data-c="6">Để xác định không buộc phải thấy trước phải dựa vào nghĩa vụ buộc phải thấy trước của những người cụ thể và trong điều kiện, hoàn cảnh cụ thể. Nghĩa vụ phải thấy trước, có thể là nghĩa vụ của bất kỳ công dân nào. Ví dụ: khi ném vật cứng từ tầng cao của một ngôi nhà thì bất kỳ ai cũng phải quan sát. Nghĩa vụ buộc phải thấy trước còn thể hiện trong các quy tắc hành chính, quy tắc nghề nghiệp ở dưới dạng văn bản như điều lệ, nội quy, quy chế, văn bản pháp luật.</p>
 <p data-c="7">Luật hình sự Việt Nam thừa nhận nguyên tắc trách nhiệm hình sự trên cơ sở lỗi. Người gây thiệt hại trong trường hợp sự kiện bất ngờ được cho là không có lỗi nên họ không phải chịu trách nhiệm hình sự. Bởi lẽ, lỗi xuất phát từ tự do lựa chọn cách xử sự của con người. Nhưng người gây thiệt hại trong trường hợp sự kiện bất ngờ do có sự kiện bất ngờ nên họ không có tự do khi lựa chọn hành vi hay nói cách khác họ không được lựa chọn hành vi nên họ không có lỗi.</p>
-<p data-c="8">Sự kiện bất ngờ rất giống với lỗi vô ý do cẩu thả ở chỗ, khi thực hiện hành vi cả hai trường hợp đều không thấy trước hậu quả. Nhưng trong lỗi vô ý do cẩu thả, người phạm tội có thể biết và buộc phải biết hậu quả xảy ra, còn trong trường hợp gây thiệt hại trong sự kiện bất ngờ, người này không thể biết và không buộc phải biết hậu quả xảy ra.</p></div></section><section class="tdl-panel" role="tabpanel" id="panel-goc-nhin" aria-labelledby="tab-goc-nhin" hidden><h2 class="tdl-panel__title">Góc nhìn Luật sư Nam</h2><div class="tdl-empty"><svg class="tdl-empty__icon" aria-hidden="true"><use href="#i-doc"/></svg><p>Phần phân tích thực tiễn của Luật sư Nam về Điều 20 đang được biên soạn. Nếu bạn đang gặp vụ việc liên quan, luật sư có thể trao đổi trực tiếp để đánh giá hồ sơ cụ thể.</p><div class="tdl-empty__actions"><a class="btn btn--primary btn--sm" href="../../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--outline btn--sm" href="../../dich-vu/hinh-su/">Dịch vụ luật sư hình sự</a></div></div></section><section class="tdl-panel" role="tabpanel" id="panel-ban-an" aria-labelledby="tab-ban-an" hidden><h2 class="tdl-panel__title">Bản án liên quan</h2><div class="tdl-empty"><svg class="tdl-empty__icon" aria-hidden="true"><use href="#i-doc"/></svg><p>Chưa có bản án được tuyển chọn cho Điều 20.</p><p>Bạn có thể tra cứu bản án, quyết định đã công bố tại <a href="https://congbobanan.toaan.gov.vn/" target="_blank" rel="noopener">Cổng công bố bản án của Tòa án nhân dân</a> và án lệ tại <a href="https://anle.toaan.gov.vn/" target="_blank" rel="noopener">Trang thông tin án lệ</a>.</p><div class="tdl-empty__actions"><a class="btn btn--primary btn--sm" href="../../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--outline btn--sm" href="../../dich-vu/hinh-su/">Dịch vụ luật sư hình sự</a></div></div></section><section class="tdl-panel" role="tabpanel" id="panel-tinh-huong" aria-labelledby="tab-tinh-huong" hidden><h2 class="tdl-panel__title">Tình huống thực tiễn</h2><div class="tdl-empty"><svg class="tdl-empty__icon" aria-hidden="true"><use href="#i-doc"/></svg><p>Tình huống thực tiễn áp dụng Điều 20 đang được biên soạn.</p><div class="tdl-empty__actions"><a class="btn btn--primary btn--sm" href="../../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--outline btn--sm" href="../../dich-vu/hinh-su/">Dịch vụ luật sư hình sự</a></div></div></section><section class="tdl-panel" role="tabpanel" id="panel-dieu-lien-quan" aria-labelledby="tab-dieu-lien-quan" hidden><h2 class="tdl-panel__title">Điều liên quan</h2>
+<p data-c="8">Sự kiện bất ngờ rất giống với lỗi vô ý do cẩu thả ở chỗ, khi thực hiện hành vi cả hai trường hợp đều không thấy trước hậu quả. Nhưng trong lỗi vô ý do cẩu thả, người phạm tội có thể biết và buộc phải biết hậu quả xảy ra, còn trong trường hợp gây thiệt hại trong sự kiện bất ngờ, người này không thể biết và không buộc phải biết hậu quả xảy ra.</p></div></section><section class="tdl-panel" role="tabpanel" id="panel-thuc-tien" aria-labelledby="tab-thuc-tien" hidden><h2 class="tdl-panel__title">Thực tiễn áp dụng</h2><div class="tdl-empty"><svg class="tdl-empty__icon" aria-hidden="true"><use href="#i-doc"/></svg><p>Góc nhìn của Luật sư Nam, bản án và tình huống thực tiễn về Điều 20 đang được biên soạn. Nếu anh chị đang gặp vụ việc liên quan, luật sư có thể trao đổi trực tiếp để đánh giá hồ sơ cụ thể.</p><p>Tra cứu bản án, quyết định đã công bố tại <a href="https://congbobanan.toaan.gov.vn/" target="_blank" rel="noopener">Cổng công bố bản án của Tòa án nhân dân</a> và án lệ tại <a href="https://anle.toaan.gov.vn/" target="_blank" rel="noopener">Trang thông tin án lệ</a>.</p><div class="tdl-empty__actions"><a class="btn btn--primary btn--sm" href="../../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--outline btn--sm" href="../../dich-vu/hinh-su/">Dịch vụ luật sư hình sự</a></div></div></section><section class="tdl-panel" role="tabpanel" id="panel-dieu-lien-quan" aria-labelledby="tab-dieu-lien-quan" hidden><h2 class="tdl-panel__title">Điều liên quan</h2>
 <div class="tdl-relgrid">
   <section><h3>Điều này dẫn chiếu tới</h3><p class="tdl-muted">Văn bản điều luật không dẫn chiếu điều khác.</p></section>
   <section><h3>Được dẫn chiếu tại</h3><p class="tdl-muted">Chưa có điều luật nào dẫn chiếu trực tiếp tới điều này.</p></section>
@@ -332,6 +339,12 @@
     <li>Bộ luật Tố tụng hình sự 2015 (sửa đổi, bổ sung)</li>
   </ul>
   <a class="link-arrow" href="../../dich-vu/hinh-su/">Dịch vụ luật sư hình sự <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+</section><section class="tdl-card tdl-card--navy">
+  <svg class="tdl-card__big" aria-hidden="true"><use href="#i-shield-check"/></svg>
+  <h2 class="tdl-card__title tdl-card__title--light">Cần luật sư về Điều 20?</h2>
+  <p>Bào chữa, bảo vệ bị hại và tư vấn khẩn cấp qua các giai đoạn điều tra, truy tố, xét xử.</p>
+  <a class="btn btn--primary btn--block btn--sm" href="../../lien-he/#lien-he-truc-tiep">Liên hệ tư vấn <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  <a class="tdl-card__phone" href="tel:0983498499"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg> 0983 498 499</a>
 </section></aside>
   </div>
 </div>
@@ -341,8 +354,8 @@
 <footer class="footer site-footer">
   <div class="container footer__grid">
     <div class="footer__brand">
-      <a class="logo" href="../../" aria-label="Công Ty Luật TNHH Luật Sư Nam – Trang chủ">
-      <img class="logo__img" src="../../assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="">
+      <a class="logo" href="../../" aria-label="Luật Sư Nam – Kiến tạo công lý bền vững – Trang chủ">
+      <img class="logo__img" src="../../assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="" loading="lazy" decoding="async">
       <span class="logo__text"><span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">Kiến tạo công lý bền vững</span></span>
     </a>
       <p class="footer__about"><strong>Công Ty Luật TNHH Luật Sư Nam</strong> tư vấn pháp luật, đại diện và tham gia tố tụng cho cá nhân, doanh nghiệp tại Thành phố Hồ Chí Minh và các tỉnh thành trên cả nước. Hoạt động theo Giấy đăng ký hoạt động do Sở Tư pháp cấp.</p>

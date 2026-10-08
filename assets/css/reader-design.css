@@ -55,3 +55,7 @@
 /* Thẻ "Cần luật sư" trên nền sáng: chữ mô tả đủ tương phản */
 .tdl-page .tdl-card--navy{color:var(--text)}
 .tdl-page .tdl-card--navy p{color:var(--text);margin:0}
+
+/* Tương phản tối thiểu 4.5:1 trên nền sáng (WCAG AA) */
+.tdl-page .tdl-head__ch{color:#86651f}
+.tdl-page .tdl-card--navy .tdl-card__phone,.tdl-page .tdl-card--navy .link-arrow{color:#8a5a12}

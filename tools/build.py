@@ -22,6 +22,7 @@ import html
 import json
 import os
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -34,6 +35,7 @@ SRC = os.path.join(ROOT, "src")
 TODAY = datetime.date.today().isoformat()
 ORG_ID = SITE_URL + "/#organization"
 SITE_ID = SITE_URL + "/#website"
+PERSON_ID = SITE_URL + "/gioi-thieu/#luat-su-nguyen-trong-nam"
 ASSET_VERSION = "20260925a"
 
 
@@ -48,6 +50,32 @@ def strip_tags(s):
 def file_hash(rel):
     with open(os.path.join(ROOT, rel), "rb") as fh:
         return hashlib.md5(fh.read()).hexdigest()[:8]
+
+
+# Google cắt title ở khoảng 580px (≈ 60 ký tự tiếng Việt), description ở khoảng 920px
+# (≈ 155–160 ký tự). Tên website đã hiện riêng phía trên kết quả tìm kiếm, nên chỉ gắn
+# đuôi "| Luật Sư Nam" khi còn đủ chỗ, ưu tiên giữ từ khóa chính.
+TITLE_MAX, DESC_MAX = 60, 158
+
+
+def seo_title(*candidates, brand=True):
+    """Chọn phương án title đầu tiên vừa TITLE_MAX; thử kèm tên thương hiệu trước.
+    Không phương án nào vừa thì dùng phương án cuối, không cắt chữ giữa chừng
+    (cắt tên tội danh, tên chương sẽ làm sai nghĩa)."""
+    opts = []
+    for c in candidates:
+        if brand and not c.endswith(FIRM["short_name"]):
+            opts.append(f'{c} | {FIRM["short_name"]}')
+        opts.append(c)
+    return next((o for o in opts if len(o) <= TITLE_MAX), opts[-1])
+
+
+def fit_desc(text, limit=DESC_MAX):
+    """Cắt description ở ranh giới từ, không vượt limit ký tự."""
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) <= limit:
+        return text
+    return text[:limit - 1].rsplit(" ", 1)[0].rstrip(",;:–-— ") + "…"
 
 
 def abs_url(path):
@@ -180,13 +208,18 @@ def nav_html(page, r):
 
 def logo_html(r, tag=None):
     """Logo kèm chữ. Thanh menu (tag=None): "Công Ty Luật TNHH" / "Luật Sư Nam";
-    footer: "Luật Sư Nam" / khẩu hiệu."""
+    footer: "Luật Sư Nam" / khẩu hiệu (logo footer nằm cuối trang nên tải chậm)."""
     if tag is None:
         text = '<span class="logo__pre">Công Ty Luật TNHH</span><span class="logo__name">Luật Sư Nam</span>'
+        lazy = ""
     else:
         text = f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>'
-    return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
-      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="">
+        lazy = ' loading="lazy" decoding="async"'
+    # Ảnh logo để alt rỗng: liên kết đã có aria-label và chữ hiển thị, alt thêm vào làm tên đọc
+    # của liên kết lệch với chữ nhìn thấy (WCAG 2.5.3). Logo cho Google khai báo trong schema.
+    label = FIRM["legal_name"] if tag is None else f'{FIRM["short_name"]} – {tag}'  # chứa đúng chữ hiển thị
+    return f"""<a class="logo" href="{r or './'}" aria-label="{label} – Trang chủ">
+      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt=""{lazy}>
       <span class="logo__text">{text}</span>
     </a>"""
 
@@ -345,7 +378,7 @@ def call_buttons(r, cls=""):
 def help_card(r, title="Anh chị cần hỏi ngay?"):
     """Thẻ "hỏi luật sư" bên phải tiêu đề trang: ảnh luật sư, nút gọi, nút Zalo."""
     return f"""<aside class="ls-help" aria-label="Liên hệ luật sư">
-      <div class="ls-help__who"><img src="{r}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="64" height="64"><p><strong>{FIRM["lawyer"]}</strong><span>Trực tiếp nghe anh chị trình bày</span></p></div>
+      <div class="ls-help__who"><img src="{r}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="Chân dung {FIRM["lawyer"]}" width="64" height="64"><p><strong>{FIRM["lawyer"]}</strong><span>Trực tiếp nghe anh chị trình bày</span></p></div>
       <p class="ls-help__title">{title}</p>
       {call_buttons(r, "ls-actions--stack")}
       <ul class="ls-help__meta"><li>{ico("i-clock")}{FIRM["hours"]}</li><li>{ico("i-lock")}Thông tin được giữ kín theo Luật Luật sư</li></ul>
@@ -427,7 +460,7 @@ def vi_date(iso):
 
 def article_card(a, r, heading="h3"):
     return f"""<article class="post">
-  <a class="post__img" href="{r}kien-thuc-phap-ly/{a["slug"]}/" tabindex="-1" aria-hidden="true"><img src="{r}assets/img/bai-viet/{a["slug"]}.webp?v={ASSET_VERSION}" alt="" loading="lazy" width="720" height="240"></a>
+  <a class="post__img" href="{r}kien-thuc-phap-ly/{a["slug"]}/" tabindex="-1" aria-hidden="true"><img src="{r}assets/img/bai-viet/{a["slug"]}.webp?v={ASSET_VERSION}" alt="{esc(a["image_alt"])}" loading="lazy" width="720" height="240"></a>
   <div class="post__body">
     <p class="post__meta"><a class="tag" href="{r}dich-vu/{a["service"]}/">{esc(a["category"])}</a><time datetime="{a["published"]}">{ico("i-clock")}{vi_date(a["published"])}</time></p>
     <{heading} class="post__title"><a href="{r}kien-thuc-phap-ly/{a["slug"]}/">{esc(a["card_title"])}</a></{heading}>
@@ -489,6 +522,10 @@ def render_tokens(body, page, r):
             return faq_list(r, [f for f in FAQ if f["id"] in ids] if ids else None)
         if name == "arrow":
             return ARROW
+        if name == "modified":
+            # Ngày cập nhật hiển thị; thay ở bước dựng trang nên không làm đổi dấu vân tay nội dung
+            y, m, d = page["modified"].split("-")
+            return f'<time datetime="{page["modified"]}">{d}/{m}/{y}</time>'
         if name == "ico":
             nm, _, cls = arg.partition("|")
             return ico(nm, cls or "ico")
@@ -503,8 +540,10 @@ def org_node():
         "@type": "LegalService",
         "@id": ORG_ID,
         "name": FIRM["legal_name"],
-        "alternateName": [FIRM["short_name"], FIRM["brand"]],
+        "alternateName": [FIRM["short_name"], FIRM["brand"], "NamLawyerCo., LTD"],
         "slogan": FIRM["slogan"],
+        "foundingDate": "2019-01",
+        "employee": {"@id": PERSON_ID},
         "url": SITE_URL + "/",
         "logo": {"@type": "ImageObject", "url": abs_url("assets/img/icon-512.png"), "width": 512, "height": 512},
         "image": abs_url(asset_ref("assets/img/og-image.jpg")),
@@ -525,6 +564,7 @@ def org_node():
             "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             "opens": "08:00", "closes": "17:30",
         }],
+        "hasMap": f'https://www.google.com/maps/search/?api=1&query={FIRM["maps_query"]}',
         "areaServed": [{"@type": "City", "name": "Thành phố Hồ Chí Minh"}, {"@type": "Country", "name": "Việt Nam"}],
         "knowsLanguage": ["vi"],
         "sameAs": [FIRM["zalo"]],
@@ -537,12 +577,26 @@ def org_node():
     }
 
 
+def person_node():
+    """Luật sư điều hành. Chỉ dùng thông tin đã công bố trên trang Giới thiệu; số Thẻ luật sư,
+    Đoàn Luật sư (memberOf) bổ sung khi luật sư đồng ý công bố."""
+    return {
+        "@type": "Person", "@id": PERSON_ID, "name": "Nguyễn Trọng Nam", "honorificPrefix": "Luật sư",
+        "jobTitle": "Giám đốc, luật sư điều hành", "worksFor": {"@id": ORG_ID},
+        "image": abs_url(asset_ref("assets/img/luat-su-nam.webp")),
+        "url": abs_url("gioi-thieu/") + "#doi-ngu-luat-su", "knowsLanguage": ["vi"],
+        "knowsAbout": [s["name"] for s in SERVICES],
+    }
+
+
 def jsonld(page):
     url = abs_url(page["path"])
     org = org_node()
-    if page["path"] not in ("", "lien-he/", "gioi-thieu/"):
+    full_org = page["path"] in ("", "lien-he/", "gioi-thieu/")
+    if not full_org:
+        # Trang con chỉ giữ thông tin nhận diện; bản đầy đủ nằm ở trang chủ, Giới thiệu, Liên hệ
         org = {k: org[k] for k in ("@type", "@id", "name", "alternateName", "url", "logo", "image", "telephone", "email", "address")}
-    graph = [org, {
+    graph = [org] + ([person_node()] if full_org else []) + [{
         "@type": "WebSite", "@id": SITE_ID, "url": SITE_URL + "/", "name": f'{FIRM["short_name"]} – {FIRM["brand"]}',
         "inLanguage": "vi", "publisher": {"@id": ORG_ID},
     }]
@@ -570,9 +624,34 @@ def jsonld(page):
 # ---------------------------------------------------------------------------
 # Khung trang
 # ---------------------------------------------------------------------------
+_BUNDLES = {}
+REL_URL_RE = re.compile(r"""url\((?!\s*["']?data:)""")
+
+
+def css_bundle(name, files):
+    """Gộp các tệp CSS (giữ nguyên thứ tự cascade) thành assets/css/bundle-<name>.css: trình duyệt chỉ
+    tải một tệp chặn hiển thị thay vì 5–6. Tệp gộp nằm trong assets/css nên url(../img/…) của các tệp
+    cùng thư mục vẫn đúng; tệp nguồn ở thư mục khác (tu-dien.css) không được chứa url() tương đối."""
+    key = (name, tuple(files))
+    if key not in _BUNDLES:
+        parts = []
+        for f in files:
+            with open(os.path.join(ROOT, f), encoding="utf-8") as fh:
+                css = fh.read()
+            if not f.startswith("assets/css/") and REL_URL_RE.search(css):
+                raise ValueError(f"{f}: url() tương đối sẽ sai đường dẫn khi gộp vào assets/css/")
+            parts.append(f"/* ---- {f} ---- */\n{css.strip()}\n")
+        text = ("/* Tệp sinh tự động bởi tools/build.py, không sửa trực tiếp. Sửa các tệp nguồn: "
+                + ", ".join(files) + " */\n" + "".join(parts))
+        out = f"assets/css/bundle-{name}.css"
+        write(out, text)
+        _BUNDLES[key] = (out, hashlib.md5(text.encode("utf-8")).hexdigest()[:8])
+    return _BUNDLES[key]
+
+
 def layout(page):
     r = page.get("root_override", "../" * page["path"].count("/"))
-    css_v, js_v = file_hash("assets/css/style.css"), file_hash("assets/js/main.js")
+    js_v = file_hash("assets/js/main.js")
     url = abs_url(page["path"])
     # Ảnh chia sẻ luôn dùng JPG 1200×630 để tương thích Facebook, Zalo, LinkedIn
     image = abs_url(asset_ref("assets/img/og-image.jpg"))
@@ -583,7 +662,9 @@ def layout(page):
         art_meta = (f'\n<meta property="article:published_time" content="{page["published"]}">'
                     f'\n<meta property="article:modified_time" content="{page["modified"]}">'
                     f'\n<meta property="article:section" content="{esc(page["article_section"])}">')
-    preload = "".join(f'\n<link rel="preload" as="image" href="{r}{asset_ref(p)}" fetchpriority="high">' for p in page.get("preload_images", []))
+    # Ảnh nạp trước phải trùng hệt địa chỉ (kể cả ?v=) với chỗ dùng ảnh, nếu không trình duyệt tải hai lần
+    preload = "".join(f'\n<link rel="preload" as="image" href="{r}{p if "?" in p else asset_ref(p)}" fetchpriority="high">'
+                      for p in page.get("preload_images", []))
     extra_head = page.get("extra_head", "").replace("{{root}}", r)
     hero = render_tokens(page_hero_html(page, r), page, r) if page.get("page_hero", True) else ""
     body = render_tokens(page["body"], page, r)
@@ -594,8 +675,9 @@ def layout(page):
     # Mọi trang còn lại dùng chung một hệ giao diện: pages.css.
     reader = page.get("body_class") == "tdl-page"
     sheets = ("nam-theme", "mobile", "navigation", "reader-design") if reader else ("nam-theme", "mobile", "navigation", "pages")
-    styles = f'<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{extra_head}\n' + "\n".join(
-        f'<link rel="stylesheet" href="{r}assets/css/{n}.css?v={file_hash(f"assets/css/{n}.css")}">' for n in sheets)
+    bundle, bundle_v = css_bundle("reader" if reader else "site",
+                                  ["assets/css/style.css"] + page.get("extra_css", []) + [f"assets/css/{n}.css" for n in sheets])
+    styles = f'<link rel="stylesheet" href="{r}{bundle}?v={bundle_v}">{extra_head}'
     if reader:
         styles += "\n\n"
         body_cls = f' class="{page["body_class"]}"'
@@ -682,6 +764,23 @@ def crumbs_for(*items):
 # ---------------------------------------------------------------------------
 # Trang dịch vụ
 # ---------------------------------------------------------------------------
+_CODE = []
+
+
+def code():
+    """Bộ luật Hình sự (nạp một lần, dùng chung cho các trang dẫn chiếu điều luật)."""
+    if not _CODE:
+        _CODE.append(blhs.Code())
+    return _CODE[0]
+
+
+def blhs_link_items(ids, r):
+    """Liên kết tới trang điều luật, anchor là số điều kèm tên tội danh."""
+    c = code()
+    items = "".join(f'<li><a href="{r}bo-luat-hinh-su/dieu-{i}/">Điều {i}: {esc(c.by_id[i]["t"])}</a></li>' for i in ids)
+    return f'<ul class="ls-laws ls-laws--links">{items}</ul>'
+
+
 def service_page(s):
     path = f"dich-vu/{s['slug']}/"
     name_lc = s["name"].lower()
@@ -706,6 +805,11 @@ def service_page(s):
     cards = "".join(f'<a class="ls-resource" href="{{{{root}}}}{href}"><span class="ls-resource__label">{label}</span><h3>{esc(title)}</h3><p>{esc(text)}</p><span class="ls-resource__more">Xem chi tiết {ARROW}</span></a>'
                     for href, label, title, text in resources)
     related = "".join(f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"])}{esc(SERVICE_BY_SLUG[x]["name"])}</a></li>' for x in s["related"])
+    blhs_block = ""
+    if s.get("blhs"):
+        blhs_block = (f'<div class="ls-more__blhs"><h3 class="ls-more__title">{"Tội danh thường gặp trong Bộ luật Hình sự" if s["slug"] == "hinh-su" else "Điều luật hình sự liên quan"}</h3>'
+                      f'{blhs_link_items(s["blhs"], "{{root}}")}'
+                      f'<a class="link-arrow" href="{{{{root}}}}bo-luat-hinh-su/">Tra cứu toàn văn Bộ luật Hình sự {ARROW}</a></div>')
     urgent = ""
     if s.get("urgent"):
         urgent = (f'<p class="ls-urgent">{ico("i-alert")}<span><strong>Việc gấp?</strong> Người thân vừa bị bắt, tạm giữ hoặc sắp phải làm việc với cơ quan điều tra: '
@@ -770,7 +874,7 @@ def service_page(s):
   <div class="ls-head ls-head--row"><div><h2 class="h2" id="tham-khao-title">Đọc thêm trước khi gặp luật sư</h2></div><a class="link-arrow" href="{{{{root}}}}kien-thuc-phap-ly/">Thư viện pháp lý {ARROW}</a></div>
   <div class="ls-grid ls-grid--3">{cards}</div>
   <div class="ls-split ls-split--even ls-more">
-    <div><h3 class="ls-more__title">Căn cứ pháp luật chủ yếu</h3><ul class="ls-laws">{laws}</ul><p class="ls-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p></div>
+    <div><h3 class="ls-more__title">Căn cứ pháp luật chủ yếu</h3><ul class="ls-laws">{laws}</ul><p class="ls-small">Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</p>{blhs_block}</div>
     <div><h3 class="ls-more__title">Lĩnh vực liên quan</h3><ul class="ls-chips">{related}</ul></div>
   </div>
 </div></section>
@@ -780,7 +884,7 @@ def service_page(s):
     url = abs_url(path)
     return {
         "path": path, "section": "services", "body_class": "service-page", "page_hero": False,
-        "title": f'{s["title"]} | {FIRM["short_name"]}', "description": s["description"],
+        "title": seo_title(s.get("seo_title", s["title"])), "description": s["description"],
         "crumbs": crumbs_for(("Dịch vụ", "dich-vu/"), (s["name"], path)),
         "h1": strip_tags(s["hero_title"]),
         "image": image, "image_alt": s["image_alt"],
@@ -820,7 +924,7 @@ def services_hub():
 """
     return {
         "path": path, "section": "services", "schema_type": "CollectionPage",
-        "title": f'Lĩnh vực hoạt động – Dịch vụ pháp lý | {FIRM["short_name"]}',
+        "title": seo_title("Lĩnh vực hoạt động – Dịch vụ pháp lý"),
         "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 8 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng.",
         "eyebrow": "Lĩnh vực hoạt động",
         "h1": "Anh chị cần luật sư <em>giúp việc gì?</em>",
@@ -851,10 +955,14 @@ def article_page(a):
     related_svcs = "".join(
         f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"], "rel-list__icon")}<span>{esc(SERVICE_BY_SLUG[x]["name"])}</span>{ARROW}</a></li>'
         for x in a["related_services"])
+    blhs_aside = ""
+    if a.get("blhs"):
+        blhs_aside = (f'\n      <div class="aside-card">\n        <p class="aside-card__title">Điều luật hình sự liên quan</p>\n'
+                      f'        {blhs_link_items(a["blhs"], "{{root}}")}\n      </div>')
     points = "".join(f"<li>{esc(p)}</li>" for p in a.get("key_points", []))
     keypoints = f'<div class="ls-keypoints"><p class="ls-keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
     extra = f"""<p class="article-meta">
-        <span>{ico("i-user")}Ban biên tập {FIRM["short_name"]}</span>
+        <span>{ico("i-user")}<a href="{{{{root}}}}gioi-thieu/#doi-ngu-luat-su">Ban biên tập {FIRM["short_name"]}</a></span>
         <span>{ico("i-calendar")}Đăng <time datetime="{a["published"]}">{vi_date(a["published"])}</time></span>
         <span>{ico("i-clock")}Cập nhật <time datetime="{a["modified"]}">{vi_date(a["modified"])}</time> · {minutes} phút đọc</span>
       </p>"""
@@ -876,14 +984,14 @@ def article_page(a):
         <ol class="toc">{toc}</ol>
       </div>
       <div class="aside-card ls-ask">
-        <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="56" height="56" loading="lazy"><p><strong>Cần hỏi về {esc(svc["name"].lower())}?</strong><span>{FIRM["lawyer"]} trực tiếp nghe anh chị trình bày</span></p></div>
+        <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="Chân dung {FIRM["lawyer"]}" width="56" height="56" loading="lazy"><p><strong>Cần hỏi về {esc(svc["name"].lower())}?</strong><span>{FIRM["lawyer"]} trực tiếp nghe anh chị trình bày</span></p></div>
         {call_buttons("{{root}}", "ls-actions--stack ls-actions--sm")}
         <a class="link-arrow" href="{{{{root}}}}dich-vu/{svc["slug"]}/">Xem dịch vụ {esc(svc["name"])} {ARROW}</a>
       </div>
       <div class="aside-card">
         <p class="aside-card__title">Lĩnh vực liên quan</p>
         <ul class="rel-list">{related_svcs}</ul>
-      </div>
+      </div>{blhs_aside}
     </aside>
   </div>
 </section>
@@ -899,7 +1007,7 @@ def article_page(a):
     return {
         "path": path, "section": "knowledge", "og_type": "article", "body_class": "article-page",
         "published": a["published"], "modified": a["modified"], "article_section": a["category"],
-        "title": f'{a["seo_title"]} | {FIRM["short_name"]}',
+        "title": seo_title(a["seo_title"]),
         "og_title": a["title"],
         "description": a["description"],
         "eyebrow": a["category"],
@@ -944,7 +1052,7 @@ def knowledge_hub():
 """
     return {
         "path": path, "section": "knowledge", "schema_type": "CollectionPage",
-        "title": f'Kiến thức pháp lý – Bài viết, tra cứu luật | {FIRM["short_name"]}',
+        "title": seo_title("Kiến thức pháp lý – Bài viết, tra cứu luật"),
         "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai; tra cứu Bộ luật Hình sự kèm bình luận và giải đáp thắc mắc khi làm việc với luật sư.",
         "eyebrow": "Kiến thức pháp lý",
         "h1": "Hiểu đúng quyền lợi của mình <em>trước khi quyết định</em>",
@@ -967,7 +1075,7 @@ def faq_page():
   </div>
   <aside class="faq-aside">
     <div class="aside-card ls-ask">
-      <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="" width="56" height="56" loading="lazy"><p><strong>Chưa thấy câu trả lời?</strong><span>Gọi điện hoặc nhắn Zalo để hỏi trực tiếp luật sư</span></p></div>
+      <div class="ls-help__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-nam-avatar.webp")}" alt="Chân dung {FIRM["lawyer"]}" width="56" height="56" loading="lazy"><p><strong>Chưa thấy câu trả lời?</strong><span>Gọi điện hoặc nhắn Zalo để hỏi trực tiếp luật sư</span></p></div>
       {call_buttons("{{root}}", "ls-actions--stack ls-actions--sm")}
     </div>
     <div class="aside-card">
@@ -986,7 +1094,7 @@ def faq_page():
 """
     return {
         "path": path, "section": "knowledge", "schema_type": "FAQPage",
-        "title": f'Câu hỏi thường gặp khi thuê luật sư | {FIRM["short_name"]}',
+        "title": seo_title("Câu hỏi thường gặp khi thuê luật sư"),
         "description": "Giải đáp về chi phí thuê luật sư theo Điều 55 Luật Luật sư, bảo mật thông tin, cam kết kết quả, thời hiệu, thời gian phản hồi và vụ việc ngoài TP.HCM.",
         "eyebrow": "Câu hỏi thường gặp",
         "h1": "Những điều anh chị <em>hay băn khoăn nhất</em>",
@@ -1007,75 +1115,137 @@ def simple_page(name, path, section, crumbs, **extra):
     page = {"path": path, "section": section, "crumbs": crumbs, "body": body}
     page.update(meta)
     page.update(extra)
-    if "title" in page and not page["title"].endswith(FIRM["short_name"]) and path:
-        page["title"] = f'{page["title"]} | {FIRM["short_name"]}'
+    if "title" in page and path:
+        page["title"] = seo_title(page["title"])
     return page
 
 
 # ---------------------------------------------------------------------------
 # Từ điển Bộ luật Hình sự
 # ---------------------------------------------------------------------------
-CODE_LEGISLATION = {"@type": "Legislation", "name": "Bộ luật Hình sự", "legislationIdentifier": "100/2015/QH13",
-                    "legislationJurisdiction": "VN", "inLanguage": "vi"}
+# Bộ luật Hình sự số 100/2015/QH13: Quốc hội thông qua 27/11/2015, có hiệu lực từ 01/01/2018
+# (Nghị quyết 41/2017/QH14); đã sửa đổi bởi Luật 12/2017/QH14 và Luật 86/2025/QH15.
+CODE_LEGISLATION = {"@type": "Legislation", "@id": SITE_URL + "/bo-luat-hinh-su/#bo-luat", "name": "Bộ luật Hình sự", "legislationIdentifier": "100/2015/QH13",
+                    "legislationType": "Bộ luật", "legislationJurisdiction": "VN", "inLanguage": "vi",
+                    "legislationDate": "2015-11-27", "legislationDateOfApplicability": "2018-01-01",
+                    "legislationLegalForce": "https://schema.org/InForce",
+                    "legislationPassedBy": {"@type": "GovernmentOrganization",
+                                            "name": "Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam"}}
+CODE_AMENDMENTS = [("12/2017/QH14", "2017-06-20", "Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự số 100/2015/QH13"),
+                   ("86/2025/QH15", "2025-06-25", "Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự")]
+
+
+def chapter_desc(ch):
+    """Mô tả trang chương: tên chương, phạm vi điều, rồi thêm lần lượt tên các điều đầu
+    chương khi còn chỗ (không cắt dở tên điều). Tên chương quá dài thì rút gọn tên chương
+    nhưng giữ phạm vi điều và lời mời đọc."""
+    arts = ch["a"]
+    rng = f'Điều {arts[0]["id"]}–{arts[-1]["id"]}' if len(arts) > 1 else f'Điều {arts[0]["id"]}'
+    code_name = "" if "bộ luật hình sự" in ch["name"].lower() else " Bộ luật Hình sự"  # tránh lặp chữ ở Chương II
+    head = f'{ch["title"]}{code_name} 2015 ({rng}, {len(arts)} điều)'
+    tail = " Toàn văn kèm bình luận."
+    if len(head) + 1 + len(tail) > DESC_MAX:
+        prefix = f'{ch["label"]} BLHS 2015 ({rng}, {len(arts)} điều): '
+        name = fit_desc(ch["name"], DESC_MAX - len(prefix) - len(tail) - 1)
+        return prefix + name + ("" if name.endswith("…") else ".") + tail
+    best = head + "." + tail
+    for k in range(1, 5):
+        names = ", ".join(a["t"].lower() for a in arts[:k])
+        cand = f"{head}: {names}{'…' if k < len(arts) else '.'}{tail}"
+        if len(cand) > DESC_MAX:
+            break
+        best = cand
+    return best
+
+
+def article_desc(c, a):
+    """Mô tả trang điều luật. Điều quy định tội danh: số khung và mức hình phạt cao nhất
+    (trích tự động từ văn bản điều luật, xem blhs.penalty_summary). Điều khác: trích đoạn đầu."""
+    head = f'Điều {a["id"]} BLHS 2015 – {a["t"]}'
+    if a.get("repealed"):
+        return fit_desc(f"{head}: " + c.excerpt(a, 300))
+    pen = blhs.penalty_summary(a)
+    if pen:
+        n, top = pen
+        body = f"{n} khung hình phạt, cao nhất {top}" if n > 1 else f"khung hình phạt cao nhất {top}"
+        for tail in (". Toàn văn, bình luận và các điều liên quan.", ". Toàn văn kèm bình luận.", "."):
+            if len(f"{head}: {body}{tail}") <= DESC_MAX:
+                return f"{head}: {body}{tail}"
+        return fit_desc(f'Điều {a["id"]} BLHS 2015 quy định {body}: {a["t"].lower()}.')
+    head += ": "
+    return fit_desc(head + c.excerpt(a, max(60, DESC_MAX - len(head) + 20)))
 
 
 def blhs_pages():
-    code = blhs.Code()
-    rd = blhs.Renderer(code, ico, ARROW, FIRM)
+    code_ = code()
+    rd = blhs.Renderer(code_, ico, ARROW, FIRM)
+    # Dẫn ngược từ trang điều luật về bài viết, trang dịch vụ có nhắc tới điều đó
+    for a in ARTICLES:
+        for i in a.get("blhs", []):
+            rd.refs.setdefault(i, {}).setdefault("articles", []).append((f'kien-thuc-phap-ly/{a["slug"]}/', a["card_title"]))
+    for s in SERVICES:
+        label = "Hỗ trợ thủ tục công chứng" if s["slug"] == "cong-chung" else f'Luật sư {s["name"]}'
+        for i in s.get("blhs", []):
+            rd.refs.setdefault(i, {}).setdefault("services", []).append((f'dich-vu/{s["slug"]}/', label))
     common = {
         "section": "knowledge", "page_hero": False, "body_class": "tdl-page", "index_k": False,
-        "extra_head": '\n<link rel="stylesheet" href="{{root}}bo-luat-hinh-su/tu-dien.css?v=' + file_hash("bo-luat-hinh-su/tu-dien.css") + '">',
+        "extra_css": ["bo-luat-hinh-su/tu-dien.css"],
+        # Ảnh nền dải tiêu đề là phần tử LCP; khai báo trong reader-design.css nên phải nạp trước (cùng ?v=)
+        "preload_images": ["assets/img/reader-banner.webp?v=20260925a"],
         "scripts": ["bo-luat-hinh-su/lx-core.js?v=" + file_hash("bo-luat-hinh-su/lx-core.js"),
                     "bo-luat-hinh-su/tu-dien.js?v=" + file_hash("bo-luat-hinh-su/tu-dien.js")],
     }
     hub_crumb = ("Bộ luật Hình sự", "bo-luat-hinh-su/")
     pages = []
-    st = code.toc["stats"]
+    st = code_.toc["stats"]
     hub = dict(common)
     hub.update({
         "path": "bo-luat-hinh-su/", "h1": "Bộ luật Hình sự",
-        "title": f'Từ điển Bộ luật Hình sự 2015 – Tra cứu kèm bình luận | {FIRM["short_name"]}',
+        "title": seo_title("Tra cứu Bộ luật Hình sự 2015 kèm bình luận"),
         "description": f'Tra cứu toàn văn {st["arts"]} điều Bộ luật Hình sự 2015 (sửa đổi 2017, 2025) kèm bình luận từng điều; tìm theo số điều, khoản, điểm, tội danh, có dấu hoặc không dấu.',
         "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), hub_crumb),
         "body": rd.hub("../"),
         "schema_type": "CollectionPage",
         "webpage_extra": {"about": CODE_LEGISLATION},
+        "schema": [{"@type": "Legislation", "name": name, "legislationIdentifier": ident, "legislationType": "Luật",
+                    "legislationDate": date, "legislationJurisdiction": "VN", "inLanguage": "vi",
+                    "legislationChanges": {"@id": CODE_LEGISLATION["@id"]}} for ident, date, name in CODE_AMENDMENTS],
     })
     pages.append(hub)
-    for ch in code.chapters:
+    for ch in code_.chapters:
         path = f"bo-luat-hinh-su/{ch['slug']}/"
-        names = ", ".join(a["t"].lower() for a in ch["a"][:4])
-        rng = f'Điều {ch["a"][0]["id"]}–{ch["a"][-1]["id"]}' if len(ch["a"]) > 1 else f'Điều {ch["a"][0]["id"]}'
-        desc = f'{ch["title"]} Bộ luật Hình sự 2015 ({rng}, {len(ch["a"])} điều): {names}… Toàn văn kèm bình luận.'
         pg = dict(common)
         pg.update({
             "path": path, "h1": ch["title"],
-            "title": f'{ch["title"]} – Bộ luật Hình sự | {FIRM["short_name"]}',
-            "description": desc if len(desc) <= 175 else desc[:172].rsplit(" ", 1)[0] + "…",
+            "title": seo_title(f'{ch["title"]} 2015' if "bộ luật hình sự" in ch["name"].lower() else f'{ch["title"]} – Bộ luật Hình sự',
+                               f'{ch["label"]} BLHS: {ch["name"]}' if ch["num"] else ch["title"]),
+            "description": chapter_desc(ch),
             "crumbs": crumbs_for(hub_crumb, (ch["label"], path)),
             "body": rd.chapter(ch, "../../"),
             "schema_type": "CollectionPage",
             "webpage_extra": {"about": CODE_LEGISLATION},
         })
         pages.append(pg)
-    for a in code.arts:
+    for a in code_.arts:
         path = f"bo-luat-hinh-su/dieu-{a['id']}/"
-        head = f'Điều {a["id"]} BLHS 2015 – {a["t"]}: '
-        desc = head + code.excerpt(a, max(60, 158 - len(head)))
-        if len(desc) > 165:
-            desc = desc[:160].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+        a["repealed"] = code_.excerpt(a, 60).startswith("Tội này đã được bãi bỏ")
+        name = a["t"] + (" (đã bãi bỏ)" if a["repealed"] else "")
         pg = dict(common)
         pg.update({
             "path": path, "h1": f'Điều {a["id"]}. {a["t"]}',
-            "title": f'Điều {a["id"]} Bộ luật Hình sự: {a["t"]} | {FIRM["short_name"]}',
-            "description": desc,
+            "title": seo_title(f'Điều {a["id"]} Bộ luật Hình sự: {name}', f'Điều {a["id"]} BLHS 2015: {name}',
+                               f'Điều {a["id"]} BLHS: {name}'),
+            "og_title": f'Điều {a["id"]} Bộ luật Hình sự: {name} | {FIRM["short_name"]}',
+            "description": article_desc(code_, a),
             "crumbs": crumbs_for(hub_crumb, (a["ch"]["label"], f'bo-luat-hinh-su/{a["ch"]["slug"]}/'), (f'Điều {a["id"]}', path)),
             "body": rd.article(a, "../../"),
             "search_title": f'Điều {a["id"]}. {a["t"]}',
-            "search_desc": code.excerpt(a, 150),
+            "search_desc": code_.excerpt(a, 150),
             "webpage_extra": {"about": {
                 "@type": "Legislation", "name": f'Điều {a["id"]}. {a["t"]}', "legislationJurisdiction": "VN", "inLanguage": "vi",
-                "legislationIdentifier": f'Điều {a["id"]} Bộ luật Hình sự số 100/2015/QH13', "isPartOf": CODE_LEGISLATION}},
+                "legislationIdentifier": f'Điều {a["id"]} Bộ luật Hình sự số 100/2015/QH13',
+                "legislationLegalForce": "https://schema.org/" + ("NotInForce" if a["repealed"] else "InForce"),
+                "isPartOf": CODE_LEGISLATION}},
         })
         pages.append(pg)
     return pages
@@ -1085,12 +1255,14 @@ def all_pages():
     pages = []
     meta, body = load_src("pages/home.html")
     home = {"path": "", "section": "home", "crumbs": [HOME], "body": body, "page_hero": False,
-            "preload_images": ["assets/img/nam-hero-luat-su.webp"]}
+            # Ảnh nền banner khai báo trong nam-theme.css, mobile.css: giữ cùng ?v= với hai tệp đó
+            "preload_images": ["assets/img/nam-hero-luat-su.webp?v=20261006b"]}
     home.update(meta)
     pages.append(home)
 
     pages.append(simple_page("gioi-thieu", "gioi-thieu/", "about",
-                             crumbs_for(("Giới thiệu", "gioi-thieu/")), schema_type="AboutPage"))
+                             crumbs_for(("Giới thiệu", "gioi-thieu/")), schema_type="AboutPage",
+                             webpage_extra={"mainEntity": {"@id": ORG_ID}}))
     pages.append(simple_page("vi-sao-chon-chung-toi", "vi-sao-chon-chung-toi/", "about",
                              crumbs_for(("Giới thiệu", "gioi-thieu/"), ("Vì sao chọn chúng tôi", "vi-sao-chon-chung-toi/"))))
     pages.append(simple_page("quy-trinh-lam-viec", "quy-trinh-lam-viec/", "about",
@@ -1124,19 +1296,96 @@ def write(rel, text):
         fh.write(text)
 
 
+# ---------------------------------------------------------------------------
+# Ngày cập nhật thật của từng trang (sitemap lastmod, dateModified)
+# ---------------------------------------------------------------------------
+# Google chỉ tin lastmod khi nó phản ánh lần sửa nội dung thật. tools/lastmod.json lưu
+# dấu vân tay nội dung (tiêu đề, mô tả, thân trang) và ngày đổi gần nhất của mỗi trang:
+# build lại mà nội dung không đổi thì ngày giữ nguyên. Nhớ commit tệp này cùng các trang.
+LASTMOD_FILE = os.path.join(ROOT, "tools", "lastmod.json")
+
+
+def fingerprint(page):
+    parts = [page.get("title", ""), page.get("description", ""), page.get("h1", ""), page["body"]]
+    return hashlib.md5("\x00".join(parts).encode("utf-8")).hexdigest()[:12]
+
+
+def git_date(rel):
+    """Ngày commit gần nhất của trang đã sinh (chỉ dùng khi trang chưa có trong sổ)."""
+    try:
+        out = subprocess.run(["git", "log", "-1", "--format=%cs", "--", rel], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout.strip()
+        return out or TODAY
+    except (OSError, subprocess.CalledProcessError):
+        return TODAY
+
+
+def apply_lastmod(pages):
+    try:
+        with open(LASTMOD_FILE, encoding="utf-8") as fh:
+            ledger = json.load(fh)
+    except FileNotFoundError:
+        ledger = {}
+    fresh = {}
+    for p in pages:
+        fp = fingerprint(p)
+        old = ledger.get(p["path"])
+        if old and old["hash"] == fp:
+            date = old["date"]
+        elif old:
+            date = TODAY
+        else:
+            date = git_date(out_file(p))
+        fresh[p["path"]] = {"hash": fp, "date": date}
+        # Bài viết tự khai báo ngày cập nhật (hiển thị trên trang) thì giữ ngày đó
+        p.setdefault("modified", date)
+    with open(LASTMOD_FILE, "w", encoding="utf-8") as fh:
+        json.dump(fresh, fh, ensure_ascii=False, indent=0, sort_keys=True)
+        fh.write("\n")
+
+
+def out_file(page):
+    return page["path"] if page["path"].endswith(".html") else page["path"] + "index.html"
+
+
+IMG_RE = re.compile(r'<img\b[^>]*?\bsrc="([^"]+)"[^>]*?\balt="([^"]+)"')
+
+
+def content_images(page, rendered):
+    """Ảnh nội dung (có alt) trong <main>, đổi sang địa chỉ tuyệt đối cho image sitemap."""
+    main = rendered.split('<main id="main">', 1)[-1].split("</main>", 1)[0]
+    base = "/" + os.path.dirname(out_file(page))
+    seen = []
+    for src, _alt in IMG_RE.findall(main):
+        if src.startswith(("http:", "https:", "data:")):
+            continue
+        u = abs_url(os.path.normpath(os.path.join(base, src)).lstrip("/"))
+        if u not in seen:
+            seen.append(u)
+    return seen
+
+
 def main():
     pages = all_pages()
+    apply_lastmod(pages)
+    images = {}
     for p in pages:
-        out = p["path"] if p["path"].endswith(".html") else p["path"] + "index.html"
-        write(out, layout(p))
+        rendered = layout(p)
+        write(out_file(p), rendered)
+        images[p["path"]] = content_images(p, rendered)
 
-    write("doi-ngu-luat-su/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=../gioi-thieu/#doi-ngu-luat-su"><title>Giới thiệu Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/gioi-thieu/"></head><body><p>Nội dung đội ngũ đã được chuyển vào <a href="../gioi-thieu/#doi-ngu-luat-su">Giới thiệu Luật Sư Nam</a>.</p></body></html>')
+    # Trang cũ đã gộp vào Giới thiệu: chuyển hướng ngay (Google coi như chuyển hướng 301).
+    # Không đặt noindex để tín hiệu chuyển hướng và canonical không mâu thuẫn nhau.
+    write("doi-ngu-luat-su/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=../gioi-thieu/#doi-ngu-luat-su"><title>Giới thiệu Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/gioi-thieu/"></head><body><p>Nội dung đội ngũ đã được chuyển vào <a href="../gioi-thieu/#doi-ngu-luat-su">Giới thiệu Luật Sư Nam</a>.</p></body></html>')
 
     indexable = [p for p in pages if not p.get("noindex")]
     urls = "".join(
-        f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p.get('modified', TODAY)}</lastmod>\n  </url>\n"
+        f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p['modified']}</lastmod>\n"
+        + "".join(f"    <image:image><image:loc>{esc(u)}</image:loc></image:image>\n" for u in images[p["path"]])
+        + "  </url>\n"
         for p in indexable)
-    write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+    write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+          f' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n{urls}</urlset>\n')
     write("robots.txt", f"# {FIRM['legal_name']}\nUser-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n")
     write("site.webmanifest", json.dumps({
         "name": FIRM["legal_name"], "short_name": "LSN Law Firm", "description": "Tư vấn pháp lý và tham gia tố tụng tại Thành phố Hồ Chí Minh.",

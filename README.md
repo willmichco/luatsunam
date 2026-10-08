@@ -64,6 +64,8 @@ Trang Từ điển Bộ luật Hình sự giữ nguyên bộ giao diện riêng 
 ```
 tools/data.py              Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
 tools/build.py             Sinh toàn bộ trang, sitemap.xml, robots.txt, site.webmanifest, chỉ mục tìm kiếm
+tools/check_seo.py         Kiểm tra SEO sau khi build: tên miền canonical, liên kết hỏng, title, description, H1, alt ảnh, JSON-LD, sitemap
+tools/lastmod.json         Ngày cập nhật thật của từng trang (do build.py ghi, phải commit cùng các trang)
 tools/build_blhs.py        Chuyển tệp Word bình luận BLHS thành dữ liệu tra cứu
 tools/make_images.py       Sinh logo, favicon, biểu tượng ứng dụng, banner trang chủ, ảnh 8 lĩnh vực, ảnh chia sẻ (og-image)
 src/brand/logo-lsn.webp    Logo gốc (nền trong suốt)
@@ -73,13 +75,14 @@ src/bai-viet/*.html        Nội dung bài viết
 src/bo-luat-hinh-su.html   Nội dung trang tra cứu BLHS
 assets/css/style.css       Giao diện nền (biến màu, phông chữ ở :root, header, footer)
 assets/css/pages.css       Hệ giao diện chung của mọi trang trừ Từ điển Bộ luật Hình sự
+assets/css/bundle-*.css    Tệp CSS gộp (build.py sinh từ các tệp CSS nguồn): mỗi trang chỉ tải một tệp CSS
 assets/js/main.js          Menu, tìm kiếm, bản đồ, mục lục bài viết
 assets/fonts/              Be Vietnam Pro, phông sans-serif duy nhất của website (tự lưu trữ, SIL OFL 1.1)
 assets/img/                Ảnh
 bo-luat-hinh-su/           Trình đọc và dữ liệu Bộ luật Hình sự
 ```
 
-Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanifest`, `assets/search-index.json` do `tools/build.py` sinh ra. **Không sửa trực tiếp các tệp này**, sửa nguồn rồi chạy lại script.
+Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanifest`, `assets/search-index.json`, `assets/css/bundle-*.css`, `tools/lastmod.json` do `tools/build.py` sinh ra. **Không sửa trực tiếp các tệp này**, sửa nguồn rồi chạy lại script.
 
 ## Sửa nội dung thường gặp
 
@@ -87,6 +90,8 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 |---|---|
 | Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` |
 | Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`); ý nghĩa từng trường ghi ở đầu danh sách. Câu trả lời trong `faq` phải dẫn điều luật cụ thể |
+| Liên kết tới điều luật Bộ luật Hình sự | Trường `blhs` (danh sách số điều) trong `SERVICES`/`ARTICLES`. Trang dịch vụ, bài viết hiện danh sách điều; trang điều luật tự dẫn ngược về bài viết và lĩnh vực đó |
+| Title, description hiển thị trên Google | `seo_title`, `description` trong `SERVICES`/`ARTICLES`; khối `<!--meta-->` của `src/pages/*.html`. Title tối đa 60 ký tự (đuôi "\| Luật Sư Nam" chỉ gắn khi còn chỗ, hàm `seo_title` trong `tools/build.py`), description tối đa 158 ký tự. Trang Bộ luật Hình sự sinh tự động: điều quy định tội danh nêu số khung và mức hình phạt cao nhất (`penalty_summary` trong `tools/blhs.py`) |
 | Thêm bài viết | Thêm mục vào `ARTICLES` (kèm 3–4 ý `key_points` cho khung “Tóm tắt nhanh”), tạo `src/bai-viet/<slug>.html`, thêm ảnh `assets/img/bai-viet/<slug>.webp` (720×240) |
 | Câu hỏi thường gặp | `FAQ` trong `tools/data.py` |
 | Hồ sơ luật sư | `src/pages/doi-ngu-luat-su.html` (xem ghi chú cho người quản trị trong tệp) |
@@ -96,8 +101,11 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 
 ```bash
 python3 tools/build.py                 # sinh lại website
+python3 tools/check_seo.py             # kiểm tra SEO (thêm -v để xem từng trang); phải không còn LỖI
 python3 -m http.server 8000            # xem thử tại http://localhost:8000
 ```
+
+**Ngày cập nhật (`lastmod` trong sitemap, `dateModified` trong schema):** build.py so dấu vân tay nội dung từng trang (tiêu đề, mô tả, thân trang) với `tools/lastmod.json`. Trang nào nội dung đổi thì lấy ngày build, trang không đổi giữ nguyên ngày cũ. Nhờ vậy Google tin tín hiệu `lastmod`. Bài viết dùng ngày `modified` khai báo trong `tools/data.py`.
 
 Cập nhật dữ liệu Bộ luật Hình sự: `pip install python-docx && python3 tools/build_blhs.py "Binh-luan-BLHS.docx" && python3 tools/build.py`.
 
@@ -114,7 +122,7 @@ Mỗi điều luật có trang riêng `/bo-luat-hinh-su/dieu-<số>/`, bố cụ
   - Thanh chuyển Điều trước/sau, chọn chương, chọn điều.
   - Hộp “Quy định của luật”.
   - Các nút Lưu, In, Chia sẻ, Trích dẫn.
-  - 5 tab: Bình luận khoa học, Góc nhìn Luật sư Nam, Bản án liên quan, Tình huống thực tiễn, Điều liên quan.
+  - Tab: Bình luận khoa học, Điều liên quan và các phần thực tiễn. Góc nhìn Luật sư Nam, Bản án liên quan, Tình huống thực tiễn chỉ thành tab riêng khi điều đó đã có nội dung; chưa có phần nào thì gộp thành một tab "Thực tiễn áp dụng" (tránh lặp nội dung trống trên hàng trăm trang).
 - **Phải:**
   - Tìm kiếm liên quan: thuật ngữ có thật trong văn bản điều luật.
   - Điều liên quan: từ các liên kết dẫn chiếu giữa các điều.
@@ -146,11 +154,30 @@ Liên kết cũ dạng `#d173` và `#tim=…` tự chuyển sang địa chỉ m�
 - [ ] **Luật sư phụ trách rà soát 3 bài viết** trong `src/bai-viet/` trước khi công bố chính thức.
 - [ ] Bổ sung số Thẻ luật sư, Đoàn Luật sư tại trang Đội ngũ (chỉ công bố thông tin đã được luật sư đồng ý).
 - [ ] Thay ảnh minh họa lấy từ bản mockup (`assets/img/hero.webp`, `assets/img/dich-vu/*`, `assets/img/bai-viet/*`) bằng ảnh thật độ phân giải cao; ảnh gốc đặt trong `src/brand/goc/` rồi chạy lại `tools/make_images.py`.
-- [ ] Khi có tên miền riêng: sửa `SITE_URL`/`BASE_PATH`, chạy lại build, khai báo tên miền trong Settings → Pages, nộp `sitemap.xml` lên Google Search Console.
+- [ ] Chuyển sang tên miền lsn.vn: xem mục dưới.
 - [ ] Chuyển hướng hoặc đặt `noindex` cho website cũ (`willmichco.github.io/Website/`) để tránh trùng lặp nội dung với website mới.
+- [ ] **Google Search Console**: xác minh tên miền, nộp `sitemap.xml`, theo dõi mục *Trang* (lập chỉ mục) và *Trải nghiệm trên trang* (Core Web Vitals) sau 2–4 tuần.
+- [ ] **Google Business Profile** (Google Maps): tạo hoặc nhận hồ sơ công ty, tên, địa chỉ, số điện thoại ghi đúng như trên website; quan trọng nhất cho tìm kiếm "luật sư gần đây", "luật sư TP.HCM".
+- [ ] Kiểm tra dữ liệu có cấu trúc trên bản chạy thật bằng [Rich Results Test](https://search.google.com/test/rich-results) và [Schema Validator](https://validator.schema.org/) (trang chủ, một trang dịch vụ, một bài viết, một trang điều luật).
+- [ ] Đo tốc độ bản chạy thật bằng [PageSpeed Insights](https://pagespeed.web.dev/).
+- [ ] Luật sư soát lại mô tả "khung hình phạt, mức cao nhất" tự sinh trên trang điều luật (`penalty_summary` trong `tools/blhs.py`).
+- [ ] Viết nội dung tab "Thực tiễn áp dụng" (góc nhìn luật sư, bản án, tình huống) cho các điều được tìm nhiều: 173, 174, 134, 260, 51, 65.
 
 > ⚖️ Khi sửa nội dung, không thêm cụm cam kết kết quả (“cam kết thắng kiện”…) và không đăng số liệu chưa kiểm chứng. Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam nghiêm cấm luật sư hứa hẹn bảo đảm kết quả vụ việc (Quy tắc 9.1.6).
 
+## Chuyển sang tên miền lsn.vn
+
+Chỉ làm khi lsn.vn đã mua và truy cập được. Trước đó giữ nguyên `SITE_URL` hiện tại.
+
+1. Trỏ DNS lsn.vn tới nơi lưu trữ đã chọn. Nếu dùng GitHub Pages: tạo tệp `CNAME` ở thư mục gốc chứa dòng `lsn.vn`, khai báo tên miền trong Settings → Pages, bật *Enforce HTTPS*.
+2. Trong `tools/data.py`: `SITE_URL = "https://lsn.vn"`, `BASE_PATH = "/"`.
+3. `python3 tools/build.py && python3 tools/check_seo.py`: phải không còn LỖI, canonical đã sang lsn.vn.
+4. Google Search Console: thêm thuộc tính tên miền `lsn.vn` (xác minh DNS), nộp `https://lsn.vn/sitemap.xml`.
+5. Bản cũ: nếu lsn.vn chạy trên GitHub Pages thì `willmichco.github.io/luatsunam/` tự chuyển hướng 301 sang lsn.vn. Bản chatgpt.site không chuyển hướng 301 được thì cứ để chạy: canonical trên đó đã trỏ về lsn.vn, Google sẽ dần gộp tín hiệu. Nơi lưu trữ nào cho phép chuyển hướng 301 thì bật lên và dùng công cụ *Change of Address* trong Search Console.
+6. Cập nhật lsn.vn trên Google Business Profile, Zalo OA, danh thiếp và các trang mạng xã hội.
+
 ## Triển khai
 
-Mỗi lần push vào `main`, GitHub Actions (`.github/workflows/pages.yml`) xuất bản website sang nhánh `gh-pages` (bỏ qua `src/`, `tools/`, README).
+Mỗi lần push vào `main`, GitHub Actions (`.github/workflows/pages.yml`) chạy `tools/check_seo.py` rồi xuất bản website sang nhánh `gh-pages` (bỏ qua `src/`, `tools/`, README). Còn LỖI SEO thì không xuất bản.
+
+Mỗi pull request được `.github/workflows/seo-check.yml` kiểm tra: build lại phải ra đúng các tệp đã commit (tránh quên chạy build), và `check_seo.py` không có LỖI.

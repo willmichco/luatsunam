@@ -217,6 +217,58 @@ class Code:
         return cut + "…"
 
 
+PEN_RE = re.compile(r"thì bị ((?:phạt|tù|cảnh cáo)[^:;]*?)(?::|;|\.\s*$|$)")
+
+
+def penalty_summary(a):
+    """(số khung hình phạt, mức cao nhất) của điều luật quy định tội danh, hoặc None.
+
+    Chỉ tính các khoản áp dụng cho cá nhân có câu "thì bị phạt/tù/cảnh cáo …". Bỏ qua khoản
+    hình phạt bổ sung ("còn có thể bị") và khoản dành cho pháp nhân thương mại. Mức cao nhất
+    xếp theo thứ tự: tử hình > tù chung thân > tù có thời hạn (năm, tháng) > cải tạo không
+    giam giữ > phạt tiền, cảnh cáo. Dùng cho meta description nên trả về câu chữ ngắn."""
+    frames, best = 0, None
+    # Điều không chia khoản: toàn bộ quy định nằm trong một đoạn (loại "x")
+    kinds = ("k",) if any(t == "k" for t, _ in a["law"]) else ("x",)
+    for t, h in a["law"]:
+        if t not in kinds:
+            continue
+        body = re.sub(r"^\d+\.\s*", "", plain(h).rstrip("*").strip())
+        if "còn có thể bị" in body or body.startswith("Pháp nhân thương mại"):
+            continue
+        m = PEN_RE.search(body)
+        if not m:
+            continue
+        found = False
+        for opt in re.split(r",|\bhoặc\b", m.group(1)):
+            opt = opt.strip().lower()
+            if "tử hình" in opt:
+                rank = (5, 0, "tử hình")
+            elif "chung thân" in opt:
+                rank = (4, 0, "tù chung thân")
+            elif "tù" in opt and re.search(r"\d+\s*(năm|tháng)", opt):
+                y = [int(n) for n in re.findall(r"(\d+)\s*năm", opt)]
+                if y:
+                    rank = (3, max(y), f"{max(y)} năm tù")
+                else:
+                    mo = max(int(n) for n in re.findall(r"(\d+)\s*tháng", opt))
+                    rank = (2, mo, f"{mo} tháng tù")
+            elif "cải tạo không giam giữ" in opt:
+                y = [int(n) for n in re.findall(r"(\d+)\s*năm", opt)]
+                rank = (1, max(y), f"{max(y)} năm cải tạo không giam giữ") if y else (1, 0, "cải tạo không giam giữ")
+            elif "phạt tiền" in opt or "cảnh cáo" in opt:
+                rank = (0, 0, "phạt tiền" if "tiền" in opt else "cảnh cáo")
+            else:
+                continue
+            found = True
+            if best is None or rank[:2] > best[:2]:
+                best = rank
+        frames += found
+    if not frames or best[0] < 1:
+        return None
+    return frames, best[2]
+
+
 # ---------------------------------------------------------------------------
 # Dựng HTML
 # ---------------------------------------------------------------------------

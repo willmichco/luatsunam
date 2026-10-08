@@ -51,6 +51,32 @@ def file_hash(rel):
         return hashlib.md5(fh.read()).hexdigest()[:8]
 
 
+# Google cắt title ở khoảng 580px (≈ 60 ký tự tiếng Việt), description ở khoảng 920px
+# (≈ 155–160 ký tự). Tên website đã hiện riêng phía trên kết quả tìm kiếm, nên chỉ gắn
+# đuôi "| Luật Sư Nam" khi còn đủ chỗ, ưu tiên giữ từ khóa chính.
+TITLE_MAX, DESC_MAX = 60, 158
+
+
+def seo_title(*candidates, brand=True):
+    """Chọn phương án title đầu tiên vừa TITLE_MAX; thử kèm tên thương hiệu trước.
+    Không phương án nào vừa thì dùng phương án cuối, không cắt chữ giữa chừng
+    (cắt tên tội danh, tên chương sẽ làm sai nghĩa)."""
+    opts = []
+    for c in candidates:
+        if brand and not c.endswith(FIRM["short_name"]):
+            opts.append(f'{c} | {FIRM["short_name"]}')
+        opts.append(c)
+    return next((o for o in opts if len(o) <= TITLE_MAX), opts[-1])
+
+
+def fit_desc(text, limit=DESC_MAX):
+    """Cắt description ở ranh giới từ, không vượt limit ký tự."""
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) <= limit:
+        return text
+    return text[:limit - 1].rsplit(" ", 1)[0].rstrip(",;:–-— ") + "…"
+
+
 def abs_url(path):
     return SITE_URL + "/" + path
 
@@ -785,7 +811,7 @@ def service_page(s):
     url = abs_url(path)
     return {
         "path": path, "section": "services", "body_class": "service-page", "page_hero": False,
-        "title": f'{s["title"]} | {FIRM["short_name"]}', "description": s["description"],
+        "title": seo_title(s.get("seo_title", s["title"])), "description": s["description"],
         "crumbs": crumbs_for(("Dịch vụ", "dich-vu/"), (s["name"], path)),
         "h1": strip_tags(s["hero_title"]),
         "image": image, "image_alt": s["image_alt"],
@@ -825,7 +851,7 @@ def services_hub():
 """
     return {
         "path": path, "section": "services", "schema_type": "CollectionPage",
-        "title": f'Lĩnh vực hoạt động – Dịch vụ pháp lý | {FIRM["short_name"]}',
+        "title": seo_title("Lĩnh vực hoạt động – Dịch vụ pháp lý"),
         "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 8 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng.",
         "eyebrow": "Lĩnh vực hoạt động",
         "h1": "Anh chị cần luật sư <em>giúp việc gì?</em>",
@@ -904,7 +930,7 @@ def article_page(a):
     return {
         "path": path, "section": "knowledge", "og_type": "article", "body_class": "article-page",
         "published": a["published"], "modified": a["modified"], "article_section": a["category"],
-        "title": f'{a["seo_title"]} | {FIRM["short_name"]}',
+        "title": seo_title(a["seo_title"]),
         "og_title": a["title"],
         "description": a["description"],
         "eyebrow": a["category"],
@@ -949,7 +975,7 @@ def knowledge_hub():
 """
     return {
         "path": path, "section": "knowledge", "schema_type": "CollectionPage",
-        "title": f'Kiến thức pháp lý – Bài viết, tra cứu luật | {FIRM["short_name"]}',
+        "title": seo_title("Kiến thức pháp lý – Bài viết, tra cứu luật"),
         "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai; tra cứu Bộ luật Hình sự kèm bình luận và giải đáp thắc mắc khi làm việc với luật sư.",
         "eyebrow": "Kiến thức pháp lý",
         "h1": "Hiểu đúng quyền lợi của mình <em>trước khi quyết định</em>",
@@ -991,7 +1017,7 @@ def faq_page():
 """
     return {
         "path": path, "section": "knowledge", "schema_type": "FAQPage",
-        "title": f'Câu hỏi thường gặp khi thuê luật sư | {FIRM["short_name"]}',
+        "title": seo_title("Câu hỏi thường gặp khi thuê luật sư"),
         "description": "Giải đáp về chi phí thuê luật sư theo Điều 55 Luật Luật sư, bảo mật thông tin, cam kết kết quả, thời hiệu, thời gian phản hồi và vụ việc ngoài TP.HCM.",
         "eyebrow": "Câu hỏi thường gặp",
         "h1": "Những điều anh chị <em>hay băn khoăn nhất</em>",
@@ -1012,8 +1038,8 @@ def simple_page(name, path, section, crumbs, **extra):
     page = {"path": path, "section": section, "crumbs": crumbs, "body": body}
     page.update(meta)
     page.update(extra)
-    if "title" in page and not page["title"].endswith(FIRM["short_name"]) and path:
-        page["title"] = f'{page["title"]} | {FIRM["short_name"]}'
+    if "title" in page and path:
+        page["title"] = seo_title(page["title"])
     return page
 
 
@@ -1022,6 +1048,47 @@ def simple_page(name, path, section, crumbs, **extra):
 # ---------------------------------------------------------------------------
 CODE_LEGISLATION = {"@type": "Legislation", "name": "Bộ luật Hình sự", "legislationIdentifier": "100/2015/QH13",
                     "legislationJurisdiction": "VN", "inLanguage": "vi"}
+
+
+def chapter_desc(ch):
+    """Mô tả trang chương: tên chương, phạm vi điều, rồi thêm lần lượt tên các điều đầu
+    chương khi còn chỗ (không cắt dở tên điều). Tên chương quá dài thì rút gọn tên chương
+    nhưng giữ phạm vi điều và lời mời đọc."""
+    arts = ch["a"]
+    rng = f'Điều {arts[0]["id"]}–{arts[-1]["id"]}' if len(arts) > 1 else f'Điều {arts[0]["id"]}'
+    code_name = "" if "bộ luật hình sự" in ch["name"].lower() else " Bộ luật Hình sự"  # tránh lặp chữ ở Chương II
+    head = f'{ch["title"]}{code_name} 2015 ({rng}, {len(arts)} điều)'
+    tail = " Toàn văn kèm bình luận."
+    if len(head) + 1 + len(tail) > DESC_MAX:
+        prefix = f'{ch["label"]} BLHS 2015 ({rng}, {len(arts)} điều): '
+        name = fit_desc(ch["name"], DESC_MAX - len(prefix) - len(tail) - 1)
+        return prefix + name + ("" if name.endswith("…") else ".") + tail
+    best = head + "." + tail
+    for k in range(1, 5):
+        names = ", ".join(a["t"].lower() for a in arts[:k])
+        cand = f"{head}: {names}{'…' if k < len(arts) else '.'}{tail}"
+        if len(cand) > DESC_MAX:
+            break
+        best = cand
+    return best
+
+
+def article_desc(code, a):
+    """Mô tả trang điều luật. Điều quy định tội danh: số khung và mức hình phạt cao nhất
+    (trích tự động từ văn bản điều luật, xem blhs.penalty_summary). Điều khác: trích đoạn đầu."""
+    head = f'Điều {a["id"]} BLHS 2015 – {a["t"]}'
+    if a.get("repealed"):
+        return fit_desc(f"{head}: " + code.excerpt(a, 300))
+    pen = blhs.penalty_summary(a)
+    if pen:
+        n, top = pen
+        body = f"{n} khung hình phạt, cao nhất {top}" if n > 1 else f"khung hình phạt cao nhất {top}"
+        for tail in (". Toàn văn, bình luận và các điều liên quan.", ". Toàn văn kèm bình luận.", "."):
+            if len(f"{head}: {body}{tail}") <= DESC_MAX:
+                return f"{head}: {body}{tail}"
+        return fit_desc(f'Điều {a["id"]} BLHS 2015 quy định {body}: {a["t"].lower()}.')
+    head += ": "
+    return fit_desc(head + code.excerpt(a, max(60, DESC_MAX - len(head) + 20)))
 
 
 def blhs_pages():
@@ -1039,7 +1106,7 @@ def blhs_pages():
     hub = dict(common)
     hub.update({
         "path": "bo-luat-hinh-su/", "h1": "Bộ luật Hình sự",
-        "title": f'Từ điển Bộ luật Hình sự 2015 – Tra cứu kèm bình luận | {FIRM["short_name"]}',
+        "title": seo_title("Tra cứu Bộ luật Hình sự 2015 kèm bình luận"),
         "description": f'Tra cứu toàn văn {st["arts"]} điều Bộ luật Hình sự 2015 (sửa đổi 2017, 2025) kèm bình luận từng điều; tìm theo số điều, khoản, điểm, tội danh, có dấu hoặc không dấu.',
         "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), hub_crumb),
         "body": rd.hub("../"),
@@ -1049,14 +1116,12 @@ def blhs_pages():
     pages.append(hub)
     for ch in code.chapters:
         path = f"bo-luat-hinh-su/{ch['slug']}/"
-        names = ", ".join(a["t"].lower() for a in ch["a"][:4])
-        rng = f'Điều {ch["a"][0]["id"]}–{ch["a"][-1]["id"]}' if len(ch["a"]) > 1 else f'Điều {ch["a"][0]["id"]}'
-        desc = f'{ch["title"]} Bộ luật Hình sự 2015 ({rng}, {len(ch["a"])} điều): {names}… Toàn văn kèm bình luận.'
         pg = dict(common)
         pg.update({
             "path": path, "h1": ch["title"],
-            "title": f'{ch["title"]} – Bộ luật Hình sự | {FIRM["short_name"]}',
-            "description": desc if len(desc) <= 175 else desc[:172].rsplit(" ", 1)[0] + "…",
+            "title": seo_title(f'{ch["title"]} 2015' if "bộ luật hình sự" in ch["name"].lower() else f'{ch["title"]} – Bộ luật Hình sự',
+                               f'{ch["label"]} BLHS: {ch["name"]}' if ch["num"] else ch["title"]),
+            "description": chapter_desc(ch),
             "crumbs": crumbs_for(hub_crumb, (ch["label"], path)),
             "body": rd.chapter(ch, "../../"),
             "schema_type": "CollectionPage",
@@ -1065,15 +1130,15 @@ def blhs_pages():
         pages.append(pg)
     for a in code.arts:
         path = f"bo-luat-hinh-su/dieu-{a['id']}/"
-        head = f'Điều {a["id"]} BLHS 2015 – {a["t"]}: '
-        desc = head + code.excerpt(a, max(60, 158 - len(head)))
-        if len(desc) > 165:
-            desc = desc[:160].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+        a["repealed"] = code.excerpt(a, 60).startswith("Tội này đã được bãi bỏ")
+        name = a["t"] + (" (đã bãi bỏ)" if a["repealed"] else "")
         pg = dict(common)
         pg.update({
             "path": path, "h1": f'Điều {a["id"]}. {a["t"]}',
-            "title": f'Điều {a["id"]} Bộ luật Hình sự: {a["t"]} | {FIRM["short_name"]}',
-            "description": desc,
+            "title": seo_title(f'Điều {a["id"]} Bộ luật Hình sự: {name}', f'Điều {a["id"]} BLHS 2015: {name}',
+                               f'Điều {a["id"]} BLHS: {name}'),
+            "og_title": f'Điều {a["id"]} Bộ luật Hình sự: {name} | {FIRM["short_name"]}',
+            "description": article_desc(code, a),
             "crumbs": crumbs_for(hub_crumb, (a["ch"]["label"], f'bo-luat-hinh-su/{a["ch"]["slug"]}/'), (f'Điều {a["id"]}', path)),
             "body": rd.article(a, "../../"),
             "search_title": f'Điều {a["id"]}. {a["t"]}',

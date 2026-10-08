@@ -121,7 +121,7 @@ Mỗi điều luật có trang riêng `/bo-luat-hinh-su/dieu-<số>/`, bố cụ
   - Thanh chuyển Điều trước/sau, chọn chương, chọn điều.
   - Hộp “Quy định của luật”.
   - Các nút Lưu, In, Chia sẻ, Trích dẫn.
-  - 5 tab: Bình luận khoa học, Góc nhìn Luật sư Nam, Bản án liên quan, Tình huống thực tiễn, Điều liên quan.
+  - Tab: Bình luận khoa học, Điều liên quan và các phần thực tiễn. Góc nhìn Luật sư Nam, Bản án liên quan, Tình huống thực tiễn chỉ thành tab riêng khi điều đó đã có nội dung; chưa có phần nào thì gộp thành một tab "Thực tiễn áp dụng" (tránh lặp nội dung trống trên hàng trăm trang).
 - **Phải:**
   - Tìm kiếm liên quan: thuật ngữ có thật trong văn bản điều luật.
   - Điều liên quan: từ các liên kết dẫn chiếu giữa các điều.

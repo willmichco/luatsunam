@@ -605,9 +605,20 @@ class Renderer:
   <section><h3>Được nhắc tới trong phần bình luận</h3>{rel_list(a["out_cm"], "Phần bình luận không dẫn chiếu điều khác.")}</section>
   <section><h3>Cùng {esc(ch["label"].lower())}</h3>{rel_list(same_ch, "")}</section>
 </div>"""
-        tabs = [("binh-luan", "Bình luận khoa học", "i-scale", tab_cm), ("goc-nhin", "Góc nhìn Luật sư Nam", "i-user", tab_lawyer),
-                ("ban-an", "Bản án liên quan", "i-doc", tab_cases), ("tinh-huong", "Tình huống thực tiễn", "i-question", tab_sit),
-                ("dieu-lien-quan", "Điều liên quan", "i-link", tab_rel)]
+        # Ba phần thực tiễn chỉ thành tab riêng khi đã có nội dung (src/blhs/<số điều>.html).
+        # Chưa có phần nào thì gộp thành một tab ngắn, tránh lặp ba khối trống trên hàng trăm trang.
+        practice = [(tid, label, icn, body) for tid, label, icn, body in (
+            ("goc-nhin", "Góc nhìn Luật sư Nam", "i-user", tab_lawyer), ("ban-an", "Bản án liên quan", "i-doc", tab_cases),
+            ("tinh-huong", "Tình huống thực tiễn", "i-question", tab_sit)) if tid in extra]
+        if not practice:
+            practice = [("thuc-tien", "Thực tiễn áp dụng", "i-question", empty(
+                "Thực tiễn áp dụng",
+                f"Góc nhìn của Luật sư Nam, bản án và tình huống thực tiễn về Điều {a['id']} đang được biên soạn. "
+                "Nếu anh chị đang gặp vụ việc liên quan, luật sư có thể trao đổi trực tiếp để đánh giá hồ sơ cụ thể.",
+                '<p>Tra cứu bản án, quyết định đã công bố tại <a href="https://congbobanan.toaan.gov.vn/" target="_blank" rel="noopener">'
+                'Cổng công bố bản án của Tòa án nhân dân</a> và án lệ tại <a href="https://anle.toaan.gov.vn/" target="_blank" rel="noopener">'
+                'Trang thông tin án lệ</a>.</p>'))]
+        tabs = [("binh-luan", "Bình luận khoa học", "i-scale", tab_cm)] + practice + [("dieu-lien-quan", "Điều liên quan", "i-link", tab_rel)]
         tab_btns = "".join(
             f'<button class="tdl-tab" type="button" role="tab" id="tab-{tid}" aria-controls="panel-{tid}" aria-selected="{"true" if k == 0 else "false"}"'
             f'{"" if k == 0 else TI}>{self.ico(icn)}<span>{label}</span></button>' for k, (tid, label, icn, _) in enumerate(tabs))
@@ -645,7 +656,7 @@ class Renderer:
     </div>
   </header>
   <section class="tdl-law" aria-labelledby="quy-dinh">
-    <div class="tdl-law__head"><h2 id="quy-dinh">{self.ico("i-scale", "tdl-law__icon")}Quy định của luật</h2><span>({LAW_NAME})</span></div>
+    <div class="tdl-law__head"><h2 id="quy-dinh">{self.ico("i-scale", "tdl-law__icon")}Quy định của luật</h2><span>({LAW_NAME}) · Trang cập nhật {{{{modified}}}}</span></div>
     <div class="tdl-law__body">
 {law_html(a, base)}
     </div>

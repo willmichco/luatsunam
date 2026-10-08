@@ -519,6 +519,10 @@ def render_tokens(body, page, r):
             return faq_list(r, [f for f in FAQ if f["id"] in ids] if ids else None)
         if name == "arrow":
             return ARROW
+        if name == "modified":
+            # Ngày cập nhật hiển thị; thay ở bước dựng trang nên không làm đổi dấu vân tay nội dung
+            y, m, d = page["modified"].split("-")
+            return f'<time datetime="{page["modified"]}">{d}/{m}/{y}</time>'
         if name == "ico":
             nm, _, cls = arg.partition("|")
             return ico(nm, cls or "ico")
@@ -929,7 +933,7 @@ def article_page(a):
     points = "".join(f"<li>{esc(p)}</li>" for p in a.get("key_points", []))
     keypoints = f'<div class="ls-keypoints"><p class="ls-keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
     extra = f"""<p class="article-meta">
-        <span>{ico("i-user")}Ban biên tập {FIRM["short_name"]}</span>
+        <span>{ico("i-user")}<a href="{{{{root}}}}gioi-thieu/#doi-ngu-luat-su">Ban biên tập {FIRM["short_name"]}</a></span>
         <span>{ico("i-calendar")}Đăng <time datetime="{a["published"]}">{vi_date(a["published"])}</time></span>
         <span>{ico("i-clock")}Cập nhật <time datetime="{a["modified"]}">{vi_date(a["modified"])}</time> · {minutes} phút đọc</span>
       </p>"""

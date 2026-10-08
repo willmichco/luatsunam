@@ -22,6 +22,7 @@ import html
 import json
 import os
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -180,13 +181,15 @@ def nav_html(page, r):
 
 def logo_html(r, tag=None):
     """Logo kèm chữ. Thanh menu (tag=None): "Công Ty Luật TNHH" / "Luật Sư Nam";
-    footer: "Luật Sư Nam" / khẩu hiệu."""
+    footer: "Luật Sư Nam" / khẩu hiệu (logo footer nằm cuối trang nên tải chậm)."""
     if tag is None:
         text = '<span class="logo__pre">Công Ty Luật TNHH</span><span class="logo__name">Luật Sư Nam</span>'
+        lazy = ""
     else:
         text = f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>'
+        lazy = ' loading="lazy" decoding="async"'
     return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
-      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt="">
+      <img class="logo__img" src="{r}assets/img/logo-mark.webp?v=20261007a" width="88" height="88" alt=""{lazy}>
       <span class="logo__text">{text}</span>
     </a>"""
 
@@ -583,7 +586,9 @@ def layout(page):
         art_meta = (f'\n<meta property="article:published_time" content="{page["published"]}">'
                     f'\n<meta property="article:modified_time" content="{page["modified"]}">'
                     f'\n<meta property="article:section" content="{esc(page["article_section"])}">')
-    preload = "".join(f'\n<link rel="preload" as="image" href="{r}{asset_ref(p)}" fetchpriority="high">' for p in page.get("preload_images", []))
+    # Ảnh nạp trước phải trùng hệt địa chỉ (kể cả ?v=) với chỗ dùng ảnh, nếu không trình duyệt tải hai lần
+    preload = "".join(f'\n<link rel="preload" as="image" href="{r}{p if "?" in p else asset_ref(p)}" fetchpriority="high">'
+                      for p in page.get("preload_images", []))
     extra_head = page.get("extra_head", "").replace("{{root}}", r)
     hero = render_tokens(page_hero_html(page, r), page, r) if page.get("page_hero", True) else ""
     body = render_tokens(page["body"], page, r)
@@ -1085,7 +1090,8 @@ def all_pages():
     pages = []
     meta, body = load_src("pages/home.html")
     home = {"path": "", "section": "home", "crumbs": [HOME], "body": body, "page_hero": False,
-            "preload_images": ["assets/img/nam-hero-luat-su.webp"]}
+            # Ảnh nền banner khai báo trong nam-theme.css, mobile.css: giữ cùng ?v= với hai tệp đó
+            "preload_images": ["assets/img/nam-hero-luat-su.webp?v=20261006b"]}
     home.update(meta)
     pages.append(home)
 
@@ -1124,19 +1130,96 @@ def write(rel, text):
         fh.write(text)
 
 
+# ---------------------------------------------------------------------------
+# Ngày cập nhật thật của từng trang (sitemap lastmod, dateModified)
+# ---------------------------------------------------------------------------
+# Google chỉ tin lastmod khi nó phản ánh lần sửa nội dung thật. tools/lastmod.json lưu
+# dấu vân tay nội dung (tiêu đề, mô tả, thân trang) và ngày đổi gần nhất của mỗi trang:
+# build lại mà nội dung không đổi thì ngày giữ nguyên. Nhớ commit tệp này cùng các trang.
+LASTMOD_FILE = os.path.join(ROOT, "tools", "lastmod.json")
+
+
+def fingerprint(page):
+    parts = [page.get("title", ""), page.get("description", ""), page.get("h1", ""), page["body"]]
+    return hashlib.md5("\x00".join(parts).encode("utf-8")).hexdigest()[:12]
+
+
+def git_date(rel):
+    """Ngày commit gần nhất của trang đã sinh (chỉ dùng khi trang chưa có trong sổ)."""
+    try:
+        out = subprocess.run(["git", "log", "-1", "--format=%cs", "--", rel], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout.strip()
+        return out or TODAY
+    except (OSError, subprocess.CalledProcessError):
+        return TODAY
+
+
+def apply_lastmod(pages):
+    try:
+        with open(LASTMOD_FILE, encoding="utf-8") as fh:
+            ledger = json.load(fh)
+    except FileNotFoundError:
+        ledger = {}
+    fresh = {}
+    for p in pages:
+        fp = fingerprint(p)
+        old = ledger.get(p["path"])
+        if old and old["hash"] == fp:
+            date = old["date"]
+        elif old:
+            date = TODAY
+        else:
+            date = git_date(out_file(p))
+        fresh[p["path"]] = {"hash": fp, "date": date}
+        # Bài viết tự khai báo ngày cập nhật (hiển thị trên trang) thì giữ ngày đó
+        p.setdefault("modified", date)
+    with open(LASTMOD_FILE, "w", encoding="utf-8") as fh:
+        json.dump(fresh, fh, ensure_ascii=False, indent=0, sort_keys=True)
+        fh.write("\n")
+
+
+def out_file(page):
+    return page["path"] if page["path"].endswith(".html") else page["path"] + "index.html"
+
+
+IMG_RE = re.compile(r'<img\b[^>]*?\bsrc="([^"]+)"[^>]*?\balt="([^"]+)"')
+
+
+def content_images(page, rendered):
+    """Ảnh nội dung (có alt) trong <main>, đổi sang địa chỉ tuyệt đối cho image sitemap."""
+    main = rendered.split('<main id="main">', 1)[-1].split("</main>", 1)[0]
+    base = "/" + os.path.dirname(out_file(page))
+    seen = []
+    for src, _alt in IMG_RE.findall(main):
+        if src.startswith(("http:", "https:", "data:")):
+            continue
+        u = abs_url(os.path.normpath(os.path.join(base, src)).lstrip("/"))
+        if u not in seen:
+            seen.append(u)
+    return seen
+
+
 def main():
     pages = all_pages()
+    apply_lastmod(pages)
+    images = {}
     for p in pages:
-        out = p["path"] if p["path"].endswith(".html") else p["path"] + "index.html"
-        write(out, layout(p))
+        rendered = layout(p)
+        write(out_file(p), rendered)
+        images[p["path"]] = content_images(p, rendered)
 
-    write("doi-ngu-luat-su/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=../gioi-thieu/#doi-ngu-luat-su"><title>Giới thiệu Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/gioi-thieu/"></head><body><p>Nội dung đội ngũ đã được chuyển vào <a href="../gioi-thieu/#doi-ngu-luat-su">Giới thiệu Luật Sư Nam</a>.</p></body></html>')
+    # Trang cũ đã gộp vào Giới thiệu: chuyển hướng ngay (Google coi như chuyển hướng 301).
+    # Không đặt noindex để tín hiệu chuyển hướng và canonical không mâu thuẫn nhau.
+    write("doi-ngu-luat-su/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=../gioi-thieu/#doi-ngu-luat-su"><title>Giới thiệu Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/gioi-thieu/"></head><body><p>Nội dung đội ngũ đã được chuyển vào <a href="../gioi-thieu/#doi-ngu-luat-su">Giới thiệu Luật Sư Nam</a>.</p></body></html>')
 
     indexable = [p for p in pages if not p.get("noindex")]
     urls = "".join(
-        f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p.get('modified', TODAY)}</lastmod>\n  </url>\n"
+        f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p['modified']}</lastmod>\n"
+        + "".join(f"    <image:image><image:loc>{esc(u)}</image:loc></image:image>\n" for u in images[p["path"]])
+        + "  </url>\n"
         for p in indexable)
-    write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+    write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+          f' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n{urls}</urlset>\n')
     write("robots.txt", f"# {FIRM['legal_name']}\nUser-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n")
     write("site.webmanifest", json.dumps({
         "name": FIRM["legal_name"], "short_name": "LSN Law Firm", "description": "Tư vấn pháp lý và tham gia tố tụng tại Thành phố Hồ Chí Minh.",

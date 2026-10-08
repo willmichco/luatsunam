@@ -64,6 +64,8 @@ Trang Từ điển Bộ luật Hình sự giữ nguyên bộ giao diện riêng 
 ```
 tools/data.py              Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
 tools/build.py             Sinh toàn bộ trang, sitemap.xml, robots.txt, site.webmanifest, chỉ mục tìm kiếm
+tools/check_seo.py         Kiểm tra SEO sau khi build: tên miền canonical, liên kết hỏng, title, description, H1, alt ảnh, JSON-LD, sitemap
+tools/lastmod.json         Ngày cập nhật thật của từng trang (do build.py ghi, phải commit cùng các trang)
 tools/build_blhs.py        Chuyển tệp Word bình luận BLHS thành dữ liệu tra cứu
 tools/make_images.py       Sinh logo, favicon, biểu tượng ứng dụng, banner trang chủ, ảnh 8 lĩnh vực, ảnh chia sẻ (og-image)
 src/brand/logo-lsn.webp    Logo gốc (nền trong suốt)
@@ -96,8 +98,11 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 
 ```bash
 python3 tools/build.py                 # sinh lại website
+python3 tools/check_seo.py             # kiểm tra SEO (thêm -v để xem từng trang); phải không còn LỖI
 python3 -m http.server 8000            # xem thử tại http://localhost:8000
 ```
+
+**Ngày cập nhật (`lastmod` trong sitemap, `dateModified` trong schema):** build.py so dấu vân tay nội dung từng trang (tiêu đề, mô tả, thân trang) với `tools/lastmod.json`. Trang nào nội dung đổi thì lấy ngày build, trang không đổi giữ nguyên ngày cũ. Nhờ vậy Google tin tín hiệu `lastmod`. Bài viết dùng ngày `modified` khai báo trong `tools/data.py`.
 
 Cập nhật dữ liệu Bộ luật Hình sự: `pip install python-docx && python3 tools/build_blhs.py "Binh-luan-BLHS.docx" && python3 tools/build.py`.
 
@@ -146,10 +151,21 @@ Liên kết cũ dạng `#d173` và `#tim=…` tự chuyển sang địa chỉ m�
 - [ ] **Luật sư phụ trách rà soát 3 bài viết** trong `src/bai-viet/` trước khi công bố chính thức.
 - [ ] Bổ sung số Thẻ luật sư, Đoàn Luật sư tại trang Đội ngũ (chỉ công bố thông tin đã được luật sư đồng ý).
 - [ ] Thay ảnh minh họa lấy từ bản mockup (`assets/img/hero.webp`, `assets/img/dich-vu/*`, `assets/img/bai-viet/*`) bằng ảnh thật độ phân giải cao; ảnh gốc đặt trong `src/brand/goc/` rồi chạy lại `tools/make_images.py`.
-- [ ] Khi có tên miền riêng: sửa `SITE_URL`/`BASE_PATH`, chạy lại build, khai báo tên miền trong Settings → Pages, nộp `sitemap.xml` lên Google Search Console.
+- [ ] Chuyển sang tên miền lsn.vn: xem mục dưới.
 - [ ] Chuyển hướng hoặc đặt `noindex` cho website cũ (`willmichco.github.io/Website/`) để tránh trùng lặp nội dung với website mới.
 
 > ⚖️ Khi sửa nội dung, không thêm cụm cam kết kết quả (“cam kết thắng kiện”…) và không đăng số liệu chưa kiểm chứng. Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam nghiêm cấm luật sư hứa hẹn bảo đảm kết quả vụ việc (Quy tắc 9.1.6).
+
+## Chuyển sang tên miền lsn.vn
+
+Chỉ làm khi lsn.vn đã mua và truy cập được. Trước đó giữ nguyên `SITE_URL` hiện tại.
+
+1. Trỏ DNS lsn.vn tới nơi lưu trữ đã chọn. Nếu dùng GitHub Pages: tạo tệp `CNAME` ở thư mục gốc chứa dòng `lsn.vn`, khai báo tên miền trong Settings → Pages, bật *Enforce HTTPS*.
+2. Trong `tools/data.py`: `SITE_URL = "https://lsn.vn"`, `BASE_PATH = "/"`.
+3. `python3 tools/build.py && python3 tools/check_seo.py`: phải không còn LỖI, canonical đã sang lsn.vn.
+4. Google Search Console: thêm thuộc tính tên miền `lsn.vn` (xác minh DNS), nộp `https://lsn.vn/sitemap.xml`.
+5. Bản cũ: nếu lsn.vn chạy trên GitHub Pages thì `willmichco.github.io/luatsunam/` tự chuyển hướng 301 sang lsn.vn. Bản chatgpt.site không chuyển hướng 301 được thì cứ để chạy: canonical trên đó đã trỏ về lsn.vn, Google sẽ dần gộp tín hiệu. Nơi lưu trữ nào cho phép chuyển hướng 301 thì bật lên và dùng công cụ *Change of Address* trong Search Console.
+6. Cập nhật lsn.vn trên Google Business Profile, Zalo OA, danh thiếp và các trang mạng xã hội.
 
 ## Triển khai
 

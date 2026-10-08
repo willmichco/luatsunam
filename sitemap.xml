@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/luat-su-van-phong.webp?v=20261007a</image:loc></image:image>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/logo-emblem.webp?v=20261007b</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/gioi-thieu/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/luat-su-nam-van-phong.webp?v=20261007a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/vi-sao-chon-chung-toi/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/luat-su-nam.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/quy-trinh-lam-viec/</loc>
@@ -23,34 +27,42 @@
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/thua-ke/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/thua-ke.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/tranh-tung-giai-quyet-tranh-chap/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/tranh-tung-giai-quyet-tranh-chap.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/hon-nhan-gia-dinh/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/hon-nhan-gia-dinh.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/dat-dai-bat-dong-san/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/dat-dai-bat-dong-san.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/lao-dong-viec-lam/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/lao-dong-viec-lam.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/hinh-su/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/luat-su-nam.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/dan-su/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/dan-su.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/dich-vu/cong-chung/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/dich-vu/cong-chung.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/kien-thuc-phap-ly/</loc>
@@ -59,14 +71,17 @@
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/</loc>
     <lastmod>2026-09-24</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/bai-viet/thoi-hieu-chia-di-san-thua-ke.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/kien-thuc-phap-ly/ly-hon-don-phuong/</loc>
     <lastmod>2026-10-07</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/bai-viet/ly-hon-don-phuong.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/</loc>
     <lastmod>2026-09-24</lastmod>
+    <image:image><image:loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/assets/img/bai-viet/dat-coc-mua-ban-nha-dat.webp?v=20260925a</image:loc></image:image>
   </url>
   <url>
     <loc>https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/cau-hoi-thuong-gap/</loc>

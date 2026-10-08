@@ -89,6 +89,7 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 |---|---|
 | Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` |
 | Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`); ý nghĩa từng trường ghi ở đầu danh sách. Câu trả lời trong `faq` phải dẫn điều luật cụ thể |
+| Title, description hiển thị trên Google | `seo_title`, `description` trong `SERVICES`/`ARTICLES`; khối `<!--meta-->` của `src/pages/*.html`. Title tối đa 60 ký tự (đuôi "\| Luật Sư Nam" chỉ gắn khi còn chỗ, hàm `seo_title` trong `tools/build.py`), description tối đa 158 ký tự. Trang Bộ luật Hình sự sinh tự động: điều quy định tội danh nêu số khung và mức hình phạt cao nhất (`penalty_summary` trong `tools/blhs.py`) |
 | Thêm bài viết | Thêm mục vào `ARTICLES` (kèm 3–4 ý `key_points` cho khung “Tóm tắt nhanh”), tạo `src/bai-viet/<slug>.html`, thêm ảnh `assets/img/bai-viet/<slug>.webp` (720×240) |
 | Câu hỏi thường gặp | `FAQ` trong `tools/data.py` |
 | Hồ sơ luật sư | `src/pages/doi-ngu-luat-su.html` (xem ghi chú cho người quản trị trong tệp) |

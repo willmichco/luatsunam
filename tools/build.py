@@ -35,6 +35,7 @@ SRC = os.path.join(ROOT, "src")
 TODAY = datetime.date.today().isoformat()
 ORG_ID = SITE_URL + "/#organization"
 SITE_ID = SITE_URL + "/#website"
+PERSON_ID = SITE_URL + "/gioi-thieu/#luat-su-nguyen-trong-nam"
 ASSET_VERSION = "20260925a"
 
 
@@ -532,8 +533,10 @@ def org_node():
         "@type": "LegalService",
         "@id": ORG_ID,
         "name": FIRM["legal_name"],
-        "alternateName": [FIRM["short_name"], FIRM["brand"]],
+        "alternateName": [FIRM["short_name"], FIRM["brand"], "NamLawyerCo., LTD"],
         "slogan": FIRM["slogan"],
+        "foundingDate": "2019-01",
+        "employee": {"@id": PERSON_ID},
         "url": SITE_URL + "/",
         "logo": {"@type": "ImageObject", "url": abs_url("assets/img/icon-512.png"), "width": 512, "height": 512},
         "image": abs_url(asset_ref("assets/img/og-image.jpg")),
@@ -554,6 +557,7 @@ def org_node():
             "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
             "opens": "08:00", "closes": "17:30",
         }],
+        "hasMap": f'https://www.google.com/maps/search/?api=1&query={FIRM["maps_query"]}',
         "areaServed": [{"@type": "City", "name": "Thành phố Hồ Chí Minh"}, {"@type": "Country", "name": "Việt Nam"}],
         "knowsLanguage": ["vi"],
         "sameAs": [FIRM["zalo"]],
@@ -566,12 +570,26 @@ def org_node():
     }
 
 
+def person_node():
+    """Luật sư điều hành. Chỉ dùng thông tin đã công bố trên trang Giới thiệu; số Thẻ luật sư,
+    Đoàn Luật sư (memberOf) bổ sung khi luật sư đồng ý công bố."""
+    return {
+        "@type": "Person", "@id": PERSON_ID, "name": "Nguyễn Trọng Nam", "honorificPrefix": "Luật sư",
+        "jobTitle": "Giám đốc, luật sư điều hành", "worksFor": {"@id": ORG_ID},
+        "image": abs_url(asset_ref("assets/img/luat-su-nam.webp")),
+        "url": abs_url("gioi-thieu/") + "#doi-ngu-luat-su", "knowsLanguage": ["vi"],
+        "knowsAbout": [s["name"] for s in SERVICES],
+    }
+
+
 def jsonld(page):
     url = abs_url(page["path"])
     org = org_node()
-    if page["path"] not in ("", "lien-he/", "gioi-thieu/"):
+    full_org = page["path"] in ("", "lien-he/", "gioi-thieu/")
+    if not full_org:
+        # Trang con chỉ giữ thông tin nhận diện; bản đầy đủ nằm ở trang chủ, Giới thiệu, Liên hệ
         org = {k: org[k] for k in ("@type", "@id", "name", "alternateName", "url", "logo", "image", "telephone", "email", "address")}
-    graph = [org, {
+    graph = [org] + ([person_node()] if full_org else []) + [{
         "@type": "WebSite", "@id": SITE_ID, "url": SITE_URL + "/", "name": f'{FIRM["short_name"]} – {FIRM["brand"]}',
         "inLanguage": "vi", "publisher": {"@id": ORG_ID},
     }]
@@ -1046,8 +1064,16 @@ def simple_page(name, path, section, crumbs, **extra):
 # ---------------------------------------------------------------------------
 # Từ điển Bộ luật Hình sự
 # ---------------------------------------------------------------------------
-CODE_LEGISLATION = {"@type": "Legislation", "name": "Bộ luật Hình sự", "legislationIdentifier": "100/2015/QH13",
-                    "legislationJurisdiction": "VN", "inLanguage": "vi"}
+# Bộ luật Hình sự số 100/2015/QH13: Quốc hội thông qua 27/11/2015, có hiệu lực từ 01/01/2018
+# (Nghị quyết 41/2017/QH14); đã sửa đổi bởi Luật 12/2017/QH14 và Luật 86/2025/QH15.
+CODE_LEGISLATION = {"@type": "Legislation", "@id": SITE_URL + "/bo-luat-hinh-su/#bo-luat", "name": "Bộ luật Hình sự", "legislationIdentifier": "100/2015/QH13",
+                    "legislationType": "Bộ luật", "legislationJurisdiction": "VN", "inLanguage": "vi",
+                    "legislationDate": "2015-11-27", "legislationDateOfApplicability": "2018-01-01",
+                    "legislationLegalForce": "https://schema.org/InForce",
+                    "legislationPassedBy": {"@type": "GovernmentOrganization",
+                                            "name": "Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam"}}
+CODE_AMENDMENTS = [("12/2017/QH14", "2017-06-20", "Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự số 100/2015/QH13"),
+                   ("86/2025/QH15", "2025-06-25", "Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự")]
 
 
 def chapter_desc(ch):
@@ -1112,6 +1138,9 @@ def blhs_pages():
         "body": rd.hub("../"),
         "schema_type": "CollectionPage",
         "webpage_extra": {"about": CODE_LEGISLATION},
+        "schema": [{"@type": "Legislation", "name": name, "legislationIdentifier": ident, "legislationType": "Luật",
+                    "legislationDate": date, "legislationJurisdiction": "VN", "inLanguage": "vi",
+                    "legislationChanges": {"@id": CODE_LEGISLATION["@id"]}} for ident, date, name in CODE_AMENDMENTS],
     })
     pages.append(hub)
     for ch in code.chapters:
@@ -1145,7 +1174,9 @@ def blhs_pages():
             "search_desc": code.excerpt(a, 150),
             "webpage_extra": {"about": {
                 "@type": "Legislation", "name": f'Điều {a["id"]}. {a["t"]}', "legislationJurisdiction": "VN", "inLanguage": "vi",
-                "legislationIdentifier": f'Điều {a["id"]} Bộ luật Hình sự số 100/2015/QH13', "isPartOf": CODE_LEGISLATION}},
+                "legislationIdentifier": f'Điều {a["id"]} Bộ luật Hình sự số 100/2015/QH13',
+                "legislationLegalForce": "https://schema.org/" + ("NotInForce" if a["repealed"] else "InForce"),
+                "isPartOf": CODE_LEGISLATION}},
         })
         pages.append(pg)
     return pages
@@ -1161,7 +1192,8 @@ def all_pages():
     pages.append(home)
 
     pages.append(simple_page("gioi-thieu", "gioi-thieu/", "about",
-                             crumbs_for(("Giới thiệu", "gioi-thieu/")), schema_type="AboutPage"))
+                             crumbs_for(("Giới thiệu", "gioi-thieu/")), schema_type="AboutPage",
+                             webpage_extra={"mainEntity": {"@id": ORG_ID}}))
     pages.append(simple_page("vi-sao-chon-chung-toi", "vi-sao-chon-chung-toi/", "about",
                              crumbs_for(("Giới thiệu", "gioi-thieu/"), ("Vì sao chọn chúng tôi", "vi-sao-chon-chung-toi/"))))
     pages.append(simple_page("quy-trinh-lam-viec", "quy-trinh-lam-viec/", "about",

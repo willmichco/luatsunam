@@ -49,26 +49,30 @@
 .gt-timeline p{margin:0;font-size:15.5px;line-height:1.7;color:#5f5557}
 .gt-timeline li.is-now>div{background:#fff;border:1px solid #ecdfcb;border-left:4px solid var(--burgundy);border-radius:8px;padding:16px 18px;margin-top:-14px}
 
+/* Đội ngũ + cam kết: cùng một ngôn ngữ thẻ với khối Liên hệ (dấu tròn đỏ, nhãn chữ hoa, bo 10px) */
+.gt-people{background:#fffefa}
 .gt-team__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.gt-member{display:flex;gap:16px;padding:22px;background:#fff;border:1px solid #ecdfcb;border-radius:8px}
-.gt-member__avatar{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--burgundy);color:#fff;font-size:21px;font-weight:600;box-shadow:0 0 0 3px #fff,0 0 0 4px var(--gold)}
-.gt-member__avatar--alt{background:#fbf3e6;color:var(--gold-600)}
-.gt-member h3{margin:0 0 2px;font-size:18px;color:var(--ink)}
-.gt-member p:not(.gt-role){margin:8px 0 0;font-size:15px;line-height:1.65;color:#5f5557}
-
-.gt-values{background:#f8f2e8}
-.gt-values__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.gt-values__grid article{background:#fff;border:1px solid #ecdfcb;border-radius:8px;padding:24px 22px}
-.gt-values__grid svg{width:42px;height:42px;padding:9px;border-radius:10px;background:#fbecec;color:var(--burgundy);margin-bottom:12px}
-.gt-values__grid h3{margin:0 0 8px;font-size:18px;color:var(--ink)}
-.gt-values__grid p{margin:0;font-size:15px;line-height:1.65;color:#5f5557}
-.gt-values__more{margin:24px 0 0;display:flex;flex-wrap:wrap;gap:12px 32px}
+.gt-card{display:flex;flex-direction:column;gap:4px;padding:24px;background:#fff;border:1px solid #f0d9b0;border-radius:10px}
+.gt-mark{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--burgundy);color:#fff;font-size:17px;font-weight:600;line-height:1}
+.gt-card .gt-mark{margin-bottom:8px}
+.gt-mark svg{width:20px;height:20px}
+.gt-mark--line{background:#fff;color:var(--burgundy);border:1.5px solid var(--burgundy)}
+.gt-card__label{font-size:14px;color:#7a6a6c;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.gt-card h3{margin:0;font-size:22px;line-height:1.3;color:var(--ink)}
+.gt-card p{margin:8px 0 0;font-size:15px;line-height:1.65;color:#5f5557}
+.gt-promise{margin-top:48px;padding-top:36px;border-top:1px solid #eadfcd}
+.about-page .gt-promise__title{margin:0 0 24px;font-size:22px;line-height:1.3}
+.gt-promise__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.gt-promise__item{display:flex;gap:14px;align-items:flex-start}
+.gt-promise__item h4{margin:6px 0 6px;font-size:17px;color:var(--ink)}
+.gt-promise__item p{margin:0;font-size:15px;line-height:1.65;color:#5f5557}
+.gt-promise__more{margin:28px 0 0;display:flex;flex-wrap:wrap;gap:12px 32px}
 
 @media(max-width:1050px){
   .gt-hero__grid,.gt-lawyer__grid{grid-template-columns:minmax(0,1fr);gap:28px}
   .gt-portrait{max-width:620px}
   .gt-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .gt-values__grid{grid-template-columns:minmax(0,1fr)}
+  .gt-promise__grid{grid-template-columns:minmax(0,1fr);gap:20px}
 }
 @media(max-width:650px){
   .gt-section{padding-block:44px}
@@ -76,6 +80,7 @@
   .gt-hero__buttons{display:grid;grid-template-columns:1fr 1fr}
   .gt-hero__buttons .btn{padding:14px 10px;font-size:15px;justify-content:center}
   .gt-team__grid,.gt-profile{grid-template-columns:minmax(0,1fr)}
+  .gt-card h3{font-size:20px}
   .gt-timeline:before{left:6px}
   .gt-timeline li{grid-template-columns:minmax(0,1fr);gap:4px;padding-left:30px}
   .gt-timeline li:before{left:0}

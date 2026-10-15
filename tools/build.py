@@ -167,17 +167,20 @@ def nav_html(page, r):
     return "\n        ".join(items)
 
 
-def logo_html(r, tag):
+def logo_html(r, tag=None):
+    """Có tag: "LUẬT SƯ NAM" + khẩu hiệu (footer). Không tag: "Công Ty Luật TNHH / Luật Sư Nam" (header)."""
+    text = (f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>' if tag else
+            '<span class="logo__pre">Công Ty Luật TNHH</span><span class="logo__name logo__name--firm">Luật Sư Nam</span>')
     return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
       <img class="logo__img" src="{r}{asset_ref("assets/img/logo-lsn.webp")}" width="54" height="54" alt="">
-      <span class="logo__text"><span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span></span>
+      <span class="logo__text">{text}</span>
     </a>"""
 
 
 def header_html(page, r):
     return f"""<header class="header site-header" id="site-header">
   <div class="container header__inner">
-    {logo_html(r, "Công ty Luật TNHH Luật Sư Nam")}
+    {logo_html(r)}
 
     <nav class="nav" id="nav" aria-label="Điều hướng chính">
       <ul class="nav__list">

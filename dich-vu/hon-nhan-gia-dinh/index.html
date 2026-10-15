@@ -30,7 +30,7 @@
 <link rel="manifest" href="../../site.webmanifest">
 <link rel="preload" href="../../assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/css/style.css?v=d7f3df5f">
+<link rel="stylesheet" href="../../assets/css/style.css?v=7a8c07bd">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -186,6 +186,10 @@
   <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="13" rx="1.5"/><path d="M16 8V4.5A1.5 1.5 0 0 0 14.5 3h-9A1.5 1.5 0 0 0 4 4.5V16a1.5 1.5 0 0 0 1.5 1.5H8"/></g></symbol>
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
 </svg>
 <header class="header site-header" id="site-header">
@@ -222,10 +226,10 @@
   <div class="container phead__grid">
     <div class="phead__copy">
       <nav class="breadcrumb" aria-label="Đường dẫn"><ol><li><a href="../../">Trang chủ</a></li><li><a href="../../dich-vu/">Dịch vụ</a></li><li aria-current="page">Hôn nhân &amp; Gia đình</li></ol></nav>
-      <p class="eyebrow">Dịch vụ pháp lý cá nhân</p>
-      <h1 class="phead__title">Hôn nhân &amp; Gia đình</h1>
-      <p class="phead__lead">Tư vấn và đại diện giải quyết ly hôn, quyền nuôi con, cấp dưỡng, tài sản chung, nghĩa vụ chung và các thỏa thuận gia đình với nguyên tắc kín đáo, tôn trọng.</p>
-      <ul class="tags" aria-label="Nội dung dịch vụ"><li>Ly hôn</li><li>Nuôi con</li><li>Cấp dưỡng</li><li>Tài sản</li></ul><div class="phead__focus"><strong>Trọng tâm tư vấn: Bảo vệ quyền lợi, giảm thiểu xung đột</strong><p>Đặt quyền lợi hợp pháp của khách hàng và sự ổn định của trẻ em vào trung tâm của phương án xử lý.</p></div>
+      <p class="eyebrow">Luật sư hôn nhân &amp; gia đình</p>
+      <h1 class="phead__title">Ly hôn, nuôi con, chia tài sản – <em>kín đáo và tôn trọng</em></h1>
+      <p class="phead__lead">Chuyện gia đình khó nói với người ngoài. Luật sư nghe anh chị trình bày riêng, giải thích quyền của anh chị và các con, rồi cùng tìm cách giải quyết ít tổn thương nhất. Mọi thông tin được giữ kín theo Luật Luật sư.</p>
+      
       
     </div>
     <aside class="lcard" aria-label="Luật sư phụ trách">
@@ -243,45 +247,84 @@
   </div>
 </section>
 
-<nav class="subnav" aria-label="Nội dung trang"><div class="container"><a href="#pham-vi">Phạm vi hỗ trợ</a><a href="#quy-trinh">Quy trình</a><a href="#ho-so">Hồ sơ cần chuẩn bị</a><a href="#tham-khao">Tài liệu tham khảo</a><a href="#lien-quan">Lĩnh vực liên quan</a></div></nav>
+<nav class="subnav" aria-label="Nội dung trang"><div class="container"><a href="#tinh-huong">Tình huống thường gặp</a><a href="#pham-vi">Luật sư giúp gì</a><a href="#viec-nen-lam">Việc nên làm ngay</a><a href="#quy-trinh">Các bước</a><a href="#ho-so">Giấy tờ</a><a href="#hoi-dap">Hỏi đáp</a></div></nav>
 
-<section class="section svc-section" id="pham-vi">
+<section class="section svc-section" id="tinh-huong">
   <div class="container">
-    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Phạm vi hỗ trợ</p><h2 class="h2">Giải quyết rõ ràng những vấn đề quan trọng của gia đình</h2><p class="shead__text">Luật Sư Nam giúp khách hàng nhìn rõ quyền, nghĩa vụ và hệ quả của từng lựa chọn. Hồ sơ được xử lý trên cơ sở bảo mật thông tin, tôn trọng hoàn cảnh riêng và ưu tiên giải pháp có thể thực hiện lâu dài.</p></div></div>
-    <div class="grid grid--3"><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">01</span></div><h3>Ly hôn thuận tình</h3><p>Tư vấn điều kiện, chuẩn bị hồ sơ và hoàn thiện thỏa thuận về con, tài sản, nghĩa vụ chung để thực hiện thủ tục tại Tòa án.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">02</span></div><h3>Ly hôn đơn phương</h3><p>Đánh giá căn cứ, thẩm quyền, chứng cứ; soạn đơn và đại diện giải quyết khi một bên không đồng thuận hoặc vắng mặt.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">03</span></div><h3>Quyền nuôi con và cấp dưỡng</h3><p>Phân tích điều kiện chăm sóc, nguyện vọng của con, mức cấp dưỡng và tài liệu cần thiết để bảo vệ lợi ích của trẻ.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">04</span></div><h3>Tài sản và nghĩa vụ chung</h3><p>Xác định tài sản chung, riêng, công sức đóng góp, khoản nợ và phương án phân chia nhà đất, tiền, cổ phần hoặc tài sản kinh doanh.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">05</span></div><h3>Hôn nhân có yếu tố nước ngoài</h3><p>Hướng dẫn hồ sơ, ủy quyền, giấy tờ nước ngoài và thủ tục đối với người đang cư trú hoặc có tài sản ở nước ngoài.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">06</span></div><h3>Thỏa thuận gia đình</h3><p>Soạn và rà soát thỏa thuận về chế độ tài sản, phân chia tài sản trong thời kỳ hôn nhân, nuôi con và các cam kết liên quan.</p></article></div>
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Tình huống thường gặp</p><h2 class="h2">Anh chị có đang gặp chuyện này?</h2><p class="shead__text">Đây là những trường hợp về hôn nhân &amp; gia đình mà người dân thường tìm đến luật sư.</p></div></div>
+    <ul class="situations"><li><svg class="ico" aria-hidden="true"><use href="#i-check-circle"/></svg><span>Muốn ly hôn nhưng vợ hoặc chồng không chịu ký đơn, hoặc đã bỏ đi không liên lạc được.</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check-circle"/></svg><span>Hai bên đồng ý ly hôn nhưng chưa thống nhất ai nuôi con, chia nhà, chia tiền ra sao.</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check-circle"/></svg><span>Lo mất quyền nuôi con vì thu nhập thấp hơn hoặc đang phải ở nhờ nhà người thân.</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check-circle"/></svg><span>Người kia không cấp dưỡng nuôi con như đã thỏa thuận hoặc như bản án.</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check-circle"/></svg><span>Tài sản đứng tên một người, không biết có phải tài sản chung để chia hay không.</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check-circle"/></svg><span>Một bên đang ở nước ngoài, cần làm thủ tục ly hôn hoặc giấy tờ ủy quyền.</span></li></ul>
+    <p class="situations__foot">Trường hợp của anh chị khác? Cứ <a href="tel:0983498499">gọi 0983 498 499</a> hoặc <a href="https://zalo.me/0983498499" target="_blank" rel="noopener">nhắn Zalo</a> kể ngắn gọn – luật sư sẽ cho biết có giúp được hay không.</p>
+  </div>
+</section>
+
+<section class="section section--cream svc-section" id="pham-vi">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Phạm vi hỗ trợ</p><h2 class="h2">Luật sư giúp được anh chị những gì</h2><p class="shead__text">Luật sư giúp anh chị nhìn rõ quyền, nghĩa vụ và hệ quả của từng lựa chọn trước khi quyết định. Hồ sơ được xử lý kín đáo, tôn trọng hoàn cảnh riêng và ưu tiên phương án có thể thực hiện lâu dài, nhất là với các con.</p></div></div>
+    <div class="grid grid--3"><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">01</span></div><h3>Ly hôn thuận tình</h3><p>Tư vấn điều kiện, chuẩn bị hồ sơ và hoàn thiện thỏa thuận về con, tài sản, nợ chung để nộp Tòa án.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">02</span></div><h3>Ly hôn đơn phương</h3><p>Đánh giá căn cứ ly hôn, Tòa án có thẩm quyền, chứng cứ; soạn đơn và bảo vệ quyền lợi của anh chị khi bên kia không đồng ý hoặc vắng mặt.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">03</span></div><h3>Quyền nuôi con, cấp dưỡng</h3><p>Phân tích điều kiện chăm sóc con, nguyện vọng của con, mức cấp dưỡng và giấy tờ cần có để bảo vệ lợi ích của các cháu.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">04</span></div><h3>Chia tài sản, nợ chung</h3><p>Xác định tài sản chung, tài sản riêng, công sức đóng góp, khoản nợ và cách chia nhà đất, tiền, cổ phần.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">05</span></div><h3>Có yếu tố nước ngoài</h3><p>Hướng dẫn hồ sơ, giấy tờ nước ngoài và thủ tục khi một bên đang ở hoặc có tài sản ở nước ngoài.</p></article><article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">06</span></div><h3>Thỏa thuận trong gia đình</h3><p>Soạn, rà soát thỏa thuận về tài sản vợ chồng, chia tài sản trong thời kỳ hôn nhân, nuôi con và các cam kết khác.</p></article></div>
+  </div>
+</section>
+
+<section class="section svc-section" id="viec-nen-lam">
+  <div class="container split">
+    <div class="reveal">
+      <p class="eyebrow">Trong lúc chờ gặp luật sư</p>
+      <h2 class="h2">Việc nên làm ngay</h2>
+      <p class="shead__text">Những việc nhỏ dưới đây giúp anh chị giữ được quyền lợi.</p>
+      <ol class="tips"><li>Cất giữ bản chính giấy chứng nhận kết hôn, giấy khai sinh của con và giấy tờ tài sản ở nơi an toàn.</li><li>Ghi lại thu nhập, chi phí nuôi con và ai đang trực tiếp chăm sóc con hằng ngày.</li><li>Nếu bị bạo lực gia đình, hãy ưu tiên an toàn: báo công an hoặc chính quyền nơi cư trú, giữ lại giấy khám thương, hình ảnh.</li><li>Không tự ý bán, chuyển nhượng tài sản chung khi đang có mâu thuẫn; việc này có thể bất lợi cho chính anh chị.</li></ol>
+    </div>
+    <div class="stack">
+      <div class="note reveal"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>Lưu ý:</strong> Thời gian giải quyết phụ thuộc mức độ thống nhất của hai bên, nơi cư trú, tình trạng tài sản và lịch làm việc của Tòa án.</p></div>
+      <article class="context__dark reveal"><p class="eyebrow">Cách luật sư làm việc</p><h3>Kín đáo và nhân văn</h3><p>Thông tin gia đình được tiếp nhận thận trọng. Luật sư khuyến khích thỏa thuận khi phù hợp, nhưng luôn chuẩn bị phương án pháp lý đầy đủ để bảo vệ anh chị và các con.</p></article>
+    </div>
   </div>
 </section>
 
 <section class="section section--cream svc-section" id="quy-trinh">
   <div class="container">
-    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Quy trình thực hiện</p><h2 class="h2">Các bước luật sư đồng hành cùng anh chị</h2></div><a class="link-arrow" href="../../quy-trinh-lam-viec/">Quy trình làm việc chung <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-    <ol class="steps steps--5"><li class="reveal"><span class="steps__num">1</span><h3>Trao đổi riêng tư</h3><p>Xác định mong muốn, tình trạng hôn nhân, con và tài sản.</p></li><li class="reveal"><span class="steps__num">2</span><h3>Rà soát hồ sơ</h3><p>Phân loại vấn đề đã thống nhất và còn tranh chấp.</p></li><li class="reveal"><span class="steps__num">3</span><h3>Đề xuất phương án</h3><p>Phân tích lựa chọn thỏa thuận hoặc yêu cầu Tòa án.</p></li><li class="reveal"><span class="steps__num">4</span><h3>Hoàn thiện thủ tục</h3><p>Soạn hồ sơ, nộp và theo dõi quá trình giải quyết.</p></li><li class="reveal"><span class="steps__num">5</span><h3>Đồng hành sau quyết định</h3><p>Hướng dẫn thi hành và xử lý vấn đề phát sinh.</p></li></ol>
-    <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><p><strong>Lưu ý:</strong> Thời gian giải quyết phụ thuộc mức độ thống nhất, nơi cư trú của các bên, tình trạng tài sản và lịch làm việc của cơ quan có thẩm quyền.</p></div>
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Quy trình thực hiện</p><h2 class="h2">Làm việc với luật sư diễn ra thế nào?</h2><p class="shead__text">Năm bước rõ ràng. Ở mỗi bước, anh chị đều biết việc gì đang được làm.</p></div><a class="link-arrow" href="../../quy-trinh-lam-viec/">Quy trình làm việc chung <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    <ol class="steps steps--5"><li class="reveal"><span class="steps__num">1</span><h3>Trao đổi riêng</h3><p>Mong muốn của anh chị, tình trạng hôn nhân, con và tài sản.</p></li><li class="reveal"><span class="steps__num">2</span><h3>Xem hồ sơ</h3><p>Tách rõ việc đã thống nhất và việc còn tranh chấp.</p></li><li class="reveal"><span class="steps__num">3</span><h3>Bàn phương án</h3><p>Thỏa thuận hay yêu cầu Tòa án giải quyết, kèm chi phí dự kiến.</p></li><li class="reveal"><span class="steps__num">4</span><h3>Làm thủ tục</h3><p>Soạn hồ sơ, nộp đơn và theo dõi quá trình giải quyết.</p></li><li class="reveal"><span class="steps__num">5</span><h3>Sau bản án</h3><p>Hướng dẫn thi hành và xử lý việc phát sinh về con, tài sản.</p></li></ol>
   </div>
 </section>
 
 <section class="section svc-section" id="ho-so">
   <div class="container">
-    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Hồ sơ &amp; kết quả</p><h2 class="h2">Chuẩn bị rõ ràng, phối hợp hiệu quả</h2></div></div>
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Hồ sơ &amp; kết quả</p><h2 class="h2">Cần chuẩn bị gì và anh chị nhận được gì</h2><p class="shead__text">Chưa đủ giấy tờ cũng không sao: cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.</p></div></div>
     <div class="docs">
-      <article class="reveal"><h3><span class="ichip ichip--sm"><svg class="" aria-hidden="true"><use href="#i-doc"/></svg></span>Hồ sơ nên chuẩn bị</h3><ul class="check-list"><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giấy chứng nhận kết hôn và giấy tờ nhân thân</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giấy khai sinh của con và tài liệu về việc chăm sóc</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giấy tờ nhà đất, tài khoản, cổ phần và tài sản khác</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Chứng từ về thu nhập, khoản nợ và nghĩa vụ chung</span></li></ul><a class="link-arrow" href="../../quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></article>
-      <article class="reveal"><h3><span class="ichip ichip--sm"><svg class="" aria-hidden="true"><use href="#i-diamond"/></svg></span>Anh chị nhận được</h3><ul class="check-list"><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Đánh giá quyền lợi và các điểm cần ưu tiên</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Phương án về con, tài sản và nghĩa vụ tài chính</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Hồ sơ, đơn từ và thỏa thuận được chuẩn hóa</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Đại diện làm việc theo phạm vi đã thống nhất</span></li></ul></article>
-    </div>
-    <div class="context">
-      <article class="context__dark reveal"><p class="eyebrow">Nguyên tắc làm việc</p><h3>Nguyên tắc bảo mật và nhân văn</h3><p>Thông tin gia đình được tiếp nhận thận trọng. Chúng tôi khuyến khích thỏa thuận khi phù hợp, nhưng luôn chuẩn bị phương án pháp lý đầy đủ để bảo vệ khách hàng và trẻ em.</p></article>
-      <article class="context__laws reveal"><h3>Căn cứ pháp lý chủ yếu</h3><ul><li>Luật Hôn nhân và Gia đình 2014</li><li>Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)</li><li>Bộ luật Dân sự 2015</li></ul><small>Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</small></article>
+      <article class="reveal"><h3><span class="ichip ichip--sm"><svg class="" aria-hidden="true"><use href="#i-doc"/></svg></span>Giấy tờ nên mang theo</h3><ul class="check-list"><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giấy chứng nhận kết hôn và giấy tờ nhân thân</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giấy khai sinh của con và tài liệu về việc chăm sóc con</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giấy tờ nhà đất, tài khoản, cổ phần và tài sản khác</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Chứng từ về thu nhập, khoản nợ và nghĩa vụ chung</span></li></ul><a class="link-arrow" href="../../quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></article>
+      <article class="reveal"><h3><span class="ichip ichip--sm"><svg class="" aria-hidden="true"><use href="#i-check-circle"/></svg></span>Anh chị sẽ nhận được</h3><ul class="check-list"><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Giải thích quyền lợi và những điểm cần ưu tiên</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Phương án về con, tài sản và nghĩa vụ tài chính</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Đơn từ, hồ sơ và thỏa thuận được soạn sẵn</span></li><li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>Luật sư đồng hành, bảo vệ quyền lợi tại Tòa án theo phạm vi đã thống nhất</span></li></ul><a class="link-arrow" href="../../cau-hoi-thuong-gap/#chi-phi-thue-luat-su">Chi phí được tính thế nào <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></article>
     </div>
   </div>
 </section>
 
-<section class="section section--cream svc-section" id="tham-khao">
+<section class="section section--cream svc-section" id="hoi-dap">
+  <div class="container split">
+    <div class="reveal">
+      <p class="eyebrow">Hỏi đáp</p>
+      <h2 class="h2">Câu hỏi hay gặp về hôn nhân &amp; gia đình</h2>
+      <p class="shead__text">Giải đáp ngắn gọn, có dẫn điều luật. Mỗi vụ việc có tình tiết riêng, anh chị nên hỏi luật sư trước khi quyết định.</p>
+      <div class="context__laws laws-box"><h3>Căn cứ pháp luật chủ yếu</h3><ul><li>Luật Hôn nhân và Gia đình 2014</li><li>Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)</li><li>Bộ luật Dân sự 2015</li></ul><small>Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</small></div>
+    </div>
+    <div class="faq reveal"><details class="faq__item" id="hoi-dap-1">
+  <summary><span>Vợ hoặc chồng không chịu ký đơn thì có ly hôn được không?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+  <div class="faq__answer"><p>Có thể, nếu có căn cứ. Khi một bên yêu cầu ly hôn mà hòa giải tại Tòa án không thành, Tòa án giải quyết cho ly hôn nếu có căn cứ về bạo lực gia đình hoặc vi phạm nghiêm trọng quyền, nghĩa vụ vợ chồng làm hôn nhân lâm vào tình trạng trầm trọng, đời sống chung không thể kéo dài (<strong>Điều 56 Luật Hôn nhân và Gia đình 2014</strong>). Đọc thêm: <a href="../../kien-thuc-phap-ly/ly-hon-don-phuong/">ly hôn đơn phương</a>.</p></div>
+</details><details class="faq__item" id="hoi-dap-2">
+  <summary><span>Con còn nhỏ thì ai được nuôi?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+  <div class="faq__answer"><p>Hai bên được thỏa thuận; nếu không thỏa thuận được, Tòa án quyết định dựa trên quyền lợi về mọi mặt của con. Con dưới 36 tháng tuổi được giao cho mẹ trực tiếp nuôi, trừ trường hợp người mẹ không đủ điều kiện hoặc cha mẹ có thỏa thuận khác phù hợp với lợi ích của con; con từ đủ 07 tuổi trở lên thì phải xem xét nguyện vọng của con (<strong>Điều 81 Luật Hôn nhân và Gia đình 2014</strong>).</p></div>
+</details><details class="faq__item" id="hoi-dap-3">
+  <summary><span>Tôi có thể nhờ luật sư ra Tòa thay mình không?</span><svg class="faq__chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+  <div class="faq__answer"><p>Đối với việc ly hôn, anh chị phải tự mình tham gia tố tụng, không được ủy quyền cho người khác thay mặt (<strong>khoản 4 Điều 85 Bộ luật Tố tụng dân sự 2015</strong>). Luật sư chuẩn bị hồ sơ, hướng dẫn anh chị trình bày và tham gia với tư cách người bảo vệ quyền và lợi ích hợp pháp, nhất là trong các vấn đề về con và tài sản.</p></div>
+</details></div>
+  </div>
+</section>
+
+<section class="section svc-section" id="tham-khao">
   <div class="container">
-    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Tài liệu tham khảo</p><h2 class="h2">Thông tin hữu ích cho anh chị</h2></div><a class="link-arrow" href="../../kien-thuc-phap-ly/">Thư viện kiến thức <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-    <div class="grid grid--3"><a class="rcard reveal" href="../../kien-thuc-phap-ly/ly-hon-don-phuong/"><span class="tag">Bài viết</span><h3>Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con</h3><p>Căn cứ ly hôn theo Điều 56 Luật Hôn nhân và Gia đình 2014, hồ sơ khởi kiện, quyền nuôi con và chia tài sản chung.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="rcard reveal" href="../../cau-hoi-thuong-gap/"><span class="tag">Hỏi đáp</span><h3>Câu hỏi thường gặp khi thuê luật sư</h3><p>Thông tin về chi phí, bảo mật và cách làm việc với luật sư.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="rcard reveal" href="../../quy-trinh-lam-viec/#ho-so-can-chuan-bi"><span class="tag">Chuẩn bị</span><h3>Trước buổi tư vấn đầu tiên</h3><p>Giấy tờ cần mang theo và cách chuẩn bị thông tin vụ việc.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></div>
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Đọc thêm</p><h2 class="h2">Thông tin hữu ích trước khi gặp luật sư</h2></div><a class="link-arrow" href="../../kien-thuc-phap-ly/">Thư viện kiến thức <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    <div class="grid grid--3"><a class="rcard reveal" href="../../kien-thuc-phap-ly/ly-hon-don-phuong/"><span class="tag">Bài viết</span><h3>Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con</h3><p>Căn cứ ly hôn theo Điều 56 Luật Hôn nhân và Gia đình 2014, hồ sơ khởi kiện, quyền nuôi con và chia tài sản chung.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="rcard reveal" href="../../cau-hoi-thuong-gap/"><span class="tag">Hỏi đáp</span><h3>Câu hỏi thường gặp khi thuê luật sư</h3><p>Chi phí, bảo mật và cách bắt đầu làm việc với luật sư.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="rcard reveal" href="../../quy-trinh-lam-viec/#ho-so-can-chuan-bi"><span class="tag">Chuẩn bị</span><h3>Trước buổi gặp luật sư đầu tiên</h3><p>Giấy tờ nên mang theo và cách ghi lại diễn biến sự việc.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></div>
   </div>
 </section>
 
-<section class="section svc-section" id="lien-quan">
+<section class="section section--cream svc-section" id="lien-quan">
   <div class="container">
     <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Lĩnh vực liên quan</p><h2 class="h2">Hỗ trợ các vấn đề có liên quan</h2></div><a class="link-arrow" href="../../dich-vu/">Tất cả dịch vụ <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
     <div class="grid grid--3"><a class="icard reveal" href="../../dich-vu/thua-ke/"><span class="ichip"><svg class="" aria-hidden="true"><use href="#i-inherit"/></svg></span><h3 class="icard__title">Thừa kế</h3><p class="icard__text">Tư vấn lập di chúc, phân chia di sản, khai nhận thừa kế và giải quyết tranh chấp giữa các bên liên quan.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="icard reveal" href="../../dich-vu/dan-su/"><span class="ichip"><svg class="" aria-hidden="true"><use href="#i-scale"/></svg></span><h3 class="icard__title">Dân sự</h3><p class="icard__text">Tư vấn hợp đồng, nghĩa vụ, bồi thường, tài sản và đại diện giải quyết tranh chấp dân sự theo đúng trình tự.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a><a class="icard reveal" href="../../dich-vu/cong-chung/"><span class="ichip"><svg class="" aria-hidden="true"><use href="#i-doc"/></svg></span><h3 class="icard__title">Công chứng</h3><p class="icard__text">Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng, di chúc, ủy quyền, mua bán, tặng cho.</p><span class="icard__more">Xem chi tiết <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></div>
@@ -293,9 +336,9 @@
     <div class="cband__intro">
       <img class="cband__avatar" src="../../assets/img/luat-su-avatar.webp?v=20261015a" alt="Luật sư Nguyễn Trọng Nam" width="92" height="92" loading="lazy">
       <div>
-        <p class="eyebrow">Tư vấn kín đáo</p>
-        <h2 class="cband__title" id="cband-title">Một phương án rõ ràng giúp gia đình giảm thêm áp lực.</h2>
-        <p class="cband__text">Trao đổi riêng với luật sư để xác định quyền lợi và các bước cần thực hiện.</p>
+        <p class="eyebrow">Tư vấn hôn nhân &amp; gia đình</p>
+        <h2 class="cband__title" id="cband-title">Một phương án rõ ràng giúp gia đình bớt áp lực</h2>
+        <p class="cband__text">Anh chị có thể gọi điện hoặc nhắn Zalo để hẹn trao đổi riêng với luật sư. Nội dung trao đổi được giữ kín ngay từ cuộc gọi đầu tiên.</p>
       </div>
     </div>
     <div class="cband__cards">

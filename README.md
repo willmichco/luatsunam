@@ -15,14 +15,32 @@ Website tĩnh nhiều trang (HTML, CSS, JavaScript thuần), dùng giao diện m
 | `/vi-sao-chon-chung-toi/` | Bốn nguyên tắc làm việc | WebPage |
 | `/quy-trinh-lam-viec/` | Quy trình 4 bước, hồ sơ cần chuẩn bị | WebPage |
 | `/dich-vu/` | Tổng quan 8 lĩnh vực | CollectionPage, ItemList |
-| `/dich-vu/<lĩnh-vực>/` | 8 trang dịch vụ: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng | Service |
+| `/dich-vu/<lĩnh-vực>/` | 8 trang dịch vụ: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng. Mỗi trang: tình huống thường gặp, luật sư giúp gì, việc nên làm ngay, các bước, giấy tờ, hỏi đáp có dẫn điều luật | Service |
 | `/kien-thuc-phap-ly/` | Danh mục bài viết và công cụ | CollectionPage, ItemList |
-| `/kien-thuc-phap-ly/<bài-viết>/` | 3 bài viết pháp lý | Article |
+| `/kien-thuc-phap-ly/<bài-viết>/` | 3 bài viết pháp lý, mở đầu bằng khung “Tóm tắt nhanh” | Article |
 | `/cau-hoi-thuong-gap/` | 7 câu hỏi thường gặp | FAQPage |
-| `/lien-he/` | Liên hệ: gọi điện, Zalo, email, bản đồ | ContactPage |
+| `/lien-he/` | Gọi điện, Zalo, email, việc gấp, văn phòng và bản đồ | ContactPage |
 | `/chinh-sach-bao-mat/`, `/dieu-khoan-su-dung/`, `/mien-tru-trach-nhiem/` | Văn bản pháp lý của website | WebPage |
 
 Mọi trang có: `title` và `description` riêng, `canonical`, Open Graph, Twitter Card, breadcrumb hiển thị kèm `BreadcrumbList`. Đường dẫn giữ nguyên như website cũ để không mất thứ hạng khi chuyển tên miền.
+
+## Giao diện thống nhất
+
+Toàn website dùng một tệp giao diện duy nhất `assets/css/style.css` và chỉ dùng **ảnh thật** của Luật sư Nguyễn Trọng Nam:
+
+- **Giọng văn:** gọi người đọc là “anh chị”, câu ngắn, tiêu đề như lời nói hằng ngày; khẳng định pháp lý luôn kèm điều luật.
+- **Khung trang giống nhau:** đầu trang nền kem (đường dẫn, tiêu đề, đoạn mở đầu, thẻ “Luật sư phụ trách” có ảnh thật, nút Gọi/Zalo) → các mục xen kẽ nền trắng/kem → khối liên hệ đỏ cuối trang (ảnh luật sư, Gọi điện, Nhắn Zalo, Đến văn phòng). Trên điện thoại có thanh Gọi / Zalo cố định ở cuối màn hình.
+- **Thành phần dùng chung**, sinh bởi `tools/build.py`, gọi được từ `src/pages/*.html` bằng token:
+
+| Token | Hiển thị |
+|---|---|
+| `{{problems_grid}}` | 8 thẻ “Anh chị đang gặp chuyện gì?” (thứ tự: `PROBLEM_ORDER` trong `tools/data.py`) |
+| `{{services_grid}}` | 8 thẻ lĩnh vực |
+| `{{faq_list:id1,id2}}` | Câu hỏi thường gặp chọn lọc |
+| `{{articles_grid}}` | Thẻ bài viết |
+| `{{lawyer}}`, `{{phone}}`, `{{zalo}}`, `{{v}}`… | Thông tin trong `FIRM`, phiên bản tài nguyên |
+
+Khối liên hệ cuối trang được thêm tự động (tắt bằng `"contact_band": false` trong khối meta); thẻ luật sư ở đầu trang tắt bằng `"lawyer_card": false`.
 
 ## Liên kết nội bộ
 
@@ -54,11 +72,11 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 
 | Muốn sửa | Sửa tại |
 |---|---|
-| Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` (và `CONTACT_*` đầu tệp `assets/js/main.js`) |
-| Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`) |
-| Thêm bài viết | Thêm mục vào `ARTICLES`, tạo `src/bai-viet/<slug>.html`, chạy `python3 tools/make_images.py` để sinh ảnh chia sẻ `assets/img/og/bai-viet-<slug>.jpg` |
+| Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` |
+| Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`); ý nghĩa từng trường ghi ở đầu danh sách. Câu trả lời trong `faq` phải dẫn điều luật cụ thể. Sau khi sửa tên/mô tả ngắn, chạy lại `tools/make_images.py` để cập nhật ảnh chia sẻ |
+| Thêm bài viết | Thêm mục vào `ARTICLES` (kèm 3–4 ý `key_points` cho khung “Tóm tắt nhanh”), tạo `src/bai-viet/<slug>.html`, chạy `python3 tools/make_images.py` để sinh ảnh chia sẻ `assets/img/og/bai-viet-<slug>.jpg` |
 | Câu hỏi thường gặp | `FAQ` trong `tools/data.py` |
-| Hồ sơ luật sư | `src/pages/doi-ngu-luat-su.html` (xem ghi chú cho người quản trị trong tệp) |
+| Hồ sơ luật sư | `src/pages/gioi-thieu.html` |
 | Tên miền | `SITE_URL`, `BASE_PATH` đầu tệp `tools/data.py` |
 | Logo, ảnh luật sư, ảnh chia sẻ | Thay `src/brand/logo-lsn.webp` hoặc ảnh trong `src/brand/anh-that/` (giữ tên tệp), chạy `pip install pillow fonttools brotli && python3 tools/make_images.py`. Website **chỉ dùng ảnh thật**, không dùng ảnh AI/ảnh mẫu. Nếu bố cục ảnh mới khác, chỉnh toạ độ cắt ở `PHOTOS` trong `tools/make_images.py` |
 | Tên, chức danh luật sư hiển thị ở thẻ "Luật sư phụ trách" | `lawyer`, `lawyer_role` trong `FIRM` (`tools/data.py`) |

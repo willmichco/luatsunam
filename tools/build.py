@@ -20,8 +20,8 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import (ARTICLE_BY_SLUG, ARTICLES, BASE_PATH, FAQ, FIRM, SERVICE_BY_SLUG,  # noqa: E402
-                  SERVICES, SITE_URL, articles_for_service)
+from data import (ARTICLE_BY_SLUG, ARTICLES, BASE_PATH, FAQ, FIRM, PROBLEM_ORDER,  # noqa: E402
+                  SERVICE_BY_SLUG, SERVICES, SITE_URL, articles_for_service)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "src")
@@ -93,6 +93,10 @@ SPRITE = """<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hi
   <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="13" rx="1.5"/><path d="M16 8V4.5A1.5 1.5 0 0 0 14.5 3h-9A1.5 1.5 0 0 0 4 4.5V16a1.5 1.5 0 0 0 1.5 1.5H8"/></g></symbol>
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
 </svg>"""
 
@@ -372,6 +376,18 @@ def icard(href, icon, title, text, more="Xem chi tiết", heading="h3"):
             f'<span class="icard__more">{more} {ARROW}</span></a>')
 
 
+def problem_card(s, r):
+    """Thẻ "anh chị đang gặp chuyện gì": tình huống đời thường dẫn tới trang lĩnh vực."""
+    return (f'<a class="icard reveal" href="{r}dich-vu/{s["slug"]}/"><span class="ichip">{ico(s.get("problem_icon", s["icon"]), "")}</span>'
+            f'<span class="icard__tag">{esc(s["name"])}</span>'
+            f'<h3 class="icard__title">{esc(s["problem_title"])}</h3><p class="icard__text">{esc(s["problem_text"])}</p>'
+            f'<span class="icard__more">Xem cách giải quyết {ARROW}</span></a>')
+
+
+def problems_grid(r):
+    return '<div class="grid grid--4">' + "".join(problem_card(SERVICE_BY_SLUG[x], r) for x in PROBLEM_ORDER) + "</div>"
+
+
 def service_card(s, r, heading="h3"):
     return icard(f'{r}dich-vu/{s["slug"]}/', s["icon"], esc(s["name"]), esc(s["short"]), heading=heading)
 
@@ -432,6 +448,8 @@ def render_tokens(body, page, r):
             return ""
         if name == "services_grid":
             return services_grid(r)
+        if name == "problems_grid":
+            return problems_grid(r)
         if name == "articles_grid":
             return articles_grid(r)
         if name == "faq_list":
@@ -625,63 +643,102 @@ def crumbs_for(*items):
 # ---------------------------------------------------------------------------
 def service_page(s):
     path = f"dich-vu/{s['slug']}/"
+    name_lc = s["name"].lower()
     arts = articles_for_service(s["slug"])
+    situations = "".join(f'<li>{ico("i-check-circle")}<span>{esc(x)}</span></li>' for x in s["situations"])
     scope = "".join(f'<article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">{i:02d}</span></div>'
                     f'<h3>{esc(h)}</h3><p>{esc(p)}</p></article>' for i, (h, p) in enumerate(s["scope"], 1))
+    tips = "".join(f"<li>{esc(x)}</li>" for x in s["tips"])
     steps = "".join(f'<li class="reveal"><span class="steps__num">{i}</span><h3>{esc(h)}</h3><p>{esc(p)}</p></li>'
                     for i, (h, p) in enumerate(s["steps"], 1))
+    faq = "".join(f"""<details class="faq__item" id="hoi-dap-{i}">
+  <summary><span>{esc(q)}</span>{ico("i-chevron", "faq__chev")}</summary>
+  <div class="faq__answer"><p>{a}</p></div>
+</details>""" for i, (q, a) in enumerate(s["faq"], 1))
     laws = "".join(f'<li>{esc(x)}</li>' for x in s["laws"])
-    tags = "".join(f'<li>{esc(t)}</li>' for t in s["tags"])
     resources = [(f'kien-thuc-phap-ly/{a["slug"]}/', "Bài viết", a["card_title"], a["excerpt"]) for a in arts[:3]]
-    extras = [("cau-hoi-thuong-gap/", "Hỏi đáp", "Câu hỏi thường gặp khi thuê luật sư", "Thông tin về chi phí, bảo mật và cách làm việc với luật sư."),
-              ("quy-trinh-lam-viec/#ho-so-can-chuan-bi", "Chuẩn bị", "Trước buổi tư vấn đầu tiên", "Giấy tờ cần mang theo và cách chuẩn bị thông tin vụ việc.")]
+    extras = [("cau-hoi-thuong-gap/", "Hỏi đáp", "Câu hỏi thường gặp khi thuê luật sư", "Chi phí, bảo mật và cách bắt đầu làm việc với luật sư."),
+              ("quy-trinh-lam-viec/#ho-so-can-chuan-bi", "Chuẩn bị", "Trước buổi gặp luật sư đầu tiên", "Giấy tờ nên mang theo và cách ghi lại diễn biến sự việc."),
+              ("vi-sao-chon-chung-toi/", "Cách làm việc", "Những điều luật sư cam kết và không làm", "Nói rõ được – mất, chi phí thỏa thuận trước, không hứa hẹn kết quả.")]
     resources += extras[:max(0, 3 - len(resources))]
     cards = "".join(f'<a class="rcard reveal" href="{{{{root}}}}{href}"><span class="tag">{label}</span><h3>{esc(title)}</h3>'
                     f'<p>{esc(text)}</p><span class="icard__more">Xem chi tiết {ARROW}</span></a>' for href, label, title, text in resources)
     related = "".join(icard(f'{{{{root}}}}dich-vu/{x["slug"]}/', x["icon"], esc(x["name"]), esc(x["short"]))
                       for x in SERVICES if x["slug"] in s["related"])
-    extra = (f'<ul class="tags" aria-label="Nội dung dịch vụ">{tags}</ul>'
-             f'<div class="phead__focus"><strong>Trọng tâm tư vấn: {esc(s["focus_title"])}</strong><p>{esc(s["focus_text"])}</p></div>')
+    urgent = ""
+    if s.get("urgent"):
+        urgent = (f'<p class="urgent">{ico("i-alert")}<span><strong>Việc gấp?</strong> Người thân vừa bị bắt, tạm giữ hoặc sắp phải làm việc với cơ quan điều tra: '
+                  f'hãy gọi ngay <a href="tel:{FIRM["phone_tel"]}">{FIRM["phone"]}</a>. {FIRM["hours_note"]}.</span></p>')
     body = f"""
-<nav class="subnav" aria-label="Nội dung trang"><div class="container"><a href="#pham-vi">Phạm vi hỗ trợ</a><a href="#quy-trinh">Quy trình</a><a href="#ho-so">Hồ sơ cần chuẩn bị</a><a href="#tham-khao">Tài liệu tham khảo</a><a href="#lien-quan">Lĩnh vực liên quan</a></div></nav>
+<nav class="subnav" aria-label="Nội dung trang"><div class="container"><a href="#tinh-huong">Tình huống thường gặp</a><a href="#pham-vi">Luật sư giúp gì</a><a href="#viec-nen-lam">Việc nên làm ngay</a><a href="#quy-trinh">Các bước</a><a href="#ho-so">Giấy tờ</a><a href="#hoi-dap">Hỏi đáp</a></div></nav>
 
-<section class="section svc-section" id="pham-vi">
+<section class="section svc-section" id="tinh-huong">
   <div class="container">
-    {shead("Phạm vi hỗ trợ", esc(s["scope_title"]), esc(s["scope_intro"]))}
+    {shead("Tình huống thường gặp", "Anh chị có đang gặp chuyện này?", f"Đây là những trường hợp về {esc(name_lc)} mà người dân thường tìm đến luật sư.")}
+    <ul class="situations">{situations}</ul>
+    <p class="situations__foot">Trường hợp của anh chị khác? Cứ <a href="tel:{FIRM["phone_tel"]}">gọi {FIRM["phone"]}</a> hoặc <a href="{FIRM["zalo"]}" target="_blank" rel="noopener">nhắn Zalo</a> kể ngắn gọn – luật sư sẽ cho biết có giúp được hay không.</p>
+  </div>
+</section>
+
+<section class="section section--cream svc-section" id="pham-vi">
+  <div class="container">
+    {shead("Phạm vi hỗ trợ", "Luật sư giúp được anh chị những gì", esc(s["scope_intro"]))}
     <div class="grid grid--3">{scope}</div>
+  </div>
+</section>
+
+<section class="section svc-section" id="viec-nen-lam">
+  <div class="container split">
+    <div class="reveal">
+      <p class="eyebrow">Trong lúc chờ gặp luật sư</p>
+      <h2 class="h2">Việc nên làm ngay</h2>
+      <p class="shead__text">Những việc nhỏ dưới đây giúp anh chị giữ được quyền lợi.</p>
+      <ol class="tips">{tips}</ol>
+    </div>
+    <div class="stack">
+      <div class="note reveal">{ico("i-alert")}<p><strong>{esc(s["note_title"])}:</strong> {esc(s["note_text"])}</p></div>
+      <article class="context__dark reveal"><p class="eyebrow">Cách luật sư làm việc</p><h3>{esc(s["principle_title"])}</h3><p>{esc(s["principle_text"])}</p></article>
+    </div>
   </div>
 </section>
 
 <section class="section section--cream svc-section" id="quy-trinh">
   <div class="container">
-    {shead("Quy trình thực hiện", "Các bước luật sư đồng hành cùng anh chị", link=("{{root}}quy-trinh-lam-viec/", "Quy trình làm việc chung"))}
+    {shead("Quy trình thực hiện", "Làm việc với luật sư diễn ra thế nào?", "Năm bước rõ ràng. Ở mỗi bước, anh chị đều biết việc gì đang được làm.", link=("{{root}}quy-trinh-lam-viec/", "Quy trình làm việc chung"))}
     <ol class="steps steps--5">{steps}</ol>
-    <div class="note">{ico("i-alert")}<p><strong>{esc(s["note_title"])}:</strong> {esc(s["note_text"])}</p></div>
   </div>
 </section>
 
 <section class="section svc-section" id="ho-so">
   <div class="container">
-    {shead("Hồ sơ &amp; kết quả", "Chuẩn bị rõ ràng, phối hợp hiệu quả")}
+    {shead("Hồ sơ &amp; kết quả", "Cần chuẩn bị gì và anh chị nhận được gì", "Chưa đủ giấy tờ cũng không sao: cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.")}
     <div class="docs">
-      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-doc", "")}</span>{esc(s.get("docs_title", "Hồ sơ nên chuẩn bị"))}</h3>{check_list(s["docs"])}<a class="link-arrow" href="{{{{root}}}}quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ {ARROW}</a></article>
-      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-diamond", "")}</span>Anh chị nhận được</h3>{check_list(s["deliverables"])}</article>
-    </div>
-    <div class="context">
-      <article class="context__dark reveal"><p class="eyebrow">Nguyên tắc làm việc</p><h3>{esc(s["principle_title"])}</h3><p>{esc(s["principle_text"])}</p></article>
-      <article class="context__laws reveal"><h3>Căn cứ pháp lý chủ yếu</h3><ul>{laws}</ul><small>Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</small></article>
+      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-doc", "")}</span>{esc(s.get("docs_title", "Giấy tờ nên mang theo"))}</h3>{check_list(s["docs"])}<a class="link-arrow" href="{{{{root}}}}quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ {ARROW}</a></article>
+      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-check-circle", "")}</span>Anh chị sẽ nhận được</h3>{check_list(s["deliverables"])}<a class="link-arrow" href="{{{{root}}}}cau-hoi-thuong-gap/#chi-phi-thue-luat-su">Chi phí được tính thế nào {ARROW}</a></article>
     </div>
   </div>
 </section>
 
-<section class="section section--cream svc-section" id="tham-khao">
+<section class="section section--cream svc-section" id="hoi-dap">
+  <div class="container split">
+    <div class="reveal">
+      <p class="eyebrow">Hỏi đáp</p>
+      <h2 class="h2">Câu hỏi hay gặp về {esc(name_lc)}</h2>
+      <p class="shead__text">Giải đáp ngắn gọn, có dẫn điều luật. Mỗi vụ việc có tình tiết riêng, anh chị nên hỏi luật sư trước khi quyết định.</p>
+      <div class="context__laws laws-box"><h3>Căn cứ pháp luật chủ yếu</h3><ul>{laws}</ul><small>Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</small></div>
+    </div>
+    <div class="faq reveal">{faq}</div>
+  </div>
+</section>
+
+<section class="section svc-section" id="tham-khao">
   <div class="container">
-    {shead("Tài liệu tham khảo", "Thông tin hữu ích cho anh chị", link=("{{root}}kien-thuc-phap-ly/", "Thư viện kiến thức"))}
+    {shead("Đọc thêm", "Thông tin hữu ích trước khi gặp luật sư", link=("{{root}}kien-thuc-phap-ly/", "Thư viện kiến thức"))}
     <div class="grid grid--3">{cards}</div>
   </div>
 </section>
 
-<section class="section svc-section" id="lien-quan">
+<section class="section section--cream svc-section" id="lien-quan">
   <div class="container">
     {shead("Lĩnh vực liên quan", "Hỗ trợ các vấn đề có liên quan", link=("{{root}}dich-vu/", "Tất cả dịch vụ"))}
     <div class="grid grid--3">{related}</div>
@@ -690,13 +747,14 @@ def service_page(s):
 """
     url = abs_url(path)
     og = f'assets/img/og/dich-vu-{s["slug"]}.jpg'
+    eyebrow = "Luật sư hỗ trợ công chứng" if s["slug"] == "cong-chung" else f"Luật sư {name_lc}"
     return {
         "path": path, "section": "services",
         "title": f'{s["title"]} | {FIRM["short_name"]}', "description": s["description"],
-        "eyebrow": s["eyebrow"], "h1": esc(s["name"]), "lead": esc(s["lead"]), "hero": {"extra": extra},
+        "eyebrow": eyebrow, "h1": s["hero_title"], "lead": esc(s["lead"]), "hero": {"extra": urgent},
         "crumbs": crumbs_for(("Dịch vụ", "dich-vu/"), (s["name"], path)),
         "image": og, "og_image": og, "body": body,
-        "cband": {"eyebrow": s["cta_eyebrow"], "title": esc(s["cta_title"]), "text": esc(s["cta_text"])},
+        "cband": {"eyebrow": f"Tư vấn {name_lc}", "title": esc(s["cta_title"]), "text": esc(s["cta_text"])},
         "schema": [{
             "@type": "Service", "@id": url + "#service", "name": s["name"], "serviceType": s["title"],
             "description": s["description"], "url": url, "provider": {"@id": ORG_ID},
@@ -710,23 +768,23 @@ def service_page(s):
 def services_hub():
     path = "dich-vu/"
     modes = [
-        ("I", "Tư vấn pháp luật", "Phân tích quy định, trả lời câu hỏi pháp lý bằng lời nói hoặc bằng văn bản; soạn thảo, rà soát hợp đồng, đơn từ và các tài liệu pháp lý khác."),
-        ("II", "Đại diện ngoài tố tụng", "Thay mặt khách hàng làm việc, thương lượng, hòa giải với các bên liên quan và thực hiện thủ tục tại cơ quan nhà nước trong phạm vi được ủy quyền."),
-        ("III", "Tham gia tố tụng", "Bào chữa, bảo vệ quyền và lợi ích hợp pháp hoặc đại diện cho đương sự trong các vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài."),
+        ("i-chat", "Tư vấn, giải đáp", "Luật sư nghe anh chị trình bày, giải thích quy định và hướng xử lý; soạn hoặc kiểm tra hợp đồng, đơn từ, giấy tờ trước khi anh chị ký, nộp."),
+        ("i-user", "Thay mặt anh chị làm việc", "Trong phạm vi được ủy quyền, luật sư thay anh chị làm việc, thương lượng, hòa giải với bên kia và làm thủ tục tại cơ quan nhà nước."),
+        ("i-gavel", "Cùng anh chị ra Tòa", "Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài."),
     ]
-    mode_html = "".join(f'<article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">{n}</span></div><h3>{h}</h3><p>{p}</p></article>'
-                        for n, h, p in modes)
+    mode_html = "".join(f'<article class="icard reveal"><span class="ichip">{ico(i, "")}</span><h3 class="icard__title">{h}</h3><p class="icard__text">{p}</p></article>'
+                        for i, h, p in modes)
     body = f"""
 <section class="section section--cream">
   <div class="container">
-    {shead("Tám lĩnh vực", "Chọn lĩnh vực gần với vụ việc của anh chị", "Mỗi lĩnh vực có trang riêng: phạm vi hỗ trợ, giấy tờ cần chuẩn bị và các bước luật sư sẽ thực hiện.")}
-    {{{{services_grid}}}}
+    {shead("Tám lĩnh vực", "Chọn tình huống gần giống với anh chị", "Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.")}
+    {{{{problems_grid}}}}
   </div>
 </section>
 
 <section class="section">
   <div class="container">
-    {shead("Hình thức hỗ trợ", "Ba cách luật sư đồng hành", "Tùy tính chất vụ việc, anh chị có thể chọn một hoặc kết hợp nhiều hình thức dưới đây, theo phạm vi quy định tại Luật Luật sư.", center=True)}
+    {shead("Hình thức hỗ trợ", "Luật sư có thể giúp anh chị theo ba cách", "Tùy vụ việc, anh chị chọn một hoặc kết hợp nhiều cách, theo phạm vi hành nghề quy định tại Luật Luật sư.", center=True)}
     <div class="grid grid--3">{mode_html}</div>
   </div>
 </section>
@@ -737,12 +795,12 @@ def services_hub():
         "title": f'Lĩnh vực hoạt động – Dịch vụ pháp lý | {FIRM["short_name"]}',
         "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 8 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng.",
         "eyebrow": "Lĩnh vực hoạt động",
-        "h1": "Dịch vụ pháp lý cho <em>cá nhân và doanh nghiệp</em>",
-        "lead": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực hành nghề chính. Chưa rõ vụ việc thuộc lĩnh vực nào? Anh chị cứ gọi điện hoặc nhắn Zalo kể sự việc.",
+        "h1": "Anh chị cần luật sư <em>giúp việc gì?</em>",
+        "lead": "Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực gắn với đời sống hằng ngày của người dân.",
         "crumbs": crumbs_for(("Lĩnh vực hoạt động", path)),
         "body": body,
         "cband": {"eyebrow": "Chưa rõ lĩnh vực", "title": "Chưa rõ vụ việc thuộc lĩnh vực nào?",
-                  "text": "Hãy kể ngắn gọn sự việc và giấy tờ đang có. Luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp."},
+                  "text": "Không sao cả. Anh chị cứ gọi điện hoặc nhắn Zalo kể ngắn gọn sự việc – luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp."},
         "webpage_extra": {"mainEntity": {
             "@type": "ItemList", "numberOfItems": len(SERVICES),
             "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"dich-vu/{s['slug']}/"), "name": s["name"]}
@@ -767,6 +825,8 @@ def article_page(a):
     related_svcs = "".join(
         f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"], "rel-list__icon")}<span>{esc(SERVICE_BY_SLUG[x]["name"])}</span>{ARROW}</a></li>'
         for x in a["related_services"])
+    points = "".join(f"<li>{esc(p)}</li>" for p in a.get("key_points", []))
+    keypoints = f'<div class="keypoints"><p class="keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
     extra = f"""<p class="article-meta">
         <span>{ico("i-user")}Ban biên tập {FIRM["short_name"]}</span>
         <span>{ico("i-calendar")}Đăng <time datetime="{a["published"]}">{vi_date(a["published"])}</time></span>
@@ -776,10 +836,11 @@ def article_page(a):
 <section class="section">
   <div class="container article-layout">
     <article class="prose" id="noi-dung-bai-viet">
+      {keypoints}
       {content}
       <div class="article-disclaimer">
         {ico("i-alert", "note__icon")}
-        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="{{{{root}}}}lien-he/">liên hệ luật sư</a> trước khi quyết định.</p>
+        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="{{{{root}}}}lien-he/">hỏi luật sư</a> trước khi quyết định.</p>
       </div>
     </article>
     <aside class="article-aside">
@@ -823,7 +884,7 @@ def article_page(a):
         "image": og, "og_image": og,
         "hero": {"extra": extra},
         "body": body, "modified": a["modified"],
-        "cband": {"eyebrow": svc["cta_eyebrow"], "title": esc(svc["cta_title"]), "text": esc(svc["cta_text"])},
+        "cband": {"eyebrow": f"Tư vấn {svc['name'].lower()}", "title": esc(svc["cta_title"]), "text": esc(svc["cta_text"])},
         "schema": [{
             "@type": "Article", "@id": url + "#article", "headline": a["title"], "description": a["description"],
             "image": abs_url(asset_ref(og)), "datePublished": a["published"],
@@ -840,7 +901,7 @@ def knowledge_hub():
     body = f"""
 <section class="section section--cream">
   <div class="container">
-    {shead("Bài viết mới", "Phân tích và hướng dẫn pháp lý", "Mỗi bài viết gắn với một lĩnh vực hành nghề, trích dẫn điều luật cụ thể và ghi rõ ngày cập nhật.")}
+    {shead("Bài viết mới", "Giải thích tình huống người dân hay gặp", "Mỗi bài có trích điều luật cụ thể và ghi rõ ngày cập nhật.")}
     {{{{articles_grid}}}}
   </div>
 </section>
@@ -866,8 +927,8 @@ def knowledge_hub():
 
 <section class="section section--cream">
   <div class="container">
-    {shead("Theo lĩnh vực", "Tìm hiểu dịch vụ theo vấn đề của anh chị", link=("{{root}}dich-vu/", "Tổng quan dịch vụ"))}
-    {{{{services_grid}}}}
+    {shead("Theo lĩnh vực", "Tìm theo vấn đề của anh chị", "Mỗi lĩnh vực có giải đáp ngắn, việc nên làm ngay và giấy tờ cần chuẩn bị.", link=("{{root}}dich-vu/", "Tất cả lĩnh vực"))}
+    {{{{problems_grid}}}}
   </div>
 </section>
 """
@@ -876,8 +937,8 @@ def knowledge_hub():
         "title": f'Kiến thức pháp lý – Bài viết, tra cứu luật | {FIRM["short_name"]}',
         "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai và giải đáp thắc mắc khi làm việc với luật sư.",
         "eyebrow": "Kiến thức pháp lý",
-        "h1": "Thông tin pháp lý <em>rõ ràng, có căn cứ</em>",
-        "lead": "Phân tích, hướng dẫn và giải đáp do đội ngũ Luật Sư Nam biên soạn, giúp anh chị hiểu quyền và nghĩa vụ trước khi đưa ra quyết định.",
+        "h1": "Hiểu đúng quyền lợi của mình <em>trước khi quyết định</em>",
+        "lead": "Bài viết và giải đáp do Luật Sư Nam biên soạn bằng lời lẽ dễ hiểu, có dẫn điều luật cụ thể. Đọc để nắm vấn đề – còn vụ việc của anh chị, hãy hỏi trực tiếp luật sư.",
         "crumbs": crumbs_for(("Kiến thức pháp lý", path)),
         "body": body,
         "webpage_extra": {"mainEntity": {
@@ -914,8 +975,8 @@ def faq_page():
         "title": f'Câu hỏi thường gặp khi thuê luật sư | {FIRM["short_name"]}',
         "description": "Giải đáp về chi phí thuê luật sư theo Điều 55 Luật Luật sư, bảo mật thông tin, cam kết kết quả, thời hiệu, thời gian phản hồi và vụ việc ngoài TP.HCM.",
         "eyebrow": "Câu hỏi thường gặp",
-        "h1": "Những điều khách hàng <em>hay hỏi nhất</em>",
-        "lead": "Chi phí, bảo mật, thời hạn và cách bắt đầu làm việc với luật sư, giải đáp ngắn gọn và có dẫn chiếu quy định.",
+        "h1": "Những điều anh chị <em>hay băn khoăn nhất</em>",
+        "lead": "Thuê luật sư tốn bao nhiêu, thông tin có được giữ kín không, có cần gấp không – giải đáp ngắn gọn, có dẫn quy định cụ thể.",
         "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), ("Câu hỏi thường gặp", path)),
         "body": body,
         "cband": {"title": "Chưa thấy câu trả lời? Hỏi trực tiếp luật sư"},

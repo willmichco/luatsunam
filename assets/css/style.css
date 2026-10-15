@@ -623,7 +623,7 @@ a.icard:hover .icard__more { gap: 10px; }
   .nav__toggle > .ico { width: 18px; height: 18px; }
   .nav__sub, .nav__sub--mega, #sub-knowledge { position: static; display: none; width: 100%; min-width: 0; margin: 2px 0 10px; padding: 6px; grid-template-columns: 1fr; gap: 0; background: var(--cream); border: 0; border-radius: var(--radius-sm); box-shadow: none; opacity: 1; visibility: visible; transform: none !important; transition: none; }
   .nav__sub::before { display: none; }
-  .nav__item.is-open > .nav__sub { display: grid; }
+  .nav__item.is-open > .nav__sub, .nav__item.is-open > #sub-knowledge { display: grid; }
   .nav__group + .nav__group { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
   .nav__mobile-extra { display: flex; flex-direction: column; gap: 14px; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--line); }
   .nav__hotline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; color: var(--brand); font-size: 19px; font-weight: 600; }

@@ -7,7 +7,6 @@ Nguồn nội dung:
     tools/data.py            Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
     src/pages/*.html         Nội dung các trang đơn lẻ (có khối <!--meta {...} --> ở đầu)
     src/bai-viet/*.html      Nội dung bài viết
-    src/bo-luat-hinh-su.html Nội dung trang tra cứu Bộ luật Hình sự
 
 Kết quả: <duong-dan>/index.html cho mọi trang, 404.html, sitemap.xml, robots.txt,
 site.webmanifest, assets/search-index.json.
@@ -21,7 +20,6 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import blhs  # noqa: E402
 from data import (ARTICLE_BY_SLUG, ARTICLES, BASE_PATH, FAQ, FIRM, SERVICE_BY_SLUG,  # noqa: E402
                   SERVICES, SITE_URL, articles_for_service)
 
@@ -118,7 +116,6 @@ NAV = [
     ("services", "Dịch vụ", "dich-vu/", "services"),
     ("knowledge", "Thư viện pháp lý", "kien-thuc-phap-ly/", [
         ("Bài viết pháp lý", "kien-thuc-phap-ly/", "Phân tích, hướng dẫn theo từng lĩnh vực"),
-        ("Tra cứu Bộ luật Hình sự", "bo-luat-hinh-su/", "Toàn văn kèm bình luận từng điều"),
         ("Câu hỏi thường gặp", "cau-hoi-thuong-gap/", "Chi phí, bảo mật, thời hạn"),
     ]),
     ("contact", "Liên hệ", "lien-he/", None),
@@ -219,7 +216,6 @@ def footer_html(r):
         <li><a href="{r}vi-sao-chon-chung-toi/">Vì sao chọn chúng tôi</a></li>
         <li><a href="{r}quy-trinh-lam-viec/">Quy trình làm việc</a></li>
         <li><a href="{r}kien-thuc-phap-ly/">Kiến thức pháp lý</a></li>
-        <li><a href="{r}bo-luat-hinh-su/">Tra cứu Bộ luật Hình sự</a></li>
         <li><a href="{r}cau-hoi-thuong-gap/">Câu hỏi thường gặp</a></li>
         <li><a href="{r}lien-he/">Liên hệ</a></li>
       </ul>
@@ -278,7 +274,7 @@ def overlays_html(r):
       <a href="{r}dich-vu/thua-ke/">Thừa kế</a>
       <a href="{r}dich-vu/hon-nhan-gia-dinh/">Ly hôn</a>
       <a href="{r}dich-vu/dat-dai-bat-dong-san/">Tranh chấp đất đai</a>
-      <a href="{r}bo-luat-hinh-su/">Bộ luật Hình sự</a>
+      <a href="{r}dich-vu/hinh-su/">Luật sư hình sự</a>
     </p>
   </div>
 </div>"""
@@ -639,8 +635,6 @@ def service_page(s):
     resources = [(f'kien-thuc-phap-ly/{a["slug"]}/', "Bài viết", a["card_title"], a["excerpt"]) for a in arts[:3]]
     extras = [("cau-hoi-thuong-gap/", "Hỏi đáp", "Câu hỏi thường gặp khi thuê luật sư", "Thông tin về chi phí, bảo mật và cách làm việc với luật sư."),
               ("quy-trinh-lam-viec/#ho-so-can-chuan-bi", "Chuẩn bị", "Trước buổi tư vấn đầu tiên", "Giấy tờ cần mang theo và cách chuẩn bị thông tin vụ việc.")]
-    if s["slug"] == "hinh-su":
-        extras.insert(0, ("bo-luat-hinh-su/", "Tra cứu", "Bộ luật Hình sự và bình luận", "Tra cứu nội dung theo điều, khoản, điểm và từ khóa."))
     resources += extras[:max(0, 3 - len(resources))]
     cards = "".join(f'<a class="rcard reveal" href="{{{{root}}}}{href}"><span class="tag">{label}</span><h3>{esc(title)}</h3>'
                     f'<p>{esc(text)}</p><span class="icard__more">Xem chi tiết {ARROW}</span></a>' for href, label, title, text in resources)
@@ -853,12 +847,12 @@ def knowledge_hub():
 
 <section class="section">
   <div class="container grid grid--2">
-    <a class="tool-card tool-card--dark reveal" href="{{{{root}}}}bo-luat-hinh-su/">
-      <span class="ichip">{ico("i-book", "")}</span>
-      <span class="eyebrow">Công cụ tra cứu</span>
-      <h2 class="tool-card__title">Bộ luật Hình sự 2015 (sửa đổi 2017, 2025)</h2>
-      <p>Toàn văn 428 điều kèm bình luận từng điều; tìm kiếm có dấu, không dấu, tra nhanh theo điều, khoản, điểm.</p>
-      <span class="link-arrow link-arrow--light">Mở công cụ tra cứu {ARROW}</span>
+    <a class="tool-card tool-card--dark reveal" href="{{{{root}}}}quy-trinh-lam-viec/">
+      <span class="ichip">{ico("i-steps", "")}</span>
+      <span class="eyebrow">Làm việc với luật sư</span>
+      <h2 class="tool-card__title">Quy trình 4 bước và giấy tờ cần chuẩn bị</h2>
+      <p>Từ buổi trao đổi đầu tiên đến khi hoàn tất: mỗi bước có đầu việc, kết quả và người phụ trách rõ ràng.</p>
+      <span class="link-arrow link-arrow--light">Xem quy trình làm việc {ARROW}</span>
     </a>
     <a class="tool-card reveal" href="{{{{root}}}}cau-hoi-thuong-gap/">
       <span class="ichip">{ico("i-question", "")}</span>
@@ -880,10 +874,10 @@ def knowledge_hub():
     return {
         "path": path, "section": "knowledge", "schema_type": "CollectionPage",
         "title": f'Kiến thức pháp lý – Bài viết, tra cứu luật | {FIRM["short_name"]}',
-        "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai; tra cứu Bộ luật Hình sự kèm bình luận và giải đáp thắc mắc khi làm việc với luật sư.",
+        "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai và giải đáp thắc mắc khi làm việc với luật sư.",
         "eyebrow": "Kiến thức pháp lý",
         "h1": "Thông tin pháp lý <em>rõ ràng, có căn cứ</em>",
-        "lead": "Phân tích, hướng dẫn và công cụ tra cứu do đội ngũ Luật Sư Nam biên soạn, giúp anh chị hiểu quyền và nghĩa vụ trước khi đưa ra quyết định.",
+        "lead": "Phân tích, hướng dẫn và giải đáp do đội ngũ Luật Sư Nam biên soạn, giúp anh chị hiểu quyền và nghĩa vụ trước khi đưa ra quyết định.",
         "crumbs": crumbs_for(("Kiến thức pháp lý", path)),
         "body": body,
         "webpage_extra": {"mainEntity": {
@@ -945,78 +939,6 @@ def simple_page(name, path, section, crumbs, **extra):
     return page
 
 
-# ---------------------------------------------------------------------------
-# Từ điển Bộ luật Hình sự
-# ---------------------------------------------------------------------------
-CODE_LEGISLATION = {"@type": "Legislation", "name": "Bộ luật Hình sự", "legislationIdentifier": "100/2015/QH13",
-                    "legislationJurisdiction": "VN", "inLanguage": "vi"}
-
-
-def blhs_pages():
-    code = blhs.Code()
-    rd = blhs.Renderer(code, ico, ARROW, FIRM)
-    common = {
-        "section": "knowledge", "page_hero": False, "body_class": "tdl-page", "index_k": False,
-        "extra_head": ('\n<link rel="stylesheet" href="{{root}}bo-luat-hinh-su/tu-dien.css?v=' + file_hash("bo-luat-hinh-su/tu-dien.css") + '">'
-                       '\n<link rel="stylesheet" href="{{root}}assets/css/reader-design.css?v=' + file_hash("assets/css/reader-design.css") + '">'),
-        "cband": {"eyebrow": "Luật sư hình sự", "title": "Người nhà bị công an mời làm việc, bị tạm giữ?",
-                  "text": "Thời hạn tạm giữ, tạm giam được tính theo ngày. Gọi luật sư sớm để được hướng dẫn quyền của người bị buộc tội và thủ tục mời luật sư bào chữa."},
-        "scripts": ["bo-luat-hinh-su/lx-core.js?v=" + file_hash("bo-luat-hinh-su/lx-core.js"),
-                    "bo-luat-hinh-su/tu-dien.js?v=" + file_hash("bo-luat-hinh-su/tu-dien.js")],
-    }
-    hub_crumb = ("Bộ luật Hình sự", "bo-luat-hinh-su/")
-    pages = []
-    st = code.toc["stats"]
-    hub = dict(common)
-    hub.update({
-        "path": "bo-luat-hinh-su/", "h1": "Bộ luật Hình sự",
-        "title": f'Từ điển Bộ luật Hình sự 2015 – Tra cứu kèm bình luận | {FIRM["short_name"]}',
-        "description": f'Tra cứu toàn văn {st["arts"]} điều Bộ luật Hình sự 2015 (sửa đổi 2017, 2025) kèm bình luận từng điều; tìm theo số điều, khoản, điểm, tội danh, có dấu hoặc không dấu.',
-        "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), hub_crumb),
-        "body": rd.hub("../"),
-        "schema_type": "CollectionPage",
-        "webpage_extra": {"about": CODE_LEGISLATION},
-    })
-    pages.append(hub)
-    for ch in code.chapters:
-        path = f"bo-luat-hinh-su/{ch['slug']}/"
-        names = ", ".join(a["t"].lower() for a in ch["a"][:4])
-        rng = f'Điều {ch["a"][0]["id"]}–{ch["a"][-1]["id"]}' if len(ch["a"]) > 1 else f'Điều {ch["a"][0]["id"]}'
-        desc = f'{ch["title"]} Bộ luật Hình sự 2015 ({rng}, {len(ch["a"])} điều): {names}… Toàn văn kèm bình luận.'
-        pg = dict(common)
-        pg.update({
-            "path": path, "h1": ch["title"],
-            "title": f'{ch["title"]} – Bộ luật Hình sự | {FIRM["short_name"]}',
-            "description": desc if len(desc) <= 175 else desc[:172].rsplit(" ", 1)[0] + "…",
-            "crumbs": crumbs_for(hub_crumb, (ch["label"], path)),
-            "body": rd.chapter(ch, "../../"),
-            "schema_type": "CollectionPage",
-            "webpage_extra": {"about": CODE_LEGISLATION},
-        })
-        pages.append(pg)
-    for a in code.arts:
-        path = f"bo-luat-hinh-su/dieu-{a['id']}/"
-        head = f'Điều {a["id"]} BLHS 2015 – {a["t"]}: '
-        desc = head + code.excerpt(a, max(60, 158 - len(head)))
-        if len(desc) > 165:
-            desc = desc[:160].rsplit(" ", 1)[0].rstrip(",;:") + "…"
-        pg = dict(common)
-        pg.update({
-            "path": path, "h1": f'Điều {a["id"]}. {a["t"]}',
-            "title": f'Điều {a["id"]} Bộ luật Hình sự: {a["t"]} | {FIRM["short_name"]}',
-            "description": desc,
-            "crumbs": crumbs_for(hub_crumb, (a["ch"]["label"], f'bo-luat-hinh-su/{a["ch"]["slug"]}/'), (f'Điều {a["id"]}', path)),
-            "body": rd.article(a, "../../"),
-            "search_title": f'Điều {a["id"]}. {a["t"]}',
-            "search_desc": code.excerpt(a, 150),
-            "webpage_extra": {"about": {
-                "@type": "Legislation", "name": f'Điều {a["id"]}. {a["t"]}', "legislationJurisdiction": "VN", "inLanguage": "vi",
-                "legislationIdentifier": f'Điều {a["id"]} Bộ luật Hình sự số 100/2015/QH13', "isPartOf": CODE_LEGISLATION}},
-        })
-        pages.append(pg)
-    return pages
-
-
 def all_pages():
     pages = []
     meta, body = load_src("pages/home.html")
@@ -1035,8 +957,6 @@ def all_pages():
     pages.append(knowledge_hub())
     pages.extend(article_page(a) for a in ARTICLES)
     pages.append(faq_page())
-
-    pages.extend(blhs_pages())
 
     pages.append(simple_page("lien-he", "lien-he/", "contact", crumbs_for(("Liên hệ", "lien-he/")), schema_type="ContactPage",
                              contact_band=False))
@@ -1090,8 +1010,7 @@ def main():
             keys = " · ".join(strip_tags(h) for h in heads)[:600]
         else:
             keys = ""
-        section = "Bộ luật Hình sự" if p["path"].startswith("bo-luat-hinh-su/") else \
-            next((lbl for key, lbl, _, _ in NAV if key == p.get("section")), "")
+        section = next((lbl for key, lbl, _, _ in NAV if key == p.get("section")), "")
         index.append({"t": p.get("search_title") or (p["crumbs"][-1][0] if p["path"] else FIRM["legal_name"]), "u": p["path"],
                       "d": p.get("search_desc") or p["description"], "s": section, "k": keys})
     for f in FAQ:

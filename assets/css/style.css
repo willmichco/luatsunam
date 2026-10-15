@@ -1,7 +1,6 @@
 /* =========================================================
    Công Ty Luật TNHH Luật Sư Nam — hệ thiết kế dùng chung
-   Đỏ thương hiệu · vàng đồng · nền kem. Một tệp duy nhất cho toàn website
-   (trang Từ điển BLHS nạp thêm bo-luat-hinh-su/tu-dien.css và reader-design.css).
+   Đỏ thương hiệu · vàng đồng · nền kem. Một tệp duy nhất cho toàn website.
    ========================================================= */
 
 /* ---------- Phông chữ tự lưu trữ: Be Vietnam Pro (SIL Open Font License 1.1) ---------- */
@@ -49,16 +48,6 @@
   --section-y: clamp(52px, 6.5vw, 88px);
   --ease: cubic-bezier(.2, .7, .2, 1);
 
-  /* Tên cũ, giữ để tương thích Từ điển BLHS (tu-dien.css, reader-design.css) */
-  --burgundy: var(--brand);
-  --burgundy-600: var(--brand-700);
-  --burgundy-text: #a8000a;
-  --gold-600: var(--gold-700);
-  --navy-900: #24171a;
-  --navy-800: var(--dark);
-  --navy-700: #42282d;
-  --navy-600: #553439;
-  --radius-md: var(--radius);
 }
 
 /* ---------- Nền tảng ---------- */
@@ -741,7 +730,6 @@ a.icard:hover .icard__more { gap: 10px; }
   .floating { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
   .floating__btn--zalo, .floating__btn--phone { display: none; }
   .floating__btn { width: 44px; height: 44px; }
-  .tdl-toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 
 @media (max-width: 380px) {

@@ -28,7 +28,7 @@ SRC = os.path.join(ROOT, "src")
 TODAY = datetime.date.today().isoformat()
 ORG_ID = SITE_URL + "/#organization"
 SITE_ID = SITE_URL + "/#website"
-ASSET_VERSION = "20261015a"
+ASSET_VERSION = "20261015b"
 
 
 def esc(s):
@@ -50,6 +50,35 @@ def abs_url(path):
 
 def asset_ref(path):
     return f"{path}?v={ASSET_VERSION}"
+
+
+# ---------------------------------------------------------------------------
+# Ảnh thật của luật sư: AVIF (nhẹ) + WebP (dự phòng), 3 bề ngang do tools/make_images.py sinh ra
+# ---------------------------------------------------------------------------
+PHOTO_SETS = {
+    "van-phong": {"w": 784, "h": 651, "alt": f'{FIRM["lawyer"]} làm việc tại văn phòng Luật Sư Nam, {FIRM["street"]}',
+                  "sizes": "(max-width: 700px) calc(100vw - 40px), (max-width: 900px) 640px, 560px"},
+    "phien-toa": {"w": 800, "h": 812, "alt": f'{FIRM["lawyer"]} tại ghế người bào chữa trong phiên tòa',
+                  "sizes": "(max-width: 600px) calc(100vw - 40px), 520px"},
+}
+
+
+def picture(r, name, lazy=False):
+    p = PHOTO_SETS[name]
+    base = f"assets/img/luat-su-{name}"
+
+    def srcset(ext):
+        return ", ".join(f"{r}{asset_ref(f'{base}{s}.{ext}')} {w}w" for s, w in (("-480", 480), ("-640", 640), ("", p["w"])))
+    load = 'loading="lazy" decoding="async"' if lazy else 'fetchpriority="high"'
+    return (f'<picture><source type="image/avif" srcset="{srcset("avif")}" sizes="{p["sizes"]}">'
+            f'<img src="{r}{asset_ref(base + ".webp")}" srcset="{srcset("webp")}" sizes="{p["sizes"]}" '
+            f'alt="{esc(p["alt"])}" width="{p["w"]}" height="{p["h"]}" {load}></picture>')
+
+
+def open_now(cls="open-now"):
+    """Trạng thái "Đang trong giờ làm việc / Ngoài giờ" theo giờ Việt Nam, do main.js điền khi tải trang."""
+    # Giữ sẵn chỗ (ẩn bằng visibility) để khi điền chữ, bố cục không bị xô lệch
+    return f'<span class="{cls}" data-open-now>&nbsp;</span>'
 
 
 # ---------------------------------------------------------------------------
@@ -169,11 +198,12 @@ def nav_html(page, r):
 
 def logo_html(r, tag=None):
     """Có tag: "LUẬT SƯ NAM" + khẩu hiệu (footer). Không tag: "Công Ty Luật TNHH / Luật Sư Nam" (header)."""
-    text = (f'<span class="logo__name">LUẬT SƯ NAM</span><span class="logo__tag">{tag}</span>' if tag else
-            '<span class="logo__pre">Công Ty Luật TNHH</span><span class="logo__name logo__name--firm">Luật Sư Nam</span>')
-    return f"""<a class="logo" href="{r or './'}" aria-label="{FIRM["legal_name"]} – Trang chủ">
-      <img class="logo__img" src="{r}{asset_ref("assets/img/logo-lsn.webp")}" width="54" height="54" alt="">
-      <span class="logo__text">{text}</span>
+    # Tên đọc bởi trình đọc màn hình lấy từ chữ hiển thị (khớp nhãn nhìn thấy), thêm "Trang chủ" ẩn
+    text = (f'<span class="logo__name">LUẬT SƯ NAM</span> <span class="logo__tag">{tag}</span>' if tag else
+            '<span class="logo__pre">Công Ty Luật TNHH</span> <span class="logo__name logo__name--firm">Luật Sư Nam</span>')
+    return f"""<a class="logo" href="{r or './'}">
+      <img class="logo__img" src="{r}{asset_ref("assets/img/logo-lsn-108.webp")}" srcset="{r}{asset_ref("assets/img/logo-lsn.webp")} 3x" width="54" height="54" alt="">
+      <span class="logo__text">{text}<span class="sr-only"> – Trang chủ</span></span>
     </a>"""
 
 
@@ -190,6 +220,7 @@ def header_html(page, r):
         <a class="btn btn--primary btn--block" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>
         <a class="btn btn--zalo btn--block" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")} Nhắn Zalo cho luật sư</a>
         <p class="nav__note">{ico("i-clock")}{FIRM["hours"]}</p>
+        <p class="nav__note">{open_now()}</p>
       </div>
     </nav>
 
@@ -303,8 +334,13 @@ def breadcrumb_html(crumbs, r):
 
 def lawyer_card(r):
     """Thẻ luật sư phụ trách ở đầu trang: ảnh thật, tên, gọi / Zalo."""
+    # Điện thoại, máy tính bảng: ảnh hiển thị tròn 72–96px nên dùng ảnh avatar vuông (nhẹ, đúng khung mặt)
     return f"""<aside class="lcard" aria-label="Luật sư phụ trách">
-      <img class="lcard__photo" src="{r}{asset_ref("assets/img/luat-su-chan-dung.webp")}" alt="{FIRM["lawyer"]} tại phiên tòa" width="560" height="420">
+      <picture>
+        <source media="(max-width: 900px)" srcset="{r}{asset_ref("assets/img/luat-su-avatar.webp")}">
+        <source type="image/avif" srcset="{r}{asset_ref("assets/img/luat-su-chan-dung.avif")}">
+        <img class="lcard__photo" src="{r}{asset_ref("assets/img/luat-su-chan-dung.webp")}" alt="{FIRM["lawyer"]} tại phiên tòa" width="560" height="420">
+      </picture>
       <div class="lcard__body">
         <p class="lcard__name">{FIRM["lawyer"]}</p>
         <p class="lcard__role">{FIRM["lawyer_role"]}</p>
@@ -313,6 +349,7 @@ def lawyer_card(r):
           <a class="btn btn--outline btn--sm" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")} Zalo</a>
         </div>
         <p class="lcard__note">{ico("i-clock")} {FIRM["hours"]}</p>
+        {open_now("open-now lcard__status")}
       </div>
     </aside>"""
 
@@ -348,7 +385,7 @@ def contact_band(r, eyebrow="Tư vấn trực tiếp với luật sư", title="C
     return f"""<section class="cband" aria-labelledby="cband-title">
   <div class="container">
     <div class="cband__intro">
-      <img class="cband__avatar" src="{r}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="{FIRM["lawyer"]}" width="92" height="92" loading="lazy">
+      <img class="cband__avatar" src="{r}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="{FIRM["lawyer"]}" width="92" height="92" loading="lazy" decoding="async">
       <div>
         <p class="eyebrow">{esc(eyebrow)}</p>
         <h2 class="cband__title" id="cband-title">{title}</h2>
@@ -356,7 +393,7 @@ def contact_band(r, eyebrow="Tư vấn trực tiếp với luật sư", title="C
       </div>
     </div>
     <div class="cband__cards">
-      <a class="cband__card" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")}<span>Gọi điện</span><strong>{FIRM["phone"]}</strong><small>{FIRM["hours"]}</small></a>
+      <a class="cband__card" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")}<span>Gọi điện</span><strong>{FIRM["phone"]}</strong><small>{FIRM["hours"]}</small>{open_now()}</a>
       <a class="cband__card cband__card--zalo" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")}<span>Nhắn Zalo</span><strong>{FIRM["phone"]}</strong><small>Kể ngắn gọn sự việc, luật sư phản hồi trong giờ làm việc</small></a>
       <a class="cband__card" href="https://www.google.com/maps/dir/?api=1&amp;destination={FIRM["maps_query"]}" target="_blank" rel="noopener">{ico("i-pin")}<span>Đến văn phòng</span><strong>{FIRM["street"]}</strong><small>{FIRM["ward"]}, TP.HCM · gọi trước khi đến</small></a>
     </div>
@@ -389,7 +426,7 @@ def problem_card(s, r):
 
 
 def problems_grid(r):
-    return '<div class="grid grid--4">' + "".join(problem_card(SERVICE_BY_SLUG[x], r) for x in PROBLEM_ORDER) + "</div>"
+    return '<div class="grid grid--4 grid--problems">' + "".join(problem_card(SERVICE_BY_SLUG[x], r) for x in PROBLEM_ORDER) + "</div>"
 
 
 def service_card(s, r, heading="h3"):
@@ -461,6 +498,11 @@ def render_tokens(body, page, r):
             return faq_list(r, [f for f in FAQ if f["id"] in ids] if ids else None)
         if name == "arrow":
             return ARROW
+        if name == "photo":
+            nm, _, opt = arg.partition("|")
+            return picture(r, nm, lazy=opt == "lazy")
+        if name == "open_now":
+            return open_now()
         if name == "ico":
             nm, _, cls = arg.partition("|")
             return ico(nm, cls or "ico")
@@ -564,10 +606,16 @@ def layout(page):
     scripts = "".join(f'\n<script src="{r}{s}" defer></script>' for s in page.get("scripts", []))
     body_cls = f' class="{page["body_class"]}"' if page.get("body_class") else ""
     canonical = "" if page.get("noindex") else f'\n<link rel="canonical" href="{url}">'
+    # Trang 404 được phục vụ ở mọi độ sâu đường dẫn: xác định thư mục gốc khi chạy để tài nguyên tải đúng
+    # cả trên GitHub Pages (BASE_PATH) lẫn tên miền riêng (/)
+    base_js = ""
+    if page.get("dynamic_base"):
+        base_js = ('\n<script>(function(){var p="' + BASE_PATH + '",b=document.createElement("base");'
+                   'b.href=location.pathname.indexOf(p)===0?p:"/";document.head.appendChild(b);})();</script>')
     return f"""<!doctype html>
 <html lang="vi" data-root="{r}">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8">{base_js}
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{esc(page["title"])}</title>
 <meta name="description" content="{esc(page["description"])}">
@@ -650,7 +698,7 @@ def service_page(s):
     name_lc = s["name"].lower()
     arts = articles_for_service(s["slug"])
     situations = "".join(f'<li>{ico("i-check-circle")}<span>{esc(x)}</span></li>' for x in s["situations"])
-    scope = "".join(f'<article class="ncard reveal"><div class="ncard__top"><span class="ncard__num">{i:02d}</span></div>'
+    scope = "".join(f'<article class="ncard ncard--num reveal"><div class="ncard__top"><span class="ncard__num">{i:02d}</span></div>'
                     f'<h3>{esc(h)}</h3><p>{esc(p)}</p></article>' for i, (h, p) in enumerate(s["scope"], 1))
     tips = "".join(f"<li>{esc(x)}</li>" for x in s["tips"])
     steps = "".join(f'<li class="reveal"><span class="steps__num">{i}</span><h3>{esc(h)}</h3><p>{esc(p)}</p></li>'
@@ -821,7 +869,8 @@ H2_RE = re.compile(r'<h2 id="([^"]+)">(.*?)</h2>', re.S)
 def article_page(a):
     path = f"kien-thuc-phap-ly/{a['slug']}/"
     meta, content = load_src(f"bai-viet/{a['slug']}.html")
-    toc = "".join(f'<li><a href="#{i}">{strip_tags(t)}</a></li>' for i, t in H2_RE.findall(content))
+    heads = H2_RE.findall(content)
+    toc = "".join(f'<li><a href="#{i}">{strip_tags(t)}</a></li>' for i, t in heads)
     words = len(strip_tags(content).split())
     minutes = max(1, round(words / 220))
     svc = SERVICE_BY_SLUG[a["service"]]
@@ -835,11 +884,16 @@ def article_page(a):
         <span>{ico("i-user")}Ban biên tập {FIRM["short_name"]}</span>
         <span>{ico("i-calendar")}Đăng <time datetime="{a["published"]}">{vi_date(a["published"])}</time></span>
         <span>{ico("i-clock")}Cập nhật <time datetime="{a["modified"]}">{vi_date(a["modified"])}</time> · {minutes} phút đọc</span>
+        <button class="share-btn" type="button" data-share>{ico("i-share")}Chia sẻ bài viết</button>
       </p>"""
     body = f"""
 <section class="section">
   <div class="container article-layout">
     <article class="prose" id="noi-dung-bai-viet">
+      <details class="toc-mobile">
+        <summary>{ico("i-list")}<span>Mục lục bài viết</span><small>{len(heads)} mục</small>{ico("i-chevron", "toc-mobile__chev")}</summary>
+        <ol class="toc">{toc}</ol>
+      </details>
       {keypoints}
       {content}
       <div class="article-disclaimer">
@@ -853,7 +907,7 @@ def article_page(a):
         <ol class="toc">{toc}</ol>
       </div>
       <div class="aside-card aside-card--cta">
-        <div class="aside-card__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="" width="52" height="52" loading="lazy"><div><strong>{FIRM["lawyer"]}</strong><small>Trực tiếp tiếp nhận hồ sơ</small></div></div>
+        <div class="aside-card__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="" width="52" height="52" loading="lazy" decoding="async"><div><strong>{FIRM["lawyer"]}</strong><small>Trực tiếp tiếp nhận hồ sơ</small></div></div>
         <p class="aside-card__title">Cần luật sư về {esc(svc["name"].lower())}?</p>
         <p>{esc(svc["short"])}</p>
         <a class="btn btn--primary btn--block btn--sm" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>
@@ -1029,7 +1083,8 @@ def all_pages():
                         ("mien-tru-trach-nhiem", "Miễn trừ trách nhiệm")]:
         pages.append(simple_page(name, f"{name}/", "", crumbs_for((label, f"{name}/")), lawyer_card=False))
 
-    nf = simple_page("404", "404.html", "", [HOME], noindex=True, root_override=BASE_PATH, page_hero=False, contact_band=False)
+    nf = simple_page("404", "404.html", "", [HOME], noindex=True, root_override="", dynamic_base=True,
+                     page_hero=False, contact_band=False)
     pages.append(nf)
     return pages
 
@@ -1061,7 +1116,7 @@ def main():
     write("site.webmanifest", json.dumps({
         "name": FIRM["legal_name"], "short_name": "LSN Law Firm", "description": "Tư vấn pháp lý và tham gia tố tụng tại Thành phố Hồ Chí Minh.",
         "lang": "vi", "start_url": "./", "scope": "./", "display": "standalone",
-        "background_color": "#041b2e", "theme_color": "#041b2e",
+        "background_color": "#fffdf9", "theme_color": "#fffdf9",
         "icons": [{"src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png"},
                   {"src": "assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"}],

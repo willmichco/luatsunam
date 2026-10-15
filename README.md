@@ -38,9 +38,21 @@ Toàn website dùng một tệp giao diện duy nhất `assets/css/style.css` v�
 | `{{services_grid}}` | 8 thẻ lĩnh vực |
 | `{{faq_list:id1,id2}}` | Câu hỏi thường gặp chọn lọc |
 | `{{articles_grid}}` | Thẻ bài viết |
+| `{{photo:van-phong}}`, `{{photo:phien-toa\|lazy}}` | Ảnh thật của luật sư dạng `<picture>` (AVIF + WebP, 3 kích thước); `lazy` cho ảnh dưới màn hình đầu |
+| `{{open_now}}` | Trạng thái “Đang trong giờ làm việc / Ngoài giờ · làm việc lại 08:00…” theo giờ Việt Nam |
 | `{{lawyer}}`, `{{phone}}`, `{{zalo}}`, `{{v}}`… | Thông tin trong `FIRM`, phiên bản tài nguyên |
 
 Khối liên hệ cuối trang được thêm tự động (tắt bằng `"contact_band": false` trong khối meta); thẻ luật sư ở đầu trang tắt bằng `"lawyer_card": false`.
+
+## Trải nghiệm và hiệu năng
+
+- **Điện thoại:** thanh Gọi / Zalo cố định; 8 tình huống ở trang chủ hiển thị dạng danh sách gọn; các bước làm việc dạng dòng thời gian; thẻ đánh số gộp số và tiêu đề một hàng; footer hai cột; đường dẫn ẩn mục cuối (đã có ở tiêu đề).
+- **Giờ làm việc:** `main.js` hiển thị “Đang trong giờ làm việc” hoặc “Ngoài giờ · làm việc lại 08:00 sáng mai/thứ Hai” theo giờ Việt Nam (Thứ 2 – Thứ 6, 08:00 – 17:30). Chưa tính ngày lễ; nếu đổi giờ làm việc, sửa cả `FIRM["hours"]` và hàm trong `main.js`.
+- **Máy tính:** bấm số điện thoại sẽ chép số vào bộ nhớ tạm và báo “Đã chép số…”; tìm kiếm mở bằng phím `/` hoặc `Ctrl/⌘ + K`, chọn kết quả bằng phím mũi tên.
+- **Bài viết:** mục lục thu gọn ở đầu bài trên điện thoại, thanh tiến độ đọc dưới header, nút “Chia sẻ bài viết” (mở bảng chia sẻ của điện thoại như Zalo, Messenger; máy tính thì chép liên kết).
+- **Ảnh:** AVIF (nhẹ hơn WebP khoảng 40%) kèm WebP dự phòng, mỗi ảnh 3 bề ngang 480/640/gốc; thẻ luật sư trên điện thoại dùng ảnh avatar vuông nhỏ.
+- **Phông chữ:** 3 độ đậm 400/600/700 (bỏ 500 để bớt 2 tệp tải). Phông dự phòng Arial/Roboto được chỉnh `size-adjust` khớp chiều rộng Be Vietnam Pro nên chữ không nhảy dòng khi phông chính tải xong (CLS ≈ 0). Tệp `be-vietnam-pro-500-*` vẫn giữ vì `tools/make_images.py` dùng cho ảnh chia sẻ.
+- **Trang 404:** tự xác định thư mục gốc khi chạy, nên tải đúng giao diện cả trên GitHub Pages (`BASE_PATH`) lẫn tên miền riêng.
 
 ## Liên kết nội bộ
 
@@ -55,13 +67,13 @@ Khối liên hệ cuối trang được thêm tự động (tắt bằng `"conta
 ```
 tools/data.py              Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
 tools/build.py             Sinh toàn bộ trang, sitemap.xml, robots.txt, site.webmanifest, chỉ mục tìm kiếm
-tools/make_images.py       Sinh logo, favicon, ảnh luật sư (cắt, tối ưu) và ảnh chia sẻ OG cho từng trang
+tools/make_images.py       Sinh logo, favicon, ảnh luật sư (cắt, tối ưu, AVIF + WebP nhiều kích thước) và ảnh chia sẻ OG
 src/brand/logo-lsn.webp    Logo gốc (nền trong suốt)
 src/brand/anh-that/        Ảnh thật gốc của luật sư: van-phong.webp (tại văn phòng), phien-toa.webp (tại phiên tòa)
 src/pages/*.html           Nội dung các trang đơn lẻ (khối <!--meta {...} --> ở đầu là tiêu đề, mô tả)
 src/bai-viet/*.html        Nội dung bài viết
 assets/css/style.css       Toàn bộ giao diện (một tệp duy nhất): biến màu, chữ, khoảng cách ở :root, thành phần dùng chung
-assets/js/main.js          Menu, tìm kiếm, hiện dần khi cuộn, mục đang đọc, bản đồ
+assets/js/main.js          Menu, tìm kiếm, hiện dần khi cuộn, mục đang đọc, bản đồ, giờ làm việc, chia sẻ, tiến độ đọc
 assets/fonts/              Be Vietnam Pro, phông sans-serif duy nhất của website (tự lưu trữ, SIL OFL 1.1)
 assets/img/                Ảnh
 ```

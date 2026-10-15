@@ -6,7 +6,7 @@
 <section class="hero">
   <div class="container hero__grid">
     <div class="hero__copy">
-      <p class="eyebrow">Công ty Luật TNHH Luật Sư Nam · TP. Hồ Chí Minh</p>
+      <p class="eyebrow">Luật sư tư vấn &amp; tranh tụng tại TP.HCM</p>
       <h1 class="hero__title">Gặp chuyện pháp lý, <span>có luật sư bên cạnh</span></h1>
       <p class="hero__lead">Anh chị cứ kể sự việc. Luật sư lắng nghe, nói rõ quyền lợi và rủi ro theo đúng quy định pháp luật, rồi cùng anh chị chọn cách giải quyết phù hợp. Mọi thông tin đều được giữ kín.</p>
       <div class="hero__actions">
@@ -16,10 +16,11 @@
       <ul class="hero__info">
         <li>{{ico:i-pin}} {{street}}, {{ward}}, TP.HCM</li>
         <li>{{ico:i-clock}} {{hours}}</li>
+        <li>{{open_now}}</li>
       </ul>
     </div>
     <figure class="photo">
-      <img src="{{root}}assets/img/luat-su-van-phong.webp?v={{v}}" srcset="{{root}}assets/img/luat-su-van-phong-480.webp?v={{v}} 480w, {{root}}assets/img/luat-su-van-phong.webp?v={{v}} 784w" sizes="(max-width: 900px) calc(100vw - 40px), 560px" alt="{{lawyer}} làm việc tại văn phòng Luật Sư Nam, 22c Vũ Ngọc Phan" width="784" height="651" fetchpriority="high">
+      {{photo:van-phong}}
       <figcaption class="photo__cap"><strong>{{lawyer}}</strong><span>Giám đốc · tại văn phòng 22c Vũ Ngọc Phan</span></figcaption>
     </figure>
   </div>
@@ -46,7 +47,7 @@
 <section class="section" aria-labelledby="about-title">
   <div class="container profile">
     <figure class="photo reveal">
-      <img src="{{root}}assets/img/luat-su-phien-toa.webp?v={{v}}" srcset="{{root}}assets/img/luat-su-phien-toa-480.webp?v={{v}} 480w, {{root}}assets/img/luat-su-phien-toa.webp?v={{v}} 800w" sizes="(max-width: 900px) calc(100vw - 40px), 520px" alt="{{lawyer}} tại ghế người bào chữa trong phiên tòa" width="800" height="812" loading="lazy">
+      {{photo:phien-toa|lazy}}
       <figcaption class="photo__cap"><strong>Tại phiên tòa</strong><span>Luật sư trực tiếp bào chữa, tranh tụng cho khách hàng</span></figcaption>
     </figure>
     <div class="reveal">

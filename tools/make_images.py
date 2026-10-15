@@ -14,11 +14,11 @@ với khách hàng đã được đồng ý), thay tệp trong src/brand/anh-tha
 nếu bố cục ảnh khác, chỉnh toạ độ cắt trong PHOTOS.
 
 Kết quả trong assets/img/:
-    logo-lsn.webp, favicon-32.png, icon-192.png, icon-512.png, apple-touch-icon.png
-    luat-su-van-phong[-480].webp      Ảnh văn phòng (trang chủ, giới thiệu)
-    luat-su-phien-toa[-480].webp      Ảnh tại phiên tòa (trang chủ, giới thiệu)
-    luat-su-chan-dung.webp            Ảnh cắt 4:3 cho thẻ "Luật sư phụ trách" ở đầu các trang
-    luat-su-avatar.webp               Ảnh tròn nhỏ cho khối liên hệ
+    logo-lsn[-108].webp, favicon-32.png, icon-192.png, icon-512.png, apple-touch-icon.png
+    luat-su-van-phong[-480|-640].avif/.webp  Ảnh văn phòng (trang chủ, giới thiệu)
+    luat-su-phien-toa[-480|-640].avif/.webp  Ảnh tại phiên tòa (trang chủ, giới thiệu)
+    luat-su-chan-dung.avif/.webp      Ảnh cắt 4:3 cho thẻ "Luật sư phụ trách" ở đầu các trang
+    luat-su-avatar.webp               Ảnh tròn nhỏ cho khối liên hệ, thẻ luật sư trên điện thoại
     og-image.jpg                      Ảnh chia sẻ mặc định 1200×630
     og/dich-vu-<slug>.jpg             Ảnh chia sẻ riêng cho 8 trang dịch vụ
     og/bai-viet-<slug>.jpg            Ảnh chia sẻ riêng cho từng bài viết
@@ -63,6 +63,25 @@ def save_webp(im, rel, width=None, quality=82):
     if width and im.width > width:
         im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
     im.save(os.path.join(OUT, rel), "WEBP", quality=quality, method=6)
+
+
+def save_avif(im, rel, width=None, quality=56):
+    """AVIF nhẹ hơn WebP khoảng 40% với chất lượng tương đương; trình duyệt cũ dùng bản WebP."""
+    if width and im.width > width:
+        im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
+    im.save(os.path.join(OUT, rel), "AVIF", quality=quality, speed=4)
+
+
+# Bề ngang các bản ảnh cho srcset (khớp với PHOTO_SETS trong tools/build.py); None = kích thước gốc
+PHOTO_WIDTHS = (480, 640, None)
+
+
+def save_photo_set(im, base):
+    """luat-su-<base>[-480|-640].webp/.avif: trình duyệt chọn bản vừa khung hình và mật độ điểm ảnh."""
+    for w in PHOTO_WIDTHS:
+        suffix = f"-{w}" if w else ""
+        save_webp(im, f"{base}{suffix}.webp", w, quality=78)
+        save_avif(im, f"{base}{suffix}.avif", w)
 
 
 def square(im):
@@ -163,18 +182,20 @@ def og_card(logo, pic, box, eyebrow, title, text, rel):
 def main():
     logo = square(Image.open(os.path.join(BRAND, "logo-lsn.webp")).convert("RGBA"))
     fit(logo, 160).save(os.path.join(OUT, "logo-lsn.webp"), "WEBP", quality=90, method=6)
+    fit(logo, 108).save(os.path.join(OUT, "logo-lsn-108.webp"), "WEBP", quality=90, method=6)
     fit(logo, 32).save(os.path.join(OUT, "favicon-32.png"), optimize=True)
     fit(logo, 192, .04).save(os.path.join(OUT, "icon-192.png"), optimize=True)
     fit(logo, 512, .04).save(os.path.join(OUT, "icon-512.png"), optimize=True)
     fit(logo, 180, .08, (255, 255, 255, 255)).convert("RGB").save(os.path.join(OUT, "apple-touch-icon.png"), optimize=True)
 
     office, court = photo("van-phong"), photo("phien-toa")
-    save_webp(office, "luat-su-van-phong.webp")
-    save_webp(office, "luat-su-van-phong-480.webp", 480)
-    save_webp(court, "luat-su-phien-toa.webp")
-    save_webp(court, "luat-su-phien-toa-480.webp", 480)
-    save_webp(court.crop(PHOTOS["phien-toa"]["card"]), "luat-su-chan-dung.webp")
-    save_webp(court.crop(PHOTOS["phien-toa"]["avatar"]).resize((200, 200), Image.LANCZOS), "luat-su-avatar.webp", quality=86)
+    save_photo_set(office, "luat-su-van-phong")
+    save_photo_set(court, "luat-su-phien-toa")
+    card = court.crop(PHOTOS["phien-toa"]["card"])
+    save_webp(card, "luat-su-chan-dung.webp", quality=80)
+    save_avif(card, "luat-su-chan-dung.avif")
+    # Ảnh tròn: giữ nguyên độ phân giải vùng cắt (260px) để nét trên màn hình mật độ cao
+    save_webp(court.crop(PHOTOS["phien-toa"]["avatar"]), "luat-su-avatar.webp", quality=84)
 
     og_card(logo, court, PHOTOS["phien-toa"]["og"], "Luật sư tư vấn & tranh tụng tại TP.HCM",
             "Gặp chuyện pháp lý, có luật sư bên cạnh",

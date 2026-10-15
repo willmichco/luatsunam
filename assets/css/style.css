@@ -6,12 +6,17 @@
 /* ---------- Phông chữ tự lưu trữ: Be Vietnam Pro (SIL Open Font License 1.1) ---------- */
 @font-face { font-family: "Be Vietnam Pro"; font-weight: 400; font-display: swap; src: url("../fonts/be-vietnam-pro-400-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
 @font-face { font-family: "Be Vietnam Pro"; font-weight: 400; font-display: swap; src: url("../fonts/be-vietnam-pro-400-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: "Be Vietnam Pro"; font-weight: 500; font-display: swap; src: url("../fonts/be-vietnam-pro-500-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
-@font-face { font-family: "Be Vietnam Pro"; font-weight: 500; font-display: swap; src: url("../fonts/be-vietnam-pro-500-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Be Vietnam Pro"; font-weight: 600; font-display: swap; src: url("../fonts/be-vietnam-pro-600-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
 @font-face { font-family: "Be Vietnam Pro"; font-weight: 600; font-display: swap; src: url("../fonts/be-vietnam-pro-600-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: "Be Vietnam Pro"; font-weight: 700; font-display: swap; src: url("../fonts/be-vietnam-pro-700-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
 @font-face { font-family: "Be Vietnam Pro"; font-weight: 700; font-display: swap; src: url("../fonts/be-vietnam-pro-700-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+/* Phông dự phòng chỉnh kích thước khớp Be Vietnam Pro (đo trên văn bản tiếng Việt của website): khi phông chính
+   tải xong, chữ không nhảy dòng, bố cục không xô lệch (giảm CLS). A: Arial/Liberation (iOS, Windows, Linux), R: Roboto (Android) */
+@font-face { font-family: "BVP Fallback A"; font-weight: 400; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans"); size-adjust: 107.24%; ascent-override: 93.25%; descent-override: 24.71%; line-gap-override: 0%; }
+@font-face { font-family: "BVP Fallback A"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("LiberationSans-Bold"); size-adjust: 102.4%; ascent-override: 97.66%; descent-override: 25.88%; line-gap-override: 0%; }
+@font-face { font-family: "BVP Fallback R"; font-weight: 400; src: local("Roboto"), local("Roboto-Regular"); size-adjust: 109.28%; ascent-override: 91.5%; descent-override: 24.25%; line-gap-override: 0%; }
+@font-face { font-family: "BVP Fallback R"; font-weight: 600 700; src: local("Roboto Bold"), local("Roboto-Bold"); size-adjust: 109.93%; ascent-override: 90.96%; descent-override: 24.11%; line-gap-override: 0%; }
 
 /* ---------- Biến thiết kế ---------- */
 :root {
@@ -33,7 +38,7 @@
   --dark-text: #c8b8b3;
   --zalo: #0068ff;
 
-  --font-sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Be Vietnam Pro", "BVP Fallback A", "BVP Fallback R", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-heading: var(--font-sans);
 
   --container: 1200px;
@@ -154,12 +159,12 @@ a.tag:hover { background: var(--brand); color: #fff; }
 .logo__name { white-space: nowrap; font-size: 24px; font-weight: 700; letter-spacing: .01em; color: var(--ink); }
 .logo__pre { white-space: nowrap; font-size: 13px; font-weight: 600; letter-spacing: .01em; color: var(--muted); margin-bottom: 3px; }
 .logo__name--firm { font-size: 25px; letter-spacing: -.01em; color: var(--brand); }
-.logo__tag { white-space: nowrap; font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.logo__tag { white-space: nowrap; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
 
 .nav { margin-left: auto; }
 .nav__list { display: flex; align-items: center; gap: 2px; }
 .nav__item { position: relative; display: flex; align-items: center; }
-.nav__link { position: relative; display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 12px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text); font: 500 15px/1.4 var(--font-sans); white-space: nowrap; transition: color .2s, background .2s; }
+.nav__link { position: relative; display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 12px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--ink); font: 400 15px/1.4 var(--font-sans); white-space: nowrap; transition: color .2s, background .2s; }
 .nav__link::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; border-radius: 2px; background: var(--brand); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
 .nav__link:hover, .nav__item.is-open > .nav__link { color: var(--brand); background: #f8f1e9; }
 .nav__link.is-active { color: var(--brand); }
@@ -173,7 +178,7 @@ a.tag:hover { background: var(--brand); color: #fff; }
 .nav__item.is-open > .nav__sub--mega { transform: translate(-50%, 0); }
 .nav__item:last-of-type .nav__sub, #sub-knowledge { left: auto; right: 0; }
 .nav__group-title { padding: 8px 12px 6px; font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-700); }
-.nav__sublink { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--ink); font-size: 15px; font-weight: 500; line-height: 1.45; transition: background .2s, color .2s; }
+.nav__sublink { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--ink); font-size: 15px; font-weight: 600; line-height: 1.45; transition: background .2s, color .2s; }
 .nav__sublink small { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; font-weight: 400; }
 .nav__sublink:hover, .nav__sublink[aria-current="page"] { background: #f8f1e9; color: var(--brand); }
 .nav__subicon { width: 24px; height: 24px; color: var(--brand); }
@@ -183,7 +188,7 @@ a.tag:hover { background: var(--brand); color: #fff; }
 .nav__mobile-extra, .nav__note { display: none; }
 
 .header__actions { display: flex; align-items: center; gap: 10px; padding-left: 16px; border-left: 1px solid var(--line); flex-shrink: 0; }
-.header__search { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--white); color: var(--text); font: 500 14px/1.4 var(--font-sans); transition: background .2s, border-color .2s, color .2s; }
+.header__search { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--white); color: var(--text); font: 400 14px/1.4 var(--font-sans); transition: background .2s, border-color .2s, color .2s; }
 .header__search .ico { width: 20px; height: 20px; }
 .header__search span { display: none; }
 .header__search:hover { border-color: var(--gold-300); color: var(--brand); }
@@ -215,7 +220,7 @@ a.tag:hover { background: var(--brand); color: #fff; }
 .breadcrumb li { display: inline-flex; align-items: center; gap: 8px; }
 .breadcrumb li + li::before { content: "/"; color: var(--gold-300); }
 .breadcrumb a:hover { color: var(--brand); }
-.breadcrumb [aria-current="page"] { color: var(--ink); font-weight: 500; }
+.breadcrumb [aria-current="page"] { color: var(--ink); font-weight: 600; }
 
 .article-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; font-size: 14px; color: var(--muted); }
 .article-meta span { display: inline-flex; align-items: center; gap: 7px; }
@@ -247,6 +252,7 @@ a.tag:hover { background: var(--brand); color: #fff; }
 .hero__info .ico { width: 17px; height: 17px; color: var(--brand); }
 .photo { position: relative; margin: 0; border-radius: var(--radius-lg); overflow: hidden; background: var(--cream-200); box-shadow: var(--shadow-lg); }
 .photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo picture, .lcard picture { display: block; }
 .photo__cap { position: absolute; left: 16px; bottom: 16px; display: flex; flex-direction: column; padding: 10px 16px; border-radius: 10px; background: rgba(255, 253, 249, .95); border-left: 3px solid var(--brand); box-shadow: 0 6px 18px rgba(40, 20, 15, .16); line-height: 1.4; }
 .photo__cap strong { font-size: 15.5px; color: var(--ink); }
 .photo__cap span { font-size: 13px; color: var(--muted); }
@@ -376,8 +382,10 @@ a.icard:hover .icard__more { gap: 10px; }
 .subnav { position: sticky; top: var(--header-h); z-index: 20; background: rgba(255, 253, 249, .96); border-bottom: 1px solid var(--line); }
 .subnav .container { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-block: 8px; }
 .subnav .container::-webkit-scrollbar { display: none; }
-.subnav a { flex-shrink: 0; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; transition: background .2s, color .2s; }
+.subnav a { flex-shrink: 0; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 400; color: var(--ink); white-space: nowrap; transition: background .2s, color .2s; }
 .subnav a:hover, .subnav a.is-active { background: var(--brand-50); color: var(--brand); }
+/* Còn mục bị khuất bên phải: làm mờ mép để người dùng biết vuốt ngang được */
+.subnav .container.has-more { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
 .svc-section { scroll-margin-top: calc(var(--header-h) + 64px); }
 .docs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .docs > article { padding: 30px 28px; background: var(--white); border: 1px solid var(--line); border-top: 3px solid var(--gold); border-radius: var(--radius); }
@@ -441,10 +449,10 @@ a.icard:hover .icard__more { gap: 10px; }
 .toc { counter-reset: toc; display: flex; flex-direction: column; gap: 2px; }
 .toc li { counter-increment: toc; }
 .toc a { display: flex; gap: 10px; padding: 7px 8px; border-radius: 6px; font-size: 14px; color: var(--text); line-height: 1.45; transition: background .2s, color .2s; }
-.toc a::before { content: counter(toc, decimal-leading-zero); color: var(--gold-700); font-weight: 600; font-size: 12px; padding-top: 2px; }
+.toc a::before { content: counter(toc, decimal-leading-zero); flex-shrink: 0; min-width: 16px; color: var(--gold-700); font-weight: 600; font-size: 12px; padding-top: 2px; }
 .toc a:hover, .toc a.is-active { background: var(--cream); color: var(--brand); }
 .rel-list { display: flex; flex-direction: column; gap: 4px; }
-.rel-list a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 14.5px; font-weight: 500; color: var(--ink); transition: background .2s, color .2s; }
+.rel-list a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 14.5px; font-weight: 400; color: var(--ink); transition: background .2s, color .2s; }
 .rel-list a span { flex: 1; }
 .rel-list a .ico:last-child { width: 16px; height: 16px; color: var(--muted); }
 .rel-list a:hover { background: var(--cream); color: var(--brand); }
@@ -585,6 +593,46 @@ a.icard:hover .icard__more { gap: 10px; }
   .js .reveal.is-in { opacity: 1; transform: none; }
 }
 
+/* ---------- Trạng thái giờ làm việc (main.js điền theo giờ Việt Nam) ---------- */
+.open-now { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600; line-height: 1.4; color: #1f7a3d; }
+.open-now::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px rgba(31, 122, 61, .16); flex-shrink: 0; }
+.open-now.is-closed { color: var(--muted); }
+.open-now:not(.is-ready), .share-btn:not(.is-ready) { visibility: hidden; }
+.open-now.is-closed::before { background: #b9aaa5; box-shadow: 0 0 0 3px rgba(185, 170, 165, .2); }
+.cband__card .open-now { margin-top: 8px; font-size: 13px; letter-spacing: 0; text-transform: none; color: #1f7a3d; }
+.cband__card .open-now.is-closed { color: var(--muted); }
+.lcard__status { margin-top: 10px; }
+.contact__list .open-now { display: flex; margin: 4px 0 2px; }
+
+/* ---------- Thông báo nhỏ (sao chép số điện thoại, liên kết) ---------- */
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 120; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 14.5px; line-height: 1.45; box-shadow: var(--shadow-lg); transform: translate(-50%, 16px); opacity: 0; visibility: hidden; transition: opacity .25s, transform .25s var(--ease), visibility .25s; }
+.toast.is-visible { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.toast .ico { width: 18px; height: 18px; color: #8fd6a3; }
+
+/* ---------- Bài viết: thanh tiến độ đọc, mục lục trên điện thoại, chia sẻ ---------- */
+.read-progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; pointer-events: none; }
+.read-progress span { display: block; height: 100%; background: var(--brand); transform: scaleX(0); transform-origin: left; }
+.share-btn { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--ink); font-size: 14px; font-weight: 600; transition: border-color .2s, color .2s; }
+.share-btn:hover { border-color: var(--brand); color: var(--brand); }
+.article-meta .share-btn .ico { color: var(--brand); }
+.toc-mobile { display: none; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.toc-mobile summary { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 12px 16px; cursor: pointer; list-style: none; font-weight: 600; color: var(--ink); }
+.toc-mobile summary::-webkit-details-marker { display: none; }
+.toc-mobile summary .ico { width: 18px; height: 18px; color: var(--gold-700); }
+.toc-mobile summary small { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--muted); }
+.toc-mobile .toc-mobile__chev { width: 18px; height: 18px; color: var(--brand); transition: transform .25s var(--ease); }
+.toc-mobile[open] .toc-mobile__chev { transform: rotate(180deg); }
+.prose .toc-mobile .toc { list-style: none; margin: 0; padding: 0 8px 10px; }
+.prose .toc-mobile .toc li + li { margin-top: 0; }
+.prose .toc-mobile .toc a { text-decoration: none; font-size: 15px; padding: 9px 8px; }
+
+/* ---------- Câu hỏi thường gặp: mở, đóng mượt (trình duyệt hỗ trợ) ---------- */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  .faq__item::details-content, .toc-mobile::details-content { height: 0; overflow: clip; transition: height .3s var(--ease), content-visibility .3s allow-discrete; }
+  .faq__item[open]::details-content, .toc-mobile[open]::details-content { height: auto; }
+}
+
 /* =========================================================
    ĐÁP ỨNG MÀN HÌNH
    ========================================================= */
@@ -639,7 +687,9 @@ a.icard:hover .icard__more { gap: 10px; }
   .split, .profile { gap: 36px; }
   .article-layout, .legal-layout, .faq-layout { grid-template-columns: minmax(0, 1fr); gap: 36px; }
   .article-aside, .legal-aside, .faq-aside { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .article-aside .aside-card--toc, .legal-aside .aside-card--toc { grid-column: 1 / -1; }
+  .legal-aside .aside-card--toc { grid-column: 1 / -1; }
+  .toc-mobile { display: block; }
+  .article-aside .aside-card--toc { display: none; }
   .legal-aside { order: -1; }
   .legal-aside .aside-card:not(.aside-card--toc) { display: none; }
   .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -651,6 +701,8 @@ a.icard:hover .icard__more { gap: 10px; }
   .phead__grid { padding-block: 28px 40px; gap: 28px; }
   .hero__grid { padding-block: 32px 44px; }
   .hero .photo { max-width: 640px; }
+  .hero .photo img { aspect-ratio: 16 / 10; }
+  .profile .photo { max-width: 520px; }
   .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .shead { flex-direction: column; align-items: flex-start; }
@@ -658,7 +710,7 @@ a.icard:hover .icard__more { gap: 10px; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cband__cards { grid-template-columns: minmax(0, 1fr); }
   .cband__card { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 16px 18px; }
-  .cband__card .ico { grid-row: span 3; margin: 0; }
+  .cband__card .ico { grid-row: span 4; margin: 0; }
   .cband__card strong { font-size: 19px; }
   /* Thẻ luật sư dạng ngang trên máy tính bảng, điện thoại */
   .lcard { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 0 16px; padding: 14px; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
@@ -682,7 +734,7 @@ a.icard:hover .icard__more { gap: 10px; }
   .header__call { display: none; }
   .header__search, .burger { width: 42px; min-width: 42px; border: 0; background: transparent; }
 
-  .grid--2, .grid--3, .grid--4, .docs, .steps, .steps--5, .footer__grid, .article-aside, .legal-aside, .faq-aside, .profile__facts { grid-template-columns: minmax(0, 1fr); }
+  .grid--2, .grid--3, .grid--4, .docs, .steps, .steps--5, .article-aside, .legal-aside, .faq-aside { grid-template-columns: minmax(0, 1fr); }
   .grid { gap: 14px; }
   .icard { padding: 20px 18px; }
   /* Thẻ dịch vụ, tình huống: dạng hàng gọn trên điện thoại */
@@ -690,9 +742,33 @@ a.icard:hover .icard__more { gap: 10px; }
   .icard:not(.icard--stack) .ichip { grid-row: span 4; margin: 0; }
   .icard__title { font-size: 17px; }
   .icard__text { font-size: 15px; }
+  /* Thẻ có liên kết: mũi tên bên phải thay cho dòng "Xem chi tiết" */
+  a.icard:not(.icard--stack) { padding-right: 46px; }
+  a.icard .icard__more { position: absolute; top: 50%; right: 14px; margin: 0; font-size: 0; transform: translateY(-50%); }
+  a.icard .icard__more .ico { width: 20px; height: 20px; }
+  a.icard:hover, a.icard:focus-visible { transform: none; }
+  /* "Anh chị đang gặp chuyện gì?": mỗi tình huống một dòng, xem đủ 8 tình huống trong khoảng hai màn hình */
+  .grid--problems { gap: 10px; }
+  .grid--problems .icard { padding: 14px 46px 14px 14px; row-gap: 2px; align-items: center; }
+  .grid--problems .ichip { grid-row: span 2; width: 44px; height: 44px; }
+  .grid--problems .icard__text { display: none; }
+  .grid--problems .icard__tag { font-size: 11.5px; }
+  .grid--problems .icard__title { font-size: 16.5px; line-height: 1.35; }
   .ncard { padding: 22px 20px; }
-  .steps > li { padding: 20px 18px; }
-  .steps__label { top: 26px; right: 18px; }
+  /* Thẻ đánh số: số và tiêu đề trên một hàng */
+  .ncard--num { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 8px 14px; padding: 18px; }
+  .ncard--num .ncard__top { margin: 0; }
+  .ncard--num p { grid-column: 1 / -1; }
+  /* Các bước: dòng thời gian dọc thay cho thẻ, đọc liền mạch từ trên xuống */
+  .steps, .steps--5 { gap: 0; }
+  .steps > li { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 16px; row-gap: 4px; padding: 0 0 24px; background: none; border: 0; border-radius: 0; }
+  .steps > li::before { content: ""; position: absolute; left: 19px; top: 46px; bottom: 4px; width: 2px; border-radius: 2px; background: var(--gold-300); }
+  .steps > li:last-child { padding-bottom: 0; }
+  .steps > li:last-child::before { display: none; }
+  .steps__num { grid-row: span 3; margin: 0; }
+  .steps > li > :not(.steps__num) { grid-column: 2; }
+  .steps h3 { padding-top: 7px; font-size: 17px; }
+  .breadcrumb li:nth-child(n+3)[aria-current="page"] { display: none; }
   .phead__title { font-size: clamp(28px, 7.4vw, 36px); }
   .phead__lead, .hero__lead { font-size: 16.5px; }
   .hero__title { font-size: clamp(30px, 8.4vw, 40px); }
@@ -721,7 +797,11 @@ a.icard:hover .icard__more { gap: 10px; }
   .prose :where(p, li, a) { overflow-wrap: anywhere; }
   .cband__intro { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
   .cband__avatar { width: 72px; height: 72px; }
-  .footer__grid { gap: 28px; padding-block: 40px 28px; }
+  /* Footer: hai cột liên kết đặt cạnh nhau cho gọn */
+  .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; padding-block: 40px 28px; }
+  .footer__brand, .footer__grid > :last-child { grid-column: 1 / -1; }
+  .footer__links a { padding-block: 6px; }
+  .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   .footer__bottom-inner { flex-direction: column; }
   .search__box { padding: 44px 18px 20px; }
   .search { padding-top: 8vh; }

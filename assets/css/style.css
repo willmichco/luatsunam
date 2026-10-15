@@ -176,7 +176,7 @@ a.tag:hover { background: var(--brand); color: #fff; }
 .nav__item.is-open > .nav__sub { opacity: 1; visibility: visible; transform: none; }
 .nav__sub--mega { left: 50%; width: 620px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 10px; transform: translate(-50%, 6px); }
 .nav__item.is-open > .nav__sub--mega { transform: translate(-50%, 0); }
-.nav__item:last-of-type .nav__sub, #sub-knowledge { left: auto; right: 0; }
+.nav__item:last-of-type .nav__sub, .nav__sub--right { left: auto; right: 0; }
 .nav__group-title { padding: 8px 12px 6px; font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-700); }
 .nav__sublink { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--ink); font-size: 15px; font-weight: 600; line-height: 1.45; transition: background .2s, color .2s; }
 .nav__sublink small { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; font-weight: 400; }
@@ -672,9 +672,9 @@ a.icard:hover .icard__more { gap: 10px; }
   .nav__link::after { display: none; }
   .nav__link.is-active { background: #f8f1e9; }
   .nav__toggle > .ico { width: 18px; height: 18px; }
-  .nav__sub, .nav__sub--mega, #sub-knowledge { position: static; display: none; width: 100%; min-width: 0; margin: 2px 0 10px; padding: 6px; grid-template-columns: 1fr; gap: 0; background: var(--cream); border: 0; border-radius: var(--radius-sm); box-shadow: none; opacity: 1; visibility: visible; transform: none !important; transition: none; }
+  .nav__sub, .nav__sub--mega, .nav__sub--right { position: static; display: none; width: 100%; min-width: 0; margin: 2px 0 10px; padding: 6px; grid-template-columns: 1fr; gap: 0; background: var(--cream); border: 0; border-radius: var(--radius-sm); box-shadow: none; opacity: 1; visibility: visible; transform: none !important; transition: none; }
   .nav__sub::before { display: none; }
-  .nav__item.is-open > .nav__sub, .nav__item.is-open > #sub-knowledge { display: grid; }
+  .nav__item.is-open > .nav__sub, .nav__item.is-open > .nav__sub--right { display: grid; }
   .nav__group + .nav__group { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
   .nav__mobile-extra { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding: 16px; background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius); }
   .nav__note { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 2px; font-size: 13.5px; color: var(--muted); }
@@ -893,3 +893,14 @@ a.icard:hover .icard__more { gap: 10px; }
   .assure p + p { border-left: 0; border-top: 1px solid var(--line); }
   .assure p { padding: 16px 18px; }
 }
+
+/* ---------- Biến thể khối dựng trang (CMS) ---------- */
+.check-list--2col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 28px; }
+.prose--narrow { max-width: 780px; margin-inline: auto; }
+.team-card__photo { margin: -10px -8px 6px; border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 4 / 3; background: var(--cream); }
+.team-card__photo img { width: 100%; height: 100%; object-fit: cover; }
+.team-card .profile__facts { margin-top: 6px; }
+.draft-banner { position: sticky; top: 0; z-index: 60; padding: 10px 16px; background: #fff4c2; border-bottom: 1px solid #e6c200; color: #5c4a00; font-size: 14.5px; text-align: center; }
+@media (max-width: 760px) { .check-list--2col { grid-template-columns: minmax(0, 1fr); } }
+.team-card__photo picture { display: block; height: 100%; }
+.prose img { max-width: 100%; height: auto; border-radius: var(--radius-sm); }

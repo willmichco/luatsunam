@@ -1,0 +1,104 @@
+tieu_de: Trang chủ
+nhap: false
+dau_trang:
+  nhan: Luật sư tư vấn & tranh tụng tại TP.HCM
+  tieu_de: Gặp chuyện pháp lý, *có luật sư bên cạnh*
+  mo_dau: Luật sư Nguyễn Trọng Nam trực tiếp lắng nghe, nói rõ quyền lợi, rủi ro và cùng anh chị chọn cách giải quyết.
+  the_luat_su: false
+cac_khoi:
+  - loai: dau_trang
+    nhan: Luật sư tư vấn & tranh tụng tại TP.HCM
+    tieu_de: Gặp chuyện pháp lý, *có luật sư bên cạnh*
+    doan_mo_dau: Anh chị cứ kể sự việc. Luật sư lắng nghe, nói rõ quyền lợi và rủi ro theo đúng quy định pháp luật, rồi cùng anh chị chọn cách giải quyết phù hợp. Mọi thông tin đều được giữ kín.
+    nut_lien_he: true
+    dai_thong_tin: true
+    vi_tri_anh: phai
+    anh_co_san: van-phong
+    chu_thich: '{{luat_su}}'
+    chu_thich_phu: Giám đốc · tại văn phòng 22c Vũ Ngọc Phan
+  - loai: dai_cam_ket
+    muc:
+      - bieu_tuong: i-user
+        tieu_de: Luật sư trực tiếp tiếp nhận
+        mo_ta: Anh chị trao đổi thẳng với luật sư phụ trách, không qua trung gian.
+      - bieu_tuong: i-scale
+        tieu_de: Nói rõ được – mất
+        mo_ta: Phân tích thẳng thắn điểm mạnh, điểm yếu; không hứa hẹn bảo đảm kết quả.
+      - bieu_tuong: i-doc
+        tieu_de: Chi phí thỏa thuận trước
+        mo_ta: Phạm vi công việc và thù lao ghi rõ trong hợp đồng trước khi làm.
+      - bieu_tuong: i-shield-check
+        tieu_de: Giữ kín thông tin
+        mo_ta: Bảo mật theo Luật Luật sư, ngay từ buổi trao đổi đầu tiên.
+  - loai: luoi_linh_vuc
+    nen: kem
+    tieu_de: Anh chị đang gặp chuyện gì?
+    mo_ta: Chọn tình huống gần giống với mình để xem luật sư có thể giúp gì. Nếu chưa biết thuộc lĩnh vực nào, cứ gọi điện hoặc nhắn Zalo kể sự việc.
+    kieu: tinh_huong
+  - loai: anh_chu
+    nen: trang
+    nhan: Về chúng tôi
+    tieu_de: Văn phòng luật do {{luat_su}} trực tiếp điều hành
+    vi_tri_anh: trai
+    noi_dung: |
+      Công Ty Luật TNHH Luật Sư Nam đặt văn phòng tại {{dia_chi}}. Chúng tôi tư vấn, đại diện và tham gia tố tụng cho người dân và doanh nghiệp, từ việc kiểm tra một hợp đồng trước khi ký đến giải quyết tranh chấp tại Tòa án.
+
+      Mỗi vụ việc bắt đầu bằng việc lắng nghe anh chị, xem kỹ giấy tờ và thống nhất hướng giải quyết phù hợp với mong muốn của anh chị. Luật sư nhận hồ sơ cũng là người theo hồ sơ đến cùng.
+    so_lieu:
+      - nhan: Thành lập
+        gia_tri: Tháng 01/2019
+      - nhan: Gắn bó TP.HCM
+        gia_tri: Từ năm 1999
+      - nhan: Lĩnh vực
+        gia_tri: 7 lĩnh vực tư vấn, tranh tụng
+      - nhan: Phụ trách hồ sơ
+        gia_tri: 1 luật sư xuyên suốt
+    lien_ket:
+      - nhan: Tìm hiểu về luật sư và công ty
+        trang: /gioi-thieu/
+    anh_co_san: phien-toa
+    chu_thich: Tại phiên tòa
+    chu_thich_phu: Luật sư trực tiếp bào chữa, tranh tụng cho khách hàng
+  - loai: cac_buoc
+    nen: kem
+    tieu_de: Làm việc với luật sư có khó không?
+    mo_ta: 'Không khó. Chỉ cần bốn bước:'
+    lien_ket:
+      nhan: Giấy tờ cần chuẩn bị
+      trang: /quy-trinh-lam-viec/
+    kieu: ngang
+    buoc:
+      - tieu_de: Gọi điện hoặc nhắn Zalo
+        mo_ta: Kể ngắn gọn sự việc. Luật sư cho biết anh chị cần chuẩn bị những giấy tờ gì.
+      - tieu_de: Gặp luật sư, mang theo giấy tờ
+        mo_ta: Luật sư xem hồ sơ, giải thích quyền lợi, rủi ro và các thời hạn cần lưu ý.
+      - tieu_de: Thống nhất cách làm và chi phí
+        mo_ta: Phạm vi công việc và chi phí được nói rõ, ghi vào hợp đồng trước khi triển khai.
+      - tieu_de: Luật sư thực hiện, báo tiến độ
+        mo_ta: Một luật sư phụ trách xuyên suốt, thường xuyên cập nhật để anh chị nắm được tình hình.
+  - loai: hoi_dap
+    nen: trang
+    tieu_de: Những câu anh chị hay hỏi
+    mo_ta: Về chi phí, kết quả vụ việc và việc giữ bí mật thông tin.
+    lien_ket:
+      nhan: Xem tất cả câu hỏi
+      trang: /cau-hoi-thuong-gap/
+    cau_hoi:
+      - chi-phi-thue-luat-su
+      - cam-ket-thang-kien
+      - bao-mat-thong-tin
+      - chuan-bi-buoi-dau
+  - loai: bai_viet_moi
+    nen: kem
+    tieu_de: Kiến thức pháp luật dễ hiểu
+    mo_ta: Bài viết giải thích các tình huống thường gặp, kèm căn cứ pháp luật.
+    lien_ket:
+      nhan: Xem tất cả bài viết
+      trang: /kien-thuc-phap-ly/
+    so_bai: 3
+    so_cot: '3'
+lien_he_cuoi_trang:
+  hien: true
+seo:
+  tieu_de: Luật sư tư vấn & tranh tụng tại TP.HCM
+  mo_ta: Luật Sư Nam – tư vấn và tranh tụng về thừa kế, đất đai, hôn nhân gia đình, hình sự, dân sự, công chứng tại TP.HCM. Hotline 0983 498 499.

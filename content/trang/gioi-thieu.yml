@@ -1,0 +1,104 @@
+tieu_de: Giới thiệu
+nhap: false
+loai_trang: AboutPage
+dau_trang:
+  nhan: Về chúng tôi
+  tieu_de: Công Ty Luật TNHH *Luật Sư Nam*
+  mo_dau: Đồng hành cùng cá nhân và doanh nghiệp bằng sự cẩn trọng, trách nhiệm và giải pháp pháp lý phù hợp với từng vụ việc.
+  the_luat_su: true
+cac_khoi:
+  - loai: dau_trang
+    ma_neo: cong-ty
+    nhan: Giới thiệu Luật Sư Nam
+    tieu_de: Văn phòng luật do *{{luat_su}}* trực tiếp điều hành
+    doan_mo_dau: |
+      Công Ty Luật TNHH Luật Sư Nam thành lập tháng 01 năm 2019 tại Thành phố Hồ Chí Minh. Chúng tôi tư vấn pháp luật, tham gia tố tụng và đại diện theo ủy quyền cho người dân và doanh nghiệp.
+
+      Luật sư Nguyễn Trọng Nam (sinh năm 1976, quê Hà Nội) là Giám đốc, người đại diện theo pháp luật của công ty, gắn bó với TP. Hồ Chí Minh từ năm 1999. Nhiều năm trực tiếp làm thủ tục và giải quyết tranh chấp đất đai, thừa kế giúp luật sư hiểu rõ những vướng mắc thực tế mà người dân thường gặp.
+    nut_lien_he: true
+    dai_thong_tin: false
+    vi_tri_anh: phai
+    anh_co_san: van-phong
+    chu_thich: '{{luat_su}}'
+    chu_thich_phu: Giám đốc · Tư vấn, bào chữa, tranh tụng
+    so_lieu:
+      - so: 01/2019
+        mo_ta: Thành lập công ty luật
+      - so: Từ 1999
+        mo_ta: Làm việc, gắn bó với TP. Hồ Chí Minh
+      - so: '7'
+        mo_ta: Lĩnh vực tư vấn và tranh tụng
+      - so: '1'
+        mo_ta: Luật sư phụ trách xuyên suốt mỗi hồ sơ
+  - loai: dong_thoi_gian
+    ma_neo: hanh-trinh
+    nen: trang
+    nhan: Hành trình
+    tieu_de: Chặng đường hơn 25 năm tại TP. Hồ Chí Minh
+    mo_ta: Những dấu mốc trong quá trình làm việc của Luật sư Nguyễn Trọng Nam và sự ra đời của Công Ty Luật TNHH Luật Sư Nam.
+    moc:
+      - thoi_gian: 09/1999
+        tieu_de: Bắt đầu công tác tại TP. Hồ Chí Minh
+        mo_ta: Từ Hà Nội vào Thành phố Hồ Chí Minh, làm nhân viên giao nhận hàng hóa xuất nhập khẩu tại Công ty TNHH Thương mại Dịch vụ Bình Thiên.
+      - thoi_gian: 02/2001
+        tieu_de: Công ty TNHH Tư vấn Nhân Quyền
+        mo_ta: Làm việc trong lĩnh vực tư vấn chính sách thuế, xuất nhập khẩu; trải qua các vị trí giao nhận, trưởng phòng, quản lý và điều hành công ty.
+      - thoi_gian: 10/2005
+        tieu_de: Thành lập Công ty TNHH Tư vấn Nam Luật
+        mo_ta: 'Giai đoạn 2005–2009: tư vấn chính sách thuế, xuất nhập khẩu và giao nhận hàng hóa. Giai đoạn 2009–2019: hoạt động bất động sản, đại diện theo ủy quyền thực hiện thủ tục và tham gia giải quyết tranh chấp đất đai, thừa kế bất động sản.'
+      - thoi_gian: 01/2019
+        tieu_de: Thành lập Công Ty Luật TNHH Luật Sư Nam
+        mo_ta: Luật sư Nguyễn Trọng Nam là Giám đốc và đại diện theo pháp luật. Công ty hoạt động trong lĩnh vực tư vấn pháp luật, tham gia tố tụng, đại diện theo ủy quyền và các dịch vụ pháp lý khác.
+  - loai: doi_ngu
+    ma_neo: doi-ngu-luat-su
+    nen: kem
+    nhan: Đội ngũ
+    tieu_de: Đội ngũ Luật Sư Nam
+    mo_ta: 'Một văn phòng gọn nhẹ, hai người cùng theo một hồ sơ: luật sư lo phần chuyên môn, chuyên viên pháp lý lo giấy tờ và tiến độ.'
+    kieu: noi_bat
+    thanh_vien:
+      - ten: '{{luat_su}}'
+        chuc_danh: Giám đốc · Luật sư điều hành
+        mo_ta: Trực tiếp nghe sự việc, tư vấn phương án, bào chữa và tranh tụng; chịu trách nhiệm chuyên môn với từng hồ sơ. Anh chị làm việc thẳng với luật sư từ buổi trao đổi đầu tiên đến khi hồ sơ hoàn tất.
+        so_lieu:
+          - nhan: Năm sinh
+            gia_tri: 1976, quê Hà Nội
+          - nhan: Gắn bó TP.HCM
+            gia_tri: Từ năm 1999
+          - nhan: Thế mạnh
+            gia_tri: Đất đai, thừa kế, tranh tụng
+          - nhan: Chức danh
+            gia_tri: Giám đốc, đại diện theo pháp luật
+        anh_co_san: phien-toa
+        chu_thich: Tại phiên tòa
+        chu_thich_phu: Luật sư trực tiếp bào chữa, tranh tụng
+      - ten: Nguyễn Trọng Nam Minh
+        chuc_danh: Chuyên viên pháp lý
+        mo_ta: Hỗ trợ luật sư chuẩn bị, rà soát giấy tờ; theo dõi tiến độ hồ sơ và giữ liên lạc với anh chị.
+        bieu_tuong: i-doc
+  - loai: luoi_the
+    ma_neo: cach-lam-viec
+    nen: trang
+    nhan: Cách làm việc
+    tieu_de: Khi làm việc với chúng tôi, anh chị sẽ được
+    so_cot: '3'
+    the:
+      - bieu_tuong: i-user
+        tieu_de: Lắng nghe và làm rõ
+        mo_ta: Luật sư nghe anh chị kể sự việc, xem hồ sơ và cùng xác định điều anh chị thật sự cần ngay từ buổi đầu.
+      - bieu_tuong: i-lock
+        tieu_de: Minh bạch và bảo mật
+        mo_ta: Được nói rõ phương án, rủi ro và thù lao trước khi làm; thông tin của anh chị được giữ kín theo Luật Luật sư.
+      - bieu_tuong: i-steps
+        tieu_de: Theo sát từng hồ sơ
+        mo_ta: Luật sư phụ trách chuyên môn từ đầu đến cuối; chuyên viên pháp lý theo dõi từng mốc và báo tiến độ cho anh chị.
+    lien_ket_cuoi:
+      - nhan: Nguyên tắc làm việc
+        trang: /vi-sao-chon-chung-toi/
+      - nhan: Quy trình và giấy tờ cần chuẩn bị
+        trang: /quy-trinh-lam-viec/
+lien_he_cuoi_trang:
+  hien: true
+seo:
+  tieu_de: Giới thiệu công ty và đội ngũ – Luật Sư Nam
+  mo_ta: 'Công Ty Luật TNHH Luật Sư Nam do Luật sư Nguyễn Trọng Nam điều hành, thành lập 01/2019 tại TP.HCM: chặng đường nghề nghiệp, đội ngũ và cách làm việc.'

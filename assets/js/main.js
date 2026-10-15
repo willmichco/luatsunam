@@ -43,17 +43,26 @@
     });
   }
 
-  /* ---------- Giờ làm việc: Thứ 2 – Thứ 6, 08:00 – 17:30 giờ Việt Nam (UTC+7) ---------- */
+  /* ---------- Giờ làm việc theo giờ Việt Nam (UTC+7); ngày, giờ lấy từ CMS: <html data-gio="1,2,3,4,5|480|1050"> ---------- */
   (function () {
     var els = $$('[data-open-now]');
     if (!els.length) return;
+    var cfg = (doc.getAttribute('data-gio') || '1,2,3,4,5|480|1050').split('|');
+    var days = cfg[0].split(',').map(Number), opens = +cfg[1], closes = +cfg[2];
+    var DAY = ['Chủ nhật', 'thứ Hai', 'thứ Ba', 'thứ Tư', 'thứ Năm', 'thứ Sáu', 'thứ Bảy'];
+    var hhmm = ('0' + Math.floor(opens / 60)).slice(-2) + ':' + ('0' + opens % 60).slice(-2);
     function update() {
       var vn = new Date(Date.now() + 7 * 36e5); // đọc bằng getUTC* = giờ Việt Nam, không phụ thuộc múi giờ máy
       var day = vn.getUTCDay(), mins = vn.getUTCHours() * 60 + vn.getUTCMinutes();
-      var weekday = day >= 1 && day <= 5;
-      var open = weekday && mins >= 480 && mins < 1050;
-      var next = weekday && mins < 480 ? 'hôm nay' : (day >= 1 && day <= 4 ? 'sáng mai' : 'thứ Hai');
-      var text = open ? 'Đang trong giờ làm việc' : 'Ngoài giờ · làm việc lại 08:00 ' + next;
+      var workday = days.indexOf(day) >= 0;
+      var open = workday && mins >= opens && mins < closes;
+      var next = 'hôm nay';
+      if (!(workday && mins < opens)) {
+        for (var d = 1; d <= 7 && days.indexOf((day + d) % 7) < 0; d++) {}
+        var nd = (day + d) % 7;
+        next = nd === 1 ? 'thứ Hai' : (d === 1 ? 'sáng mai' : DAY[nd]);
+      }
+      var text = open ? 'Đang trong giờ làm việc' : 'Ngoài giờ · làm việc lại ' + hhmm + ' ' + next;
       els.forEach(function (el) {
         el.textContent = text;
         el.classList.toggle('is-closed', !open);

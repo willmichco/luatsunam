@@ -1,0 +1,89 @@
+ten: Hình sự
+nhap: false
+thu_tu: 4
+bieu_tuong: i-shield-check
+bieu_tuong_tinh_huong: i-shield
+mo_ta_ngan: Bào chữa, bảo vệ người bị hại và đồng hành cùng khách hàng trong các giai đoạn điều tra, truy tố, xét xử.
+the_tinh_huong:
+  tieu_de: Người nhà bị công an mời, bị bắt
+  mo_ta: Cần luật sư bào chữa, gặp người bị tạm giữ, tạm giam, hoặc bảo vệ quyền lợi cho người bị hại.
+nhan_dau_trang: Luật sư hình sự
+tieu_de_trang: Người thân gặp chuyện hình sự – *cần luật sư càng sớm càng tốt*
+mo_dau: 'Nhận giấy mời của công an, người thân bị tạm giữ, tạm giam, hay anh chị là người bị hại cần được bồi thường. Giai đoạn đầu rất quan trọng: luật sư giúp anh chị hiểu quyền của mình, làm thủ tục tham gia vụ án và bảo vệ quyền lợi theo đúng pháp luật.'
+viec_gap: true
+tinh_huong:
+  - Người thân bị bắt, bị tạm giữ; gia đình chưa biết đang ở đâu, cần làm gì.
+  - Nhận giấy mời, giấy triệu tập của cơ quan công an và lo lắng không biết trình bày thế nào.
+  - Người nhà đã bị khởi tố, cần luật sư bào chữa ở giai đoạn điều tra, truy tố, xét xử.
+  - Bị lừa đảo, chiếm đoạt tài sản, bị đánh gây thương tích – muốn tố giác và đòi bồi thường.
+  - Đã có bản án sơ thẩm, gia đình muốn kháng cáo.
+pham_vi:
+  gioi_thieu: Vụ án hình sự cần được xử lý thận trọng ngay từ buổi làm việc đầu tiên. Luật sư nghiên cứu hồ sơ, đối chiếu chứng cứ, theo dõi thủ tục và xây dựng luận điểm bào chữa hoặc bảo vệ trên cơ sở pháp luật và sự thật khách quan.
+  cac_viec:
+    - tieu_de: Tư vấn ban đầu
+      mo_ta: Giải thích quyền, nghĩa vụ, các bước tố tụng; hướng dẫn chuẩn bị giấy tờ trước khi làm việc với cơ quan tiến hành tố tụng.
+    - tieu_de: Bào chữa cho người bị buộc tội
+      mo_ta: Tham gia từ giai đoạn tạm giữ, điều tra, truy tố, xét xử; nghiên cứu hồ sơ và xây dựng luận cứ bào chữa.
+    - tieu_de: Bảo vệ người bị hại
+      mo_ta: Tư vấn tố giác, yêu cầu khởi tố, bồi thường; bảo vệ quyền lợi của người bị hại trong vụ án.
+    - tieu_de: Chứng cứ và kiến nghị
+      mo_ta: Thu thập, giao nộp, đánh giá tài liệu; đề nghị, khiếu nại quyết định, hành vi tố tụng khi có căn cứ.
+    - tieu_de: Kháng cáo
+      mo_ta: Đánh giá bản án, tư vấn phạm vi kháng cáo, chuẩn bị đơn và luận cứ cho phiên phúc thẩm.
+    - tieu_de: Bồi thường dân sự trong vụ án
+      mo_ta: Tư vấn thiệt hại, hoàn trả, bồi thường, tài sản bị thu giữ và các quyền lợi dân sự liên quan.
+viec_nen_lam:
+  - Ghi lại tên cơ quan, cán bộ thụ lý, số điện thoại, thời gian và nơi người thân được đưa đến.
+  - Giữ nguyên giấy mời, quyết định, biên bản đã nhận; chụp ảnh lại toàn bộ.
+  - Nói thật với luật sư; không xóa, sửa tài liệu, không bàn bạc để thống nhất lời khai sai sự thật.
+  - Thời hạn kháng cáo bản án hình sự sơ thẩm chỉ 15 ngày kể từ ngày tuyên án.
+luu_y:
+  tieu_de: Lưu ý quan trọng
+  noi_dung: Không xóa, sửa, che giấu tài liệu hoặc trao đổi nhằm thống nhất lời khai sai sự thật. Hãy cung cấp thông tin trung thực để luật sư tư vấn đúng.
+nguyen_tac:
+  tieu_de: Trung thực và đúng pháp luật
+  noi_dung: Luật sư giữ kín thông tin, tôn trọng sự thật khách quan, không hướng dẫn khai báo gian dối hay cản trở hoạt động tố tụng. Mọi luận điểm đều dựa trên chứng cứ và quy định pháp luật.
+cac_buoc:
+  - tieu_de: Tiếp nhận gấp
+    mo_ta: Giai đoạn vụ việc, cơ quan thụ lý và lịch làm việc gần nhất.
+  - tieu_de: Xem giấy tờ
+    mo_ta: Quyết định, biên bản, chứng cứ và thông tin ban đầu.
+  - tieu_de: Đăng ký tham gia
+    mo_ta: Làm thủ tục bào chữa hoặc bảo vệ quyền lợi.
+  - tieu_de: Nghiên cứu hồ sơ
+    mo_ta: Xây dựng luận điểm, giao nộp tài liệu, kiến nghị.
+  - tieu_de: Tham gia tố tụng
+    mo_ta: Có mặt tại buổi làm việc, phiên tòa và giai đoạn sau đó.
+giay_to:
+  tieu_de: Giấy tờ nên mang theo
+  danh_sach:
+    - Giấy mời, giấy triệu tập, quyết định hoặc biên bản đã nhận
+    - Tài liệu, dữ liệu, chứng từ liên quan đến sự việc
+    - Diễn biến sự việc theo thời gian và thông tin người làm chứng
+    - Giấy tờ về nhân thân, việc khắc phục hậu quả hoặc thiệt hại
+nhan_duoc:
+  - Giải thích rõ quyền, nghĩa vụ và giai đoạn tố tụng
+  - Đánh giá hồ sơ và định hướng làm việc phù hợp
+  - Luận cứ, đơn từ và kiến nghị theo phạm vi dịch vụ
+  - Luật sư tham gia tố tụng khi đủ điều kiện, thủ tục
+hoi_dap:
+  - hoi: Người thân bị bắt, khi nào luật sư được tham gia?
+    dap: Trường hợp bắt, tạm giữ người, người bào chữa được tham gia tố tụng từ khi người bị bắt có mặt tại trụ sở cơ quan điều tra, cơ quan được giao nhiệm vụ tiến hành một số hoạt động điều tra hoặc từ khi có quyết định tạm giữ (**Điều 74 Bộ luật Tố tụng hình sự 2015**). Người thân thích của người bị buộc tội có quyền lựa chọn người bào chữa cho họ (**Điều 75**), nên gia đình có thể liên hệ luật sư ngay.
+  - hoi: Nhận giấy mời của công an, tôi có nên đi một mình?
+    dap: Không nên phớt lờ. Hãy đọc kỹ giấy mời, giấy triệu tập để biết anh chị được mời với tư cách gì và nội dung làm việc. Nếu lo ngại vụ việc liên quan đến mình, nên trao đổi với luật sư trước buổi làm việc để hiểu quyền, nghĩa vụ và cách trình bày trung thực, đúng trọng tâm. Tùy tư cách tham gia, anh chị có thể nhờ luật sư bảo vệ quyền lợi.
+  - hoi: Thời hạn kháng cáo bản án hình sự là bao lâu?
+    dap: Thời hạn kháng cáo bản án sơ thẩm là 15 ngày kể từ ngày tuyên án; với người vắng mặt tại phiên tòa thì tính từ ngày họ nhận được bản án hoặc bản án được niêm yết (**Điều 333 Bộ luật Tố tụng hình sự 2015**).
+can_cu_phap_ly:
+  - Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017, 2025)
+  - Bộ luật Tố tụng hình sự 2015 (sửa đổi, bổ sung)
+  - Luật Luật sư 2006 (sửa đổi, bổ sung 2012)
+lien_he:
+  tieu_de: Việc hình sự cần luật sư từ giai đoạn đầu
+  doan_moi: Gọi ngay hotline để luật sư biết vụ việc đang ở giai đoạn nào và việc gì cần làm trước. Chuẩn bị sẵn giấy mời, quyết định hoặc biên bản đã nhận.
+linh_vuc_lien_quan:
+  - tranh-tung-giai-quyet-tranh-chap
+  - hon-nhan-gia-dinh
+  - dan-su
+seo:
+  tieu_de: Luật sư bào chữa vụ án Hình sự
+  mo_ta: Luật sư bào chữa cho người bị buộc tội và bảo vệ quyền lợi bị hại qua các giai đoạn điều tra, truy tố, xét xử, kháng cáo. Hỗ trợ khẩn cấp 0983 498 499.

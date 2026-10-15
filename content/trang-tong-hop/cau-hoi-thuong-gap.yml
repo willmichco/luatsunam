@@ -1,0 +1,25 @@
+dau_trang:
+  nhan: Câu hỏi thường gặp
+  tieu_de: Những điều anh chị *hay băn khoăn nhất*
+  mo_dau: Thuê luật sư tốn bao nhiêu, thông tin có được giữ kín không, có cần gấp không – giải đáp ngắn gọn, có dẫn quy định cụ thể.
+  the_luat_su: true
+ghi_chu_cuoi: Các giải đáp trên mang tính thông tin chung, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Xem thêm [Tuyên bố miễn trừ trách nhiệm](/mien-tru-trach-nhiem/).
+tim_hieu_them:
+  - bieu_tuong: i-steps
+    nhan: Quy trình làm việc
+    trang: /quy-trinh-lam-viec/
+  - bieu_tuong: i-diamond
+    nhan: Vì sao chọn chúng tôi
+    trang: /vi-sao-chon-chung-toi/
+  - bieu_tuong: i-book
+    nhan: Kiến thức pháp lý
+    trang: /kien-thuc-phap-ly/
+  - bieu_tuong: i-pin
+    nhan: Liên hệ, đường đến văn phòng
+    trang: /lien-he/
+lien_he_cuoi_trang:
+  hien: true
+  tieu_de: Chưa thấy câu trả lời? Hỏi trực tiếp luật sư
+seo:
+  tieu_de: Câu hỏi thường gặp khi thuê luật sư
+  mo_ta: Giải đáp về chi phí thuê luật sư theo Điều 55 Luật Luật sư, bảo mật thông tin, cam kết kết quả, thời hiệu, thời gian phản hồi và vụ việc ngoài TP.HCM.

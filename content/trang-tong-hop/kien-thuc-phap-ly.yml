@@ -1,0 +1,36 @@
+dau_trang:
+  nhan: Kiến thức pháp lý
+  tieu_de: Hiểu đúng quyền lợi của mình *trước khi quyết định*
+  mo_dau: Bài viết và giải đáp do Luật Sư Nam biên soạn bằng lời lẽ dễ hiểu, có dẫn điều luật cụ thể. Đọc để nắm vấn đề – còn vụ việc của anh chị, hãy hỏi trực tiếp luật sư.
+  the_luat_su: true
+bai_viet:
+  nhan: Bài viết mới
+  tieu_de: Giải thích tình huống người dân hay gặp
+  mo_ta: Mỗi bài có trích điều luật cụ thể và ghi rõ ngày cập nhật.
+the_cong_cu:
+  - bieu_tuong: i-steps
+    nhan: Làm việc với luật sư
+    tieu_de: Quy trình 4 bước và giấy tờ cần chuẩn bị
+    mo_ta: 'Từ buổi trao đổi đầu tiên đến khi hoàn tất: mỗi bước có đầu việc, kết quả và người phụ trách rõ ràng.'
+    lien_ket:
+      nhan: Xem quy trình làm việc
+      trang: /quy-trinh-lam-viec/
+  - bieu_tuong: i-question
+    nhan: Hỏi đáp
+    tieu_de: Câu hỏi thường gặp khi làm việc với luật sư
+    mo_ta: Chi phí thuê luật sư, bảo mật thông tin, thời hiệu, thời gian phản hồi và phạm vi hoạt động.
+    lien_ket:
+      nhan: Xem câu hỏi thường gặp
+      trang: /cau-hoi-thuong-gap/
+theo_linh_vuc:
+  nhan: Theo lĩnh vực
+  tieu_de: Tìm theo vấn đề của anh chị
+  mo_ta: Mỗi lĩnh vực có giải đáp ngắn, việc nên làm ngay và giấy tờ cần chuẩn bị.
+  lien_ket:
+    nhan: Tất cả lĩnh vực
+    trang: /dich-vu/
+lien_he_cuoi_trang:
+  hien: true
+seo:
+  tieu_de: Kiến thức pháp lý – Bài viết, tra cứu luật
+  mo_ta: Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai và giải đáp thắc mắc khi làm việc với luật sư.

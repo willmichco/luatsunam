@@ -1,0 +1,6 @@
+# Thư viện cho tools/build.py (dùng chung cho máy, GitHub Actions, Cloudflare). Khóa phiên bản để build ổn định.
+Pillow==12.3.0          # xử lý ảnh, WebP/AVIF
+PyYAML==6.0.3           # đọc nội dung content/*.yml
+markdown-it-py==4.2.0   # Markdown → HTML
+fonttools==4.67.0       # gộp phông Be Vietnam Pro cho ảnh chia sẻ
+Brotli==1.2.0           # đọc phông .woff2

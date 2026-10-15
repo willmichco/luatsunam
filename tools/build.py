@@ -1,194 +1,171 @@
 # -*- coding: utf-8 -*-
-"""Sinh toàn bộ website tĩnh LSN Law Firm – Công Ty Luật TNHH Luật Sư Nam.
+"""Sinh website tĩnh Công Ty Luật TNHH Luật Sư Nam từ content/ → dist/.
 
-    python3 tools/build.py
+    pip install -r requirements.txt
+    python3 tools/build.py                       # bản chính thức (GitHub Pages)
+    DRAFTS=1 NOINDEX=1 python3 tools/build.py    # bản thử: xuất cả bản nháp, chặn Google
+    python3 -m http.server 8000 --directory dist
 
-Nguồn nội dung:
-    tools/data.py            Thông tin pháp nhân, 7 lĩnh vực, bài viết, câu hỏi thường gặp
-    src/pages/*.html         Nội dung các trang đơn lẻ (có khối <!--meta {...} --> ở đầu)
-    src/bai-viet/*.html      Nội dung bài viết
+Một lệnh dùng chung cho máy, GitHub Actions và Cloudflare. Biến môi trường:
+    SITE_URL       Địa chỉ gốc, không có / cuối (mặc định https://willmichco.github.io/luatsunam)
+    BASE_PATH      Thư mục gốc trên máy chủ (mặc định /luatsunam/; tên miền riêng: /)
+    DRAFTS=1       Xuất cả bản nháp (xem trước tại /nhap/<đường-dẫn>/)
+    NOINDEX=1      Chặn Google lập chỉ mục toàn bộ (bản thử)
+    CMS_OAUTH_URL  Địa chỉ Worker đăng nhập GitHub cho /admin (để trống: đăng nhập bằng mã truy cập)
+    CMS_REPO, CMS_BRANCH  Repo nội dung (mặc định willmichco/luatsunam, main)
+Trên Cloudflare Pages (biến CF_PAGES có sẵn) mà chưa đặt SITE_URL: tự chạy chế độ bản thử.
 
-Kết quả: <duong-dan>/index.html cho mọi trang, 404.html, sitemap.xml, robots.txt,
-site.webmanifest, assets/search-index.json.
+Build lỗi (nhập sai nội dung) → in lỗi tiếng Việt kèm tệp + trường, KHÔNG ghi dist/, site giữ bản cũ.
 """
 import datetime
-import hashlib
-import html
 import json
 import os
 import re
+import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import (ARTICLE_BY_SLUG, ARTICLES, BASE_PATH, FAQ, FIRM, PROBLEM_ORDER,  # noqa: E402
-                  SERVICE_BY_SLUG, SERVICES, SITE_URL, articles_for_service)
+import blocks  # noqa: E402
+import content  # noqa: E402
+import markup as M  # noqa: E402
+import schema  # noqa: E402
+import tpl  # noqa: E402
+from images import COURT, Images  # noqa: E402
+from loi import LOI  # noqa: E402
+from markup import Ctx, esc  # noqa: E402
+from sprite import SPRITE  # noqa: E402
+from tpl import ARROW, asset_ref, ico  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "src")
 TODAY = datetime.date.today().isoformat()
-ORG_ID = SITE_URL + "/#organization"
-SITE_ID = SITE_URL + "/#website"
-ASSET_VERSION = "20261015b"
+LEGACY_URLS = ["https://willmichco.github.io/luatsunam", "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site",
+               "http://willmichco.github.io/luatsunam"]
 
 
-def esc(s):
-    return html.escape(s, quote=True)
+def read_env():
+    e = os.environ
+    preview = bool(e.get("CF_PAGES")) and not e.get("SITE_URL")
+    site_url = (e.get("SITE_URL") or (e.get("CF_PAGES_URL") if preview else "") or "https://willmichco.github.io/luatsunam").rstrip("/")
+    base_path = e.get("BASE_PATH") or ("/" if preview else "/luatsunam/")
+    if not base_path.endswith("/"):
+        base_path += "/"
+    flag = (lambda k, d: (e.get(k) or ("1" if d else "0")).strip().lower() in ("1", "true", "yes"))
+    return {
+        "site_url": site_url, "base_path": base_path,
+        "drafts": flag("DRAFTS", preview), "noindex": flag("NOINDEX", preview),
+        "oauth_url": e.get("CMS_OAUTH_URL", "").rstrip("/"),
+        "repo": e.get("CMS_REPO") or "willmichco/luatsunam", "branch": e.get("CMS_BRANCH") or "main",
+        "admin": flag("CMS_ADMIN", True),
+        "out": os.path.join(ROOT, e.get("OUT") or "dist"),
+        "internal_prefixes": sorted({site_url, *LEGACY_URLS}, key=len, reverse=True),
+    }
 
 
-def strip_tags(s):
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", s)).strip()
-
-
-def file_hash(rel):
-    with open(os.path.join(ROOT, rel), "rb") as fh:
-        return hashlib.md5(fh.read()).hexdigest()[:8]
+ENV = None
+S = None
+IMG = None
+ORG_ID = SITE_ID = ""
 
 
 def abs_url(path):
-    return SITE_URL + "/" + path
+    return ENV["site_url"] + "/" + path
 
 
-def asset_ref(path):
-    return f"{path}?v={ASSET_VERSION}"
+def F():
+    return S.firm
 
 
-# ---------------------------------------------------------------------------
-# Ảnh thật của luật sư: AVIF (nhẹ) + WebP (dự phòng), 3 bề ngang do tools/make_images.py sinh ra
-# ---------------------------------------------------------------------------
-PHOTO_SETS = {
-    "van-phong": {"w": 784, "h": 651, "alt": f'{FIRM["lawyer"]} làm việc tại văn phòng Luật Sư Nam, {FIRM["street"]}',
-                  "sizes": "(max-width: 700px) calc(100vw - 40px), (max-width: 900px) 640px, 560px"},
-    "phien-toa": {"w": 800, "h": 812, "alt": f'{FIRM["lawyer"]} tại ghế người bào chữa trong phiên tòa',
-                  "sizes": "(max-width: 600px) calc(100vw - 40px), 520px"},
-}
-
-
-def picture(r, name, lazy=False):
-    p = PHOTO_SETS[name]
-    base = f"assets/img/luat-su-{name}"
-
-    def srcset(ext):
-        return ", ".join(f"{r}{asset_ref(f'{base}{s}.{ext}')} {w}w" for s, w in (("-480", 480), ("-640", 640), ("", p["w"])))
-    load = 'loading="lazy" decoding="async"' if lazy else 'fetchpriority="high"'
-    return (f'<picture><source type="image/avif" srcset="{srcset("avif")}" sizes="{p["sizes"]}">'
-            f'<img src="{r}{asset_ref(base + ".webp")}" srcset="{srcset("webp")}" sizes="{p["sizes"]}" '
-            f'alt="{esc(p["alt"])}" width="{p["w"]}" height="{p["h"]}" {load}></picture>')
-
-
-def open_now(cls="open-now"):
-    """Trạng thái "Đang trong giờ làm việc / Ngoài giờ" theo giờ Việt Nam, do main.js điền khi tải trang."""
-    # Giữ sẵn chỗ (ẩn bằng visibility) để khi điền chữ, bố cục không bị xô lệch
-    return f'<span class="{cls}" data-open-now>&nbsp;</span>'
+def root_of(path):
+    return "../" * path.count("/")
 
 
 # ---------------------------------------------------------------------------
-# Biểu tượng SVG (sprite)
+# Menu, đầu trang, chân trang
 # ---------------------------------------------------------------------------
-SPRITE = """<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
-  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="i-scale" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6v34M14 42h20M10 12h28"/><path d="M12 12L5 27h14L12 12zM36 12l-7 15h14l-7-15z"/><path d="M5 27a7 4 0 0 0 14 0M29 27a7 4 0 0 0 14 0"/></g></symbol>
-  <symbol id="i-shield" viewBox="0 0 48 48"><path d="M24 4l16 6v12c0 10-7 18-16 22C15 40 8 32 8 22V10l16-6z" fill="currentColor"/><path d="M24 15l2.6 5.4 5.9.8-4.3 4.1 1 5.8L24 28.3l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8L24 15z" fill="#fff"/></symbol>
-  <symbol id="i-team" viewBox="0 0 48 48"><g fill="currentColor"><circle cx="24" cy="15" r="6"/><circle cx="11" cy="18" r="4.5"/><circle cx="37" cy="18" r="4.5"/><path d="M13 36c0-6.6 4.9-11 11-11s11 4.4 11 11v2H13v-2z"/><path d="M3 36c0-5 3.4-8.5 8-8.5 1.4 0 2.6.3 3.7.9A13.6 13.6 0 0 0 11 36v2H3v-2zM45 36c0-5-3.4-8.5-8-8.5-1.4 0-2.6.3-3.7.9A13.6 13.6 0 0 1 37 36v2h8v-2z"/></g></symbol>
-  <symbol id="i-inherit" viewBox="0 0 48 48"><path d="M24 7 10 15v25h28V15L24 7Zm-7 33V23h14v17M18 16h12M21 29h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-gavel" viewBox="0 0 48 48"><path d="M9 39h30M15 39V24h18v15M20 30h8M24 24V10m-8 7 8-7 8 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-house" viewBox="0 0 48 48"><path d="M12 41V9h24v32M8 41h32M18 16h4m4 0h4m-12 7h4m4 0h4m-12 7h4m4 0h4M21 41v-5h6v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-heart" viewBox="0 0 48 48"><path d="M24 41S6 30 6 17.5A9.5 9.5 0 0 1 24 13a9.5 9.5 0 0 1 18 4.5C42 30 24 41 24 41z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
-  <symbol id="i-doc" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 6h18l8 8v28H12z"/><path d="M30 6v8h8M18 20h14M18 26h14M18 32h10"/></g></symbol>
-  <symbol id="i-network" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="12" r="5"/><circle cx="10" cy="20" r="4"/><circle cx="38" cy="20" r="4"/><path d="M14 38c0-6 4.5-10 10-10s10 4 10 10M2 36c0-4.5 3-7.5 8-7.5M46 36c0-4.5-3-7.5-8-7.5"/></g></symbol>
-  <symbol id="i-shield-check" viewBox="0 0 48 48"><path d="M24 7 10 13v10c0 9 5.8 15.3 14 18 8.2-2.7 14-9 14-18V13L24 7Zm-6 17 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-diamond" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 8h24l8 10-20 24L4 18z"/><path d="M4 18h40M18 8l-4 10 10 24 10-24-4-10"/></g></symbol>
-  <symbol id="i-steps" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="12" r="4"/><circle cx="38" cy="36" r="4"/><path d="M14 12h14a6 6 0 0 1 0 12H20a6 6 0 0 0 0 12h14"/></g></symbol>
-  <symbol id="i-user" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="16" r="8"/><path d="M8 42c0-9 7-15 16-15s16 6 16 15"/></g></symbol>
-  <symbol id="i-clock48" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="24" r="18"/><path d="M24 13v11l7 5"/></g></symbol>
-  <symbol id="i-book" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M8 9h13a5 5 0 0 1 5 5v26a4 4 0 0 0-4-4H8z"/><path d="M40 9H29a5 5 0 0 0-3 1M40 9v27H30a4 4 0 0 0-4 4"/></g></symbol>
-  <symbol id="i-question" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="24" r="18"/><path d="M18.5 19a5.5 5.5 0 1 1 7.7 5c-1.4.7-2.2 1.8-2.2 3.3V29M24 35v.5"/></g></symbol>
-  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.3 7 13 7 13s7-7.7 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></symbol>
-  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2.2V17h16V7.2l-8 5.3-8-5.3zM5.5 7l6.5 4.3L18.5 7h-13z" fill="currentColor"/></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
-  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></g></symbol>
-  <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M20 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-chevron-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
-  <symbol id="i-print" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3"/><path d="M7 14h10v7H7z"/></g></symbol>
-  <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></g></symbol>
-  <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="13" rx="1.5"/><path d="M16 8V4.5A1.5 1.5 0 0 0 14.5 3h-9A1.5 1.5 0 0 0 4 4.5V16a1.5 1.5 0 0 0 1.5 1.5H8"/></g></symbol>
-  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="9" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4M12 12v4"/></g></symbol>
-  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></g></symbol>
-  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></g></symbol>
-  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.8 2.8L16.2 9.8"/></g></symbol>
-  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.6"/></g></symbol>
-  <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5"/></g></symbol>
-</svg>"""
+def p2path(value):
+    """Giá trị ô "Trang" trong CMS ("/gioi-thieu/") → đường dẫn trang ("gioi-thieu/")."""
+    return (value or "/").lstrip("/")
 
 
-def ico(name, cls="ico"):
-    return f'<svg class="{cls}" aria-hidden="true"><use href="#{name}"/></svg>'
+def menu_items():
+    """Menu đã bỏ mục trỏ tới bản nháp (bản chính thức) và tự thêm lĩnh vực chưa xếp nhóm."""
+    out = []
+    for it in S.menu.get("menu") or []:
+        it = dict(it)
+        if p2path(it.get("trang")) in S.draft_paths and not S.drafts:
+            continue
+        if it.get("loai") == "menu_xo":
+            it["muc_con"] = [x for x in it.get("muc_con") or [] if S.drafts or p2path(x.get("trang")) not in S.draft_paths]
+        if it.get("loai") == "menu_linh_vuc":
+            groups = [dict(g, linh_vuc=[x for x in g.get("linh_vuc") or [] if x in S.service_by_slug]) for g in it.get("nhom") or []]
+            placed = {x for g in groups for x in g["linh_vuc"]}
+            missing = [s["slug"] for s in S.services if s["slug"] not in placed]
+            if missing and groups:
+                groups[-1]["linh_vuc"] += missing
+            it["nhom"] = groups
+        out.append(it)
+    return out
 
 
-ARROW = ico("i-arrow")
+def menu_members(it):
+    paths = {p2path(it.get("trang"))}
+    if it.get("loai") == "menu_xo":
+        paths |= {p2path(x.get("trang")) for x in it.get("muc_con") or []}
+    if it.get("loai") == "menu_linh_vuc":
+        paths |= {f"dich-vu/{s['slug']}/" for s in S.services}
+    if "kien-thuc-phap-ly/" in paths:
+        paths |= {f"kien-thuc-phap-ly/{a['slug']}/" for a in S.articles}
+    return paths
 
-# ---------------------------------------------------------------------------
-# Menu
-# ---------------------------------------------------------------------------
-NAV = [
-    ("home", "Trang chủ", "", None),
-    ("about", "Giới thiệu", "gioi-thieu/", [
-        ("Về Luật Sư Nam", "gioi-thieu/", "Triết lý hành nghề và cam kết nghề nghiệp"),
-        ("Vì sao chọn chúng tôi", "vi-sao-chon-chung-toi/", "Bốn nguyên tắc trong mọi hồ sơ"),
-        ("Quy trình làm việc", "quy-trinh-lam-viec/", "Bốn bước và hồ sơ cần chuẩn bị"),
-    ]),
-    ("services", "Dịch vụ", "dich-vu/", "services"),
-    ("knowledge", "Thư viện pháp lý", "kien-thuc-phap-ly/", [
-        ("Bài viết pháp lý", "kien-thuc-phap-ly/", "Phân tích, hướng dẫn theo từng lĩnh vực"),
-        ("Câu hỏi thường gặp", "cau-hoi-thuong-gap/", "Chi phí, bảo mật, thời hạn"),
-    ]),
-    ("contact", "Liên hệ", "lien-he/", None),
-]
+
+def section_of(path):
+    for i, it in enumerate(menu_items()):
+        if path in menu_members(it):
+            return i, it["nhan"]
+    return None, ""
 
 
 def cur(page, href):
     return ' aria-current="page"' if page["path"] == href else ""
 
 
-def nav_html(page, r):
+def nav_link(ctx, value):
+    """Đường dẫn trong menu: giữ kiểu đường dẫn tương đối của site, đồng thời ghi lại để kiểm trang tồn tại."""
+    path = p2path(value)
+    S.link_refs.append(("content/cai-dat/menu.yml", "Menu chính", path, ""))
+    return ctx.r + path
+
+
+def nav_html(page, ctx):
     items = []
-    for key, label, href, sub in NAV:
-        active = page.get("section") == key
-        current = page["path"] == href
-        attrs = ' aria-current="page"' if current else ""
-        cls = "nav__link" + (" is-active" if active else "")
-        if not sub:
-            items.append(f'<li class="nav__item"><a class="{cls}" href="{r}{href}"{attrs}>{label}</a></li>')
+    active_idx, _ = section_of(page["path"])
+    menu = menu_items()
+    for idx, it in enumerate(menu):
+        label = esc(it["nhan"])
+        href = p2path(it.get("trang"))
+        cls = "nav__link" + (" is-active" if idx == active_idx else "")
+        if it.get("loai") == "lien_ket":
+            items.append(f'<li class="nav__item"><a class="{cls}" href="{nav_link(ctx, it.get("trang"))}"{cur(page, href)}>{label}</a></li>')
             continue
-        sid = f"sub-{key}"
-        if sub == "services":
-            groups = [
-                ("Cá nhân & gia đình", ["dan-su", "dat-dai-bat-dong-san", "hon-nhan-gia-dinh", "thua-ke"]),
-                ("Tranh chấp & thủ tục", ["tranh-tung-giai-quyet-tranh-chap", "hinh-su", "cong-chung"]),
-            ]
+        sid = "sub-" + (M.slugify(it["nhan"]) or str(idx))
+        if it.get("loai") == "menu_linh_vuc":
             links = ""
-            for group_title, slugs in groups:
+            for g in it["nhom"]:
                 group_links = "".join(
-                    f'<li><a class="nav__sublink" href="{r}dich-vu/{s["slug"]}/"{cur(page, "dich-vu/" + s["slug"] + "/")}>'
-                    f'{ico(s["icon"], "nav__subicon")}<span>{esc(s["name"])}</span></a></li>'
-                    for slug in slugs for s in [SERVICE_BY_SLUG[slug]])
-                links += f'<li class="nav__group"><p class="nav__group-title">{esc(group_title)}</p><ul>{group_links}</ul></li>'
-            links += f'<li class="nav__suball"><a href="{r}dich-vu/"{cur(page, "dich-vu/")}>Tổng quan dịch vụ pháp lý {ARROW}</a></li>'
+                    f'<li><a class="nav__sublink" href="{ctx.r}dich-vu/{s["slug"]}/"{cur(page, "dich-vu/" + s["slug"] + "/")}>'
+                    f'{ico(s["bieu_tuong"], "nav__subicon")}<span>{esc(s["ten"])}</span></a></li>'
+                    for slug in g["linh_vuc"] for s in [S.service_by_slug[slug]])
+                links += f'<li class="nav__group"><p class="nav__group-title">{esc(g["ten_nhom"])}</p><ul>{group_links}</ul></li>'
+            links += (f'<li class="nav__suball"><a href="{nav_link(ctx, it.get("trang"))}"{cur(page, href)}>'
+                      f'{esc(it.get("nhan_tat_ca") or "Tất cả")} {ARROW}</a></li>')
             sub_cls = "nav__sub nav__sub--mega"
         else:
             links = "".join(
-                f'<li><a class="nav__sublink" href="{r}{h}"{cur(page, h)}>'
-                f'<span>{esc(t)}<small>{esc(d)}</small></span></a></li>' for t, h, d in sub)
+                f'<li><a class="nav__sublink" href="{nav_link(ctx, x.get("trang"))}"{cur(page, p2path(x.get("trang")))}>'
+                f'<span>{esc(x["nhan"])}<small>{esc(x.get("mo_ta") or "")}</small></span></a></li>' for x in it.get("muc_con") or [])
             sub_cls = "nav__sub"
+        if idx >= (len(menu) + 1) // 2:  # menu xổ ở nửa phải: căn theo mép phải để không tràn màn hình
+            sub_cls += " nav__sub--right"
         items.append(
             f'<li class="nav__item has-sub"><button class="{cls} nav__toggle" type="button" '
             f'aria-expanded="false" aria-controls="{sid}"><span>{label}</span>{ico("i-chevron")}</button>'
@@ -197,108 +174,115 @@ def nav_html(page, r):
 
 
 def logo_html(r, tag=None):
-    """Có tag: "LUẬT SƯ NAM" + khẩu hiệu (footer). Không tag: "Công Ty Luật TNHH / Luật Sư Nam" (header)."""
-    # Tên đọc bởi trình đọc màn hình lấy từ chữ hiển thị (khớp nhãn nhìn thấy), thêm "Trang chủ" ẩn
-    text = (f'<span class="logo__name">LUẬT SƯ NAM</span> <span class="logo__tag">{tag}</span>' if tag else
-            '<span class="logo__pre">Công Ty Luật TNHH</span> <span class="logo__name logo__name--firm">Luật Sư Nam</span>')
+    """Có tag: tên ngắn viết hoa + khẩu hiệu (chân trang). Không tag: "Công Ty Luật TNHH / Luật Sư Nam" (đầu trang)."""
+    f = F()
+    pre = f["legal_name"][: -len(f["short_name"])].strip() if f["legal_name"].endswith(f["short_name"]) else f["legal_name"]
+    text = (f'<span class="logo__name">{esc(f["short_name"].upper())}</span> <span class="logo__tag">{esc(tag)}</span>' if tag else
+            f'<span class="logo__pre">{esc(pre)}</span> <span class="logo__name logo__name--firm">{esc(f["short_name"])}</span>')
     return f"""<a class="logo" href="{r or './'}">
       <img class="logo__img" src="{r}{asset_ref("assets/img/logo-lsn-108.webp")}" srcset="{r}{asset_ref("assets/img/logo-lsn.webp")} 3x" width="54" height="54" alt="">
       <span class="logo__text">{text}<span class="sr-only"> – Trang chủ</span></span>
     </a>"""
 
 
-def header_html(page, r):
+def header_html(page, ctx):
+    f, r = F(), ctx.r
     return f"""<header class="header site-header" id="site-header">
   <div class="container header__inner">
     {logo_html(r)}
 
     <nav class="nav" id="nav" aria-label="Điều hướng chính">
       <ul class="nav__list">
-        {nav_html(page, r)}
+        {nav_html(page, ctx)}
       </ul>
       <div class="nav__mobile-extra">
-        <a class="btn btn--primary btn--block" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>
-        <a class="btn btn--zalo btn--block" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")} Nhắn Zalo cho luật sư</a>
-        <p class="nav__note">{ico("i-clock")}{FIRM["hours"]}</p>
-        <p class="nav__note">{open_now()}</p>
+        <a class="btn btn--primary btn--block" href="tel:{f["phone_tel"]}">{ico("i-phone")} Gọi {esc(f["phone"])}</a>
+        <a class="btn btn--zalo btn--block" href="{esc(f["zalo"])}" target="_blank" rel="noopener">{ico("i-chat")} Nhắn Zalo cho luật sư</a>
+        <p class="nav__note">{ico("i-clock")}{esc(f["hours"])}</p>
+        <p class="nav__note">{tpl.open_now()}</p>
       </div>
     </nav>
 
     <div class="header__actions">
       <button class="header__search" type="button" aria-label="Tìm kiếm trên website" aria-haspopup="dialog" data-open-search>{ico("i-search")}<span>Tìm kiếm</span></button>
-      <a class="header__call" href="tel:{FIRM["phone_tel"]}" aria-label="Gọi tư vấn {FIRM["phone"]}">{ico("i-phone")}<span><small>Gọi tư vấn</small><strong>{FIRM["phone"]}</strong></span></a>
+      <a class="header__call" href="tel:{f["phone_tel"]}" aria-label="Gọi tư vấn {esc(f["phone"])}">{ico("i-phone")}<span><small>Gọi tư vấn</small><strong>{esc(f["phone"])}</strong></span></a>
       <button class="icon-btn burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nav" id="burger">{ico("i-menu", "")}</button>
     </div>
   </div>
 </header>"""
 
 
-def footer_html(r):
-    services = "".join(f'<li><a href="{r}dich-vu/{s["slug"]}/">{esc(s["name"])}</a></li>' for s in SERVICES)
+def footer_html(ctx):
+    f, r, m = F(), ctx.r, S.menu
+    c = ctx.at(src="content/cai-dat/menu.yml", where="Cột liên kết ở chân trang")
+    cols = m.get("tieu_de_cot") or {}
+    services = "".join(f'<li><a href="{r}dich-vu/{s["slug"]}/">{esc(s["ten"])}</a></li>' for s in S.services)
+    about_links = "".join(f'<li><a href="{tpl.link_href(c, x)}">{esc(x["nhan"])}</a></li>' for x in m.get("chan_trang") or [])
+    legal = "".join(f'<a href="{tpl.link_href(c.at(where="Liên kết cuối chân trang"), x)}">{esc(x["nhan"])}</a>' for x in m.get("lien_ket_phap_ly") or [])
+    about = M.inline(f["footer_about"], ctx.at(src="content/cai-dat/cong-ty.yml", where="Giới thiệu ngắn ở chân trang"))
+    disclaimer = M.inline(S.text.get("mien_tru_chan_trang"), ctx.at(src="content/cai-dat/cau-chu.yml", where="Miễn trừ trách nhiệm ở chân trang"))
     return f"""<footer class="footer site-footer">
   <div class="container footer__grid">
     <div class="footer__brand">
-      {logo_html(r, FIRM["slogan"])}
-      <p class="footer__about"><strong>{FIRM["legal_name"]}</strong> tư vấn pháp luật, đại diện và tham gia tố tụng cho cá nhân, doanh nghiệp tại Thành phố Hồ Chí Minh và các tỉnh thành trên cả nước. Hoạt động theo Giấy đăng ký hoạt động do Sở Tư pháp cấp.</p>
+      {logo_html(r, f["slogan"])}
+      <p class="footer__about">{about}</p>
       <div class="social">
-        <a href="{FIRM["zalo"]}" target="_blank" rel="noopener" aria-label="Nhắn Zalo {FIRM["phone"]}" class="social__zalo">Zalo</a>
-        <a href="tel:{FIRM["phone_tel"]}" aria-label="Gọi {FIRM["phone"]}">{ico("i-phone", "")}</a>
-        <a href="mailto:{FIRM["email"]}" aria-label="Gửi email">{ico("i-mail", "")}</a>
-        <a href="https://www.google.com/maps/search/?api=1&amp;query={FIRM["maps_query"]}" target="_blank" rel="noopener" aria-label="Mở bản đồ văn phòng">{ico("i-pin", "")}</a>
+        <a href="{esc(f["zalo"])}" target="_blank" rel="noopener" aria-label="Nhắn Zalo {esc(f["phone"])}" class="social__zalo">Zalo</a>
+        <a href="tel:{f["phone_tel"]}" aria-label="Gọi {esc(f["phone"])}">{ico("i-phone", "")}</a>
+        <a href="mailto:{esc(f["email"])}" aria-label="Gửi email">{ico("i-mail", "")}</a>
+        <a href="https://www.google.com/maps/search/?api=1&amp;query={f["maps_query"]}" target="_blank" rel="noopener" aria-label="Mở bản đồ văn phòng">{ico("i-pin", "")}</a>
       </div>
     </div>
 
     <div>
-      <h2 class="footer__title">Về chúng tôi</h2>
+      <h2 class="footer__title">{esc(cols.get("ve_chung_toi") or "Về chúng tôi")}</h2>
       <ul class="footer__links">
-        <li><a href="{r}gioi-thieu/">Giới thiệu Luật Sư Nam</a></li>
-        <li><a href="{r}vi-sao-chon-chung-toi/">Vì sao chọn chúng tôi</a></li>
-        <li><a href="{r}quy-trinh-lam-viec/">Quy trình làm việc</a></li>
-        <li><a href="{r}kien-thuc-phap-ly/">Kiến thức pháp lý</a></li>
-        <li><a href="{r}cau-hoi-thuong-gap/">Câu hỏi thường gặp</a></li>
-        <li><a href="{r}lien-he/">Liên hệ</a></li>
+        {about_links}
       </ul>
     </div>
 
     <div>
-      <h2 class="footer__title">Lĩnh vực hoạt động</h2>
+      <h2 class="footer__title">{esc(cols.get("linh_vuc") or "Lĩnh vực hoạt động")}</h2>
       <ul class="footer__links">{services}</ul>
     </div>
 
     <div>
-      <h2 class="footer__title">Văn phòng</h2>
+      <h2 class="footer__title">{esc(cols.get("van_phong") or "Văn phòng")}</h2>
       <ul class="footer__contact">
-        <li>{ico("i-pin")}<span>{FIRM["street"]},<br>{FIRM["ward"]},<br>{FIRM["city"]}</span></li>
-        <li>{ico("i-phone")}<a href="tel:{FIRM["phone_tel"]}">{FIRM["phone"]}</a></li>
-        <li>{ico("i-mail")}<a href="mailto:{FIRM["email"]}">{FIRM["email"]}</a></li>
-        <li>{ico("i-clock")}<span>{FIRM["hours"]}</span></li>
+        <li>{ico("i-pin")}<span>{esc(f["street"])},<br>{esc(f["ward"])},<br>{esc(f["city"])}</span></li>
+        <li>{ico("i-phone")}<a href="tel:{f["phone_tel"]}">{esc(f["phone"])}</a></li>
+        <li>{ico("i-mail")}<a href="mailto:{esc(f["email"])}">{esc(f["email"])}</a></li>
+        <li>{ico("i-clock")}<span>{esc(f["hours"])}</span></li>
       </ul>
     </div>
   </div>
   <div class="footer__disclaimer">
     <div class="container">
-      <p><strong>Miễn trừ trách nhiệm:</strong> Nội dung trên website chỉ mang tính thông tin pháp lý chung, không phải ý kiến tư vấn cho một vụ việc cụ thể và không làm phát sinh quan hệ luật sư – khách hàng. Quy định pháp luật có thể thay đổi theo thời điểm. Xem đầy đủ tại <a href="{r}mien-tru-trach-nhiem/">Tuyên bố miễn trừ trách nhiệm</a>.</p>
+      <p>{disclaimer}</p>
     </div>
   </div>
   <div class="footer__bottom">
     <div class="container footer__bottom-inner">
-      <p>© <span data-year>{TODAY[:4]}</span> {FIRM["legal_name"]}.</p>
-      <p class="footer__legal"><a href="{r}chinh-sach-bao-mat/">Chính sách bảo mật</a><a href="{r}dieu-khoan-su-dung/">Điều khoản sử dụng</a><a href="{r}mien-tru-trach-nhiem/">Miễn trừ trách nhiệm</a></p>
+      <p>© <span data-year>{TODAY[:4]}</span> {esc(f["legal_name"])}.</p>
+      <p class="footer__legal">{legal}</p>
     </div>
   </div>
 </footer>"""
 
 
-def overlays_html(r):
+def overlays_html(ctx):
+    f, r = F(), ctx.r
+    c = ctx.at(src="content/cai-dat/menu.yml", where="Gợi ý trong ô tìm kiếm")
+    hints = "\n      ".join(f'<a href="{tpl.link_href(c, x)}">{esc(x["nhan"])}</a>' for x in S.menu.get("goi_y_tim_kiem") or [])
     return f"""<div class="floating">
-  <a class="floating__btn floating__btn--zalo" href="{FIRM["zalo"]}" target="_blank" rel="noopener" aria-label="Nhắn Zalo {FIRM["phone"]}">Zalo</a>
-  <a class="floating__btn floating__btn--phone" href="tel:{FIRM["phone_tel"]}" aria-label="Gọi hotline {FIRM["phone"]}">{ico("i-phone", "")}</a>
+  <a class="floating__btn floating__btn--zalo" href="{esc(f["zalo"])}" target="_blank" rel="noopener" aria-label="Nhắn Zalo {esc(f["phone"])}">Zalo</a>
+  <a class="floating__btn floating__btn--phone" href="tel:{f["phone_tel"]}" aria-label="Gọi hotline {esc(f["phone"])}">{ico("i-phone", "")}</a>
   <button class="floating__btn floating__btn--top" type="button" aria-label="Lên đầu trang" id="to-top">{ico("i-up", "")}</button>
 </div>
 
 <nav class="actionbar" aria-label="Liên hệ nhanh với luật sư">
-  <a class="actionbar__call" href="tel:{FIRM["phone_tel"]}">{ico("i-phone", "")}<span>Gọi luật sư</span></a>
-  <a class="actionbar__zalo" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat", "")}<span>Nhắn Zalo</span></a>
+  <a class="actionbar__call" href="tel:{f["phone_tel"]}">{ico("i-phone", "")}<span>Gọi luật sư</span></a>
+  <a class="actionbar__zalo" href="{esc(f["zalo"])}" target="_blank" rel="noopener">{ico("i-chat", "")}<span>Nhắn Zalo</span></a>
 </nav>
 
 <div class="overlay search" id="search" hidden>
@@ -310,61 +294,26 @@ def overlays_html(r):
     </form>
     <ul class="search__results" id="search-results" aria-live="polite"></ul>
     <p class="search__hint">Gợi ý:
-      <a href="{r}dich-vu/thua-ke/">Thừa kế</a>
-      <a href="{r}dich-vu/hon-nhan-gia-dinh/">Ly hôn</a>
-      <a href="{r}dich-vu/dat-dai-bat-dong-san/">Tranh chấp đất đai</a>
-      <a href="{r}dich-vu/hinh-su/">Luật sư hình sự</a>
+      {hints}
     </p>
   </div>
 </div>"""
 
 
 # ---------------------------------------------------------------------------
-# Thành phần trang
+# Đầu trang con, dữ liệu có cấu trúc, khung trang
 # ---------------------------------------------------------------------------
-def breadcrumb_html(crumbs, r):
-    parts = []
-    for i, (name, path) in enumerate(crumbs):
-        if i == len(crumbs) - 1:
-            parts.append(f'<li aria-current="page">{esc(name)}</li>')
-        else:
-            parts.append(f'<li><a href="{r}{path}">{esc(name)}</a></li>')
-    return f'<nav class="breadcrumb" aria-label="Đường dẫn"><ol>{"".join(parts)}</ol></nav>'
-
-
-def lawyer_card(r):
-    """Thẻ luật sư phụ trách ở đầu trang: ảnh thật, tên, gọi / Zalo."""
-    # Điện thoại, máy tính bảng: ảnh hiển thị tròn 72–96px nên dùng ảnh avatar vuông (nhẹ, đúng khung mặt)
-    return f"""<aside class="lcard" aria-label="Luật sư phụ trách">
-      <picture>
-        <source media="(max-width: 900px)" srcset="{r}{asset_ref("assets/img/luat-su-avatar.webp")}">
-        <source type="image/avif" srcset="{r}{asset_ref("assets/img/luat-su-chan-dung.avif")}">
-        <img class="lcard__photo" src="{r}{asset_ref("assets/img/luat-su-chan-dung.webp")}" alt="{FIRM["lawyer"]} tại phiên tòa" width="560" height="420">
-      </picture>
-      <div class="lcard__body">
-        <p class="lcard__name">{FIRM["lawyer"]}</p>
-        <p class="lcard__role">{FIRM["lawyer_role"]}</p>
-        <div class="lcard__actions">
-          <a class="btn btn--primary btn--sm" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>
-          <a class="btn btn--outline btn--sm" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")} Zalo</a>
-        </div>
-        <p class="lcard__note">{ico("i-clock")} {FIRM["hours"]}</p>
-        {open_now("open-now lcard__status")}
-      </div>
-    </aside>"""
-
-
-def page_hero_html(page, r):
+def page_hero_html(page, ctx):
     """Đầu trang con dùng chung: đường dẫn, tiêu đề, mô tả; bên phải là thẻ luật sư phụ trách."""
     h = page.get("hero") or {}
-    aside = lawyer_card(r) if page.get("lawyer_card", True) else ""
+    aside = tpl.lawyer_card(ctx.r) if page.get("lawyer_card", True) else ""
     lead = f'<p class="phead__lead">{page["lead"]}</p>' if page.get("lead") else ""
-    eyebrow = f'<p class="eyebrow">{esc(page["eyebrow"])}</p>' if page.get("eyebrow") else ""
+    eyebrow = f'<p class="eyebrow">{page["eyebrow"]}</p>' if page.get("eyebrow") else ""
     actions = f'<div class="phead__actions">{h["actions"]}</div>' if h.get("actions") else ""
     return f"""<section class="phead{' phead--aside' if aside else ''}">
   <div class="container phead__grid">
     <div class="phead__copy">
-      {breadcrumb_html(page["crumbs"], r)}
+      {tpl.breadcrumb_html(page["crumbs"], ctx.r)}
       {eyebrow}
       <h1 class="phead__title">{page["h1"]}</h1>
       {lead}
@@ -376,179 +325,25 @@ def page_hero_html(page, r):
 </section>"""
 
 
-CBAND_TEXT = ("Vụ việc càng sớm được xem xét, anh chị càng có nhiều lựa chọn. Với việc gấp như người nhà bị tạm giữ "
-              "hoặc sắp hết thời hạn kháng cáo, hãy gọi điện trực tiếp.")
-
-
-def contact_band(r, eyebrow="Tư vấn trực tiếp với luật sư", title="Cần hỏi luật sư? Liên hệ ngay", text=CBAND_TEXT):
-    """Khối liên hệ cuối mọi trang: ảnh luật sư, gọi điện, Zalo, đường đến văn phòng."""
-    return f"""<section class="cband" aria-labelledby="cband-title">
-  <div class="container">
-    <div class="cband__intro">
-      <img class="cband__avatar" src="{r}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="{FIRM["lawyer"]}" width="92" height="92" loading="lazy" decoding="async">
-      <div>
-        <p class="eyebrow">{esc(eyebrow)}</p>
-        <h2 class="cband__title" id="cband-title">{title}</h2>
-        <p class="cband__text">{text}</p>
-      </div>
-    </div>
-    <div class="cband__cards">
-      <a class="cband__card" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")}<span>Gọi điện</span><strong>{FIRM["phone"]}</strong><small>{FIRM["hours"]}</small>{open_now()}</a>
-      <a class="cband__card cband__card--zalo" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")}<span>Nhắn Zalo</span><strong>{FIRM["phone"]}</strong><small>Kể ngắn gọn sự việc, luật sư phản hồi trong giờ làm việc</small></a>
-      <a class="cband__card" href="https://www.google.com/maps/dir/?api=1&amp;destination={FIRM["maps_query"]}" target="_blank" rel="noopener">{ico("i-pin")}<span>Đến văn phòng</span><strong>{FIRM["street"]}</strong><small>{FIRM["ward"]}, TP.HCM · gọi trước khi đến</small></a>
-    </div>
-  </div>
-</section>"""
-
-
-def shead(eyebrow, title, text="", link=None, center=False, hid=""):
-    """Tiêu đề khu vực dùng chung: nhãn nhỏ, tiêu đề, mô tả, liên kết bên phải."""
-    eb = f'<p class="eyebrow">{eyebrow}</p>' if eyebrow else ""
-    p = f'<p class="shead__text">{text}</p>' if text else ""
-    a = f'<a class="link-arrow" href="{link[0]}">{link[1]} {ARROW}</a>' if link else ""
-    idattr = f' id="{hid}"' if hid else ""
-    cls = "shead shead--center" if center else "shead"
-    return f'<div class="{cls} reveal"><div class="shead__main">{eb}<h2 class="h2"{idattr}>{title}</h2>{p}</div>{a}</div>'
-
-
-def icard(href, icon, title, text, more="Xem chi tiết", heading="h3"):
-    return (f'<a class="icard reveal" href="{href}"><span class="ichip">{ico(icon, "")}</span>'
-            f'<{heading} class="icard__title">{title}</{heading}><p class="icard__text">{text}</p>'
-            f'<span class="icard__more">{more} {ARROW}</span></a>')
-
-
-def problem_card(s, r):
-    """Thẻ "anh chị đang gặp chuyện gì": tình huống đời thường dẫn tới trang lĩnh vực."""
-    return (f'<a class="icard reveal" href="{r}dich-vu/{s["slug"]}/"><span class="ichip">{ico(s.get("problem_icon", s["icon"]), "")}</span>'
-            f'<span class="icard__tag">{esc(s["name"])}</span>'
-            f'<h3 class="icard__title">{esc(s["problem_title"])}</h3><p class="icard__text">{esc(s["problem_text"])}</p>'
-            f'<span class="icard__more">Xem cách giải quyết {ARROW}</span></a>')
-
-
-def problems_grid(r):
-    return '<div class="grid grid--4 grid--problems">' + "".join(problem_card(SERVICE_BY_SLUG[x], r) for x in PROBLEM_ORDER) + "</div>"
-
-
-def service_card(s, r, heading="h3"):
-    return icard(f'{r}dich-vu/{s["slug"]}/', s["icon"], esc(s["name"]), esc(s["short"]), heading=heading)
-
-
-def services_grid(r, exclude=None, only=None, cls="grid grid--4"):
-    items = [SERVICE_BY_SLUG[x] for x in only] if only else [s for s in SERVICES if s["slug"] != exclude]
-    return f'<div class="{cls}">' + "".join(service_card(s, r) for s in items) + "</div>"
-
-
-def vi_date(iso):
-    y, m, d = iso.split("-")
-    return f"{int(d):02d} Tháng {int(m)}, {y}"
-
-
-def article_card(a, r, heading="h3"):
-    return f"""<article class="post reveal">
-  <p class="post__meta"><a class="tag" href="{r}dich-vu/{a["service"]}/">{esc(a["category"])}</a><time datetime="{a["published"]}">{ico("i-calendar")}{vi_date(a["published"])}</time></p>
-  <{heading} class="post__title"><a href="{r}kien-thuc-phap-ly/{a["slug"]}/">{esc(a["card_title"])}</a></{heading}>
-  <p class="post__excerpt">{esc(a["excerpt"])}</p>
-  <span class="post__more" aria-hidden="true">Đọc bài viết {ARROW}</span>
-</article>"""
-
-
-def articles_grid(r, items=None, cls="grid grid--3"):
-    items = items if items is not None else ARTICLES
-    return f'<div class="{cls}">' + "".join(article_card(a, r) for a in items) + "</div>"
-
-
-def faq_list(r, items=None):
-    out = []
-    for f in (items or FAQ):
-        body = "".join(f"<p>{p}</p>" for p in f["a"]).replace("{{root}}", r)
-        out.append(f"""<details class="faq__item" id="{f["id"]}">
-  <summary><span>{esc(f["q"])}</span>{ico("i-chevron", "faq__chev")}</summary>
-  <div class="faq__answer">{body}</div>
-</details>""")
-    return '<div class="faq">' + "".join(out) + "</div>"
-
-
-def check_list(items):
-    return '<ul class="check-list">' + "".join(f"<li>{ico('i-check')}<span>{esc(i)}</span></li>" for i in items) + "</ul>"
-
-
-TOKEN_RE = re.compile(r"\{\{(\w+)(?::([^}]*))?\}\}")
-
-
-def render_tokens(body, page, r):
-    def rep(m):
-        name, arg = m.group(1), m.group(2)
-        if name == "root":
-            return r
-        if name in ("phone", "phone_tel", "email", "zalo", "address", "hours", "hours_note", "maps_query",
-                    "legal_name", "street", "ward", "city", "lawyer", "lawyer_role"):
-            return FIRM[name]
-        if name == "v":
-            return ASSET_VERSION
-        if name == "cta":
-            return ""
-        if name == "services_grid":
-            return services_grid(r)
-        if name == "problems_grid":
-            return problems_grid(r)
-        if name == "articles_grid":
-            return articles_grid(r)
-        if name == "faq_list":
-            ids = arg.split(",") if arg else None
-            return faq_list(r, [f for f in FAQ if f["id"] in ids] if ids else None)
-        if name == "arrow":
-            return ARROW
-        if name == "photo":
-            nm, _, opt = arg.partition("|")
-            return picture(r, nm, lazy=opt == "lazy")
-        if name == "open_now":
-            return open_now()
-        if name == "ico":
-            nm, _, cls = arg.partition("|")
-            return ico(nm, cls or "ico")
-        raise KeyError(f"Token không xác định: {name} ({page['path']})")
-    return TOKEN_RE.sub(rep, body)
-
-
-# ---------------------------------------------------------------------------
-# Dữ liệu có cấu trúc (JSON-LD)
-# ---------------------------------------------------------------------------
 def org_node():
+    f = F()
+    days = f["open_days"]
     return {
-        "@type": "LegalService",
-        "@id": ORG_ID,
-        "name": FIRM["legal_name"],
-        "alternateName": [FIRM["short_name"], FIRM["brand"]],
-        "slogan": FIRM["slogan"],
-        "url": SITE_URL + "/",
+        "@type": "LegalService", "@id": ORG_ID, "name": f["legal_name"],
+        "alternateName": [f["short_name"], f["brand"]], "slogan": f["slogan"], "url": ENV["site_url"] + "/",
         "logo": {"@type": "ImageObject", "url": abs_url("assets/img/icon-512.png"), "width": 512, "height": 512},
         "image": abs_url(asset_ref("assets/img/og-image.jpg")),
-        "description": "Công ty luật tại Thành phố Hồ Chí Minh, tư vấn và tham gia tố tụng trong các lĩnh vực thừa kế, "
-                       "đất đai, hôn nhân gia đình, hình sự, dân sự, công chứng và tranh chấp thương mại.",
-        "telephone": FIRM["phone_intl"],
-        "email": FIRM["email"],
-        "priceRange": "Theo thỏa thuận",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": FIRM["street"],
-            "addressLocality": FIRM["ward"],
-            "addressRegion": FIRM["city"],
-            "addressCountry": "VN",
-        },
-        "openingHoursSpecification": [{
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            "opens": "08:00", "closes": "17:30",
-        }],
+        "description": S.seo.get("mo_ta_to_chuc") or "",
+        "telephone": f["phone_intl"], "email": f["email"], "priceRange": "Theo thỏa thuận",
+        "address": {"@type": "PostalAddress", "streetAddress": f["street"], "addressLocality": f["ward"],
+                    "addressRegion": f["city"], "addressCountry": "VN"},
+        "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": days,
+                                       "opens": f["opens"], "closes": f["closes"]}],
         "areaServed": [{"@type": "City", "name": "Thành phố Hồ Chí Minh"}, {"@type": "Country", "name": "Việt Nam"}],
-        "knowsLanguage": ["vi"],
-        "sameAs": [FIRM["zalo"]],
-        "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Lĩnh vực hoạt động",
-            "itemListElement": [{"@type": "Offer", "itemOffered": {"@id": abs_url(f"dich-vu/{s['slug']}/") + "#service"}}
-                                for s in SERVICES],
-        },
+        "knowsLanguage": ["vi"], "sameAs": [f["zalo"]],
+        "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Lĩnh vực hoạt động",
+                            "itemListElement": [{"@type": "Offer", "itemOffered": {"@id": abs_url(f"dich-vu/{s['slug']}/") + "#service"}}
+                                                for s in S.services]},
     }
 
 
@@ -557,24 +352,20 @@ def jsonld(page):
     org = org_node()
     if page["path"] not in ("", "lien-he/", "gioi-thieu/"):
         org = {k: org[k] for k in ("@type", "@id", "name", "alternateName", "url", "logo", "image", "telephone", "email", "address")}
-    graph = [org, {
-        "@type": "WebSite", "@id": SITE_ID, "url": SITE_URL + "/", "name": f'{FIRM["short_name"]} – {FIRM["brand"]}',
-        "inLanguage": "vi", "publisher": {"@id": ORG_ID},
-    }]
+    graph = [org, {"@type": "WebSite", "@id": SITE_ID, "url": ENV["site_url"] + "/", "name": f'{F()["short_name"]} – {F()["brand"]}',
+                   "inLanguage": "vi", "publisher": {"@id": ORG_ID}}]
     webpage = {
         "@type": page.get("schema_type", "WebPage"), "@id": url + "#webpage", "url": url,
         "name": page["title"], "description": page["description"], "inLanguage": "vi",
         "isPartOf": {"@id": SITE_ID}, "about": {"@id": ORG_ID},
-        "primaryImageOfPage": {"@type": "ImageObject", "url": abs_url(asset_ref(page.get("image", "assets/img/og-image.jpg")))},
+        "primaryImageOfPage": {"@type": "ImageObject", "url": page["og_abs"]},
         "dateModified": page.get("modified", TODAY),
     }
     if page["path"]:
         webpage["breadcrumb"] = {"@id": url + "#breadcrumb"}
-        graph.append({
-            "@type": "BreadcrumbList", "@id": url + "#breadcrumb",
-            "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": abs_url(p)}
-                                for i, (n, p) in enumerate(page["crumbs"])],
-        })
+        graph.append({"@type": "BreadcrumbList", "@id": url + "#breadcrumb",
+                      "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": abs_url(p)}
+                                          for i, (n, p) in enumerate(page["crumbs"])]})
     webpage.update(page.get("webpage_extra", {}))
     graph.append(webpage)
     graph.extend(page.get("schema", []))
@@ -582,159 +373,279 @@ def jsonld(page):
     return json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
 
 
-# ---------------------------------------------------------------------------
-# Khung trang
-# ---------------------------------------------------------------------------
+def tracking_head(page):
+    t = S.tracking
+    out = ""
+    if page["path"] == "" and t.get("search_console"):
+        out += f'\n<meta name="google-site-verification" content="{esc(t["search_console"])}">'
+    if not t.get("da_cap_nhat_chinh_sach") or ENV["noindex"]:
+        return out
+    if t.get("ga4"):
+        g = t["ga4"]
+        out += (f'\n<script async src="https://www.googletagmanager.com/gtag/js?id={g}"></script>'
+                f"\n<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{g}');</script>")
+    if t.get("meta_pixel"):
+        px = t["meta_pixel"]
+        out += ("\n<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};"
+                "if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;"
+                "s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');"
+                f"fbq('init','{px}');fbq('track','PageView');</script>")
+    return out
+
+
+def tracking_body():
+    t = S.tracking
+    if t.get("da_cap_nhat_chinh_sach") and t.get("zalo_oa") and not ENV["noindex"]:
+        return (f'\n<div class="zalo-chat-widget" data-oaid="{t["zalo_oa"]}" data-welcome-message="Luật sư có thể giúp gì cho anh chị?" data-autopopup="0"></div>'
+                '\n<script src="https://sp.zalo.me/plugins/sdk.js" defer></script>')
+    return ""
+
+
+def gio_attr():
+    """Ngày + giờ làm việc cho main.js (trạng thái Đang trong giờ làm việc)."""
+    f = F()
+    days = ",".join(str(content.DAY_NUM[d]) for d in f["open_days"])
+
+    def mins(t):
+        h, m = (int(x) for x in t.split(":"))
+        return h * 60 + m
+    return f"{days}|{mins(f['opens'])}|{mins(f['closes'])}"
+
+
 def layout(page):
-    r = page.get("root_override", "../" * page["path"].count("/"))
+    r = page.get("root_override", root_of(page["path"]))
+    ctx = Ctx(S, r, page["path"], page.get("src", ""))
     css_v, js_v = file_hash("assets/css/style.css"), file_hash("assets/js/main.js")
     url = abs_url(page["path"])
-    # Ảnh chia sẻ JPG 1200×630 (Facebook, Zalo, LinkedIn): riêng cho dịch vụ, bài viết; còn lại dùng ảnh chung
-    image = abs_url(asset_ref(page.get("og_image", "assets/img/og-image.jpg")))
-    robots = "noindex, follow" if page.get("noindex") else "index, follow, max-image-preview:large, max-snippet:-1"
+    noindex = page.get("noindex") or ENV["noindex"]
+    robots = "noindex, follow" if noindex else "index, follow, max-image-preview:large, max-snippet:-1"
     og_type = page.get("og_type", "website")
     art_meta = ""
     if og_type == "article":
         art_meta = (f'\n<meta property="article:published_time" content="{page["published"]}">'
                     f'\n<meta property="article:modified_time" content="{page["modified"]}">'
                     f'\n<meta property="article:section" content="{esc(page["article_section"])}">')
-    extra_head = page.get("extra_head", "").replace("{{root}}", r)
-    hero = render_tokens(page_hero_html(page, r), page, r) if page.get("page_hero", True) else ""
-    body = render_tokens(page["body"], page, r)
-    body = re.sub(r"\s*<!--\s*(GHI CHÚ CHO NGƯỜI QUẢN TRỊ|Nội dung trang tra cứu).*?-->", "", body, flags=re.S)
-    band = contact_band(r, **page.get("cband", {})) if page.get("contact_band", True) else ""
-    scripts = "".join(f'\n<script src="{r}{s}" defer></script>' for s in page.get("scripts", []))
-    body_cls = f' class="{page["body_class"]}"' if page.get("body_class") else ""
+    hero = page_hero_html(page, ctx) if page.get("page_hero", True) else ""
+    band = tpl.contact_band(ctx, page.get("cband_override"), page.get("cband")) if page.get("contact_band", True) else ""
+    draft = ""
+    if page.get("is_draft"):
+        draft = ('\n<div class="draft-banner" role="note"><strong>BẢN NHÁP</strong> – chỉ để duyệt nội dung, chưa đăng lên website chính thức. '
+                 'Bỏ dấu “Bản nháp” trong /admin khi đã duyệt.</div>')
     canonical = "" if page.get("noindex") else f'\n<link rel="canonical" href="{url}">'
-    # Trang 404 được phục vụ ở mọi độ sâu đường dẫn: xác định thư mục gốc khi chạy để tài nguyên tải đúng
-    # cả trên GitHub Pages (BASE_PATH) lẫn tên miền riêng (/)
     base_js = ""
     if page.get("dynamic_base"):
-        base_js = ('\n<script>(function(){var p="' + BASE_PATH + '",b=document.createElement("base");'
+        # Trang 404 được phục vụ ở mọi độ sâu đường dẫn: xác định thư mục gốc khi chạy để tài nguyên tải đúng
+        base_js = ('\n<script>(function(){var p="' + ENV["base_path"] + '",b=document.createElement("base");'
                    'b.href=location.pathname.indexOf(p)===0?p:"/";document.head.appendChild(b);})();</script>')
+    og_title = page.get("og_title", page["title"])
+    og_w, og_h = page.get("og_size", (1200, 630))
     return f"""<!doctype html>
-<html lang="vi" data-root="{r}">
+<html lang="vi" data-root="{r}" data-gio="{gio_attr()}">
 <head>
 <meta charset="utf-8">{base_js}
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{esc(page["title"])}</title>
 <meta name="description" content="{esc(page["description"])}">
 <meta name="robots" content="{robots}">{canonical}
-<meta name="author" content="{FIRM["legal_name"]}">
+<meta name="author" content="{esc(F()["legal_name"])}">
 <meta name="theme-color" content="#fffdf9">
 <meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="{og_type}">
-<meta property="og:site_name" content="{FIRM["legal_name"]}">
+<meta property="og:site_name" content="{esc(F()["legal_name"])}">
 <meta property="og:locale" content="vi_VN">
-<meta property="og:title" content="{esc(page.get("og_title", page["title"]))}">
+<meta property="og:title" content="{esc(og_title)}">
 <meta property="og:description" content="{esc(page["description"])}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{image}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="{esc(page.get("og_title", page["title"]))} – {FIRM["lawyer"]}">{art_meta}
+<meta property="og:image" content="{page["og_abs"]}">
+<meta property="og:image:width" content="{og_w}">
+<meta property="og:image:height" content="{og_h}">
+<meta property="og:image:alt" content="{esc(og_title)} – {esc(F()["lawyer"])}">{art_meta}
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{esc(page.get("og_title", page["title"]))}">
+<meta name="twitter:title" content="{esc(og_title)}">
 <meta name="twitter:description" content="{esc(page["description"])}">
-<meta name="twitter:image" content="{image}">
+<meta name="twitter:image" content="{page["og_abs"]}">
 <link rel="icon" href="{r}assets/img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="{r}assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="{r}assets/img/apple-touch-icon.png">
 <link rel="manifest" href="{r}site.webmanifest">
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{extra_head}
+<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{tracking_head(page)}
 <script type="application/ld+json">
 {jsonld(page)}
 </script>
 </head>
-<body{body_cls}>
+<body{f' class="{page["body_class"]}"' if page.get("body_class") else ""}>
 <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
 {SPRITE}
-{header_html(page, r)}
-
+{header_html(page, ctx)}
+{draft}
 <main id="main">
 {hero}
-{body}
+{page["body"]}
 {band}
 </main>
 
-{footer_html(r)}
+{footer_html(ctx)}
 
-{overlays_html(r)}
+{overlays_html(ctx)}
 
-<script src="{r}assets/js/main.js?v={js_v}" defer></script>{scripts}
+<script src="{r}assets/js/main.js?v={js_v}" defer></script>{tracking_body()}
 </body>
 </html>
 """
 
 
+def file_hash(rel):
+    import hashlib
+    with open(os.path.join(ROOT, rel), "rb") as fh:
+        return hashlib.md5(fh.read()).hexdigest()[:8]
+
+
 # ---------------------------------------------------------------------------
-# Đọc trang nguồn
+# Tiêu đề, ảnh chia sẻ
 # ---------------------------------------------------------------------------
-META_RE = re.compile(r"^\s*<!--meta\s*(\{.*?\})\s*-->\s*", re.S)
-
-
-def load_src(rel):
-    with open(os.path.join(SRC, rel), encoding="utf-8") as fh:
-        text = fh.read()
-    m = META_RE.match(text)
-    meta = json.loads(m.group(1)) if m else {}
-    return meta, text[m.end():] if m else text
-
-
 HOME = ("Trang chủ", "")
 
 
-def crumbs_for(*items):
-    return [HOME] + list(items)
+def full_title(seo_title, path):
+    short = F()["short_name"]
+    if path == "":
+        return f'{F()["legal_name"]} | {seo_title}'
+    return seo_title if seo_title.endswith(short) else f"{seo_title} | {short}"
+
+
+def check_title(src, title):
+    if len(title) < 30:
+        LOI.them(src, "SEO › Tiêu đề trên Google", f"Tiêu đề đầy đủ “{title}” chỉ {len(title)} ký tự, cần ít nhất 30 để Google hiển thị rõ.")
+
+
+def og_for(seo, default_rel, job=None):
+    """Ảnh chia sẻ: ảnh tải riêng (nếu có) hoặc ảnh tự tạo từ tiêu đề; trả về (đường dẫn tuyệt đối, kích thước)."""
+    if seo and seo.get("anh_chia_se"):
+        p = seo["anh_chia_se"]
+        size = S.image_size(p) or (1200, 630)
+        return abs_url(p.lstrip("/")), size, p.lstrip("/")
+    if job:
+        IMG.og(*job)
+    return abs_url(asset_ref(default_rel)), (1200, 630), default_rel
+
+
+def lead_text(text, ctx):
+    return M.plain(text, ctx) if text else ""
 
 
 # ---------------------------------------------------------------------------
-# Trang dịch vụ
+# Trang dựng từ khối
+# ---------------------------------------------------------------------------
+def crumbs_for_page(p, path):
+    crumbs = [HOME]
+    parent = p2path(p.get("trang_cha")) if p.get("trang_cha") else None
+    seen = set()
+    while parent and parent not in seen and parent in S.registry and parent != path:
+        seen.add(parent)
+        crumbs.insert(1, (S.registry[parent]["label"], parent))
+        parent = S.registry[parent].get("parent")
+    return crumbs + [(p["tieu_de"], path)]
+
+
+def block_page(p):
+    slug = p["slug"]
+    path = "" if slug == content.HOME_SLUG else f"{slug}/"
+    ctx = Ctx(S, root_of(path), path, p["_src"])
+    visible = [b for b in p.get("cac_khoi") or [] if b.get("hien_thi", True)]
+    has_hero = bool(visible) and visible[0]["loai"] == "dau_trang"
+    head = p.get("dau_trang") or {}
+    hc = ctx.at(where="Đầu trang tiêu chuẩn")
+    page = {"path": path, "src": p["_src"], "crumbs": crumbs_for_page(p, path) if path else [HOME],
+            "schema_type": p.get("loai_trang") or "WebPage", "ids": set(), "is_draft": p.get("nhap")}
+    page.update({
+        "page_hero": not has_hero and path != "",
+        "eyebrow": M.plain(head.get("nhan"), hc), "h1": M.title(head.get("tieu_de"), hc), "lead": lead_text(head.get("mo_dau"), hc),
+        "lawyer_card": head.get("the_luat_su", True),
+    })
+    page["body"] = blocks.render(ctx, page, p.get("cac_khoi") or [])
+    seo = p.get("seo") or {}
+    page["title"] = full_title(seo.get("tieu_de", ""), path)
+    check_title(p["_src"], page["title"])
+    page["description"] = seo.get("mo_ta", "")
+    band = p.get("lien_he_cuoi_trang") or {}
+    page["contact_band"] = band.get("hien", True)
+    page["cband_override"] = dict(band, _src=p["_src"])
+    if path == "":
+        page["og_abs"], page["og_size"], page["og_rel"] = og_for(seo, "assets/img/og-image.jpg")
+    else:
+        title_txt = M.title_text(head.get("tieu_de") or (visible[0].get("tieu_de") if has_hero else p["tieu_de"]), hc)
+        job = (f"og/trang-{slug}.jpg", M.expand(head.get("nhan") or F()["short_name"], hc), title_txt,
+               M.expand(head.get("mo_dau") or seo.get("mo_ta", ""), hc), "van-phong")
+        page["og_abs"], page["og_size"], page["og_rel"] = og_for(seo, f"assets/img/{job[0]}", job)
+    return page
+
+
+# ---------------------------------------------------------------------------
+# Trang lĩnh vực
 # ---------------------------------------------------------------------------
 def service_page(s):
     path = f"dich-vu/{s['slug']}/"
-    name_lc = s["name"].lower()
-    arts = articles_for_service(s["slug"])
-    situations = "".join(f'<li>{ico("i-check-circle")}<span>{esc(x)}</span></li>' for x in s["situations"])
+    r = root_of(path)
+    name_lc = s["ten"].lower()
+    ctx = Ctx(S, r, path, s["_src"], extra={"ten_linh_vuc": name_lc})
+    T = S.text.get("trang_linh_vuc") or {}
+    tc = ctx.at(src="content/cai-dat/cau-chu.yml", where="Trang lĩnh vực")
+
+    def sec(key):
+        return T.get(key) or {}
+
+    def P(text, c=tc):
+        return M.plain(text, c)
+    arts = [a for a in S.articles if s["slug"] in a["linh_vuc_lien_quan"]]
+    situations = "".join(f'<li>{ico("i-check-circle")}<span>{P(x, ctx)}</span></li>' for x in s.get("tinh_huong") or [])
+    pv = s.get("pham_vi") or {}
     scope = "".join(f'<article class="ncard ncard--num reveal"><div class="ncard__top"><span class="ncard__num">{i:02d}</span></div>'
-                    f'<h3>{esc(h)}</h3><p>{esc(p)}</p></article>' for i, (h, p) in enumerate(s["scope"], 1))
-    tips = "".join(f"<li>{esc(x)}</li>" for x in s["tips"])
-    steps = "".join(f'<li class="reveal"><span class="steps__num">{i}</span><h3>{esc(h)}</h3><p>{esc(p)}</p></li>'
-                    for i, (h, p) in enumerate(s["steps"], 1))
+                    f'<h3>{P(x["tieu_de"], ctx)}</h3><p>{P(x["mo_ta"], ctx)}</p></article>' for i, x in enumerate(pv.get("cac_viec") or [], 1))
+    tips = "".join(f"<li>{P(x, ctx)}</li>" for x in s.get("viec_nen_lam") or [])
+    steps_ = s.get("cac_buoc") or []
+    steps = "".join(f'<li class="reveal"><span class="steps__num">{i}</span><h3>{P(x["tieu_de"], ctx)}</h3><p>{P(x["mo_ta"], ctx)}</p></li>'
+                    for i, x in enumerate(steps_, 1))
     faq = "".join(f"""<details class="faq__item" id="hoi-dap-{i}">
-  <summary><span>{esc(q)}</span>{ico("i-chevron", "faq__chev")}</summary>
-  <div class="faq__answer"><p>{a}</p></div>
-</details>""" for i, (q, a) in enumerate(s["faq"], 1))
-    laws = "".join(f'<li>{esc(x)}</li>' for x in s["laws"])
-    resources = [(f'kien-thuc-phap-ly/{a["slug"]}/', "Bài viết", a["card_title"], a["excerpt"]) for a in arts[:3]]
-    extras = [("cau-hoi-thuong-gap/", "Hỏi đáp", "Câu hỏi thường gặp khi thuê luật sư", "Chi phí, bảo mật và cách bắt đầu làm việc với luật sư."),
-              ("quy-trinh-lam-viec/#ho-so-can-chuan-bi", "Chuẩn bị", "Trước buổi gặp luật sư đầu tiên", "Giấy tờ nên mang theo và cách ghi lại diễn biến sự việc."),
-              ("vi-sao-chon-chung-toi/", "Cách làm việc", "Những điều luật sư cam kết và không làm", "Nói rõ được – mất, chi phí thỏa thuận trước, không hứa hẹn kết quả.")]
-    resources += extras[:max(0, 3 - len(resources))]
-    cards = "".join(f'<a class="rcard reveal" href="{{{{root}}}}{href}"><span class="tag">{label}</span><h3>{esc(title)}</h3>'
+  <summary><span>{P(x["hoi"], ctx)}</span>{ico("i-chevron", "faq__chev")}</summary>
+  <div class="faq__answer">{re.sub(r">\n<", "><", M.block(x["dap"], ctx.at(where=f"Hỏi đáp riêng › Câu hỏi {i}")).strip())}</div>
+</details>""" for i, x in enumerate(s.get("hoi_dap") or [], 1))
+    laws = "".join(f"<li>{P(x, ctx)}</li>" for x in s.get("can_cu_phap_ly") or [])
+    resources = [(f"{r}kien-thuc-phap-ly/{a['slug']}/", "Bài viết", a.get("tieu_de_ngan") or a["tieu_de"], a["tom_tat"]) for a in arts[:3]]
+    for x in (T.get("the_bo_sung") or [])[: max(0, 3 - len(resources))]:
+        resources.append((tpl.link_href(tc.at(where="Trang lĩnh vực › Thẻ bổ sung"), x.get("lien_ket")), x["nhan"], x["tieu_de"], x["mo_ta"]))
+    cards = "".join(f'<a class="rcard reveal" href="{href}"><span class="tag">{esc(label)}</span><h3>{esc(title)}</h3>'
                     f'<p>{esc(text)}</p><span class="icard__more">Xem chi tiết {ARROW}</span></a>' for href, label, title, text in resources)
-    related = "".join(icard(f'{{{{root}}}}dich-vu/{x["slug"]}/', x["icon"], esc(x["name"]), esc(x["short"]))
-                      for x in SERVICES if x["slug"] in s["related"])
+    related = "".join(tpl.icard(f'{r}dich-vu/{x}/', S.service_by_slug[x]["bieu_tuong"], esc(S.service_by_slug[x]["ten"]),
+                                esc(S.service_by_slug[x]["mo_ta_ngan"])) for x in s.get("linh_vuc_lien_quan") or [] if x in S.service_by_slug)
     urgent = ""
-    if s.get("urgent"):
-        urgent = (f'<p class="urgent">{ico("i-alert")}<span><strong>Việc gấp?</strong> Người thân vừa bị bắt, tạm giữ hoặc sắp phải làm việc với cơ quan điều tra: '
-                  f'hãy gọi ngay <a href="tel:{FIRM["phone_tel"]}">{FIRM["phone"]}</a>. {FIRM["hours_note"]}.</span></p>')
+    if s.get("viec_gap"):
+        vg = S.text.get("viec_gap") or {}
+        urgent = (f'<p class="urgent">{ico("i-alert")}<span><strong>{P(vg.get("nhan"))}</strong> '
+                  f'{M.inline(vg.get("noi_dung"), tc.at(where="Ô Việc gấp"))}</span></p>')
+    nav = "".join(f'<a href="#{a}">{P(lbl)}</a>' for a, lbl in zip(["tinh-huong", "pham-vi", "viec-nen-lam", "quy-trinh", "ho-so", "hoi-dap"],
+                                                                    T.get("muc_luc") or []))
+    th, pvh, vn, qt, hs, hd, tk, lq = (sec(k) for k in ("tinh_huong", "pham_vi", "viec_nen_lam", "quy_trinh", "ho_so", "hoi_dap", "tham_khao", "lien_quan"))
+    gt = s.get("giay_to") or {}
+    lu, ng = s.get("luu_y") or {}, s.get("nguyen_tac") or {}
+    link_qt = tpl.link_href(tc, {"trang": "/quy-trinh-lam-viec/"})
+    link_hs = tpl.link_href(tc, {"trang": "/quy-trinh-lam-viec/", "ma_neo": "ho-so-can-chuan-bi"})
+    link_cp = tpl.link_href(tc, {"trang": "/cau-hoi-thuong-gap/", "ma_neo": "chi-phi-thue-luat-su"})
     body = f"""
-<nav class="subnav" aria-label="Nội dung trang"><div class="container"><a href="#tinh-huong">Tình huống thường gặp</a><a href="#pham-vi">Luật sư giúp gì</a><a href="#viec-nen-lam">Việc nên làm ngay</a><a href="#quy-trinh">Các bước</a><a href="#ho-so">Giấy tờ</a><a href="#hoi-dap">Hỏi đáp</a></div></nav>
+<nav class="subnav" aria-label="Nội dung trang"><div class="container">{nav}</div></nav>
 
 <section class="section svc-section" id="tinh-huong">
   <div class="container">
-    {shead("Tình huống thường gặp", "Anh chị có đang gặp chuyện này?", f"Đây là những trường hợp về {esc(name_lc)} mà người dân thường tìm đến luật sư.")}
+    {tpl.shead(P(th.get("nhan")), P(th.get("tieu_de")), P(th.get("mo_ta")))}
     <ul class="situations">{situations}</ul>
-    <p class="situations__foot">Trường hợp của anh chị khác? Cứ <a href="tel:{FIRM["phone_tel"]}">gọi {FIRM["phone"]}</a> hoặc <a href="{FIRM["zalo"]}" target="_blank" rel="noopener">nhắn Zalo</a> kể ngắn gọn – luật sư sẽ cho biết có giúp được hay không.</p>
+    <p class="situations__foot">{M.inline(th.get("cuoi"), tc.at(where="Trang lĩnh vực › Mục Tình huống"))}</p>
   </div>
 </section>
 
 <section class="section section--cream svc-section" id="pham-vi">
   <div class="container">
-    {shead("Phạm vi hỗ trợ", "Luật sư giúp được anh chị những gì", esc(s["scope_intro"]))}
+    {tpl.shead(P(pvh.get("nhan")), P(pvh.get("tieu_de")), P(pv.get("gioi_thieu"), ctx))}
     <div class="grid grid--3">{scope}</div>
   </div>
 </section>
@@ -742,31 +653,31 @@ def service_page(s):
 <section class="section svc-section" id="viec-nen-lam">
   <div class="container split">
     <div class="reveal">
-      <p class="eyebrow">Trong lúc chờ gặp luật sư</p>
-      <h2 class="h2">Việc nên làm ngay</h2>
-      <p class="shead__text">Những việc nhỏ dưới đây giúp anh chị giữ được quyền lợi.</p>
+      <p class="eyebrow">{P(vn.get("nhan"))}</p>
+      <h2 class="h2">{P(vn.get("tieu_de"))}</h2>
+      <p class="shead__text">{P(vn.get("mo_ta"))}</p>
       <ol class="tips">{tips}</ol>
     </div>
     <div class="stack">
-      <div class="note reveal">{ico("i-alert")}<p><strong>{esc(s["note_title"])}:</strong> {esc(s["note_text"])}</p></div>
-      <article class="context__dark reveal"><p class="eyebrow">Cách luật sư làm việc</p><h3>{esc(s["principle_title"])}</h3><p>{esc(s["principle_text"])}</p></article>
+      <div class="note reveal">{ico("i-alert")}<p><strong>{P(lu.get("tieu_de"), ctx)}:</strong> {P(lu.get("noi_dung"), ctx)}</p></div>
+      <article class="context__dark reveal"><p class="eyebrow">{P(vn.get("nhan_nguyen_tac"))}</p><h3>{P(ng.get("tieu_de"), ctx)}</h3><p>{P(ng.get("noi_dung"), ctx)}</p></article>
     </div>
   </div>
 </section>
 
 <section class="section section--cream svc-section" id="quy-trinh">
   <div class="container">
-    {shead("Quy trình thực hiện", "Làm việc với luật sư diễn ra thế nào?", "Năm bước rõ ràng. Ở mỗi bước, anh chị đều biết việc gì đang được làm.", link=("{{root}}quy-trinh-lam-viec/", "Quy trình làm việc chung"))}
-    <ol class="steps steps--5">{steps}</ol>
+    {tpl.shead(P(qt.get("nhan")), P(qt.get("tieu_de")), P(qt.get("mo_ta")), link=(link_qt, P(qt.get("lien_ket"))))}
+    <ol class="steps{" steps--5" if len(steps_) == 5 else ""}">{steps}</ol>
   </div>
 </section>
 
 <section class="section svc-section" id="ho-so">
   <div class="container">
-    {shead("Hồ sơ &amp; kết quả", "Cần chuẩn bị gì và anh chị nhận được gì", "Chưa đủ giấy tờ cũng không sao: cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.")}
+    {tpl.shead(P(hs.get("nhan")), P(hs.get("tieu_de")), P(hs.get("mo_ta")))}
     <div class="docs">
-      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-doc", "")}</span>{esc(s.get("docs_title", "Giấy tờ nên mang theo"))}</h3>{check_list(s["docs"])}<a class="link-arrow" href="{{{{root}}}}quy-trinh-lam-viec/#ho-so-can-chuan-bi">Hướng dẫn chuẩn bị hồ sơ {ARROW}</a></article>
-      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-check-circle", "")}</span>Anh chị sẽ nhận được</h3>{check_list(s["deliverables"])}<a class="link-arrow" href="{{{{root}}}}cau-hoi-thuong-gap/#chi-phi-thue-luat-su">Chi phí được tính thế nào {ARROW}</a></article>
+      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-doc", "")}</span>{P(gt.get("tieu_de") or "Giấy tờ nên mang theo", ctx)}</h3>{tpl.check_list(gt.get("danh_sach") or [], ctx=ctx)}<a class="link-arrow" href="{link_hs}">{P(hs.get("lien_ket_ho_so"))} {ARROW}</a></article>
+      <article class="reveal"><h3><span class="ichip ichip--sm">{ico("i-check-circle", "")}</span>{P(hs.get("tieu_de_nhan_duoc"))}</h3>{tpl.check_list(s.get("nhan_duoc") or [], ctx=ctx)}<a class="link-arrow" href="{link_cp}">{P(hs.get("lien_ket_chi_phi"))} {ARROW}</a></article>
     </div>
   </div>
 </section>
@@ -774,10 +685,10 @@ def service_page(s):
 <section class="section section--cream svc-section" id="hoi-dap">
   <div class="container split">
     <div class="reveal">
-      <p class="eyebrow">Hỏi đáp</p>
-      <h2 class="h2">Câu hỏi hay gặp về {esc(name_lc)}</h2>
-      <p class="shead__text">Giải đáp ngắn gọn, có dẫn điều luật. Mỗi vụ việc có tình tiết riêng, anh chị nên hỏi luật sư trước khi quyết định.</p>
-      <div class="context__laws laws-box"><h3>Căn cứ pháp luật chủ yếu</h3><ul>{laws}</ul><small>Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.</small></div>
+      <p class="eyebrow">{P(hd.get("nhan"))}</p>
+      <h2 class="h2">{P(hd.get("tieu_de"))}</h2>
+      <p class="shead__text">{P(hd.get("mo_ta"))}</p>
+      <div class="context__laws laws-box"><h3>{P(hd.get("tieu_de_can_cu"))}</h3><ul>{laws}</ul><small>{P(hd.get("ghi_chu_can_cu"))}</small></div>
     </div>
     <div class="faq reveal">{faq}</div>
   </div>
@@ -785,105 +696,203 @@ def service_page(s):
 
 <section class="section svc-section" id="tham-khao">
   <div class="container">
-    {shead("Đọc thêm", "Thông tin hữu ích trước khi gặp luật sư", link=("{{root}}kien-thuc-phap-ly/", "Thư viện kiến thức"))}
+    {tpl.shead(P(tk.get("nhan")), P(tk.get("tieu_de")), link=(tpl.link_href(tc, {"trang": "/kien-thuc-phap-ly/"}), P(tk.get("lien_ket"))))}
     <div class="grid grid--3">{cards}</div>
   </div>
 </section>
-
+"""
+    if related:
+        body += f"""
 <section class="section section--cream svc-section" id="lien-quan">
   <div class="container">
-    {shead("Lĩnh vực liên quan", "Hỗ trợ các vấn đề có liên quan", link=("{{root}}dich-vu/", "Tất cả dịch vụ"))}
+    {tpl.shead(P(lq.get("nhan")), P(lq.get("tieu_de")), link=(tpl.link_href(tc, {"trang": "/dich-vu/"}), P(lq.get("lien_ket"))))}
     <div class="grid grid--3">{related}</div>
   </div>
 </section>
 """
     url = abs_url(path)
-    og = f'assets/img/og/dich-vu-{s["slug"]}.jpg'
-    eyebrow = "Luật sư hỗ trợ công chứng" if s["slug"] == "cong-chung" else f"Luật sư {name_lc}"
+    seo = s.get("seo") or {}
+    og_abs, og_size, og_rel = og_for(seo, f'assets/img/og/dich-vu-{s["slug"]}.jpg',
+                                     (f'og/dich-vu-{s["slug"]}.jpg', "Dịch vụ pháp lý", s["ten"], s["mo_ta_ngan"],
+                                      "phien-toa" if s["slug"] in COURT else "van-phong"))
+    lh = s.get("lien_he") or {}
+    title = full_title(seo.get("tieu_de", ""), path)
+    check_title(s["_src"], title)
     return {
-        "path": path, "section": "services",
-        "title": f'{s["title"]} | {FIRM["short_name"]}', "description": s["description"],
-        "eyebrow": eyebrow, "h1": s["hero_title"], "lead": esc(s["lead"]), "hero": {"extra": urgent},
-        "crumbs": crumbs_for(("Dịch vụ", "dich-vu/"), (s["name"], path)),
-        "image": og, "og_image": og, "body": body,
-        "cband": {"eyebrow": f"Tư vấn {name_lc}", "title": esc(s["cta_title"]), "text": esc(s["cta_text"])},
+        "path": path, "src": s["_src"], "is_draft": s.get("nhap"),
+        "title": title, "description": seo.get("mo_ta", ""),
+        "eyebrow": P(s.get("nhan_dau_trang"), ctx), "h1": M.title(s.get("tieu_de_trang"), ctx), "lead": P(s.get("mo_dau"), ctx),
+        "hero": {"extra": urgent},
+        "crumbs": [HOME, ("Dịch vụ", "dich-vu/"), (s["ten"], path)],
+        "og_abs": og_abs, "og_size": og_size, "og_rel": og_rel, "body": body,
+        "cband": {"nhan": M.expand(T.get("nhan_lien_he") or "", ctx), "tieu_de": lh.get("tieu_de"), "doan_moi": lh.get("doan_moi")},
         "schema": [{
-            "@type": "Service", "@id": url + "#service", "name": s["name"], "serviceType": s["title"],
-            "description": s["description"], "url": url, "provider": {"@id": ORG_ID},
+            "@type": "Service", "@id": url + "#service", "name": s["ten"], "serviceType": seo.get("tieu_de", ""),
+            "description": seo.get("mo_ta", ""), "url": url, "provider": {"@id": ORG_ID},
             "areaServed": [{"@type": "City", "name": "Thành phố Hồ Chí Minh"}, {"@type": "Country", "name": "Việt Nam"}],
-            "image": abs_url(asset_ref(og)),
+            "image": og_abs,
         }],
         "webpage_extra": {"mainEntity": {"@id": url + "#service"}},
     }
 
 
+# ---------------------------------------------------------------------------
+# Trang tổng hợp
+# ---------------------------------------------------------------------------
+def hub_head(page, d, ctx):
+    head = d.get("dau_trang") or {}
+    c = ctx.at(where="Đầu trang")
+    page.update({"eyebrow": M.plain(head.get("nhan"), c), "h1": M.title(head.get("tieu_de"), c),
+                 "lead": lead_text(head.get("mo_dau"), c), "lawyer_card": head.get("the_luat_su", True)})
+    band = d.get("lien_he_cuoi_trang") or {}
+    page["contact_band"] = band.get("hien", True)
+    page["cband_override"] = dict(band, _src=d["_src"])
+    seo = d.get("seo") or {}
+    page["title"] = full_title(seo.get("tieu_de", ""), page["path"])
+    check_title(d["_src"], page["title"])
+    page["description"] = seo.get("mo_ta", "")
+    page["og_abs"], page["og_size"], page["og_rel"] = og_for(seo, "assets/img/og-image.jpg")
+    return page
+
+
 def services_hub():
+    d = S.hubs["dich_vu"]
     path = "dich-vu/"
-    modes = [
-        ("i-chat", "Tư vấn, giải đáp", "Luật sư nghe anh chị trình bày, giải thích quy định và hướng xử lý; soạn hoặc kiểm tra hợp đồng, đơn từ, giấy tờ trước khi anh chị ký, nộp."),
-        ("i-user", "Thay mặt anh chị làm việc", "Trong phạm vi được ủy quyền, luật sư thay anh chị làm việc, thương lượng, hòa giải với bên kia và làm thủ tục tại cơ quan nhà nước."),
-        ("i-gavel", "Cùng anh chị ra Tòa", "Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, kinh doanh thương mại và tại Trọng tài."),
-    ]
-    mode_html = "".join(f'<article class="icard reveal"><span class="ichip">{ico(i, "")}</span><h3 class="icard__title">{h}</h3><p class="icard__text">{p}</p></article>'
-                        for i, h, p in modes)
+    ctx = Ctx(S, root_of(path), path, d["_src"])
+    lw, ht = d.get("luoi") or {}, d.get("hinh_thuc") or {}
+    mode_html = "".join(f'<article class="icard reveal"><span class="ichip">{ico(x["bieu_tuong"], "")}</span><h3 class="icard__title">{M.plain(x["tieu_de"], ctx)}</h3>'
+                        f'<p class="icard__text">{M.plain(x["mo_ta"], ctx)}</p></article>' for x in ht.get("the") or [])
     body = f"""
 <section class="section section--cream">
   <div class="container">
-    {shead("Bảy lĩnh vực", "Chọn tình huống gần giống với anh chị", "Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.")}
-    {{{{problems_grid}}}}
+    {tpl.shead(M.plain(lw.get("nhan"), ctx), M.plain(lw.get("tieu_de"), ctx), M.plain(lw.get("mo_ta"), ctx))}
+    {tpl.problems_grid(ctx.r)}
   </div>
 </section>
 
 <section class="section">
   <div class="container">
-    {shead("Hình thức hỗ trợ", "Luật sư có thể giúp anh chị theo ba cách", "Tùy vụ việc, anh chị chọn một hoặc kết hợp nhiều cách, theo phạm vi hành nghề quy định tại Luật Luật sư.", center=True)}
+    {tpl.shead(M.plain(ht.get("nhan"), ctx), M.plain(ht.get("tieu_de"), ctx), M.plain(ht.get("mo_ta"), ctx), center=True)}
     <div class="grid grid--3">{mode_html}</div>
   </div>
 </section>
 """
-    url = abs_url(path)
-    return {
-        "path": path, "section": "services", "schema_type": "CollectionPage",
-        "title": f'Lĩnh vực hoạt động – Dịch vụ pháp lý | {FIRM["short_name"]}',
-        "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, hình sự, dân sự, công chứng.",
-        "eyebrow": "Lĩnh vực hoạt động",
-        "h1": "Anh chị cần luật sư <em>giúp việc gì?</em>",
-        "lead": "Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong bảy lĩnh vực gắn với đời sống hằng ngày của người dân.",
-        "crumbs": crumbs_for(("Lĩnh vực hoạt động", path)),
-        "body": body,
-        "cband": {"eyebrow": "Chưa rõ lĩnh vực", "title": "Chưa rõ vụ việc thuộc lĩnh vực nào?",
-                  "text": "Không sao cả. Anh chị cứ gọi điện hoặc nhắn Zalo kể ngắn gọn sự việc – luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp."},
-        "webpage_extra": {"mainEntity": {
-            "@type": "ItemList", "numberOfItems": len(SERVICES),
-            "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"dich-vu/{s['slug']}/"), "name": s["name"]}
-                                for i, s in enumerate(SERVICES)]}},
-    }
+    page = {"path": path, "src": d["_src"], "schema_type": "CollectionPage", "crumbs": [HOME, ("Lĩnh vực hoạt động", path)], "body": body,
+            "webpage_extra": {"mainEntity": {
+                "@type": "ItemList", "numberOfItems": len(S.services),
+                "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"dich-vu/{s['slug']}/"), "name": s["ten"]}
+                                    for i, s in enumerate(S.services)]}}}
+    return hub_head(page, d, ctx)
+
+
+def knowledge_hub():
+    d = S.hubs["kien_thuc"]
+    path = "kien-thuc-phap-ly/"
+    ctx = Ctx(S, root_of(path), path, d["_src"])
+    bv, tl = d.get("bai_viet") or {}, d.get("theo_linh_vuc") or {}
+    tools_html = []
+    for n, x in enumerate(d.get("the_cong_cu") or []):
+        dark = n == 0
+        tools_html.append(f"""<a class="tool-card{" tool-card--dark" if dark else ""} reveal" href="{tpl.link_href(ctx.at(where="Hai thẻ lớn giữa trang"), x.get("lien_ket"))}">
+      <span class="ichip">{ico(x["bieu_tuong"], "")}</span>
+      <span class="eyebrow">{M.plain(x.get("nhan"), ctx)}</span>
+      <h2 class="tool-card__title">{M.plain(x["tieu_de"], ctx)}</h2>
+      <p>{M.plain(x.get("mo_ta"), ctx)}</p>
+      <span class="link-arrow{" link-arrow--light" if dark else ""}">{M.plain((x.get("lien_ket") or {}).get("nhan"), ctx)} {ARROW}</span>
+    </a>""")
+    tl_link = tl.get("lien_ket")
+    body = f"""
+<section class="section section--cream">
+  <div class="container">
+    {tpl.shead(M.plain(bv.get("nhan"), ctx), M.plain(bv.get("tieu_de"), ctx), M.plain(bv.get("mo_ta"), ctx))}
+    {tpl.articles_grid(ctx.r)}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container grid grid--2">
+    {(chr(10) + "    ").join(tools_html)}
+  </div>
+</section>
+
+<section class="section section--cream">
+  <div class="container">
+    {tpl.shead(M.plain(tl.get("nhan"), ctx), M.plain(tl.get("tieu_de"), ctx), M.plain(tl.get("mo_ta"), ctx),
+               link=(tpl.link_href(ctx, tl_link), M.plain(tl_link.get("nhan"), ctx)) if tl_link else None)}
+    {tpl.problems_grid(ctx.r)}
+  </div>
+</section>
+"""
+    page = {"path": path, "src": d["_src"], "schema_type": "CollectionPage", "crumbs": [HOME, ("Kiến thức pháp lý", path)], "body": body,
+            "webpage_extra": {"mainEntity": {
+                "@type": "ItemList", "numberOfItems": len(S.articles),
+                "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"kien-thuc-phap-ly/{a['slug']}/"), "name": a["tieu_de"]}
+                                    for i, a in enumerate(S.articles)]}}}
+    return hub_head(page, d, ctx)
+
+
+def faq_page():
+    d = S.hubs["hoi_dap"]
+    path = "cau-hoi-thuong-gap/"
+    ctx = Ctx(S, root_of(path), path, d["_src"])
+    aside = "\n          ".join(f'<li><a href="{tpl.link_href(ctx.at(where="Cột Tìm hiểu thêm"), x)}">{ico(x["bieu_tuong"], "rel-list__icon")}'
+                               f'<span>{M.plain(x["nhan"], ctx)}</span>{ARROW}</a></li>' for x in d.get("tim_hieu_them") or [])
+    foot = M.inline(d.get("ghi_chu_cuoi"), ctx.at(where="Ghi chú dưới danh sách câu hỏi"))
+    body = f"""
+<section class="section">
+  <div class="container faq-layout">
+    <div>{tpl.faq_list(ctx)}
+      {f'<p class="faq__foot">{foot}</p>' if foot else ""}
+    </div>
+    <aside class="faq-aside">
+      <div class="aside-card">
+        <p class="aside-card__title">Tìm hiểu thêm</p>
+        <ul class="rel-list">
+          {aside}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+"""
+    qa = []
+    for f in S.faq:
+        qa.append({"@type": "Question", "name": f["hoi"],
+                   "acceptedAnswer": {"@type": "Answer", "text": M.to_text(f["dap"], ctx.at(src="content/hoi-dap.yml"))}})
+    page = {"path": path, "src": d["_src"], "schema_type": "FAQPage",
+            "crumbs": [HOME, ("Kiến thức pháp lý", "kien-thuc-phap-ly/"), ("Câu hỏi thường gặp", path)], "body": body,
+            "webpage_extra": {"mainEntity": qa}}
+    return hub_head(page, d, ctx)
 
 
 # ---------------------------------------------------------------------------
 # Bài viết
 # ---------------------------------------------------------------------------
-H2_RE = re.compile(r'<h2 id="([^"]+)">(.*?)</h2>', re.S)
-
-
 def article_page(a):
     path = f"kien-thuc-phap-ly/{a['slug']}/"
-    meta, content = load_src(f"bai-viet/{a['slug']}.html")
-    heads = H2_RE.findall(content)
-    toc = "".join(f'<li><a href="#{i}">{strip_tags(t)}</a></li>' for i, t in heads)
-    words = len(strip_tags(content).split())
+    r = root_of(path)
+    ctx = Ctx(S, r, path, a["_src"], where="Nội dung bài viết")
+    svc = S.service_by_slug.get(a["linh_vuc"]) or {"slug": a["linh_vuc"], "ten": "", "mo_ta_ngan": "", "bieu_tuong": "i-doc",
+                                                    "lien_he": {}}
+    tb = S.text.get("bai_viet") or {}
+    tc = ctx.at(src="content/cai-dat/cau-chu.yml", where="Trang bài viết")
+    toc_items = []
+    lead = f'<p class="prose__lead">{M.plain(a.get("doan_dan"), ctx.at(where="Đoạn dẫn đầu bài"))}</p>'
+    content_html = lead + "\n\n" + M.block(a.get("body"), ctx, toc=toc_items)
+    toc = "".join(f'<li><a href="#{i}">{esc(t)}</a></li>' for i, t in toc_items)
+    words = len(M.strip_tags(content_html).split())
     minutes = max(1, round(words / 220))
-    svc = SERVICE_BY_SLUG[a["service"]]
-    others = [x for x in ARTICLES if x["slug"] != a["slug"]]
+    others = [x for x in S.articles if x["slug"] != a["slug"]][:4]
     related_svcs = "".join(
-        f'<li><a href="{{{{root}}}}dich-vu/{x}/">{ico(SERVICE_BY_SLUG[x]["icon"], "rel-list__icon")}<span>{esc(SERVICE_BY_SLUG[x]["name"])}</span>{ARROW}</a></li>'
-        for x in a["related_services"])
-    points = "".join(f"<li>{esc(p)}</li>" for p in a.get("key_points", []))
+        f'<li><a href="{r}dich-vu/{x}/">{ico(S.service_by_slug[x]["bieu_tuong"], "rel-list__icon")}<span>{esc(S.service_by_slug[x]["ten"])}</span>{ARROW}</a></li>'
+        for x in a["linh_vuc_lien_quan"] if x in S.service_by_slug)
+    points = "".join(f"<li>{M.plain(p, ctx)}</li>" for p in a.get("tom_tat_nhanh") or [])
     keypoints = f'<div class="keypoints"><p class="keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
+    pub, mod = a["ngay_dang"], a["ngay_cap_nhat"]
     extra = f"""<p class="article-meta">
-        <span>{ico("i-user")}Ban biên tập {FIRM["short_name"]}</span>
-        <span>{ico("i-calendar")}Đăng <time datetime="{a["published"]}">{vi_date(a["published"])}</time></span>
-        <span>{ico("i-clock")}Cập nhật <time datetime="{a["modified"]}">{vi_date(a["modified"])}</time> · {minutes} phút đọc</span>
+        <span>{ico("i-user")}{M.plain(tb.get("tac_gia"), tc)}</span>
+        <span>{ico("i-calendar")}Đăng <time datetime="{pub}">{tpl.vi_date(pub)}</time></span>
+        <span>{ico("i-clock")}Cập nhật <time datetime="{mod}">{tpl.vi_date(mod)}</time> · {minutes} phút đọc</span>
         <button class="share-btn" type="button" data-share>{ico("i-share")}Chia sẻ bài viết</button>
       </p>"""
     body = f"""
@@ -891,14 +900,14 @@ def article_page(a):
   <div class="container article-layout">
     <article class="prose" id="noi-dung-bai-viet">
       <details class="toc-mobile">
-        <summary>{ico("i-list")}<span>Mục lục bài viết</span><small>{len(heads)} mục</small>{ico("i-chevron", "toc-mobile__chev")}</summary>
+        <summary>{ico("i-list")}<span>Mục lục bài viết</span><small>{len(toc_items)} mục</small>{ico("i-chevron", "toc-mobile__chev")}</summary>
         <ol class="toc">{toc}</ol>
       </details>
       {keypoints}
-      {content}
+      {content_html}
       <div class="article-disclaimer">
         {ico("i-alert", "note__icon")}
-        <p>Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc <a href="{{{{root}}}}lien-he/">hỏi luật sư</a> trước khi quyết định.</p>
+        <p>{M.inline(S.text.get("mien_tru_cuoi_bai"), tc.at(where="Lưu ý cuối mỗi bài viết"))}</p>
       </div>
     </article>
     <aside class="article-aside">
@@ -907,11 +916,11 @@ def article_page(a):
         <ol class="toc">{toc}</ol>
       </div>
       <div class="aside-card aside-card--cta">
-        <div class="aside-card__who"><img src="{{{{root}}}}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="" width="52" height="52" loading="lazy" decoding="async"><div><strong>{FIRM["lawyer"]}</strong><small>Trực tiếp tiếp nhận hồ sơ</small></div></div>
-        <p class="aside-card__title">Cần luật sư về {esc(svc["name"].lower())}?</p>
-        <p>{esc(svc["short"])}</p>
-        <a class="btn btn--primary btn--block btn--sm" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>
-        <a class="btn btn--light btn--block btn--sm" href="{{{{root}}}}dich-vu/{svc["slug"]}/">Xem dịch vụ {esc(svc["name"])}</a>
+        <div class="aside-card__who"><img src="{r}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="" width="52" height="52" loading="lazy" decoding="async"><div><strong>{esc(F()["lawyer"])}</strong><small>Trực tiếp tiếp nhận hồ sơ</small></div></div>
+        <p class="aside-card__title">Cần luật sư về {esc(svc["ten"].lower())}?</p>
+        <p>{esc(svc["mo_ta_ngan"])}</p>
+        <a class="btn btn--primary btn--block btn--sm" href="tel:{F()["phone_tel"]}">{ico("i-phone")} Gọi {esc(F()["phone"])}</a>
+        <a class="btn btn--light btn--block btn--sm" href="{r}dich-vu/{svc["slug"]}/">Xem dịch vụ {esc(svc["ten"])}</a>
       </div>
       <div class="aside-card">
         <p class="aside-card__title">Lĩnh vực liên quan</p>
@@ -920,204 +929,295 @@ def article_page(a):
     </aside>
   </div>
 </section>
-
+"""
+    if others:
+        body += f"""
 <section class="section section--cream">
   <div class="container">
-    {shead("Đọc tiếp", "Bài viết khác", link=("{{root}}kien-thuc-phap-ly/", "Tất cả bài viết"))}
-    {articles_grid("{{root}}", others, cls="grid grid--2")}
+    {tpl.shead(M.plain(tb.get("doc_tiep_nhan"), tc), M.plain(tb.get("doc_tiep_tieu_de"), tc), link=(f"{r}kien-thuc-phap-ly/", "Tất cả bài viết"))}
+    {tpl.articles_grid(r, others, cls="grid grid--2")}
   </div>
 </section>
 """
     url = abs_url(path)
-    og = f'assets/img/og/bai-viet-{a["slug"]}.jpg'
+    seo = a.get("seo") or {}
+    card_title = a.get("tieu_de_ngan") or a["tieu_de"]
+    og_abs, og_size, og_rel = og_for(seo, f'assets/img/og/bai-viet-{a["slug"]}.jpg',
+                                     (f'og/bai-viet-{a["slug"]}.jpg', svc["ten"], card_title, a["tom_tat"], "van-phong"))
+    lh = svc.get("lien_he") or {}
+    title = full_title(seo.get("tieu_de", ""), path)
+    check_title(a["_src"], title)
     return {
-        "path": path, "section": "knowledge", "og_type": "article", "lawyer_card": False,
-        "published": a["published"], "modified": a["modified"], "article_section": a["category"],
-        "title": f'{a["seo_title"]} | {FIRM["short_name"]}',
-        "og_title": a["title"],
-        "description": a["description"],
-        "eyebrow": a["category"],
-        "h1": esc(a["title"]),
-        "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), (a["card_title"], path)),
-        "image": og, "og_image": og,
-        "hero": {"extra": extra},
-        "body": body, "modified": a["modified"],
-        "cband": {"eyebrow": f"Tư vấn {svc['name'].lower()}", "title": esc(svc["cta_title"]), "text": esc(svc["cta_text"])},
+        "path": path, "src": a["_src"], "is_draft": a.get("nhap"), "og_type": "article", "lawyer_card": False,
+        "published": pub, "modified": mod, "article_section": svc["ten"],
+        "title": title, "og_title": a["tieu_de"], "description": seo.get("mo_ta", ""),
+        "eyebrow": esc(svc["ten"]), "h1": esc(a["tieu_de"]),
+        "crumbs": [HOME, ("Kiến thức pháp lý", "kien-thuc-phap-ly/"), (card_title, path)],
+        "og_abs": og_abs, "og_size": og_size, "og_rel": og_rel, "hero": {"extra": extra}, "body": body,
+        "cband": {"nhan": f"Tư vấn {svc['ten'].lower()}", "tieu_de": lh.get("tieu_de"), "doan_moi": lh.get("doan_moi")},
         "schema": [{
-            "@type": "Article", "@id": url + "#article", "headline": a["title"], "description": a["description"],
-            "image": abs_url(asset_ref(og)), "datePublished": a["published"],
-            "dateModified": a["modified"], "inLanguage": "vi", "articleSection": a["category"], "wordCount": words,
-            "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
+            "@type": "Article", "@id": url + "#article", "headline": a["tieu_de"], "description": seo.get("mo_ta", ""),
+            "image": og_abs, "datePublished": pub, "dateModified": mod, "inLanguage": "vi", "articleSection": svc["ten"],
+            "wordCount": words, "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
             "mainEntityOfPage": {"@id": url + "#webpage"},
-            "about": {"@id": abs_url(f'dich-vu/{a["service"]}/') + "#service"},
+            "about": {"@id": abs_url(f'dich-vu/{a["linh_vuc"]}/') + "#service"},
         }],
     }
 
 
-def knowledge_hub():
-    path = "kien-thuc-phap-ly/"
+# ---------------------------------------------------------------------------
+# Trang văn bản, trang 404
+# ---------------------------------------------------------------------------
+LEGAL = [("chinh-sach-bao-mat", "i-shield-check"), ("dieu-khoan-su-dung", "i-doc"), ("mien-tru-trach-nhiem", "i-alert")]
+
+
+def legal_page(name):
+    d = S.legal[name]
+    path = f"{name}/"
+    r = root_of(path)
+    ctx = Ctx(S, r, path, d["_src"], where="Nội dung")
+    toc_items = []
+    content_html = M.block(d.get("body"), ctx, toc=toc_items)
+    toc = "\n          ".join(f'<li><a href="#{i}">{esc(t)}</a></li>' for i, t in toc_items)
+    rel = "\n          ".join(f'<li><a href="{r}{n}/">{ico(icon, "rel-list__icon")}<span>{esc(S.legal[n].get("tieu_de", ""))}</span>{ARROW}</a></li>'
+                              for n, icon in LEGAL if n != name)
     body = f"""
 <section class="section section--cream">
-  <div class="container">
-    {shead("Bài viết mới", "Giải thích tình huống người dân hay gặp", "Mỗi bài có trích điều luật cụ thể và ghi rõ ngày cập nhật.")}
-    {{{{articles_grid}}}}
-  </div>
-</section>
-
-<section class="section">
-  <div class="container grid grid--2">
-    <a class="tool-card tool-card--dark reveal" href="{{{{root}}}}quy-trinh-lam-viec/">
-      <span class="ichip">{ico("i-steps", "")}</span>
-      <span class="eyebrow">Làm việc với luật sư</span>
-      <h2 class="tool-card__title">Quy trình 4 bước và giấy tờ cần chuẩn bị</h2>
-      <p>Từ buổi trao đổi đầu tiên đến khi hoàn tất: mỗi bước có đầu việc, kết quả và người phụ trách rõ ràng.</p>
-      <span class="link-arrow link-arrow--light">Xem quy trình làm việc {ARROW}</span>
-    </a>
-    <a class="tool-card reveal" href="{{{{root}}}}cau-hoi-thuong-gap/">
-      <span class="ichip">{ico("i-question", "")}</span>
-      <span class="eyebrow">Hỏi đáp</span>
-      <h2 class="tool-card__title">Câu hỏi thường gặp khi làm việc với luật sư</h2>
-      <p>Chi phí thuê luật sư, bảo mật thông tin, thời hiệu, thời gian phản hồi và phạm vi hoạt động.</p>
-      <span class="link-arrow">Xem câu hỏi thường gặp {ARROW}</span>
-    </a>
-  </div>
-</section>
-
-<section class="section section--cream">
-  <div class="container">
-    {shead("Theo lĩnh vực", "Tìm theo vấn đề của anh chị", "Mỗi lĩnh vực có giải đáp ngắn, việc nên làm ngay và giấy tờ cần chuẩn bị.", link=("{{root}}dich-vu/", "Tất cả lĩnh vực"))}
-    {{{{problems_grid}}}}
-  </div>
-</section>
-"""
-    return {
-        "path": path, "section": "knowledge", "schema_type": "CollectionPage",
-        "title": f'Kiến thức pháp lý – Bài viết, tra cứu luật | {FIRM["short_name"]}',
-        "description": "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai và giải đáp thắc mắc khi làm việc với luật sư.",
-        "eyebrow": "Kiến thức pháp lý",
-        "h1": "Hiểu đúng quyền lợi của mình <em>trước khi quyết định</em>",
-        "lead": "Bài viết và giải đáp do Luật Sư Nam biên soạn bằng lời lẽ dễ hiểu, có dẫn điều luật cụ thể. Đọc để nắm vấn đề – còn vụ việc của anh chị, hãy hỏi trực tiếp luật sư.",
-        "crumbs": crumbs_for(("Kiến thức pháp lý", path)),
-        "body": body,
-        "webpage_extra": {"mainEntity": {
-            "@type": "ItemList", "numberOfItems": len(ARTICLES),
-            "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"kien-thuc-phap-ly/{a['slug']}/"), "name": a["title"]}
-                                for i, a in enumerate(ARTICLES)]}},
-    }
-
-
-def faq_page():
-    path = "cau-hoi-thuong-gap/"
-    body = f"""
-<section class="section">
-  <div class="container faq-layout">
-    <div>{{{{faq_list}}}}
-      <p class="faq__foot">Các giải đáp trên mang tính thông tin chung, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Xem thêm <a href="{{{{root}}}}mien-tru-trach-nhiem/">Tuyên bố miễn trừ trách nhiệm</a>.</p>
-    </div>
-    <aside class="faq-aside">
+  <div class="container legal-layout">
+    <article class="prose card legal-doc">
+      {content_html}
+    </article>
+    <aside class="legal-aside">
+      <div class="aside-card aside-card--toc">
+        <p class="aside-card__title">Nội dung chính</p>
+        <ol class="toc">
+          {toc}
+        </ol>
+      </div>
       <div class="aside-card">
-        <p class="aside-card__title">Tìm hiểu thêm</p>
+        <p class="aside-card__title">Văn bản liên quan</p>
         <ul class="rel-list">
-          <li><a href="{{{{root}}}}quy-trinh-lam-viec/">{ico("i-steps", "rel-list__icon")}<span>Quy trình làm việc</span>{ARROW}</a></li>
-          <li><a href="{{{{root}}}}vi-sao-chon-chung-toi/">{ico("i-diamond", "rel-list__icon")}<span>Vì sao chọn chúng tôi</span>{ARROW}</a></li>
-          <li><a href="{{{{root}}}}kien-thuc-phap-ly/">{ico("i-book", "rel-list__icon")}<span>Kiến thức pháp lý</span>{ARROW}</a></li>
-          <li><a href="{{{{root}}}}lien-he/">{ico("i-pin", "rel-list__icon")}<span>Liên hệ, đường đến văn phòng</span>{ARROW}</a></li>
+          {rel}
         </ul>
       </div>
     </aside>
   </div>
 </section>
 """
-    return {
-        "path": path, "section": "knowledge", "schema_type": "FAQPage",
-        "title": f'Câu hỏi thường gặp khi thuê luật sư | {FIRM["short_name"]}',
-        "description": "Giải đáp về chi phí thuê luật sư theo Điều 55 Luật Luật sư, bảo mật thông tin, cam kết kết quả, thời hiệu, thời gian phản hồi và vụ việc ngoài TP.HCM.",
-        "eyebrow": "Câu hỏi thường gặp",
-        "h1": "Những điều anh chị <em>hay băn khoăn nhất</em>",
-        "lead": "Thuê luật sư tốn bao nhiêu, thông tin có được giữ kín không, có cần gấp không – giải đáp ngắn gọn, có dẫn quy định cụ thể.",
-        "crumbs": crumbs_for(("Kiến thức pháp lý", "kien-thuc-phap-ly/"), ("Câu hỏi thường gặp", path)),
-        "body": body,
-        "cband": {"title": "Chưa thấy câu trả lời? Hỏi trực tiếp luật sư"},
-        "webpage_extra": {"mainEntity": [{
-            "@type": "Question", "name": f["q"],
-            "acceptedAnswer": {"@type": "Answer", "text": " ".join(strip_tags(p.replace("{{root}}", "")) for p in f["a"])},
-        } for f in FAQ]},
-    }
-
-
-# ---------------------------------------------------------------------------
-# Trang đơn lẻ từ src/pages
-# ---------------------------------------------------------------------------
-def simple_page(name, path, section, crumbs, **extra):
-    meta, body = load_src(f"pages/{name}.html")
-    page = {"path": path, "section": section, "crumbs": crumbs, "body": body}
-    page.update(meta)
-    page.update(extra)
-    if "title" in page and not page["title"].endswith(FIRM["short_name"]) and path:
-        page["title"] = f'{page["title"]} | {FIRM["short_name"]}'
+    mod = d.get("ngay_cap_nhat") or TODAY
+    y, m, dd = mod.split("-")
+    lead = M.plain(d.get("mo_dau"), ctx.at(where="Đoạn mở đầu"))
+    lead = (lead + " " if lead else "") + f"Cập nhật lần cuối: {dd}/{m}/{y}."
+    seo = d.get("seo") or {}
+    page = {"path": path, "src": d["_src"], "lawyer_card": False, "modified": mod, "body": body,
+            "crumbs": [HOME, (d.get("tieu_de", ""), path)], "eyebrow": M.plain(d.get("nhan"), ctx),
+            "h1": M.title(d.get("tieu_de_trang"), ctx), "lead": lead,
+            "title": full_title(seo.get("tieu_de", ""), path), "description": seo.get("mo_ta", "")}
+    check_title(d["_src"], page["title"])
+    page["og_abs"], page["og_size"], page["og_rel"] = og_for(seo, "assets/img/og-image.jpg")
     return page
 
 
-def all_pages():
-    pages = []
-    meta, body = load_src("pages/home.html")
-    home = {"path": "", "section": "home", "crumbs": [HOME], "body": body, "page_hero": False}
-    home.update(meta)
-    pages.append(home)
+def not_found_page():
+    d = S.not_found
+    ctx = Ctx(S, "", "404.html", d["_src"])
+    f = F()
+    body = f"""<section class="notfound">
+  <div class="container notfound__inner">
+    <p class="notfound__code">404</p>
+    <h1 class="notfound__title">{M.plain(d.get("tieu_de"), ctx)}</h1>
+    <p class="notfound__text">{M.plain(d.get("noi_dung"), ctx)}</p>
+    <div class="notfound__actions">
+      <a class="btn btn--primary" href="">Về trang chủ {ARROW}</a>
+      <a class="btn btn--outline" href="dich-vu/">Xem lĩnh vực hoạt động</a>
+      <a class="btn btn--outline" href="lien-he/">Liên hệ luật sư</a>
+    </div>
+    <ul class="notfound__links">
+      <li><a href="kien-thuc-phap-ly/">Kiến thức pháp lý</a></li>
+      <li><a href="cau-hoi-thuong-gap/">Câu hỏi thường gặp</a></li>
+      <li><a href="tel:{f["phone_tel"]}">Gọi {esc(f["phone"])}</a></li>
+    </ul>
+  </div>
+</section>"""
+    seo = d.get("seo") or {}
+    page = {"path": "404.html", "src": d["_src"], "noindex": True, "root_override": "", "dynamic_base": True,
+            "page_hero": False, "contact_band": False, "crumbs": [HOME], "body": body,
+            "title": full_title(seo.get("tieu_de", ""), "404.html"), "description": seo.get("mo_ta", "")}
+    page["og_abs"], page["og_size"], page["og_rel"] = og_for({}, "assets/img/og-image.jpg")
+    return page
 
-    pages.append(simple_page("gioi-thieu", "gioi-thieu/", "about",
-                             crumbs_for(("Giới thiệu", "gioi-thieu/")), schema_type="AboutPage"))
-    pages.append(simple_page("vi-sao-chon-chung-toi", "vi-sao-chon-chung-toi/", "about",
-                             crumbs_for(("Giới thiệu", "gioi-thieu/"), ("Vì sao chọn chúng tôi", "vi-sao-chon-chung-toi/"))))
-    pages.append(simple_page("quy-trinh-lam-viec", "quy-trinh-lam-viec/", "about",
-                             crumbs_for(("Giới thiệu", "gioi-thieu/"), ("Quy trình làm việc", "quy-trinh-lam-viec/"))))
-    pages.append(services_hub())
-    pages.extend(service_page(s) for s in SERVICES)
-    pages.append(knowledge_hub())
-    pages.extend(article_page(a) for a in ARTICLES)
-    pages.append(faq_page())
 
-    pages.append(simple_page("lien-he", "lien-he/", "contact", crumbs_for(("Liên hệ", "lien-he/")), schema_type="ContactPage",
-                             contact_band=False))
-    for name, label in [("chinh-sach-bao-mat", "Chính sách bảo mật"), ("dieu-khoan-su-dung", "Điều khoản sử dụng"),
-                        ("mien-tru-trach-nhiem", "Miễn trừ trách nhiệm")]:
-        pages.append(simple_page(name, f"{name}/", "", crumbs_for((label, f"{name}/")), lawyer_card=False))
+# ---------------------------------------------------------------------------
+# Danh mục trang (cho menu, kiểm liên kết, danh sách chọn trong CMS)
+# ---------------------------------------------------------------------------
+def build_registry():
+    """Mọi trang sẽ có trên site, theo thứ tự hiển thị ở sitemap và tìm kiếm."""
+    reg = {}
 
-    nf = simple_page("404", "404.html", "", [HOME], noindex=True, root_override="", dynamic_base=True,
-                     page_hero=False, contact_band=False)
-    pages.append(nf)
-    return pages
+    def add(path, label, kind, parent=None, title=None):
+        reg[path] = {"label": label, "kind": kind, "parent": parent, "title": title or label}
+
+    add("", "Trang chủ", "trang")
+    for slug, p in S.pages.items():
+        if slug != content.HOME_SLUG:
+            add(f"{slug}/", p["tieu_de"], "trang", p2path(p.get("trang_cha")) if p.get("trang_cha") else None)
+    add("dich-vu/", "Lĩnh vực hoạt động", "hub")
+    for s in S.services:
+        add(f"dich-vu/{s['slug']}/", s["ten"], "dich_vu", "dich-vu/", f"Dịch vụ › {s['ten']}")
+    add("kien-thuc-phap-ly/", "Kiến thức pháp lý", "hub")
+    for a in S.articles:
+        add(f"kien-thuc-phap-ly/{a['slug']}/", a.get("tieu_de_ngan") or a["tieu_de"], "bai_viet", "kien-thuc-phap-ly/",
+            f"Bài viết › {a.get('tieu_de_ngan') or a['tieu_de']}")
+    add("cau-hoi-thuong-gap/", "Câu hỏi thường gặp", "hub", "kien-thuc-phap-ly/")
+    for name, _ in LEGAL:
+        add(f"{name}/", S.legal[name].get("tieu_de", name), "van_ban")
+    return reg
+
+
+def draft_paths():
+    out = {}
+    for x in S.draft_items:
+        src = x["_src"]
+        if src.startswith("content/dich-vu/"):
+            out[f"dich-vu/{x['slug']}/"] = x.get("ten")
+        elif src.startswith("content/bai-viet/"):
+            out[f"kien-thuc-phap-ly/{x['slug']}/"] = x.get("tieu_de")
+        elif src.startswith("content/trang/"):
+            out[f"{x['slug']}/"] = x.get("tieu_de")
+    return out
+
+
+def menu_walk():
+    order = []
+    for it in S.menu.get("menu") or []:
+        order.append(p2path(it.get("trang")))
+        for x in it.get("muc_con") or []:
+            order.append(p2path(x.get("trang")))
+    return order
+
+
+def ordered_pages(pages):
+    walk = menu_walk()
+    pos = {p: i for i, p in reversed(list(enumerate(walk)))}
+    svc_at = pos.get("dich-vu/", 10 ** 6)
+
+    def key(p):
+        path = p["path"]
+        if path == "":
+            return (0, 0, "")
+        kind = S.registry.get(path, {}).get("kind")
+        if kind == "trang":
+            i = pos.get(path, 10 ** 7)
+            return (1 if i < svc_at else 3, i, path)
+        if kind == "van_ban":
+            return (4, [n for n, _ in LEGAL].index(path.rstrip("/")), path)
+        return (2, 0, "")  # trang tổng hợp, lĩnh vực, bài viết: giữ thứ tự dựng
+    return sorted(pages, key=key)
+
+
+def cms_options():
+    entries = [(path, info) for path, info in S.registry.items()]
+    for path, title in S.draft_paths.items():
+        if path not in S.registry:
+            entries.append((path, {"title": f"{title} (bản nháp)"}))
+    pages = [{"label": f'{info["title"]} — /{path}', "value": "/" + path} for path, info in entries]
+    faq = [{"label": f["hoi"], "value": f["ma"]} for f in S.faq]
+    return {"pages": pages, "faq": faq}
+
+
+# ---------------------------------------------------------------------------
+# Kiểm liên kết nội bộ, mã neo, chuyển hướng
+# ---------------------------------------------------------------------------
+ID_RE = re.compile(r'\sid="([^"]+)"')
+
+
+def check_links(rendered, out):
+    ids = {path: set(ID_RE.findall(h)) for path, h in rendered.items()}
+    redirect_from = {p2path(x["tu"]): x["den"] for x in S.redirects if x.get("tu")}
+    for src, where, path, anchor in S.link_refs:
+        if path and "." in path.rsplit("/", 1)[-1]:  # tệp tĩnh (ảnh, pdf…)
+            if not os.path.isfile(os.path.join(out, path)):
+                LOI.them(src, where, f"Liên kết tới tệp “/{path}” không tồn tại.")
+            continue
+        if path not in rendered:
+            if path in redirect_from:
+                LOI.them(src, where, f"Liên kết tới “/{path}” là đường dẫn cũ đã chuyển hướng; đổi thành “{redirect_from[path]}”.")
+            elif path in S.draft_paths and not S.drafts:
+                LOI.them(src, where, f"Liên kết tới “/{path}” – trang này đang là bản nháp nên chưa có trên site. Đăng trang đó trước hoặc bỏ liên kết.")
+            else:
+                LOI.them(src, where, f"Liên kết tới “/{path}” không tồn tại trên site.")
+            continue
+        if anchor and anchor not in ids[path]:
+            LOI.them(src, where, f"Mã neo “#{anchor}” không có trên trang “/{path}”.")
+    # Chuyển hướng: đích có thật, không vòng lặp, đường dẫn cũ không trùng trang đang có
+    for i, x in enumerate(S.redirects, 1):
+        where = f"Đường dẫn cũ → mới › Chuyển hướng {i}"
+        src_p, (dst_p, _, anchor) = p2path(x["tu"]), p2path(x["den"]).partition("#")
+        if src_p in rendered:
+            LOI.them("content/cai-dat/chuyen-huong.yml", where, f"“{x['tu']}” đang là một trang có thật; không thể vừa là trang vừa chuyển hướng.")
+        if dst_p in redirect_from:
+            LOI.them("content/cai-dat/chuyen-huong.yml", where, f"Đích “{x['den']}” lại là đường dẫn chuyển hướng khác (vòng lặp/chuỗi chuyển hướng).")
+        elif dst_p not in rendered:
+            LOI.them("content/cai-dat/chuyen-huong.yml", where, f"Đích “{x['den']}” không phải trang có thật.")
+        elif anchor and anchor not in ids[dst_p]:
+            LOI.them("content/cai-dat/chuyen-huong.yml", where, f"Mã neo “#{anchor}” không có trên trang “{x['den']}”.")
 
 
 # ---------------------------------------------------------------------------
 # Tệp phụ trợ
 # ---------------------------------------------------------------------------
-def write(rel, text):
-    full = os.path.join(ROOT, rel)
+def write(out, rel, text):
+    full = os.path.join(out, rel)
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w", encoding="utf-8") as fh:
         fh.write(text)
 
 
-def main():
-    pages = all_pages()
-    for p in pages:
-        out = p["path"] if p["path"].endswith(".html") else p["path"] + "index.html"
-        write(out, layout(p))
+def redirect_stub(path, target, label):
+    depth = path.count("/")
+    rel_target = "../" * depth + target.lstrip("/")
+    canonical = abs_url(target.lstrip("/").split("#")[0])
+    return (f'<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
+            f'<meta http-equiv="refresh" content="0; url={esc(rel_target)}"><title>{esc(label)}</title>'
+            f'<link rel="canonical" href="{canonical}"></head><body><p>Trang đã chuyển sang <a href="{esc(rel_target)}">{esc(label)}</a>.</p></body></html>')
 
-    write("doi-ngu-luat-su/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=../gioi-thieu/#doi-ngu-luat-su"><title>Giới thiệu Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/gioi-thieu/"></head><body><p>Nội dung đội ngũ đã được chuyển vào <a href="../gioi-thieu/#doi-ngu-luat-su">Giới thiệu Luật Sư Nam</a>.</p></body></html>')
 
-    # Lĩnh vực Lao động & Việc làm đã ngừng: giữ đường dẫn cũ, chuyển về trang Dịch vụ để không ra trang lỗi
-    write("dich-vu/lao-dong-viec-lam/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=../"><title>Lĩnh vực hoạt động – Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/dich-vu/"></head><body><p>Xem các <a href="../">lĩnh vực hoạt động</a> của Luật Sư Nam.</p></body></html>')
+def write_extras(out, pages, rendered):
+    bp = ENV["base_path"]
+    # Chuyển hướng: trang chuyển tiếp (GitHub Pages) + _redirects 301 thật (Cloudflare)
+    lines = []
+    for x in S.redirects:
+        src_p = p2path(x["tu"])
+        dst_p = p2path(x["den"]).split("#")[0]
+        label = S.registry.get(dst_p, {}).get("label", "trang mới")
+        write(out, src_p + "index.html", redirect_stub(src_p, x["den"], f"{label} – {F()['short_name']}"))
+        lines.append(f"{bp}{src_p} {bp}{x['den'].lstrip('/')} 301")
+        lines.append(f"{bp}{src_p.rstrip('/')} {bp}{x['den'].lstrip('/')} 301")
+    if S.drafts:
+        for path in S.draft_paths:
+            slug = path.rstrip("/").rsplit("/", 1)[-1]
+            lines.append(f"{bp}nhap/{slug}/ {bp}{path} 302")
+    write(out, "_redirects", "\n".join(lines) + "\n")
+    headers = [f"{bp}assets/fonts/*", "  Cache-Control: public, max-age=31536000, immutable",
+               f"{bp}assets/*", "  Cache-Control: public, max-age=604800",
+               f"{bp}admin/*", "  X-Robots-Tag: noindex, nofollow", "  Cache-Control: no-cache",
+               f"{bp}nhap/*", "  X-Robots-Tag: noindex, nofollow"]
+    if ENV["noindex"]:
+        headers += [f"{bp}*", "  X-Robots-Tag: noindex, nofollow"]
+    write(out, "_headers", "\n".join(headers) + "\n")
+    write(out, ".nojekyll", "")
 
-    indexable = [p for p in pages if not p.get("noindex")]
-    urls = "".join(
-        f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p.get('modified', TODAY)}</lastmod>\n  </url>\n"
-        for p in indexable)
-    write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
-    write("robots.txt", f"# {FIRM['legal_name']}\nUser-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n")
-    write("site.webmanifest", json.dumps({
-        "name": FIRM["legal_name"], "short_name": "LSN Law Firm", "description": "Tư vấn pháp lý và tham gia tố tụng tại Thành phố Hồ Chí Minh.",
+    indexable = [p for p in pages if not p.get("noindex") and not p.get("is_draft")]
+    if ENV["noindex"]:
+        write(out, "robots.txt", f"# {F()['legal_name']} – bản thử, không lập chỉ mục\nUser-agent: *\nDisallow: /\n")
+    else:
+        urls = "".join(f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p.get('modified', TODAY)}</lastmod>\n  </url>\n"
+                       for p in indexable)
+        write(out, "sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+        write(out, "robots.txt", f"# {F()['legal_name']}\nUser-agent: *\nAllow: /\nDisallow: {bp}admin/\nDisallow: {bp}nhap/\n\n"
+                                 f"Sitemap: {ENV['site_url']}/sitemap.xml\n")
+    write(out, "site.webmanifest", json.dumps({
+        "name": F()["legal_name"], "short_name": F()["brand"], "description": "Tư vấn pháp lý và tham gia tố tụng tại Thành phố Hồ Chí Minh.",
         "lang": "vi", "start_url": "./", "scope": "./", "display": "standalone",
         "background_color": "#fffdf9", "theme_color": "#fffdf9",
         "icons": [{"src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png"},
@@ -1128,20 +1228,124 @@ def main():
     # Chỉ mục tìm kiếm trong site
     index = []
     for p in indexable:
-        if p.get("index_k", True):
-            heads = re.findall(r"<h[23][^>]*>(.*?)</h[23]>", render_tokens(p["body"], p, ""), re.S)
-            keys = " · ".join(strip_tags(h) for h in heads)[:600]
-        else:
-            keys = ""
-        section = next((lbl for key, lbl, _, _ in NAV if key == p.get("section")), "")
-        index.append({"t": p.get("search_title") or (p["crumbs"][-1][0] if p["path"] else FIRM["legal_name"]), "u": p["path"],
-                      "d": p.get("search_desc") or p["description"], "s": section, "k": keys})
-    for f in FAQ:
-        index.append({"t": f["q"], "u": f"cau-hoi-thuong-gap/#{f['id']}", "d": strip_tags(f["a"][0].replace("{{root}}", ""))[:180],
-                      "s": "Câu hỏi thường gặp", "k": ""})
-    write("assets/search-index.json", json.dumps(index, ensure_ascii=False, separators=(",", ":")))
+        heads = re.findall(r"<h[23][^>]*>(.*?)</h[23]>", p["body"], re.S)
+        keys = " · ".join(tpl.unescape(M.strip_tags(h)) for h in heads)[:600]
+        _, section = section_of(p["path"])
+        index.append({"t": p["crumbs"][-1][0] if p["path"] else F()["legal_name"], "u": p["path"],
+                      "d": p["description"], "s": section, "k": keys})
+    ctx = Ctx(S, "", "cau-hoi-thuong-gap/", "content/hoi-dap.yml")
+    for f in S.faq:
+        first = M.to_text(f["dap"].split("\n\n")[0], ctx)
+        index.append({"t": f["hoi"], "u": f"cau-hoi-thuong-gap/#{f['ma']}", "d": first[:180], "s": "Câu hỏi thường gặp", "k": ""})
+    write(out, "assets/search-index.json", json.dumps(index, ensure_ascii=False, separators=(",", ":")))
 
-    print(f"Đã tạo {len(pages)} trang, sitemap {len(indexable)} URL.")
+    # Trang danh sách bản nháp (chỉ bản thử)
+    if S.drafts and S.draft_paths:
+        rows = "".join(f'<li><a href="../{p}">{esc(t or p)}</a> <small>/{p}</small></li>' for p, t in S.draft_paths.items())
+        write(out, "nhap/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow">'
+                                      '<meta name="viewport" content="width=device-width, initial-scale=1"><title>Bản nháp chờ duyệt</title>'
+                                      '<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;color:#2b1d21}'
+                                      'a{color:#b5000b}small{color:#7a6e70}</style></head><body><h1>Bản nháp chờ duyệt</h1>'
+                                      f'<p>Bấm để xem đúng bố cục thật. Chưa đăng lên site chính thức.</p><ul>{rows}</ul></body></html>')
+
+    # Trang quản trị /admin: Sveltia CMS + cấu hình sinh từ schema
+    if ENV["admin"]:
+        import yaml
+        os.makedirs(os.path.join(out, "admin"), exist_ok=True)
+        shutil.copy2(os.path.join(ROOT, "admin", "index.html"), os.path.join(out, "admin", "index.html"))
+        cfg = schema.cms_config(cms_options(), ENV)
+        header = ("# TỆP TỰ SINH từ tools/schema.py mỗi lần build – không sửa tay.\n"
+                  "# Thêm/sửa trường: sửa tools/schema.py rồi build lại.\n")
+        write(out, "admin/config.yml", header + yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False, width=10 ** 6))
+
+
+# ---------------------------------------------------------------------------
+# Chạy
+# ---------------------------------------------------------------------------
+def copy_static(out):
+    for d in ("css", "js", "fonts"):
+        shutil.copytree(os.path.join(ROOT, "assets", d), os.path.join(out, "assets", d))
+
+
+def fail():
+    print(LOI.bao_cao(), file=sys.stderr)
+    LOI.ghi_tom_tat_github()
+    path = os.environ.get("BUILD_ERRORS_FILE")
+    if path:
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(LOI.bao_cao(markdown=True))
+    sys.exit(1)
+
+
+def main():
+    global ENV, S, IMG, ORG_ID, SITE_ID
+    ENV = read_env()
+    ORG_ID, SITE_ID = ENV["site_url"] + "/#organization", ENV["site_url"] + "/#website"
+    S = content.load(ENV)
+    invalid = bool(LOI)  # có lỗi dữ liệu: vẫn dựng thử để gom thêm lỗi (liên kết, mã chèn…) rồi mới dừng
+    S.registry = build_registry()
+    S.draft_paths = draft_paths()
+
+    out = ENV["out"]
+    tmp = out + ".tmp"
+    shutil.rmtree(tmp, ignore_errors=True)
+    os.makedirs(tmp)
+    try:
+        copy_static(tmp)
+        IMG = Images(S, tmp)
+        sizes = IMG.brand()
+        uploads = IMG.uploads()
+        tpl.init(S, sizes, uploads)
+        default_og = S.seo.get("anh_chia_se") or {}
+        if default_og.get("anh_rieng"):
+            IMG.og_from_file("og-image.jpg", default_og["anh_rieng"])
+        else:
+            IMG.og("og-image.jpg", default_og.get("nhan", ""), default_og.get("tieu_de", ""), default_og.get("mo_ta", ""), "phien-toa")
+
+        pages = [block_page(S.pages[content.HOME_SLUG])]
+        pages += [block_page(p) for slug, p in S.pages.items() if slug != content.HOME_SLUG]
+        pages.append(services_hub())
+        pages += [service_page(s) for s in S.services]
+        pages.append(knowledge_hub())
+        pages += [article_page(a) for a in S.articles]
+        pages.append(faq_page())
+        pages += [legal_page(n) for n, _ in LEGAL]
+        pages = ordered_pages(pages)
+        nf = not_found_page()
+
+        rendered = {}
+        for p in pages + [nf]:
+            html = layout(p)
+            rendered[p["path"]] = html
+            write(tmp, p["path"] if p["path"].endswith(".html") else p["path"] + "index.html", html)
+        check_links(rendered, tmp)
+        if LOI:
+            fail()
+    except SystemExit:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+    except Exception:
+        shutil.rmtree(tmp, ignore_errors=True)
+        if invalid:
+            fail()  # dữ liệu sai làm bước dựng trang không chạy tiếp được: báo các lỗi đã gom
+        raise
+    try:
+        IMG.run_og()
+        write_extras(tmp, pages, rendered)
+    except SystemExit:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+    except Exception:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+    shutil.rmtree(out, ignore_errors=True)
+    os.replace(tmp, out)
+    drafts = f", {len(S.draft_paths)} bản nháp" + (" (đã xuất để xem trước)" if S.drafts else " (không xuất)")
+    print(f"Đã tạo {len(pages) + 1} trang, sitemap {0 if ENV['noindex'] else len([p for p in pages if not p.get('is_draft')])} URL{drafts} → {os.path.relpath(out, ROOT)}/")
+    print(f"Địa chỉ gốc: {ENV['site_url']}/  ·  noindex: {'có' if ENV['noindex'] else 'không'}")
+    if LOI.canh_bao:
+        print(LOI.bao_cao())
+        LOI.ghi_tom_tat_github()
 
 
 if __name__ == "__main__":

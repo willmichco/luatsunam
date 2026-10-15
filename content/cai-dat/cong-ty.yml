@@ -1,0 +1,25 @@
+ten_phap_nhan: Công Ty Luật TNHH Luật Sư Nam
+ten_ngan: Luật Sư Nam
+thuong_hieu: LSN Law Firm
+khau_hieu: Kiến tạo công lý bền vững
+luat_su: Luật sư Nguyễn Trọng Nam
+chuc_danh_luat_su: Giám đốc · Trực tiếp tiếp nhận và phụ trách hồ sơ
+hotline: 0983 498 499
+zalo: https://zalo.me/0983498499
+email: luatsunam.hcm@gmail.com
+dia_chi:
+  so_nha_duong: 22c Vũ Ngọc Phan
+  phuong: Phường Bình Lợi Trung
+  thanh_pho: Thành phố Hồ Chí Minh
+  thanh_pho_viet_tat: TP.HCM
+gio_lam_viec:
+  ngay:
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+  mo_cua: 08:00
+  dong_cua: '17:30'
+  ngoai_gio: 'Ngoài giờ và cuối tuần: vui lòng liên hệ trước qua hotline hoặc Zalo'
+gioi_thieu_chan_trang: '**{{ten_cong_ty}}** tư vấn pháp luật, đại diện và tham gia tố tụng cho cá nhân, doanh nghiệp tại Thành phố Hồ Chí Minh và các tỉnh thành trên cả nước. Hoạt động theo Giấy đăng ký hoạt động do Sở Tư pháp cấp.'

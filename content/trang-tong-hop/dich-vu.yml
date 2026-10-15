@@ -1,0 +1,31 @@
+dau_trang:
+  nhan: Lĩnh vực hoạt động
+  tieu_de: Anh chị cần luật sư *giúp việc gì?*
+  mo_dau: Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong bảy lĩnh vực gắn với đời sống hằng ngày của người dân.
+  the_luat_su: true
+luoi:
+  nhan: Bảy lĩnh vực
+  tieu_de: Chọn tình huống gần giống với anh chị
+  mo_ta: 'Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.'
+hinh_thuc:
+  nhan: Hình thức hỗ trợ
+  tieu_de: Luật sư có thể giúp anh chị theo ba cách
+  mo_ta: Tùy vụ việc, anh chị chọn một hoặc kết hợp nhiều cách, theo phạm vi hành nghề quy định tại Luật Luật sư.
+  the:
+    - bieu_tuong: i-chat
+      tieu_de: Tư vấn, giải đáp
+      mo_ta: Luật sư nghe anh chị trình bày, giải thích quy định và hướng xử lý; soạn hoặc kiểm tra hợp đồng, đơn từ, giấy tờ trước khi anh chị ký, nộp.
+    - bieu_tuong: i-user
+      tieu_de: Thay mặt anh chị làm việc
+      mo_ta: Trong phạm vi được ủy quyền, luật sư thay anh chị làm việc, thương lượng, hòa giải với bên kia và làm thủ tục tại cơ quan nhà nước.
+    - bieu_tuong: i-gavel
+      tieu_de: Cùng anh chị ra Tòa
+      mo_ta: Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, kinh doanh thương mại và tại Trọng tài.
+lien_he_cuoi_trang:
+  hien: true
+  nhan: Chưa rõ lĩnh vực
+  tieu_de: Chưa rõ vụ việc thuộc lĩnh vực nào?
+  doan_moi: Không sao cả. Anh chị cứ gọi điện hoặc nhắn Zalo kể ngắn gọn sự việc – luật sư sẽ xác định vấn đề pháp lý chính và hướng xử lý phù hợp.
+seo:
+  tieu_de: Lĩnh vực hoạt động – Dịch vụ pháp lý
+  mo_ta: 'Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, hình sự, dân sự, công chứng.'

@@ -3,4 +3,10 @@ node_modules/
 *.log
 __pycache__/
 .sites-runtime/
+# Kết quả build (sinh lại mỗi lần, không lưu vào repo)
 dist/
+dist.tmp/
+dist-*/
+.cache/
+build-errors.md
+issue.md

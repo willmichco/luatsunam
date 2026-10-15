@@ -1,0 +1,81 @@
+tieu_de: Quy trình làm việc
+nhap: false
+trang_cha: /gioi-thieu/
+dau_trang:
+  nhan: Quy trình làm việc
+  tieu_de: 'Làm việc với luật sư: *bốn bước, không phức tạp*'
+  mo_dau: Anh chị không cần hiểu luật mới gặp luật sư. Chỉ cần kể lại sự việc và mang theo những giấy tờ đang có – phần còn lại, luật sư sẽ hướng dẫn từng bước.
+  the_luat_su: true
+cac_khoi:
+  - loai: cac_buoc
+    nen: kem
+    nhan: Bốn bước
+    tieu_de: Từ cuộc gọi đầu tiên đến khi xong việc
+    mo_ta: Áp dụng cho cả yêu cầu tư vấn và vụ việc tranh tụng; thời gian của từng bước tùy tính chất và mức độ phức tạp của hồ sơ.
+    kieu: ngang
+    buoc:
+      - tieu_de: Gọi điện hoặc nhắn Zalo
+        mo_ta: Anh chị kể ngắn gọn sự việc. Luật sư hỏi thêm vài điều cần thiết, kiểm tra xung đột lợi ích, cho biết những thời hạn cần chú ý và giấy tờ nên mang theo. Thông tin được giữ kín ngay từ lúc này.
+        ket_qua: Anh chị biết việc của mình cần làm gì trước
+      - tieu_de: Gặp luật sư, xem hồ sơ
+        mo_ta: Luật sư đọc giấy tờ, đối chiếu quy định pháp luật hiện hành; chỉ ra điểm mạnh, điểm yếu, thời hiệu và những giấy tờ còn thiếu. Gặp tại văn phòng hoặc trao đổi trực tuyến với vụ việc ở xa.
+        ket_qua: Đánh giá sơ bộ, nói thật được – mất
+      - tieu_de: Thống nhất cách làm và chi phí
+        mo_ta: Anh chị được nghe các lựa chọn kèm rủi ro, thời gian và chi phí dự kiến. Khi đồng ý, phạm vi công việc và thù lao được ghi vào hợp đồng dịch vụ pháp lý trước khi bắt đầu.
+        ket_qua: Kế hoạch rõ ràng, chi phí biết trước
+      - tieu_de: Luật sư thực hiện, báo tiến độ
+        mo_ta: Luật sư làm theo kế hoạch, báo tiến độ theo các mốc đã thống nhất, trao đổi trước khi có thay đổi và bàn giao kết quả kèm hướng dẫn việc tiếp theo.
+        ket_qua: Một luật sư theo hồ sơ đến cùng
+  - loai: dau_tich
+    ma_neo: ho-so-can-chuan-bi
+    nen: trang
+    nhan: Chuẩn bị trước
+    tieu_de: Giấy tờ nên mang theo buổi gặp đầu tiên
+    mo_ta: Mang bản sao là đủ. Chưa có đủ giấy tờ cũng không sao – cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.
+    muc:
+      - Giấy tờ tùy thân của người cần tư vấn (căn cước, hộ chiếu)
+      - Hợp đồng, thỏa thuận, giấy tờ về tài sản liên quan đến sự việc
+      - Thông báo, giấy mời, quyết định hoặc bản án đã nhận từ cơ quan nhà nước, Tòa án
+      - Tin nhắn, email, chứng từ chuyển khoản thể hiện diễn biến sự việc
+      - Bản ghi diễn biến sự việc theo thứ tự thời gian và những câu anh chị muốn hỏi
+    ghi_chu_cuoi: Vui lòng chưa gửi tài liệu mật qua tin nhắn, email trước khi được luật sư hướng dẫn cách gửi phù hợp.
+    hop_meo:
+      nhan: Mẹo nhỏ trước khi gặp luật sư
+      tieu_de: Ghi ra giấy câu chuyện của anh chị
+      mo_ta: Không cần viết hay, chỉ cần trả lời năm câu hỏi này. Mười phút ghi chép giúp buổi gặp ngắn gọn và chính xác hơn nhiều.
+      y:
+        - dam: Chuyện bắt đầu khi nào?
+          noi_dung: Ghi các mốc ngày tháng quan trọng.
+        - dam: Những ai liên quan?
+          noi_dung: Họ tên, quan hệ với anh chị.
+        - dam: Đã xảy ra những gì?
+          noi_dung: Kể theo thứ tự trước – sau.
+        - dam: Đang có giấy tờ gì?
+          noi_dung: Hợp đồng, biên nhận, tin nhắn, quyết định.
+        - dam: Anh chị mong muốn điều gì?
+          noi_dung: Kết quả mà anh chị hướng tới.
+  - loai: luoi_linh_vuc
+    nen: kem
+    nhan: Theo lĩnh vực
+    tieu_de: Giấy tờ theo từng loại vụ việc
+    mo_ta: Mỗi lĩnh vực có danh sách giấy tờ riêng, kèm việc nên làm ngay.
+    lien_ket:
+      nhan: Tổng quan 7 lĩnh vực
+      trang: /dich-vu/
+    kieu: tinh_huong
+  - loai: hoi_dap
+    nen: trang
+    tieu_de: Trước khi bắt đầu, anh chị thường hỏi
+    mo_ta: Chi phí, giữ bí mật và thời gian phản hồi.
+    lien_ket:
+      nhan: Tất cả câu hỏi thường gặp
+      trang: /cau-hoi-thuong-gap/
+    cau_hoi:
+      - chi-phi-thue-luat-su
+      - bao-mat-thong-tin
+      - thoi-gian-phan-hoi
+lien_he_cuoi_trang:
+  hien: true
+seo:
+  tieu_de: Quy trình làm việc với luật sư và hồ sơ cần chuẩn bị
+  mo_ta: 'Bốn bước làm việc với Luật Sư Nam: kể sự việc, gặp luật sư xem hồ sơ, thống nhất cách làm và chi phí, thực hiện và báo tiến độ; kèm hồ sơ cần chuẩn bị.'

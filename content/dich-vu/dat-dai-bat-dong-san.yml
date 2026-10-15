@@ -1,0 +1,90 @@
+ten: Đất đai & Bất động sản
+nhap: false
+thu_tu: 2
+bieu_tuong: i-house
+mo_ta_ngan: Rà soát pháp lý dự án, giao dịch, cấp giấy chứng nhận và giải quyết tranh chấp đất đai, nhà ở.
+the_tinh_huong:
+  tieu_de: Mua bán, đặt cọc nhà đất
+  mo_ta: Lo bị lừa khi đặt cọc, tranh chấp ranh giới, chậm sang tên hoặc chưa được cấp sổ.
+nhan_dau_trang: Luật sư đất đai & bất động sản
+tieu_de_trang: Nhà đất là tài sản lớn – *kiểm tra kỹ trước khi xuống tiền*
+mo_dau: Sắp đặt cọc mua nhà, tranh chấp ranh giới với hàng xóm, đất bị thu hồi hay mãi chưa được cấp sổ – luật sư giúp anh chị đọc hiểu giấy tờ, chỉ ra rủi ro và đi cùng anh chị qua từng thủ tục với cơ quan nhà nước, Tòa án.
+viec_gap: false
+tinh_huong:
+  - Sắp đặt cọc, mua nhà đất và muốn biết giấy tờ có an toàn không.
+  - Đã đặt cọc nhưng bên bán đổi ý, đòi tăng giá hoặc không chịu ra công chứng.
+  - Mua đất bằng giấy tay nhiều năm, giờ không sang tên được.
+  - Tranh chấp ranh giới, lối đi chung với hàng xóm.
+  - Đất bị thu hồi, không đồng ý với mức bồi thường, hỗ trợ.
+  - Hồ sơ xin cấp sổ bị trả lại hoặc kéo dài không rõ lý do.
+pham_vi:
+  gioi_thieu: Giấy tờ nhà đất thường trải qua nhiều đời chủ, nhiều thời kỳ. Luật sư kiểm tra nguồn gốc, tình trạng pháp lý, quy hoạch, thế chấp và điều kiện chuyển nhượng trước, rồi mới đề xuất cách làm an toàn cho anh chị.
+  cac_viec:
+    - tieu_de: Kiểm tra trước khi mua, đặt cọc
+      mo_ta: Xem giấy chứng nhận, người bán, quy hoạch, thế chấp, hạn chế chuyển nhượng và các điều khoản đặt cọc.
+    - tieu_de: Thủ tục nhà đất
+      mo_ta: Hỗ trợ cấp, cấp đổi giấy chứng nhận; sang tên, tặng cho, thừa kế, tách thửa, hợp thửa và đăng ký biến động.
+    - tieu_de: Hợp đồng và đặt cọc
+      mo_ta: Soạn, rà soát hợp đồng đặt cọc, chuyển nhượng, thuê; thiết kế cách thanh toán và cách xử lý khi một bên vi phạm.
+    - tieu_de: Tranh chấp đất đai
+      mo_ta: Tư vấn tranh chấp ranh giới, lối đi, quyền sử dụng, giao dịch vô hiệu và yêu cầu hủy, chỉnh lý giấy chứng nhận.
+    - tieu_de: Thu hồi, bồi thường, tái định cư
+      mo_ta: Rà soát phương án bồi thường, hỗ trợ, tái định cư; tư vấn khiếu nại và làm việc với cơ quan nhà nước.
+    - tieu_de: Pháp lý dự án bất động sản
+      mo_ta: Rà soát chủ trương, đất đai, xây dựng, điều kiện kinh doanh, mua bán và chuyển nhượng dự án.
+viec_nen_lam:
+  - Chưa đặt cọc, chưa chuyển tiền lớn khi chưa xem bản chính giấy chứng nhận và kiểm tra quy hoạch, thế chấp.
+  - Ưu tiên chuyển khoản; nếu đưa tiền mặt phải có biên nhận ghi rõ nội dung và chữ ký người nhận.
+  - Giữ lại toàn bộ hợp đồng, biên nhận, tin nhắn và thông báo của cơ quan nhà nước.
+  - 'Nhận quyết định thu hồi đất, bồi thường: chú ý thời hiệu khiếu nại, thông thường là 90 ngày kể từ khi nhận hoặc biết quyết định.'
+luu_y:
+  tieu_de: Lưu ý
+  noi_dung: Kết luận pháp lý phụ thuộc giấy tờ thực tế và thông tin từ cơ quan có thẩm quyền. Không nên đặt cọc hoặc thanh toán lớn khi tình trạng hồ sơ chưa được làm rõ.
+nguyen_tac:
+  tieu_de: Không chỉ nhìn bản sao sổ
+  noi_dung: Việc đánh giá dựa trên giấy tờ về người bán, hiện trạng, quy hoạch, thế chấp và lịch sử chuyển nhượng mà anh chị cung cấp hoặc có thể xác minh – không chỉ một bản sao giấy chứng nhận.
+cac_buoc:
+  - tieu_de: Nghe anh chị kể
+    mo_ta: Giao dịch, thủ tục hay tranh chấp cần giải quyết.
+  - tieu_de: Kiểm tra giấy tờ
+    mo_ta: Quyền sở hữu, quy hoạch, thế chấp và hạn chế pháp lý.
+  - tieu_de: Chỉ ra rủi ro
+    mo_ta: Việc cần khắc phục và điều kiện phải có trước khi ký.
+  - tieu_de: Triển khai
+    mo_ta: Soạn hồ sơ, đàm phán hoặc làm việc với cơ quan nhà nước.
+  - tieu_de: Hoàn tất
+    mo_ta: Theo dõi đăng ký, bàn giao và nghĩa vụ sau giao dịch.
+giay_to:
+  tieu_de: Giấy tờ nên mang theo
+  danh_sach:
+    - Giấy chứng nhận và hồ sơ kỹ thuật thửa đất, căn nhà
+    - Hợp đồng, đặt cọc, giấy giao nhận tiền và biên bản
+    - Thông tin quy hoạch, thế chấp hoặc thông báo của cơ quan nhà nước
+    - Đơn từ, quyết định và tài liệu tranh chấp đã có
+nhan_duoc:
+  - Đánh giá tình trạng pháp lý và những rủi ro chính
+  - Danh sách điều kiện cần hoàn thiện trước khi giao dịch
+  - Hợp đồng, văn bản và hồ sơ thủ tục phù hợp
+  - Phương án thương lượng, khiếu nại hoặc khởi kiện
+hoi_dap:
+  - hoi: Đặt cọc rồi mà bên bán đổi ý thì xử lý thế nào?
+    dap: 'Nếu hợp đồng đặt cọc không có thỏa thuận khác, bên nhận cọc từ chối giao kết, thực hiện hợp đồng thì phải trả lại tiền cọc và một khoản tiền tương đương giá trị tiền cọc; ngược lại, bên đặt cọc từ chối thì mất cọc (**Điều 328 Bộ luật Dân sự 2015**). Cách xử lý cụ thể còn tùy nội dung hợp đồng đặt cọc và chứng cứ về việc ai vi phạm. Đọc thêm: [6 điểm cần kiểm tra trước khi đặt cọc](/kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/).'
+  - hoi: Mua bán đất bằng giấy tay có được không?
+    dap: Hợp đồng chuyển nhượng quyền sử dụng đất phải được công chứng hoặc chứng thực theo **Luật Đất đai 2024** (trừ một số trường hợp kinh doanh bất động sản). Giấy tay khó dùng để sang tên và dễ phát sinh tranh chấp. Với giao dịch giấy tay đã có từ trước, khả năng hợp thức hóa phụ thuộc thời điểm giao dịch, tình trạng đất và giấy tờ – luật sư cần xem hồ sơ cụ thể.
+  - hoi: Tranh chấp đất với hàng xóm có phải hòa giải ở phường, xã trước không?
+    dap: Với tranh chấp về việc ai có quyền sử dụng đất, như ranh giới, lối đi, các bên phải hòa giải tại Ủy ban nhân dân cấp xã nơi có đất trước khi yêu cầu giải quyết. Tranh chấp về hợp đồng chuyển nhượng, tặng cho hay thừa kế quyền sử dụng đất thường không bắt buộc bước này. Luật sư sẽ xác định đúng thủ tục cho vụ việc của anh chị.
+can_cu_phap_ly:
+  - Luật Đất đai 2024
+  - Luật Nhà ở 2023
+  - Luật Kinh doanh bất động sản 2023
+  - Bộ luật Dân sự 2015
+lien_he:
+  tieu_de: Kiểm tra trước khi ký để không mất tiền oan
+  doan_moi: Chuẩn bị sẵn giấy tờ nhà đất đang có rồi gọi điện hoặc nhắn Zalo cho luật sư. Luật sư sẽ cho biết cần xác minh thêm điều gì trước khi anh chị xuống tiền.
+linh_vuc_lien_quan:
+  - thua-ke
+  - tranh-tung-giai-quyet-tranh-chap
+  - cong-chung
+seo:
+  tieu_de: Luật sư Đất đai & Bất động sản
+  mo_ta: Rà soát pháp lý dự án và giao dịch bất động sản, thủ tục cấp Giấy chứng nhận, giải quyết tranh chấp đất đai, nhà ở theo Luật Đất đai hiện hành.

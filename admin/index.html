@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Quản trị website Luật Sư Nam</title>
+<!-- Trang quản trị nội dung. Cấu hình (config.yml) TỰ SINH từ tools/schema.py mỗi lần build: không sửa tay. -->
+</head>
+<body>
+<!-- Sveltia CMS khóa phiên bản cố định; nâng cấp: đổi số phiên bản, thử ở bản thử trước khi đưa lên chính thức -->
+<script src="https://unpkg.com/@sveltia/cms@0.221.8/dist/sveltia-cms.js"></script>
+<script>
+  (function () {
+    /* ---------- Thành phần "Bảng" cho khung soạn thảo ----------
+       Trình soạn thảo trực quan chưa có công cụ bảng: nếu để nguyên, lưu bài có bảng có thể làm vỡ bảng.
+       Thành phần này nhận diện bảng Markdown và cho sửa bằng một ô chữ đơn giản:
+       mỗi dòng một hàng, các ô cách nhau bằng dấu |, dòng đầu là tiêu đề cột. */
+    var TABLE = /^\|[^\n]*\|[ \t]*\n\|[ \t:|-]+\|[ \t]*(?:\n\|[^\n]*\|[ \t]*)*/m;
+
+    function splitRow(line) {
+      var cells = [], cur = '', s = line.trim().replace(/^\|/, '').replace(/\|$/, '');
+      for (var i = 0; i < s.length; i++) {
+        if (s[i] === '\\' && s[i + 1] === '|') { cur += '|'; i++; continue; }
+        if (s[i] === '|') { cells.push(cur.trim()); cur = ''; continue; }
+        cur += s[i];
+      }
+      cells.push(cur.trim());
+      return cells;
+    }
+
+    function tableToText(md) {
+      return md.split('\n').filter(function (l, i) { return i !== 1 && l.trim(); })
+        .map(function (l) { return splitRow(l).join(' | '); }).join('\n');
+    }
+
+    function textToTable(text) {
+      var rows = (text || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean)
+        .map(function (l) { return l.split('|').map(function (c) { return c.trim().replace(/\|/g, '\\|'); }); });
+      if (!rows.length) return '';
+      var n = Math.max.apply(null, rows.map(function (r) { return r.length; }));
+      rows = rows.map(function (r) { while (r.length < n) r.push(''); return r; });
+      var line = function (r) { return '| ' + r.join(' | ') + ' |'; };
+      var sep = '|' + rows[0].map(function () { return '---'; }).join('|') + '|';
+      return [line(rows[0]), sep].concat(rows.slice(1).map(line)).join('\n');
+    }
+
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    CMS.registerEditorComponent({
+      id: 'bang',
+      label: 'Bảng',
+      icon: 'table',
+      fields: [{
+        name: 'noi_dung', label: 'Nội dung bảng', widget: 'text',
+        hint: 'Mỗi dòng là một hàng; các ô cách nhau bằng dấu |. Dòng đầu tiên là tiêu đề cột. ' +
+              'Ví dụ: “Yêu cầu | Thời hiệu | Căn cứ” rồi xuống dòng “Chia nhà đất | 30 năm | Khoản 1 Điều 623”. ' +
+              'In đậm: **chữ**. Trên điện thoại, bảng tự cuộn ngang.'
+      }],
+      pattern: TABLE,
+      fromBlock: function (m) { return { noi_dung: tableToText(m[0]) }; },
+      toBlock: function (d) { return textToTable(d.noi_dung); },
+      toPreview: function (d) {
+        var rows = (d.noi_dung || '').split('\n').filter(Boolean).map(function (l) { return l.split('|'); });
+        return '<table style="border-collapse:collapse">' + rows.map(function (r, i) {
+          var t = i ? 'td' : 'th';
+          return '<tr>' + r.map(function (c) { return '<' + t + ' style="border:1px solid #ccc;padding:4px 8px">' + esc(c.trim()) + '</' + t + '>'; }).join('') + '</tr>';
+        }).join('') + '</table>';
+      }
+    });
+  })();
+</script>
+</body>
+</html>

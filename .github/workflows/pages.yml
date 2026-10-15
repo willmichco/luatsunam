@@ -1,5 +1,7 @@
-name: Deploy GitHub Pages
+name: Build và đăng website (GitHub Pages)
 
+# Mỗi lần lưu trong /admin (hoặc push vào main): build từ content/ → kiểm → đăng dist/ lên nhánh gh-pages.
+# Build lỗi: KHÔNG đăng (site giữ bản cũ) và mở issue "Build lỗi" kèm lỗi tiếng Việt → GitHub gửi email cho quản trị.
 on:
   push:
     branches: [main]
@@ -7,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: pages
@@ -15,12 +18,74 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Publish static site to gh-pages
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Cài thư viện
+        run: pip install -r requirements.txt
+
+      - name: Dùng lại ảnh đã xử lý ở lần trước
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: img-${{ hashFiles('tools/images.py') }}-${{ github.sha }}
+          restore-keys: img-${{ hashFiles('tools/images.py') }}-
+
+      - name: Build website
+        env:
+          BUILD_ERRORS_FILE: build-errors.md
+          CMS_OAUTH_URL: ${{ vars.CMS_OAUTH_URL }}
+          CMS_ADMIN: ${{ vars.CMS_ADMIN }}
+        run: python3 tools/build.py
+
+      - name: Kiểm canonical, sitemap, liên kết nội bộ
+        shell: bash  # bật pipefail: bước kiểm lỗi thì dừng, không đăng
+        run: python3 tools/kiem_tra.py | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Đăng lên GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          exclude_assets: '.github,README.md,src,tools'
+          publish_dir: ./dist
           force_orphan: true
+          commit_message: "Đăng website từ ${{ github.sha }}"
+
+      - name: Báo build lỗi (mở issue → email cho quản trị)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          gh label create build-loi --color B5000B --description "Build website bị lỗi" --force >/dev/null 2>&1 || true
+          {
+            echo "**Lần lưu gây lỗi:** ${COMMIT_MSG:-(không rõ)} – bởi @${ACTOR}"
+            echo ""
+            if [ -f build-errors.md ]; then cat build-errors.md; else echo "Build hoặc bước kiểm bị lỗi. Xem chi tiết: ${RUN_URL}"; fi
+            echo ""
+            echo "---"
+            echo "Website đang chạy vẫn giữ bản cũ. Sửa đúng tệp/trường nêu trên trong /admin rồi bấm Lưu; issue này tự đóng khi build lại thành công."
+            echo "Chi tiết kỹ thuật: ${RUN_URL}"
+          } > issue.md
+          num=$(gh issue list --label build-loi --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$num" ]; then
+            gh issue comment "$num" --body-file issue.md
+          else
+            gh issue create --title "Build website lỗi – site vẫn giữ bản cũ" --label build-loi --body-file issue.md
+          fi
+
+      - name: Đóng thông báo lỗi khi đã build lại được
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for num in $(gh issue list --label build-loi --state open --json number --jq '.[].number' 2>/dev/null || true); do
+            gh issue close "$num" --comment "Đã build và đăng lại thành công (${{ github.sha }})."
+          done

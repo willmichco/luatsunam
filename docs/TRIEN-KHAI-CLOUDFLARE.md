@@ -3,6 +3,16 @@
 Code đã sẵn trong repo. Các bước dưới chỉ là bấm trên giao diện Cloudflare/GitHub, làm theo thứ tự A → E.
 Toàn bộ dùng gói **Free**: 0 đ/tháng.
 
+## 0. (1 phút, nên làm ngay) Cho GitHub Pages đọc nhánh `gh-pages`
+
+Hiện GitHub Pages đọc **thư mục gốc nhánh `main`**, nên workflow phải chép bản build vào `main` sau mỗi lần lưu
+(commit “Cập nhật bản build… [skip ci]”). Chuyển sang `gh-pages` để `main` chỉ còn mã nguồn:
+
+repo → **Settings** → **Pages** → *Build and deployment* → *Source*: **Deploy from a branch** → *Branch*: **gh-pages** / **(root)** → **Save**.
+
+Workflow tự nhận ra thay đổi (đọc cấu hình Pages qua API) và từ lần lưu sau sẽ đăng lên `gh-pages`.
+Sau đó có thể xóa các tệp build cũ ở gốc `main` (danh sách trong `.ban-build.txt`).
+
 ## A. Bản thử trên Cloudflare Pages (chứa bản nháp, chặn Google)
 
 1. <https://dash.cloudflare.com> → **Workers & Pages** → **Create** → tab **Pages** → **Connect to Git** → chọn repo `willmichco/luatsunam`.

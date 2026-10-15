@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pages: read
 
 concurrency:
   group: pages
@@ -48,13 +49,49 @@ jobs:
         shell: bash  # bật pipefail: bước kiểm lỗi thì dừng, không đăng
         run: python3 tools/kiem_tra.py | tee -a "$GITHUB_STEP_SUMMARY"
 
-      - name: Đăng lên GitHub Pages
+      - name: Xem GitHub Pages đang đọc nhánh nào
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          src=$(gh api "repos/${{ github.repository }}/pages" --jq '.source.branch // "gh-pages"' 2>/dev/null || echo gh-pages)
+          echo "branch=$src" >> "$GITHUB_OUTPUT"
+          echo "GitHub Pages đang đọc nhánh: $src"
+
+      # Cấu hình khuyến nghị: Settings → Pages → Deploy from a branch → gh-pages / (root)
+      - name: Đăng lên nhánh gh-pages
+        if: steps.pages.outputs.branch != 'main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           force_orphan: true
           commit_message: "Đăng website từ ${{ github.sha }}"
+
+      # Cấu hình cũ (Pages đọc gốc nhánh main): chép bản build vào gốc main, commit [skip ci].
+      # .ban-build.txt ghi danh sách tệp do build sinh ra để xóa đúng tệp của trang đã gỡ.
+      - name: Đăng vào gốc nhánh main (Pages đang đọc main)
+        if: steps.pages.outputs.branch == 'main'
+        run: |
+          (cd dist && find . -type f | sed 's#^\./##' | sort) > /tmp/moi.txt
+          if [ -f .ban-build.txt ]; then
+            # Chỉ xóa tệp do build sinh ra; không bao giờ xóa tệp nguồn trùng tên (admin, CSS, JS, phông, ảnh tải lên)
+            comm -23 <(sort .ban-build.txt) /tmp/moi.txt | { grep -Ev '^(admin/index\.html|assets/(css|js|fonts)/|assets/uploads/[^/]+$)' || true; } \
+              | while read -r f; do git rm -q --ignore-unmatch -- "$f"; done
+          fi
+          cp -r dist/. .
+          cp /tmp/moi.txt .ban-build.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- . ':!dist' ':!.cache' ':!build-errors.md'
+          if git diff --cached --quiet; then echo "Bản build không đổi"; exit 0; fi
+          git commit -q -m "Cập nhật bản build cho GitHub Pages từ ${GITHUB_SHA::7} [skip ci]"
+          for i in 1 2 3 4; do
+            git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0
+            sleep $((i * 3))
+          done
+          exit 1
+        shell: bash
 
       - name: Báo build lỗi (mở issue → email cho quản trị)
         if: failure()

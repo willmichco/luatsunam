@@ -43,7 +43,9 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `tools/kiem_tra.py` | Kiểm sau build: canonical, og:url, sitemap, robots, liên kết, mã neo |
 | `cloudflare/oauth-worker/` | Worker đăng nhập GitHub cho /admin |
 
-Các tệp HTML, `sitemap.xml`, ảnh trong `assets/img/` **không nằm trong repo**: build sinh vào `dist/`.
+Các tệp HTML, `sitemap.xml`, ảnh trong `assets/img/` do build sinh vào `dist/`, **không sửa tay**.
+GitHub Pages hiện đọc gốc nhánh `main`, nên workflow tạm chép `dist/` vào gốc `main` (danh sách tệp: `.ban-build.txt`);
+khi chuyển nguồn Pages sang `gh-pages` (Settings → Pages), workflow tự đăng lên `gh-pages` và `main` chỉ còn mã nguồn.
 
 ## Chạy trên máy
 

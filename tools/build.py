@@ -4,7 +4,7 @@
     python3 tools/build.py
 
 Nguồn nội dung:
-    tools/data.py            Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
+    tools/data.py            Thông tin pháp nhân, 7 lĩnh vực, bài viết, câu hỏi thường gặp
     src/pages/*.html         Nội dung các trang đơn lẻ (có khối <!--meta {...} --> ở đầu)
     src/bai-viet/*.html      Nội dung bài viết
 
@@ -173,7 +173,7 @@ def nav_html(page, r):
         if sub == "services":
             groups = [
                 ("Cá nhân & gia đình", ["dan-su", "dat-dai-bat-dong-san", "hon-nhan-gia-dinh", "thua-ke"]),
-                ("Tranh chấp & thủ tục", ["tranh-tung-giai-quyet-tranh-chap", "hinh-su", "lao-dong-viec-lam", "cong-chung"]),
+                ("Tranh chấp & thủ tục", ["tranh-tung-giai-quyet-tranh-chap", "hinh-su", "cong-chung"]),
             ]
             links = ""
             for group_title, slugs in groups:
@@ -524,7 +524,7 @@ def org_node():
         "logo": {"@type": "ImageObject", "url": abs_url("assets/img/icon-512.png"), "width": 512, "height": 512},
         "image": abs_url(asset_ref("assets/img/og-image.jpg")),
         "description": "Công ty luật tại Thành phố Hồ Chí Minh, tư vấn và tham gia tố tụng trong các lĩnh vực thừa kế, "
-                       "đất đai, hôn nhân gia đình, lao động, hình sự, dân sự, công chứng và tranh chấp thương mại.",
+                       "đất đai, hôn nhân gia đình, hình sự, dân sự, công chứng và tranh chấp thương mại.",
         "telephone": FIRM["phone_intl"],
         "email": FIRM["email"],
         "priceRange": "Theo thỏa thuận",
@@ -822,14 +822,14 @@ def services_hub():
     modes = [
         ("i-chat", "Tư vấn, giải đáp", "Luật sư nghe anh chị trình bày, giải thích quy định và hướng xử lý; soạn hoặc kiểm tra hợp đồng, đơn từ, giấy tờ trước khi anh chị ký, nộp."),
         ("i-user", "Thay mặt anh chị làm việc", "Trong phạm vi được ủy quyền, luật sư thay anh chị làm việc, thương lượng, hòa giải với bên kia và làm thủ tục tại cơ quan nhà nước."),
-        ("i-gavel", "Cùng anh chị ra Tòa", "Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, lao động, kinh doanh thương mại và tại Trọng tài."),
+        ("i-gavel", "Cùng anh chị ra Tòa", "Luật sư bào chữa, bảo vệ quyền lợi hoặc đại diện cho anh chị trong vụ án hình sự, dân sự, hôn nhân gia đình, kinh doanh thương mại và tại Trọng tài."),
     ]
     mode_html = "".join(f'<article class="icard reveal"><span class="ichip">{ico(i, "")}</span><h3 class="icard__title">{h}</h3><p class="icard__text">{p}</p></article>'
                         for i, h, p in modes)
     body = f"""
 <section class="section section--cream">
   <div class="container">
-    {shead("Tám lĩnh vực", "Chọn tình huống gần giống với anh chị", "Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.")}
+    {shead("Bảy lĩnh vực", "Chọn tình huống gần giống với anh chị", "Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.")}
     {{{{problems_grid}}}}
   </div>
 </section>
@@ -845,10 +845,10 @@ def services_hub():
     return {
         "path": path, "section": "services", "schema_type": "CollectionPage",
         "title": f'Lĩnh vực hoạt động – Dịch vụ pháp lý | {FIRM["short_name"]}',
-        "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 8 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng.",
+        "description": "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, hình sự, dân sự, công chứng.",
         "eyebrow": "Lĩnh vực hoạt động",
         "h1": "Anh chị cần luật sư <em>giúp việc gì?</em>",
-        "lead": "Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong tám lĩnh vực gắn với đời sống hằng ngày của người dân.",
+        "lead": "Từ chia di sản, ly hôn, mua bán nhà đất đến người thân gặp chuyện hình sự – Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong bảy lĩnh vực gắn với đời sống hằng ngày của người dân.",
         "crumbs": crumbs_for(("Lĩnh vực hoạt động", path)),
         "body": body,
         "cband": {"eyebrow": "Chưa rõ lĩnh vực", "title": "Chưa rõ vụ việc thuộc lĩnh vực nào?",
@@ -1106,6 +1106,9 @@ def main():
         write(out, layout(p))
 
     write("doi-ngu-luat-su/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=../gioi-thieu/#doi-ngu-luat-su"><title>Giới thiệu Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/gioi-thieu/"></head><body><p>Nội dung đội ngũ đã được chuyển vào <a href="../gioi-thieu/#doi-ngu-luat-su">Giới thiệu Luật Sư Nam</a>.</p></body></html>')
+
+    # Lĩnh vực Lao động & Việc làm đã ngừng: giữ đường dẫn cũ, chuyển về trang Dịch vụ để không ra trang lỗi
+    write("dich-vu/lao-dong-viec-lam/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=../"><title>Lĩnh vực hoạt động – Luật Sư Nam</title><link rel="canonical" href="' + SITE_URL + '/dich-vu/"></head><body><p>Xem các <a href="../">lĩnh vực hoạt động</a> của Luật Sư Nam.</p></body></html>')
 
     indexable = [p for p in pages if not p.get("noindex")]
     urls = "".join(

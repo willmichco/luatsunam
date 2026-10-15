@@ -14,8 +14,8 @@ Website tĩnh nhiều trang (HTML, CSS, JavaScript thuần), dùng giao diện m
 | `/doi-ngu-luat-su/` | Hồ sơ Luật sư Nam | ProfilePage, Person |
 | `/vi-sao-chon-chung-toi/` | Bốn nguyên tắc làm việc | WebPage |
 | `/quy-trinh-lam-viec/` | Quy trình 4 bước, hồ sơ cần chuẩn bị | WebPage |
-| `/dich-vu/` | Tổng quan 8 lĩnh vực | CollectionPage, ItemList |
-| `/dich-vu/<lĩnh-vực>/` | 8 trang dịch vụ: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, lao động, hình sự, dân sự, công chứng. Mỗi trang: tình huống thường gặp, luật sư giúp gì, việc nên làm ngay, các bước, giấy tờ, hỏi đáp có dẫn điều luật | Service |
+| `/dich-vu/` | Tổng quan 7 lĩnh vực | CollectionPage, ItemList |
+| `/dich-vu/<lĩnh-vực>/` | 7 trang dịch vụ: thừa kế, tranh tụng, hôn nhân gia đình, đất đai, hình sự, dân sự, công chứng. Mỗi trang: tình huống thường gặp, luật sư giúp gì, việc nên làm ngay, các bước, giấy tờ, hỏi đáp có dẫn điều luật | Service |
 | `/kien-thuc-phap-ly/` | Danh mục bài viết và công cụ | CollectionPage, ItemList |
 | `/kien-thuc-phap-ly/<bài-viết>/` | 3 bài viết pháp lý, mở đầu bằng khung “Tóm tắt nhanh” | Article |
 | `/cau-hoi-thuong-gap/` | 7 câu hỏi thường gặp | FAQPage |
@@ -34,8 +34,8 @@ Toàn website dùng một tệp giao diện duy nhất `assets/css/style.css` v�
 
 | Token | Hiển thị |
 |---|---|
-| `{{problems_grid}}` | 8 thẻ “Anh chị đang gặp chuyện gì?” (thứ tự: `PROBLEM_ORDER` trong `tools/data.py`) |
-| `{{services_grid}}` | 8 thẻ lĩnh vực |
+| `{{problems_grid}}` | 7 thẻ “Anh chị đang gặp chuyện gì?” (thứ tự: `PROBLEM_ORDER` trong `tools/data.py`) |
+| `{{services_grid}}` | 7 thẻ lĩnh vực |
 | `{{faq_list:id1,id2}}` | Câu hỏi thường gặp chọn lọc |
 | `{{articles_grid}}` | Thẻ bài viết |
 | `{{photo:van-phong}}`, `{{photo:phien-toa\|lazy}}` | Ảnh thật của luật sư dạng `<picture>` (AVIF + WebP, 3 kích thước); `lazy` cho ảnh dưới màn hình đầu |
@@ -56,16 +56,16 @@ Khối liên hệ cuối trang được thêm tự động (tắt bằng `"conta
 
 ## Liên kết nội bộ
 
-- Menu có menu xổ cho **Giới thiệu**, **Lĩnh vực hoạt động** (8 lĩnh vực) và **Kiến thức pháp lý**.
+- Menu có menu xổ cho **Giới thiệu**, **Lĩnh vực hoạt động** (7 lĩnh vực) và **Kiến thức pháp lý**.
 - Mỗi trang dịch vụ liên kết tới 3 lĩnh vực liên quan (khai báo ở trường `related` trong `tools/data.py`), bài viết liên quan, quy trình làm việc và câu hỏi thường gặp.
 - Mỗi bài viết có mục lục, liên kết trong nội dung tới trang dịch vụ, khung “Cần luật sư về…”, danh sách lĩnh vực liên quan và bài viết khác.
-- Footer liên kết tới toàn bộ trang chính và 8 lĩnh vực.
+- Footer liên kết tới toàn bộ trang chính và 7 lĩnh vực. Trang cũ `/dich-vu/lao-dong-viec-lam/` chuyển hướng về `/dich-vu/`.
 - Tìm kiếm trong website (biểu tượng kính lúp) dùng chỉ mục `assets/search-index.json` do script sinh ra.
 
 ## Cấu trúc thư mục
 
 ```
-tools/data.py              Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
+tools/data.py              Thông tin pháp nhân, 7 lĩnh vực, bài viết, câu hỏi thường gặp
 tools/build.py             Sinh toàn bộ trang, sitemap.xml, robots.txt, site.webmanifest, chỉ mục tìm kiếm
 tools/make_images.py       Sinh logo, favicon, ảnh luật sư (cắt, tối ưu, AVIF + WebP nhiều kích thước) và ảnh chia sẻ OG
 src/brand/logo-lsn.webp    Logo gốc (nền trong suốt)

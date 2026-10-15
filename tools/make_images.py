@@ -20,7 +20,7 @@ Kết quả trong assets/img/:
     luat-su-chan-dung.avif/.webp      Ảnh cắt 4:3 cho thẻ "Luật sư phụ trách" ở đầu các trang
     luat-su-avatar.webp               Ảnh tròn nhỏ cho khối liên hệ, thẻ luật sư trên điện thoại
     og-image.jpg                      Ảnh chia sẻ mặc định 1200×630
-    og/dich-vu-<slug>.jpg             Ảnh chia sẻ riêng cho 8 trang dịch vụ
+    og/dich-vu-<slug>.jpg             Ảnh chia sẻ riêng cho 7 trang dịch vụ
     og/bai-viet-<slug>.jpg            Ảnh chia sẻ riêng cho từng bài viết
 """
 import io
@@ -46,7 +46,7 @@ PHOTOS = {
     "phien-toa": {"file": "phien-toa.webp", "og": (60, 20, 740, 812), "card": (118, 118, 678, 538), "avatar": (268, 115, 528, 375)},
 }
 # Dịch vụ gắn với tố tụng dùng ảnh tại phiên tòa, còn lại dùng ảnh văn phòng
-COURT = {"hinh-su", "tranh-tung-giai-quyet-tranh-chap", "dan-su", "hon-nhan-gia-dinh", "lao-dong-viec-lam"}
+COURT = {"hinh-su", "tranh-tung-giai-quyet-tranh-chap", "dan-su", "hon-nhan-gia-dinh"}
 
 
 def photo(name):

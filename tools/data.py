@@ -131,9 +131,9 @@ SERVICES = [
         "slug": "tranh-tung-giai-quyet-tranh-chap",
         "name": "Tranh tụng & Giải quyết tranh chấp",
         "icon": "i-gavel",
-        "short": "Đại diện, thương lượng và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp thương mại, hợp đồng và lao động.",
+        "short": "Đại diện, thương lượng và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp thương mại, hợp đồng.",
         "title": "Luật sư Tranh tụng & Giải quyết tranh chấp",
-        "description": "Đại diện, thương lượng, hòa giải và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp hợp đồng, thương mại, dân sự và lao động.",
+        "description": "Đại diện, thương lượng, hòa giải và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp hợp đồng, thương mại, dân sự.",
         "image_alt": "Búa phán quyết trên bàn xét xử",
         "problem_title": "Bị kiện hoặc cần khởi kiện ra Tòa",
         "problem_text": "Soạn đơn, chuẩn bị chứng cứ, đại diện và tranh luận tại Tòa án, Trọng tài qua các cấp xét xử.",
@@ -195,7 +195,7 @@ SERVICES = [
         "laws": ["Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)", "Bộ luật Dân sự 2015", "Luật Thương mại 2005", "Luật Trọng tài thương mại 2010", "Luật Thi hành án dân sự"],
         "cta_title": "Chuẩn bị sớm giúp giữ được chứng cứ và thời hạn",
         "cta_text": "Gọi điện hoặc nhắn Zalo cho luật sư ngay khi nhận giấy tờ của Tòa án hoặc khi thấy tranh chấp có dấu hiệu kéo dài.",
-        "related": ["dan-su", "lao-dong-viec-lam", "dat-dai-bat-dong-san"],
+        "related": ["dan-su", "dat-dai-bat-dong-san", "cong-chung"],
     },
     {
         "slug": "hon-nhan-gia-dinh",
@@ -340,76 +340,6 @@ SERVICES = [
         "related": ["cong-chung", "thua-ke", "tranh-tung-giai-quyet-tranh-chap"],
     },
     {
-        "slug": "lao-dong-viec-lam",
-        "name": "Lao động & Việc làm",
-        "icon": "i-network",
-        "problem_icon": "i-team",
-        "short": "Xây dựng quy chế, hợp đồng lao động, xử lý kỷ luật, chấm dứt hợp đồng và tranh chấp lao động.",
-        "title": "Luật sư Lao động & Việc làm",
-        "description": "Xây dựng hợp đồng lao động, nội quy, quy chế; tư vấn xử lý kỷ luật, chấm dứt hợp đồng và giải quyết tranh chấp lao động theo Bộ luật Lao động.",
-        "image_alt": "Hai doanh nhân bắt tay trong văn phòng",
-        "problem_title": "Bị cho nghỉ việc, nợ lương, bảo hiểm",
-        "problem_text": "Người lao động bị chấm dứt hợp đồng trái luật; doanh nghiệp cần xử lý kỷ luật, nội quy đúng quy định.",
-        "hero_title": "Quyền lợi người lao động, <em>quy trình đúng cho doanh nghiệp</em>",
-        "lead": "Bị cho nghỉ việc đột ngột, bị nợ lương, công ty không đóng bảo hiểm – hay doanh nghiệp cần kỷ luật, cho nghỉ việc đúng luật để tránh bị kiện. Luật sư giúp anh chị biết mình đúng, sai ở đâu và nên làm gì tiếp theo.",
-        "situations": [
-            "Bị công ty cho nghỉ việc ngang, không báo trước, không có lý do rõ ràng.",
-            "Bị nợ lương, không được trả trợ cấp thôi việc hoặc tiền ngày phép.",
-            "Công ty không đóng hoặc đóng thiếu bảo hiểm xã hội.",
-            "Bị kỷ luật, sa thải nhưng thấy không đúng quy trình.",
-            "Doanh nghiệp cần xây dựng hợp đồng, nội quy, quy trình kỷ luật đúng luật.",
-            "Doanh nghiệp muốn cho người lao động nghỉ việc mà không bị kiện ngược.",
-        ],
-        "scope_intro": "Quan hệ lao động cần cả căn cứ pháp luật lẫn hồ sơ làm đúng từng bước. Luật sư xem quy trình, chứng cứ và tác động thực tế để đề xuất cách xử lý phù hợp cho cả người lao động và doanh nghiệp.",
-        "scope": [
-            ("Hợp đồng và hồ sơ nhân sự", "Soạn, rà soát hợp đồng lao động, thử việc, bảo mật, đào tạo, điều chuyển và hồ sơ quản lý người lao động."),
-            ("Nội quy và chính sách", "Xây dựng nội quy lao động, quy chế lương thưởng, đánh giá công việc và quy trình tiếp nhận khiếu nại."),
-            ("Kỷ luật lao động", "Đánh giá hành vi, chứng cứ, thời hiệu; hướng dẫn họp xử lý và ra quyết định đúng trình tự."),
-            ("Chấm dứt hợp đồng", "Tư vấn đơn phương chấm dứt, thỏa thuận nghỉ việc, thay đổi cơ cấu và các khoản phải thanh toán."),
-            ("Tiền lương, bảo hiểm", "Rà soát tiền lương, làm thêm giờ, phép năm, bảo hiểm, trợ cấp và các khoản bồi thường."),
-            ("Tranh chấp lao động", "Đại diện thương lượng, hòa giải và khởi kiện về kỷ luật, cho nghỉ việc, tiền lương, bảo hiểm và quyền lợi khác."),
-        ],
-        "tips": [
-            "Giữ lại hợp đồng lao động, bảng lương, sao kê nhận lương và các quyết định của công ty.",
-            "Chụp lại tin nhắn, email thông báo cho nghỉ việc; ghi rõ ngày nhận.",
-            "Không ký đơn xin nghỉ việc hay biên bản theo mẫu công ty đưa nếu nội dung không đúng sự thật.",
-            "Thời hiệu yêu cầu Tòa án giải quyết tranh chấp lao động cá nhân là 01 năm – đừng để quá lâu.",
-        ],
-        "docs": [
-            "Hợp đồng, phụ lục, mô tả công việc và hồ sơ nhân sự",
-            "Nội quy, quy chế, thông báo và biên bản liên quan",
-            "Bảng lương, chấm công, bảo hiểm và chứng từ thanh toán",
-            "Email, tin nhắn, đánh giá công việc hoặc đơn khiếu nại",
-        ],
-        "deliverables": [
-            "Đánh giá căn cứ và rủi ro của từng hướng xử lý",
-            "Các bước cần làm và mẫu văn bản cần dùng",
-            "Văn bản nhân sự được soạn hoặc rà soát",
-            "Phương án thương lượng và đại diện khi tranh chấp",
-        ],
-        "principle_title": "Phòng ngừa hơn chữa cháy",
-        "principle_text": "Hồ sơ lao động được thiết kế để áp dụng được trong thực tế, đồng thời đủ căn cứ chứng minh khi cơ quan quản lý kiểm tra hoặc khi có tranh chấp.",
-        "steps": [
-            ("Nghe anh chị kể", "Hợp đồng, vị trí công việc và chuyện đang xảy ra."),
-            ("Rà soát quy trình", "Căn cứ, thời hạn, thẩm quyền và chứng cứ."),
-            ("Cân nhắc lựa chọn", "Giải quyết nội bộ, thỏa thuận hay tranh chấp."),
-            ("Chuẩn bị văn bản", "Soạn giấy tờ và hướng dẫn từng bước thực hiện."),
-            ("Theo dõi kết quả", "Kiểm tra thanh toán, bàn giao và nghĩa vụ còn lại."),
-        ],
-        "note_title": "Lưu ý",
-        "note_text": "Kỷ luật hoặc cho nghỉ việc sai căn cứ, sai thời hiệu hay sai thủ tục có thể khiến doanh nghiệp phải nhận lại người lao động, trả lương và bồi thường.",
-        "faq": [
-            ("Bị cho nghỉ việc trái luật, tôi có quyền đòi gì?",
-             "Nếu người sử dụng lao động đơn phương chấm dứt hợp đồng trái pháp luật, họ phải nhận anh chị trở lại làm việc, trả tiền lương, đóng bảo hiểm cho những ngày không được làm việc và trả thêm ít nhất 02 tháng tiền lương theo hợp đồng; nếu anh chị không muốn quay lại thì còn được trả trợ cấp thôi việc (<strong>Điều 41 Bộ luật Lao động 2019</strong>)."),
-            ("Thời hạn khởi kiện tranh chấp lao động là bao lâu?",
-             "Thời hiệu yêu cầu Tòa án giải quyết tranh chấp lao động cá nhân là 01 năm kể từ ngày phát hiện ra hành vi mà anh chị cho rằng quyền, lợi ích hợp pháp của mình bị vi phạm (<strong>khoản 3 Điều 190 Bộ luật Lao động 2019</strong>). Một số tranh chấp như bị sa thải, bị đơn phương chấm dứt hợp đồng có thể yêu cầu Tòa án giải quyết mà không bắt buộc qua hòa giải viên lao động (<strong>Điều 188</strong>)."),
-        ],
-        "laws": ["Bộ luật Lao động 2019", "Luật Bảo hiểm xã hội 2024", "Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)"],
-        "cta_title": "Biết rõ quyền lợi trước khi ký bất cứ giấy tờ gì",
-        "cta_text": "Gọi điện hoặc nhắn Zalo kể ngắn gọn chuyện đang xảy ra ở nơi làm việc. Luật sư sẽ cho biết anh chị cần giữ lại giấy tờ gì và nên làm gì trước.",
-        "related": ["tranh-tung-giai-quyet-tranh-chap", "dan-su", "hinh-su"],
-    },
-    {
         "slug": "hinh-su",
         "name": "Hình sự",
         "icon": "i-shield-check",
@@ -481,7 +411,7 @@ SERVICES = [
         "laws": ["Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017, 2025)", "Bộ luật Tố tụng hình sự 2015 (sửa đổi, bổ sung)", "Luật Luật sư 2006 (sửa đổi, bổ sung 2012)"],
         "cta_title": "Việc hình sự cần luật sư từ giai đoạn đầu",
         "cta_text": "Gọi ngay hotline để luật sư biết vụ việc đang ở giai đoạn nào và việc gì cần làm trước. Chuẩn bị sẵn giấy mời, quyết định hoặc biên bản đã nhận.",
-        "related": ["tranh-tung-giai-quyet-tranh-chap", "dan-su", "lao-dong-viec-lam"],
+        "related": ["tranh-tung-giai-quyet-tranh-chap", "dan-su", "hon-nhan-gia-dinh"],
     },
     {
         "slug": "dan-su",
@@ -629,7 +559,7 @@ SERVICE_BY_SLUG = {s["slug"]: s for s in SERVICES}
 
 # Thứ tự thẻ "Anh chị đang gặp chuyện gì?" (trang chủ, trang Dịch vụ): việc người dân hay gặp nhất đứng trước
 PROBLEM_ORDER = ["thua-ke", "dat-dai-bat-dong-san", "hon-nhan-gia-dinh", "hinh-su",
-                 "dan-su", "lao-dong-viec-lam", "tranh-tung-giai-quyet-tranh-chap", "cong-chung"]
+                 "dan-su", "tranh-tung-giai-quyet-tranh-chap", "cong-chung"]
 
 # ---------------------------------------------------------------------------
 # Bài viết pháp lý. Nội dung từng bài: src/bai-viet/<slug>.html

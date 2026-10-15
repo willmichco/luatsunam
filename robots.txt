@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://luat-su-nam-phap-ly.willmich-co.chatgpt.site/sitemap.xml
+Sitemap: https://willmichco.github.io/luatsunam/sitemap.xml

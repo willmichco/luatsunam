@@ -2,7 +2,7 @@
 
 Website tĩnh nhiều trang (HTML, CSS, JavaScript thuần), dùng giao diện mới LSN Law Firm và nội dung chuyển từ website cũ [`willmichco/Website`](https://github.com/willmichco/Website).
 
-- Xem trực tiếp: <https://willmichco.github.io/law_newsite/>
+- Xem trực tiếp: <https://willmichco.github.io/luatsunam/>
 - Chỉ cần sửa nội dung trong `tools/data.py` và `src/`, sau đó chạy `python3 tools/build.py` để sinh lại toàn bộ trang.
 
 ## Sơ đồ website

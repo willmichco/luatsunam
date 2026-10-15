@@ -16,7 +16,7 @@ Không hứa hẹn kết quả (Quy tắc 9.1.6 Bộ Quy tắc Đạo đức và
 # (GitHub Pages phục vụ trang này ở mọi độ sâu đường dẫn nên không dùng được
 # đường dẫn tương đối). Website đang chạy tại https://willmichco.github.io/luatsunam/
 # ---------------------------------------------------------------------------
-SITE_URL = "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site"
+SITE_URL = "https://willmichco.github.io/luatsunam"
 BASE_PATH = "/luatsunam/"
 
 FIRM = {

@@ -189,6 +189,7 @@ def header_html(page, r):
       <div class="nav__mobile-extra">
         <a class="btn btn--primary btn--block" href="tel:{FIRM["phone_tel"]}">{ico("i-phone")} Gọi {FIRM["phone"]}</a>
         <a class="btn btn--zalo btn--block" href="{FIRM["zalo"]}" target="_blank" rel="noopener">{ico("i-chat")} Nhắn Zalo cho luật sư</a>
+        <p class="nav__note">{ico("i-clock")}{FIRM["hours"]}</p>
       </div>
     </nav>
 

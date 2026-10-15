@@ -1,61 +1,96 @@
 <!--meta {
   "title": "Công Ty Luật TNHH Luật Sư Nam | Luật sư tư vấn & tranh tụng tại TP.HCM",
   "description": "Luật Sư Nam – tư vấn và tranh tụng về thừa kế, đất đai, hôn nhân gia đình, lao động, hình sự, dân sự, công chứng tại TP.HCM. Hotline 0983 498 499.",
-  "h1": "Trang chủ",
-  "body_class": "home-page"
+  "h1": "Trang chủ"
 } -->
-<section class="nam-hero hm-hero"><div class="container"><div class="nam-hero-copy">
-<p class="eyebrow">Công ty Luật TNHH Luật Sư Nam · TP. Hồ Chí Minh</p>
-<h1>Gặp chuyện pháp lý,<br><span>có luật sư bên cạnh</span></h1>
-<p>Anh chị cứ kể sự việc. Luật sư lắng nghe, nói rõ quyền lợi và rủi ro theo đúng quy định pháp luật, rồi cùng anh chị chọn cách giải quyết phù hợp. Mọi thông tin đều được giữ kín.</p>
-{{call_buttons}}
-<ul class="hm-hero__info">
-<li>{{ico:i-pin}} {{street}}, {{ward}}, TP.HCM</li>
-<li>{{ico:i-clock}} {{hours}}</li>
-</ul>
-<figure class="hm-hero__photo"><img src="{{root}}assets/img/luat-su-van-phong.webp?v=20261007a" alt="Luật sư Nguyễn Trọng Nam làm việc tại văn phòng Luật Sư Nam" width="784" height="651" loading="lazy"><figcaption><strong>Luật sư Nguyễn Trọng Nam</strong><span>Giám đốc Công ty Luật TNHH Luật Sư Nam</span></figcaption></figure>
-</div></div>
-<a class="hm-hero__tag" href="{{root}}gioi-thieu/#doi-ngu-luat-su"><strong>Luật sư Nguyễn Trọng Nam</strong><span>Giám đốc Công ty Luật TNHH Luật Sư Nam</span></a>
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Công ty Luật TNHH Luật Sư Nam · TP. Hồ Chí Minh</p>
+      <h1 class="hero__title">Gặp chuyện pháp lý, <span>có luật sư bên cạnh</span></h1>
+      <p class="hero__lead">Anh chị cứ kể sự việc. Luật sư lắng nghe, nói rõ quyền lợi và rủi ro theo đúng quy định pháp luật, rồi cùng anh chị chọn cách giải quyết phù hợp. Mọi thông tin đều được giữ kín.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary btn--lg" href="tel:{{phone_tel}}">{{ico:i-phone}} Gọi {{phone}}</a>
+        <a class="btn btn--outline btn--lg" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}} Nhắn Zalo</a>
+      </div>
+      <ul class="hero__info">
+        <li>{{ico:i-pin}} {{street}}, {{ward}}, TP.HCM</li>
+        <li>{{ico:i-clock}} {{hours}}</li>
+      </ul>
+    </div>
+    <figure class="photo">
+      <img src="{{root}}assets/img/luat-su-van-phong.webp?v={{v}}" srcset="{{root}}assets/img/luat-su-van-phong-480.webp?v={{v}} 480w, {{root}}assets/img/luat-su-van-phong.webp?v={{v}} 784w" sizes="(max-width: 900px) calc(100vw - 40px), 560px" alt="{{lawyer}} làm việc tại văn phòng Luật Sư Nam, 22c Vũ Ngọc Phan" width="784" height="651" fetchpriority="high">
+      <figcaption class="photo__cap"><strong>{{lawyer}}</strong><span>Giám đốc · tại văn phòng 22c Vũ Ngọc Phan</span></figcaption>
+    </figure>
+  </div>
 </section>
 
-{{promise}}
+<section class="promise" aria-label="Cam kết khi làm việc">
+  <div class="container">
+    <ul class="promise__list">
+      <li><span class="ichip ichip--sm">{{ico:i-user|}}</span><div><strong>Luật sư trực tiếp tiếp nhận</strong><span>Anh chị trao đổi thẳng với luật sư phụ trách, không qua trung gian.</span></div></li>
+      <li><span class="ichip ichip--sm">{{ico:i-scale|}}</span><div><strong>Nói rõ được – mất</strong><span>Phân tích thẳng thắn điểm mạnh, điểm yếu; không hứa hẹn bảo đảm kết quả.</span></div></li>
+      <li><span class="ichip ichip--sm">{{ico:i-doc|}}</span><div><strong>Chi phí thỏa thuận trước</strong><span>Phạm vi công việc và thù lao ghi rõ trong hợp đồng trước khi làm.</span></div></li>
+      <li><span class="ichip ichip--sm">{{ico:i-shield-check|}}</span><div><strong>Giữ kín thông tin</strong><span>Bảo mật theo Luật Luật sư, ngay từ buổi trao đổi đầu tiên.</span></div></li>
+    </ul>
+  </div>
+</section>
 
-<section class="ls-section ls-section--cream" aria-labelledby="problems-title"><div class="container">
-<div class="ls-head"><h2 class="h2" id="problems-title">Anh chị đang gặp chuyện gì?</h2><p>Chọn tình huống gần giống với mình để xem luật sư có thể giúp gì. Nếu chưa biết thuộc lĩnh vực nào, cứ gọi điện hoặc nhắn Zalo kể sự việc.</p></div>
-{{problems_grid}}
-</div></section>
+<section class="section section--cream" aria-labelledby="problems-title">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><h2 class="h2" id="problems-title">Anh chị đang gặp chuyện gì?</h2><p class="shead__text">Chọn tình huống gần giống với mình để xem luật sư có thể giúp gì. Nếu chưa biết thuộc lĩnh vực nào, cứ gọi điện hoặc nhắn Zalo kể sự việc.</p></div></div>
+    {{problems_grid}}
+  </div>
+</section>
 
-<section class="ls-section" aria-labelledby="about-title"><div class="container home-about__grid">
-<div class="home-about__copy">
-<p class="eyebrow">Về chúng tôi</p>
-<h2 class="h2" id="about-title">Công ty Luật TNHH Luật Sư Nam</h2>
-<p>Văn phòng luật sư tại {{street}}, {{ward}}, Thành phố Hồ Chí Minh, do Luật sư Nguyễn Trọng Nam trực tiếp điều hành. Chúng tôi tư vấn, đại diện và tham gia tố tụng cho người dân và doanh nghiệp, từ việc kiểm tra một hợp đồng trước khi ký đến giải quyết tranh chấp tại Tòa án.</p>
-<p>Mỗi vụ việc bắt đầu bằng việc lắng nghe anh chị, xem kỹ giấy tờ và thống nhất hướng giải quyết phù hợp với mong muốn của anh chị.</p>
-<a class="link-arrow" href="{{root}}gioi-thieu/">Tìm hiểu về Luật Sư Nam {{arrow}}</a>
-</div>
-<figure class="home-about__image"><img src="{{root}}assets/img/logo-emblem.webp?v=20261007b" alt="Logo Công Ty Luật TNHH Luật Sư Nam" width="560" height="561" loading="lazy"><figcaption><span>Công Ty Luật TNHH</span><strong>Luật Sư Nam</strong></figcaption></figure>
-</div></section>
+<section class="section" aria-labelledby="about-title">
+  <div class="container profile">
+    <figure class="photo reveal">
+      <img src="{{root}}assets/img/luat-su-phien-toa.webp?v={{v}}" srcset="{{root}}assets/img/luat-su-phien-toa-480.webp?v={{v}} 480w, {{root}}assets/img/luat-su-phien-toa.webp?v={{v}} 800w" sizes="(max-width: 900px) calc(100vw - 40px), 520px" alt="{{lawyer}} tại ghế người bào chữa trong phiên tòa" width="800" height="812" loading="lazy">
+      <figcaption class="photo__cap"><strong>Tại phiên tòa</strong><span>Luật sư trực tiếp bào chữa, tranh tụng cho khách hàng</span></figcaption>
+    </figure>
+    <div class="reveal">
+      <p class="eyebrow">Về chúng tôi</p>
+      <h2 class="h2" id="about-title">Văn phòng luật do {{lawyer}} trực tiếp điều hành</h2>
+      <p class="profile__text">Công Ty Luật TNHH Luật Sư Nam đặt văn phòng tại {{street}}, {{ward}}, Thành phố Hồ Chí Minh. Chúng tôi tư vấn, đại diện và tham gia tố tụng cho người dân và doanh nghiệp, từ việc kiểm tra một hợp đồng trước khi ký đến giải quyết tranh chấp tại Tòa án.</p>
+      <p class="profile__text">Mỗi vụ việc bắt đầu bằng việc lắng nghe anh chị, xem kỹ giấy tờ và thống nhất hướng giải quyết phù hợp với mong muốn của anh chị. Luật sư nhận hồ sơ cũng là người theo hồ sơ đến cùng.</p>
+      <dl class="profile__facts">
+        <div><dt>Thành lập</dt><dd>Tháng 01/2019</dd></div>
+        <div><dt>Gắn bó TP.HCM</dt><dd>Từ năm 1999</dd></div>
+        <div><dt>Lĩnh vực</dt><dd>8 lĩnh vực tư vấn, tranh tụng</dd></div>
+        <div><dt>Phụ trách hồ sơ</dt><dd>1 luật sư xuyên suốt</dd></div>
+      </dl>
+      <p class="section-more"><a class="link-arrow" href="{{root}}gioi-thieu/">Tìm hiểu về luật sư và công ty {{arrow}}</a></p>
+    </div>
+  </div>
+</section>
 
-<section class="ls-section ls-section--cream" aria-labelledby="steps-title"><div class="container">
-<div class="ls-head"><h2 class="h2" id="steps-title">Làm việc với luật sư có khó không?</h2><p>Không khó. Chỉ cần bốn bước:</p></div>
-<ol class="ls-steps">
-<li><b>1</b><h3>Gọi điện hoặc nhắn Zalo</h3><p>Kể ngắn gọn sự việc. Luật sư cho biết anh chị cần chuẩn bị những giấy tờ gì.</p></li>
-<li><b>2</b><h3>Gặp luật sư, mang theo giấy tờ</h3><p>Luật sư xem hồ sơ, giải thích quyền lợi, rủi ro và các thời hạn cần lưu ý.</p></li>
-<li><b>3</b><h3>Thống nhất cách làm và chi phí</h3><p>Phạm vi công việc và chi phí được nói rõ, ghi vào hợp đồng trước khi triển khai.</p></li>
-<li><b>4</b><h3>Luật sư thực hiện, báo tiến độ</h3><p>Một luật sư phụ trách xuyên suốt, thường xuyên cập nhật để anh chị nắm được tình hình.</p></li>
-</ol>
-<p class="ls-steps__more"><a class="link-arrow" href="{{root}}quy-trinh-lam-viec/">Xem quy trình và danh sách giấy tờ cần chuẩn bị {{arrow}}</a></p>
-</div></section>
+<section class="section section--cream" aria-labelledby="steps-title">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><h2 class="h2" id="steps-title">Làm việc với luật sư có khó không?</h2><p class="shead__text">Không khó. Chỉ cần bốn bước:</p></div><a class="link-arrow" href="{{root}}quy-trinh-lam-viec/">Giấy tờ cần chuẩn bị {{arrow}}</a></div>
+    <ol class="steps">
+      <li class="reveal"><span class="steps__num">1</span><h3>Gọi điện hoặc nhắn Zalo</h3><p>Kể ngắn gọn sự việc. Luật sư cho biết anh chị cần chuẩn bị những giấy tờ gì.</p></li>
+      <li class="reveal"><span class="steps__num">2</span><h3>Gặp luật sư, mang theo giấy tờ</h3><p>Luật sư xem hồ sơ, giải thích quyền lợi, rủi ro và các thời hạn cần lưu ý.</p></li>
+      <li class="reveal"><span class="steps__num">3</span><h3>Thống nhất cách làm và chi phí</h3><p>Phạm vi công việc và chi phí được nói rõ, ghi vào hợp đồng trước khi triển khai.</p></li>
+      <li class="reveal"><span class="steps__num">4</span><h3>Luật sư thực hiện, báo tiến độ</h3><p>Một luật sư phụ trách xuyên suốt, thường xuyên cập nhật để anh chị nắm được tình hình.</p></li>
+    </ol>
+  </div>
+</section>
 
-<section class="ls-section" aria-labelledby="faq-title"><div class="container ls-split ls-split--faq">
-<div class="ls-head"><h2 class="h2" id="faq-title">Những câu anh chị hay hỏi</h2><p>Về chi phí, kết quả vụ việc và việc giữ bí mật thông tin.</p><a class="link-arrow" href="{{root}}cau-hoi-thuong-gap/">Xem tất cả câu hỏi {{arrow}}</a></div>
-<div>{{faq_list:chi-phi-thue-luat-su,cam-ket-thang-kien,bao-mat-thong-tin,chuan-bi-buoi-dau}}</div>
-</div></section>
+<section class="section" aria-labelledby="faq-title">
+  <div class="container split">
+    <div class="reveal">
+      <h2 class="h2" id="faq-title">Những câu anh chị hay hỏi</h2>
+      <p class="shead__text">Về chi phí, kết quả vụ việc và việc giữ bí mật thông tin.</p>
+      <p class="section-more"><a class="link-arrow" href="{{root}}cau-hoi-thuong-gap/">Xem tất cả câu hỏi {{arrow}}</a></p>
+    </div>
+    <div class="reveal">{{faq_list:chi-phi-thue-luat-su,cam-ket-thang-kien,bao-mat-thong-tin,chuan-bi-buoi-dau}}</div>
+  </div>
+</section>
 
-<section class="ls-section ls-section--cream" aria-labelledby="articles-title"><div class="container">
-<div class="ls-head ls-head--row"><div><h2 class="h2" id="articles-title">Kiến thức pháp luật dễ hiểu</h2><p>Bài viết giải thích các tình huống thường gặp, kèm căn cứ pháp luật.</p></div><a class="link-arrow" href="{{root}}kien-thuc-phap-ly/">Xem tất cả bài viết {{arrow}}</a></div>
-{{articles_grid}}
-<a class="home-library" href="{{root}}bo-luat-hinh-su/">{{ico:i-book}}<span><strong>Tra cứu Bộ luật Hình sự</strong><small>Toàn văn kèm bình luận từng điều; tìm theo số điều hoặc từ khóa, gõ có dấu hay không dấu đều được</small></span><span class="home-library__action">Tra cứu {{arrow}}</span></a>
-</div></section>
-
-{{contact}}
+<section class="section section--cream" aria-labelledby="articles-title">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><h2 class="h2" id="articles-title">Kiến thức pháp luật dễ hiểu</h2><p class="shead__text">Bài viết giải thích các tình huống thường gặp, kèm căn cứ pháp luật.</p></div><a class="link-arrow" href="{{root}}kien-thuc-phap-ly/">Xem tất cả bài viết {{arrow}}</a></div>
+    {{articles_grid}}
+  </div>
+</section>

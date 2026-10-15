@@ -25,6 +25,7 @@ FIRM = {
     "brand": "LSN Law Firm",
     "slogan": "Kiến tạo công lý bền vững",
     "lawyer": "Luật sư Nguyễn Trọng Nam",
+    "lawyer_role": "Giám đốc · Trực tiếp tiếp nhận và phụ trách hồ sơ",
     "phone": "0983 498 499",
     "phone_tel": "0983498499",
     "phone_intl": "+84983498499",

@@ -107,58 +107,20 @@
     else if (!e.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement))) { e.preventDefault(); first.focus(); }
   });
 
-  /* ---------- Hero slider (trang chủ) ---------- */
-  var slides = $$('.hero__slide');
-  var dots = $$('.hero__dots button');
-  if (slides.length > 1) {
-    var current = 0, timer = null;
-    var go = function (i) {
-      current = (i + slides.length) % slides.length;
-      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === current); s.setAttribute('aria-hidden', String(k !== current)); });
-      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === current); d.setAttribute('aria-selected', String(k === current)); });
-    };
-    var stop = function () { clearInterval(timer); };
-    var play = function () { if (!reduceMotion) { stop(); timer = setInterval(function () { go(current + 1); }, 6500); } };
-    dots.forEach(function (d, k) { d.addEventListener('click', function () { go(k); play(); }); });
-    var hero = $('.hero');
-    hero.addEventListener('mouseenter', stop);
-    hero.addEventListener('mouseleave', play);
-    go(0);
-    play();
-  }
-
-  /* ---------- Hiện dần khi cuộn + đếm số ---------- */
-  function countUp(el) {
-    var target = parseInt(el.getAttribute('data-count'), 10);
-    var pad = parseInt(el.getAttribute('data-pad') || '0', 10);
-    var fmt = function (n) { var s = String(n); while (s.length < pad) s = '0' + s; return s; };
-    if (reduceMotion) { el.textContent = fmt(target); return; }
-    var start = null, dur = 1400;
-    function step(t) {
-      if (!start) start = t;
-      var p = Math.min((t - start) / dur, 1);
-      el.textContent = fmt(Math.round(target * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
+  /* ---------- Hiện dần khi cuộn ---------- */
   var reveals = $$('.reveal');
-  var counters = $$('[data-count]');
-  if ('IntersectionObserver' in window) {
+  if ('IntersectionObserver' in window && !reduceMotion) {
     var io = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
         var el = e.target;
-        if (el.classList.contains('reveal')) {
-          var siblings = $$(':scope > .reveal', el.parentElement);
-          el.style.transitionDelay = Math.min(Math.max(siblings.indexOf(el), 0), 5) * 70 + 'ms';
-          el.classList.add('is-in');
-        }
-        if (el.hasAttribute('data-count')) countUp(el);
+        var siblings = $$(':scope > .reveal', el.parentElement);
+        el.style.transitionDelay = Math.min(Math.max(siblings.indexOf(el), 0), 4) * 60 + 'ms';
+        el.classList.add('is-in');
         obs.unobserve(el);
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    reveals.concat(counters).forEach(function (el) { io.observe(el); });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
   } else {
     reveals.forEach(function (el) { el.classList.add('is-in'); });
   }
@@ -248,20 +210,26 @@
     });
   });
 
-  /* ---------- Mục lục bài viết: đánh dấu mục đang đọc ---------- */
-  var tocLinks = $$('.toc a[href^="#"]');
-  if (tocLinks.length && 'IntersectionObserver' in window) {
+  /* ---------- Mục lục bài viết, thanh mục trang dịch vụ: đánh dấu mục đang đọc ---------- */
+  function spyOn(links) {
+    if (!links.length || !('IntersectionObserver' in window)) return;
     var map = {};
-    tocLinks.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
-        tocLinks.forEach(function (a) { a.classList.remove('is-active'); });
-        if (map[e.target.id]) map[e.target.id].classList.add('is-active');
+        links.forEach(function (a) { a.classList.remove('is-active'); });
+        var a = map[e.target.id];
+        if (!a) return;
+        a.classList.add('is-active');
+        var bar = a.parentElement;
+        if (bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: a.offsetLeft - 16, behavior: reduceMotion ? 'auto' : 'smooth' });
       });
-    }, { rootMargin: '-20% 0px -70% 0px' });
+    }, { rootMargin: '-25% 0px -65% 0px' });
     Object.keys(map).forEach(function (id) { var el = document.getElementById(id); if (el) spy.observe(el); });
   }
+  spyOn($$('.toc a[href^="#"]'));
+  spyOn($$('.subnav a[href^="#"]'));
 
   /* ---------- Mở câu hỏi khi truy cập bằng liên kết #id ---------- */
   function openFromHash() {

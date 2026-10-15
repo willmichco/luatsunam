@@ -783,3 +783,25 @@ a.icard:hover .icard__more { gap: 10px; }
 .icard__text a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
 .cband__email { font-size: 17px !important; overflow-wrap: anywhere; }
 #lien-he-truc-tiep .urgent { margin-top: 20px; }
+
+/* ---------- Liên hệ: ba điều cần nói khi gọi ---------- */
+.callprep { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; counter-reset: none; }
+.callprep li { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 28px 26px 26px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.callprep__num { position: absolute; top: 10px; right: 20px; font-size: 64px; font-weight: 700; line-height: 1; color: #f3e6d4; pointer-events: none; }
+.callprep .ichip { position: relative; margin-bottom: 6px; }
+.callprep h3 { position: relative; font-size: 19px; font-weight: 600; line-height: 1.4; }
+.callprep p { position: relative; font-size: 15.5px; line-height: 1.7; color: var(--muted); }
+.assure { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 20px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); }
+.assure p { display: flex; gap: 12px; align-items: flex-start; padding: 18px 24px; font-size: 14.5px; line-height: 1.65; color: var(--text); }
+.assure p + p { border-left: 1px solid var(--line); }
+.assure .ico { width: 20px; height: 20px; margin-top: 2px; color: var(--gold-700); }
+.assure strong { color: var(--ink); }
+@media (max-width: 900px) {
+  .callprep { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .callprep li { display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 16px; row-gap: 4px; padding: 20px 18px; }
+  .callprep .ichip { grid-row: span 2; margin: 0; }
+  .callprep__num { font-size: 48px; top: 8px; right: 14px; }
+  .assure { grid-template-columns: minmax(0, 1fr); }
+  .assure p + p { border-left: 0; border-top: 1px solid var(--line); }
+  .assure p { padding: 16px 18px; }
+}

@@ -20,6 +20,8 @@ FIRM = {
     "short_name": "Luật Sư Nam",
     "brand": "LSN Law Firm",
     "slogan": "Kiến tạo công lý bền vững",
+    "lawyer": "Luật sư Nguyễn Trọng Nam",
+    "lawyer_role": "Giám đốc · Trực tiếp tiếp nhận và phụ trách hồ sơ",
     "phone": "0983 498 499",
     "phone_tel": "0983498499",
     "phone_intl": "+84983498499",
@@ -530,7 +532,7 @@ FAQ = [
         "q": "Luật sư có cam kết chắc chắn thắng kiện không?",
         "a": [
             "Không. Chúng tôi phân tích thẳng thắn điểm mạnh, điểm yếu trong hồ sơ và khả năng thành công dựa trên chứng cứ cùng quy định pháp luật, nhưng không đưa ra cam kết bảo đảm kết quả.",
-            "Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam nghiêm cấm luật sư hứa hẹn, cam kết bảo đảm kết quả vụ việc về những nội dung nằm ngoài khả năng và điều kiện thực hiện của luật sư (<strong>Quy tắc 9.1.6</strong>). Nếu một đơn vị cam kết chắc chắn thắng kiện, đó là dấu hiệu bạn nên cân nhắc rất kỹ.",
+            "Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam nghiêm cấm luật sư hứa hẹn, cam kết bảo đảm kết quả vụ việc về những nội dung nằm ngoài khả năng và điều kiện thực hiện của luật sư (<strong>Quy tắc 9.1.6</strong>). Nếu một đơn vị cam kết chắc chắn thắng kiện, đó là dấu hiệu anh chị nên cân nhắc rất kỹ.",
         ],
     },
     {
@@ -545,16 +547,16 @@ FAQ = [
         "id": "chuan-bi-buoi-dau",
         "q": "Buổi trao đổi đầu tiên tôi cần chuẩn bị những gì?",
         "a": [
-            "Bạn nên mang theo bản sao các tài liệu đang có: hợp đồng, giấy tờ về tài sản, thông báo hoặc quyết định đã nhận từ cơ quan nhà nước, tin nhắn và email trao đổi giữa các bên.",
-            "Quan trọng không kém là một bản tóm tắt diễn biến theo trình tự thời gian và câu trả lời cho câu hỏi: bạn mong muốn đạt được điều gì. Danh mục chi tiết có tại trang <a href=\"{{root}}quy-trinh-lam-viec/\">Quy trình làm việc</a> và trang của từng <a href=\"{{root}}dich-vu/\">lĩnh vực dịch vụ</a>.",
+            "Anh chị nên mang theo bản sao các tài liệu đang có: hợp đồng, giấy tờ về tài sản, thông báo hoặc quyết định đã nhận từ cơ quan nhà nước, tin nhắn và email trao đổi giữa các bên.",
+            "Quan trọng không kém là một bản tóm tắt diễn biến theo trình tự thời gian và câu trả lời cho câu hỏi: anh chị mong muốn đạt được điều gì. Danh mục chi tiết có tại trang <a href=\"{{root}}quy-trinh-lam-viec/\">Quy trình làm việc</a> và trang của từng <a href=\"{{root}}dich-vu/\">lĩnh vực dịch vụ</a>.",
         ],
     },
     {
         "id": "thoi-han-quan-trong",
         "q": "Vì sao thời hạn lại quan trọng đến vậy?",
         "a": [
-            "Pháp luật quy định thời hiệu khởi kiện và thời hạn thực hiện quyền cho từng loại vụ việc. Khi thời hiệu đã hết và có đương sự yêu cầu áp dụng, quyền khởi kiện có thể không còn được bảo vệ, dù nội dung yêu cầu của bạn là có căn cứ. Ví dụ điển hình là <a href=\"{{root}}kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/\">thời hiệu chia di sản thừa kế</a>.",
-            "Tương tự, thời hạn kháng cáo bản án, thời hạn khiếu nại quyết định hành chính đều rất ngắn. Vì vậy bạn nên liên hệ luật sư <strong>càng sớm càng tốt</strong>, ngay khi nhận được văn bản đầu tiên.",
+            "Pháp luật quy định thời hiệu khởi kiện và thời hạn thực hiện quyền cho từng loại vụ việc. Khi thời hiệu đã hết và có đương sự yêu cầu áp dụng, quyền khởi kiện có thể không còn được bảo vệ, dù nội dung yêu cầu của anh chị là có căn cứ. Ví dụ điển hình là <a href=\"{{root}}kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/\">thời hiệu chia di sản thừa kế</a>.",
+            "Tương tự, thời hạn kháng cáo bản án, thời hạn khiếu nại quyết định hành chính đều rất ngắn. Vì vậy anh chị nên liên hệ luật sư <strong>càng sớm càng tốt</strong>, ngay khi nhận được văn bản đầu tiên.",
         ],
     },
     {
@@ -569,7 +571,7 @@ FAQ = [
         "id": "thoi-gian-phan-hoi",
         "q": "Liên hệ luật sư bằng cách nào và bao lâu được phản hồi?",
         "a": [
-            "Website chỉ cung cấp thông tin pháp lý tham khảo, không nhận yêu cầu tư vấn trực tuyến. Bạn liên hệ trực tiếp qua hotline hoặc Zalo <a href=\"https://zalo.me/0983498499\">0983 498 499</a>; tin nhắn Zalo và email được phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc. Với vụ việc khẩn cấp, đặc biệt là <a href=\"{{root}}dich-vu/hinh-su/\">vụ án hình sự</a> hoặc sắp hết thời hạn kháng cáo, bạn nên gọi trực tiếp hotline <a href=\"tel:0983498499\">0983 498 499</a>.",
+            "Website chỉ cung cấp thông tin pháp lý tham khảo, không nhận yêu cầu tư vấn trực tuyến. Anh chị liên hệ trực tiếp qua hotline hoặc Zalo <a href=\"https://zalo.me/0983498499\">0983 498 499</a>; tin nhắn Zalo và email được phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc. Với vụ việc khẩn cấp, đặc biệt là <a href=\"{{root}}dich-vu/hinh-su/\">vụ án hình sự</a> hoặc sắp hết thời hạn kháng cáo, anh chị nên gọi trực tiếp hotline <a href=\"tel:0983498499\">0983 498 499</a>.",
             "Lưu ý: việc trao đổi ban đầu qua điện thoại, Zalo hoặc email chưa làm phát sinh quan hệ luật sư – khách hàng. Quan hệ này chỉ hình thành khi hai bên ký kết hợp đồng dịch vụ pháp lý.",
         ],
     },

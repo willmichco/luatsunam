@@ -22,7 +22,7 @@ Website tĩnh nhiều trang (HTML, CSS, JavaScript thuần), dùng giao diện m
 | `/bo-luat-hinh-su/chuong-<số>/` | 27 trang chương: danh sách điều kèm trích đoạn | CollectionPage |
 | `/bo-luat-hinh-su/dieu-<số>/` | 428 trang điều luật: quy định, bình luận, điều liên quan, bản đồ tư duy | WebPage (about: Legislation) |
 | `/cau-hoi-thuong-gap/` | 7 câu hỏi thường gặp | FAQPage |
-| `/lien-he/` | Liên hệ, biểu mẫu, bản đồ | ContactPage |
+| `/lien-he/` | Liên hệ: gọi điện, Zalo, email, bản đồ | ContactPage |
 | `/chinh-sach-bao-mat/`, `/dieu-khoan-su-dung/`, `/mien-tru-trach-nhiem/` | Văn bản pháp lý của website | WebPage |
 
 Mọi trang có: `title` và `description` riêng, `canonical`, Open Graph, Twitter Card, breadcrumb hiển thị kèm `BreadcrumbList`. Đường dẫn giữ nguyên như website cũ để không mất thứ hạng khi chuyển tên miền.
@@ -41,14 +41,15 @@ Mọi trang có: `title` và `description` riêng, `canonical`, Open Graph, Twit
 tools/data.py              Thông tin pháp nhân, 8 lĩnh vực, bài viết, câu hỏi thường gặp
 tools/build.py             Sinh toàn bộ trang, sitemap.xml, robots.txt, site.webmanifest, chỉ mục tìm kiếm
 tools/build_blhs.py        Chuyển tệp Word bình luận BLHS thành dữ liệu tra cứu
-tools/make_images.py       Sinh logo, favicon, biểu tượng ứng dụng, banner trang chủ, ảnh 8 lĩnh vực, ảnh chia sẻ (og-image)
+tools/make_images.py       Sinh logo, favicon, ảnh luật sư (cắt, tối ưu) và ảnh chia sẻ OG cho từng trang
 src/brand/logo-lsn.webp    Logo gốc (nền trong suốt)
-src/brand/goc/             Ảnh gốc chưa xử lý của banner và 8 lĩnh vực
+src/brand/anh-that/        Ảnh thật gốc của luật sư: van-phong.webp (tại văn phòng), phien-toa.webp (tại phiên tòa)
 src/pages/*.html           Nội dung các trang đơn lẻ (khối <!--meta {...} --> ở đầu là tiêu đề, mô tả)
 src/bai-viet/*.html        Nội dung bài viết
 src/bo-luat-hinh-su.html   Nội dung trang tra cứu BLHS
-assets/css/style.css       Giao diện (biến màu, phông chữ ở :root)
-assets/js/main.js          Menu, tìm kiếm, biểu mẫu (dòng đầu: WEB3FORMS_KEY), bản đồ
+assets/css/style.css       Toàn bộ giao diện (một tệp duy nhất): biến màu, chữ, khoảng cách ở :root, thành phần dùng chung
+assets/css/reader-design.css  Giao diện riêng của Từ điển BLHS (chỉ nạp ở các trang bo-luat-hinh-su/)
+assets/js/main.js          Menu, tìm kiếm, hiện dần khi cuộn, mục đang đọc, bản đồ
 assets/fonts/              Be Vietnam Pro, phông sans-serif duy nhất của website (tự lưu trữ, SIL OFL 1.1)
 assets/img/                Ảnh
 bo-luat-hinh-su/           Trình đọc và dữ liệu Bộ luật Hình sự
@@ -62,11 +63,12 @@ Các tệp `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, `site.webmanif
 |---|---|
 | Số điện thoại, email, địa chỉ, giờ làm việc | `FIRM` trong `tools/data.py` (và `CONTACT_*` đầu tệp `assets/js/main.js`) |
 | Nội dung một lĩnh vực | Mục tương ứng trong `SERVICES` (`tools/data.py`) |
-| Thêm bài viết | Thêm mục vào `ARTICLES`, tạo `src/bai-viet/<slug>.html`, thêm ảnh `assets/img/bai-viet/<slug>.webp` (720×240) |
+| Thêm bài viết | Thêm mục vào `ARTICLES`, tạo `src/bai-viet/<slug>.html`, chạy `python3 tools/make_images.py` để sinh ảnh chia sẻ `assets/img/og/bai-viet-<slug>.jpg` |
 | Câu hỏi thường gặp | `FAQ` trong `tools/data.py` |
 | Hồ sơ luật sư | `src/pages/doi-ngu-luat-su.html` (xem ghi chú cho người quản trị trong tệp) |
 | Tên miền | `SITE_URL`, `BASE_PATH` đầu tệp `tools/data.py` |
-| Logo, banner, ảnh lĩnh vực, ảnh chia sẻ | Thay `src/brand/logo-lsn.webp` hoặc ảnh gốc trong `src/brand/goc/`, chạy `pip install pillow numpy opencv-python-headless fonttools brotli && python3 tools/make_images.py`. Ảnh lĩnh vực được chỉnh chung một tông navy – vàng đồng; banner được gắn biển logo lên mảng tường đá (toạ độ trong hàm `clean_wall`, chỉ đúng với ảnh banner hiện tại) |
+| Logo, ảnh luật sư, ảnh chia sẻ | Thay `src/brand/logo-lsn.webp` hoặc ảnh trong `src/brand/anh-that/` (giữ tên tệp), chạy `pip install pillow fonttools brotli && python3 tools/make_images.py`. Website **chỉ dùng ảnh thật**, không dùng ảnh AI/ảnh mẫu. Nếu bố cục ảnh mới khác, chỉnh toạ độ cắt ở `PHOTOS` trong `tools/make_images.py` |
+| Tên, chức danh luật sư hiển thị ở thẻ "Luật sư phụ trách" | `lawyer`, `lawyer_role` trong `FIRM` (`tools/data.py`) |
 | Phông chữ | `--font-sans` (chữ thường), `--font-heading` (tiêu đề) ở `:root` trong `assets/css/style.css` |
 
 ```bash
@@ -118,10 +120,10 @@ Liên kết cũ dạng `#d173` và `#tim=…` tự chuyển sang địa chỉ m�
 ## Việc cần làm trước khi chạy chính thức
 
 - [ ] **Bật GitHub Pages**: Settings → Pages → *Deploy from a branch* → `gh-pages` / `(root)`.
-- [ ] **Kích hoạt biểu mẫu**: lấy Access Key miễn phí tại <https://web3forms.com> (nhập `luatsunam.hcm@gmail.com`), dán vào `WEB3FORMS_KEY` ở đầu `assets/js/main.js`. Khi chưa có key, biểu mẫu mở ứng dụng email của khách.
 - [ ] **Luật sư phụ trách rà soát 3 bài viết** trong `src/bai-viet/` trước khi công bố chính thức.
 - [ ] Bổ sung số Thẻ luật sư, Đoàn Luật sư tại trang Đội ngũ (chỉ công bố thông tin đã được luật sư đồng ý).
-- [ ] Thay ảnh minh họa lấy từ bản mockup (`assets/img/hero.webp`, `assets/img/dich-vu/*`, `assets/img/bai-viet/*`) bằng ảnh thật độ phân giải cao; ảnh gốc đặt trong `src/brand/goc/` rồi chạy lại `tools/make_images.py`.
+- [x] Bỏ toàn bộ ảnh AI/mockup; website chỉ dùng 2 ảnh thật của Luật sư Nguyễn Trọng Nam.
+- [ ] Bổ sung ảnh thật độ phân giải cao (≥ 1600px): mặt tiền văn phòng 22c Vũ Ngọc Phan, phòng tiếp khách, luật sư trao đổi hồ sơ (khách quay lưng hoặc đã đồng ý). Đặt vào `src/brand/anh-that/` rồi chạy lại `tools/make_images.py`.
 - [ ] Khi có tên miền riêng: sửa `SITE_URL`/`BASE_PATH`, chạy lại build, khai báo tên miền trong Settings → Pages, nộp `sitemap.xml` lên Google Search Console.
 - [ ] Chuyển hướng hoặc đặt `noindex` cho website cũ (`willmichco.github.io/Website/`) để tránh trùng lặp nội dung với website mới.
 

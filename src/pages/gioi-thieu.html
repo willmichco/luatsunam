@@ -4,72 +4,81 @@
   "eyebrow": "Về chúng tôi",
   "h1": "Công Ty Luật TNHH <em>Luật Sư Nam</em>",
   "lead": "Đồng hành cùng cá nhân và doanh nghiệp bằng sự cẩn trọng, trách nhiệm và giải pháp pháp lý phù hợp với từng vụ việc.",
-  "hero": {
-    "image": "assets/img/van-phong.webp"
-  },
-  "image": "assets/img/luat-su-nam-van-phong.webp",
-  "page_hero": false,
-  "body_class": "about-page",
-  "preload_images": [
-    "assets/img/luat-su-nam-van-phong.webp"
-  ]
+  "image": "assets/img/luat-su-van-phong.webp",
+  "page_hero": false
 } -->
-<section class="gt-hero" id="cong-ty"><div class="container">
-<nav class="ab-crumb" aria-label="Đường dẫn"><a href="{{root}}">Trang chủ</a><span>/</span><span>Giới thiệu</span></nav>
-<div class="gt-hero__grid">
-<div class="gt-hero__copy">
-<p class="eyebrow">Giới thiệu Luật Sư Nam</p>
-<h1>Văn phòng luật do<br><span>Luật sư Nguyễn Trọng Nam</span><br>trực tiếp điều hành</h1>
-<p>Công Ty Luật TNHH Luật Sư Nam thành lập tháng 01 năm 2019 tại Thành phố Hồ Chí Minh. Chúng tôi tư vấn pháp luật, tham gia tố tụng và đại diện theo ủy quyền cho người dân và doanh nghiệp.</p>
-<p>Luật sư Nguyễn Trọng Nam (sinh năm 1976, quê Hà Nội) là Giám đốc, người đại diện theo pháp luật của công ty, gắn bó với TP. Hồ Chí Minh từ năm 1999. Nhiều năm trực tiếp làm thủ tục và giải quyết tranh chấp đất đai, thừa kế giúp luật sư hiểu rõ những vướng mắc thực tế mà người dân thường gặp.</p>
-<div class="gt-hero__buttons">
-<a class="btn btn--primary btn--lg" href="tel:{{phone_tel}}">{{ico:i-phone}} Gọi {{phone}}</a>
-<a class="btn btn--outline btn--lg" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}} Nhắn Zalo</a>
-</div>
-</div>
-<figure class="gt-portrait"><img src="{{root}}assets/img/luat-su-nam-van-phong.webp?v=20261007a" alt="Luật sư Nguyễn Trọng Nam làm việc tại văn phòng Luật Sư Nam" width="784" height="651" fetchpriority="high"><figcaption><strong>Luật sư Nguyễn Trọng Nam</strong><span>Giám đốc · Tư vấn, bào chữa, tranh tụng</span></figcaption></figure>
-</div>
-<ul class="gt-facts">
-<li><b>01/2019</b><span>Thành lập công ty luật</span></li>
-<li><b>Từ 1999</b><span>Làm việc, gắn bó với TP. Hồ Chí Minh</span></li>
-<li><b>8</b><span>Lĩnh vực tư vấn và tranh tụng</span></li>
-<li><b>1</b><span>Luật sư phụ trách xuyên suốt mỗi hồ sơ</span></li>
-</ul>
-</div></section>
+<section class="hero" id="cong-ty">
+  <div class="container">
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <nav class="breadcrumb" aria-label="Đường dẫn"><ol><li><a href="{{root}}">Trang chủ</a></li><li aria-current="page">Giới thiệu</li></ol></nav>
+        <p class="eyebrow">Giới thiệu Luật Sư Nam</p>
+        <h1 class="hero__title">Văn phòng luật do <span>{{lawyer}}</span> trực tiếp điều hành</h1>
+        <p class="hero__lead">Công Ty Luật TNHH Luật Sư Nam thành lập tháng 01 năm 2019 tại Thành phố Hồ Chí Minh. Chúng tôi tư vấn pháp luật, tham gia tố tụng và đại diện theo ủy quyền cho người dân và doanh nghiệp.</p>
+        <p class="hero__lead">Luật sư Nguyễn Trọng Nam (sinh năm 1976, quê Hà Nội) là Giám đốc, người đại diện theo pháp luật của công ty, gắn bó với TP. Hồ Chí Minh từ năm 1999. Nhiều năm trực tiếp làm thủ tục và giải quyết tranh chấp đất đai, thừa kế giúp luật sư hiểu rõ những vướng mắc thực tế mà người dân thường gặp.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary btn--lg" href="tel:{{phone_tel}}">{{ico:i-phone}} Gọi {{phone}}</a>
+          <a class="btn btn--outline btn--lg" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}} Nhắn Zalo</a>
+        </div>
+      </div>
+      <figure class="photo">
+        <img src="{{root}}assets/img/luat-su-van-phong.webp?v={{v}}" srcset="{{root}}assets/img/luat-su-van-phong-480.webp?v={{v}} 480w, {{root}}assets/img/luat-su-van-phong.webp?v={{v}} 784w" sizes="(max-width: 900px) calc(100vw - 40px), 560px" alt="{{lawyer}} làm việc tại văn phòng Luật Sư Nam" width="784" height="651" fetchpriority="high">
+        <figcaption class="photo__cap"><strong>{{lawyer}}</strong><span>Giám đốc · Tư vấn, bào chữa, tranh tụng</span></figcaption>
+      </figure>
+    </div>
+    <ul class="facts">
+      <li><b>01/2019</b><span>Thành lập công ty luật</span></li>
+      <li><b>Từ 1999</b><span>Làm việc, gắn bó với TP. Hồ Chí Minh</span></li>
+      <li><b>8</b><span>Lĩnh vực tư vấn và tranh tụng</span></li>
+      <li><b>1</b><span>Luật sư phụ trách xuyên suốt mỗi hồ sơ</span></li>
+    </ul>
+  </div>
+</section>
 
-<section class="gt-section gt-journey" id="hanh-trinh" aria-labelledby="career-title"><div class="container">
-<div class="hm-head"><h2 class="h2" id="career-title">Chặng đường hơn 25 năm tại TP. Hồ Chí Minh</h2><p>Những dấu mốc trong quá trình làm việc của Luật sư Nguyễn Trọng Nam và sự ra đời của Công Ty Luật TNHH Luật Sư Nam.</p></div>
-<ol class="gt-timeline">
-<li><time>09/1999</time><div><h3>Bắt đầu công tác tại TP. Hồ Chí Minh</h3><p>Từ Hà Nội vào Thành phố Hồ Chí Minh, làm nhân viên giao nhận hàng hóa xuất nhập khẩu tại Công ty TNHH Thương mại Dịch vụ Bình Thiên.</p></div></li>
-<li><time>02/2001</time><div><h3>Công ty TNHH Tư vấn Nhân Quyền</h3><p>Làm việc trong lĩnh vực tư vấn chính sách thuế, xuất nhập khẩu; trải qua các vị trí giao nhận, trưởng phòng, quản lý và điều hành công ty.</p></div></li>
-<li><time>10/2005</time><div><h3>Thành lập Công ty TNHH Tư vấn Nam Luật</h3><p>Giai đoạn 2005–2009: tư vấn chính sách thuế, xuất nhập khẩu và giao nhận hàng hóa. Giai đoạn 2009–2019: hoạt động bất động sản, đại diện theo ủy quyền thực hiện thủ tục và tham gia giải quyết tranh chấp đất đai, thừa kế bất động sản.</p></div></li>
-<li class="is-now"><time>01/2019</time><div><h3>Thành lập Công Ty Luật TNHH Luật Sư Nam</h3><p>Luật sư Nguyễn Trọng Nam là Giám đốc và đại diện theo pháp luật. Công ty hoạt động trong lĩnh vực tư vấn pháp luật, tham gia tố tụng, đại diện theo ủy quyền và các dịch vụ pháp lý khác.</p></div></li>
-</ol>
-</div></section>
+<section class="section" id="hanh-trinh" aria-labelledby="career-title">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Hành trình</p><h2 class="h2" id="career-title">Chặng đường hơn 25 năm tại TP. Hồ Chí Minh</h2><p class="shead__text">Những dấu mốc trong quá trình làm việc của Luật sư Nguyễn Trọng Nam và sự ra đời của Công Ty Luật TNHH Luật Sư Nam.</p></div></div>
+    <ol class="timeline">
+      <li class="reveal"><time>09/1999</time><div><h3>Bắt đầu công tác tại TP. Hồ Chí Minh</h3><p>Từ Hà Nội vào Thành phố Hồ Chí Minh, làm nhân viên giao nhận hàng hóa xuất nhập khẩu tại Công ty TNHH Thương mại Dịch vụ Bình Thiên.</p></div></li>
+      <li class="reveal"><time>02/2001</time><div><h3>Công ty TNHH Tư vấn Nhân Quyền</h3><p>Làm việc trong lĩnh vực tư vấn chính sách thuế, xuất nhập khẩu; trải qua các vị trí giao nhận, trưởng phòng, quản lý và điều hành công ty.</p></div></li>
+      <li class="reveal"><time>10/2005</time><div><h3>Thành lập Công ty TNHH Tư vấn Nam Luật</h3><p>Giai đoạn 2005–2009: tư vấn chính sách thuế, xuất nhập khẩu và giao nhận hàng hóa. Giai đoạn 2009–2019: hoạt động bất động sản, đại diện theo ủy quyền thực hiện thủ tục và tham gia giải quyết tranh chấp đất đai, thừa kế bất động sản.</p></div></li>
+      <li class="is-now reveal"><time>01/2019</time><div><h3>Thành lập Công Ty Luật TNHH Luật Sư Nam</h3><p>Luật sư Nguyễn Trọng Nam là Giám đốc và đại diện theo pháp luật. Công ty hoạt động trong lĩnh vực tư vấn pháp luật, tham gia tố tụng, đại diện theo ủy quyền và các dịch vụ pháp lý khác.</p></div></li>
+    </ol>
+  </div>
+</section>
 
-<section class="gt-section gt-team" id="doi-ngu-luat-su" aria-labelledby="team-title"><div class="container">
-<div class="hm-head"><h2 class="h2" id="team-title">Đội ngũ Luật Sư Nam</h2><p>Một văn phòng gọn nhẹ: luật sư trực tiếp phụ trách hồ sơ, chuyên viên pháp lý hỗ trợ chuẩn bị giấy tờ và theo dõi tiến độ.</p></div>
-<div class="gt-team__grid">
-<article class="gt-member"><span class="gt-member__ico">{{ico:i-user}}</span><div><h3>Luật sư Nguyễn Trọng Nam</h3><p class="gt-role">Giám đốc · Luật sư điều hành</p><p>Tiếp nhận, tư vấn, bào chữa và tranh tụng; trực tiếp phụ trách chuyên môn của công ty.</p></div></article>
-<article class="gt-member" id="nguyen-trong-nam-minh"><span class="gt-member__ico">{{ico:i-doc}}</span><div><h3 id="minh-title">Nguyễn Trọng Nam Minh</h3><p class="gt-role">Chuyên viên pháp lý</p><p>Chuyên viên pháp lý thuộc Công Ty Luật TNHH Luật Sư Nam.</p></div></article>
-</div>
-</div></section>
+<section class="section section--cream" id="doi-ngu-luat-su" aria-labelledby="team-title">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Đội ngũ</p><h2 class="h2" id="team-title">Đội ngũ Luật Sư Nam</h2><p class="shead__text">Một văn phòng gọn nhẹ: luật sư trực tiếp phụ trách hồ sơ, chuyên viên pháp lý hỗ trợ chuẩn bị giấy tờ và theo dõi tiến độ.</p></div></div>
+    <div class="profile">
+      <figure class="photo reveal">
+        <img src="{{root}}assets/img/luat-su-phien-toa.webp?v={{v}}" srcset="{{root}}assets/img/luat-su-phien-toa-480.webp?v={{v}} 480w, {{root}}assets/img/luat-su-phien-toa.webp?v={{v}} 800w" sizes="(max-width: 900px) calc(100vw - 40px), 520px" alt="{{lawyer}} tại ghế người bào chữa trong phiên tòa" width="800" height="812" loading="lazy">
+        <figcaption class="photo__cap"><strong>Tại phiên tòa</strong><span>Luật sư trực tiếp bào chữa, tranh tụng</span></figcaption>
+      </figure>
+      <div class="reveal">
+        <h3 class="h2">{{lawyer}}</h3>
+        <p class="profile__role">Giám đốc · Luật sư điều hành</p>
+        <p class="profile__text">Tiếp nhận, tư vấn, bào chữa và tranh tụng; trực tiếp phụ trách chuyên môn của công ty. Anh chị làm việc thẳng với luật sư từ buổi trao đổi đầu tiên đến khi hồ sơ hoàn tất.</p>
+        <dl class="profile__facts">
+          <div><dt>Năm sinh</dt><dd>1976, quê Hà Nội</dd></div>
+          <div><dt>Gắn bó TP.HCM</dt><dd>Từ năm 1999</dd></div>
+          <div><dt>Thế mạnh</dt><dd>Đất đai, thừa kế, tranh tụng</dd></div>
+          <div><dt>Chức danh</dt><dd>Giám đốc, đại diện theo pháp luật</dd></div>
+        </dl>
+        <div class="icard icard--row icard--stack profile__colleague" id="nguyen-trong-nam-minh"><span class="ichip">{{ico:i-doc|}}</span><div><h3 class="icard__title" id="minh-title">Nguyễn Trọng Nam Minh</h3><p class="profile__role">Chuyên viên pháp lý</p><p class="icard__text">Hỗ trợ chuẩn bị giấy tờ, theo dõi tiến độ hồ sơ cùng luật sư phụ trách.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<section class="gt-section gt-values" id="cach-lam-viec" aria-labelledby="values-title"><div class="container">
-<div class="hm-head"><h2 class="h2" id="values-title">Khi làm việc với chúng tôi, anh chị sẽ được</h2></div>
-<div class="gt-values__grid">
-<article>{{ico:i-user}}<h3>Lắng nghe và làm rõ</h3><p>Luật sư nghe anh chị kể sự việc, xem hồ sơ và cùng xác định điều anh chị thật sự cần ngay từ buổi đầu.</p></article>
-<article>{{ico:i-shield-check}}<h3>Minh bạch và bảo mật</h3><p>Được nói rõ phương án, rủi ro và thù lao trước khi làm; thông tin của anh chị được giữ kín theo Luật Luật sư.</p></article>
-<article>{{ico:i-steps}}<h3>Theo sát từng hồ sơ</h3><p>Một luật sư phụ trách xuyên suốt, phối hợp cùng đội ngũ và thường xuyên báo tiến độ cho anh chị.</p></article>
-</div>
-<p class="gt-values__more"><a class="link-arrow" href="{{root}}vi-sao-chon-chung-toi/">Nguyên tắc làm việc {{arrow}}</a> <a class="link-arrow" href="{{root}}quy-trinh-lam-viec/">Quy trình và giấy tờ cần chuẩn bị {{arrow}}</a></p>
-</div></section>
-
-<section class="hm-contact" aria-labelledby="contact-title"><div class="container">
-<div class="hm-head hm-head--light"><h2 class="h2" id="contact-title">Gặp Luật sư Nguyễn Trọng Nam</h2><p>Công Ty Luật TNHH Luật Sư Nam (NamLawyerCo., LTD). Anh chị gọi điện hoặc nhắn Zalo trước khi đến để luật sư sắp xếp thời gian tiếp.</p></div>
-<div class="hm-contact__grid">
-<a class="hm-contact__card" href="tel:{{phone_tel}}">{{ico:i-phone}}<span>Gọi điện</span><strong>{{phone}}</strong><small>{{hours}}</small></a>
-<a class="hm-contact__card" href="{{zalo}}" target="_blank" rel="noopener">{{ico:i-chat}}<span>Nhắn Zalo</span><strong>{{phone}}</strong><small>Kể ngắn gọn sự việc của anh chị</small></a>
-<a class="hm-contact__card" href="https://www.google.com/maps/dir/?api=1&amp;destination={{maps_query}}" target="_blank" rel="noopener">{{ico:i-pin}}<span>Văn phòng</span><strong>{{street}}</strong><small>{{ward}}, {{city}}</small></a>
-</div>
-</div></section>
+<section class="section" id="cach-lam-viec" aria-labelledby="values-title">
+  <div class="container">
+    <div class="shead reveal"><div class="shead__main"><p class="eyebrow">Cách làm việc</p><h2 class="h2" id="values-title">Khi làm việc với chúng tôi, anh chị sẽ được</h2></div></div>
+    <div class="grid grid--3">
+      <article class="icard reveal"><span class="ichip">{{ico:i-user|}}</span><h3 class="icard__title">Lắng nghe và làm rõ</h3><p class="icard__text">Luật sư nghe anh chị kể sự việc, xem hồ sơ và cùng xác định điều anh chị thật sự cần ngay từ buổi đầu.</p></article>
+      <article class="icard reveal"><span class="ichip">{{ico:i-shield-check|}}</span><h3 class="icard__title">Minh bạch và bảo mật</h3><p class="icard__text">Được nói rõ phương án, rủi ro và thù lao trước khi làm; thông tin của anh chị được giữ kín theo Luật Luật sư.</p></article>
+      <article class="icard reveal"><span class="ichip">{{ico:i-steps|}}</span><h3 class="icard__title">Theo sát từng hồ sơ</h3><p class="icard__text">Một luật sư phụ trách xuyên suốt, phối hợp cùng đội ngũ và thường xuyên báo tiến độ cho anh chị.</p></article>
+    </div>
+    <p class="section-more"><a class="link-arrow" href="{{root}}vi-sao-chon-chung-toi/">Nguyên tắc làm việc {{arrow}}</a><a class="link-arrow" href="{{root}}quy-trinh-lam-viec/">Quy trình và giấy tờ cần chuẩn bị {{arrow}}</a></p>
+  </div>
+</section>

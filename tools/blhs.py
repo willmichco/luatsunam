@@ -228,7 +228,7 @@ KNOWN = set()  # số hiệu các điều hiện có, do Code nạp
 NUM = r"\d{1,3}[a-z]?(?![\d/])"
 SEP = r"(?:,\s*|\s+và\s+|\s+hoặc\s+)"
 # "điều 168, 169 và 290 của Bộ luật này" trong văn bản điều luật
-LAW_REF = re.compile(r"\b([Đđ]iều)\s+(" + NUM + "(?:" + SEP + NUM + ")*)(?=\s*(?:,\s*)?(?:của\s+)?Bộ luật này)")
+LAW_REF = re.compile(r"\b([Đđ]iều)\s+(" + NUM + "(?:" + SEP + NUM + r")*)(?=\s*(?:,\s*)?(?:của\s+)?Bộ luật này)")
 
 
 def link_lists(h, a, base):
@@ -523,11 +523,11 @@ class Renderer:
         tab_lawyer = (f'<h2 class="tdl-panel__title">Góc nhìn Luật sư Nam</h2><div class="tdl-cm">{extra["goc-nhin"]}</div>'
                       if "goc-nhin" in extra else
                       empty("Góc nhìn Luật sư Nam", f"Phần phân tích thực tiễn của Luật sư Nam về Điều {a['id']} đang được biên soạn. "
-                            "Nếu bạn đang gặp vụ việc liên quan, luật sư có thể trao đổi trực tiếp để đánh giá hồ sơ cụ thể."))
+                            "Nếu anh chị đang gặp vụ việc liên quan, luật sư có thể trao đổi trực tiếp để đánh giá hồ sơ cụ thể."))
         tab_cases = (f'<h2 class="tdl-panel__title">Bản án liên quan</h2><div class="tdl-cm">{extra["ban-an"]}</div>'
                      if "ban-an" in extra else
                      empty("Bản án liên quan", f"Chưa có bản án được tuyển chọn cho Điều {a['id']}.",
-                           '<p>Bạn có thể tra cứu bản án, quyết định đã công bố tại <a href="https://congbobanan.toaan.gov.vn/" target="_blank" rel="noopener">'
+                           '<p>Anh chị có thể tra cứu bản án, quyết định đã công bố tại <a href="https://congbobanan.toaan.gov.vn/" target="_blank" rel="noopener">'
                            'Cổng công bố bản án của Tòa án nhân dân</a> và án lệ tại <a href="https://anle.toaan.gov.vn/" target="_blank" rel="noopener">'
                            'Trang thông tin án lệ</a>.</p>'))
         tab_sit = (f'<h2 class="tdl-panel__title">Tình huống thực tiễn</h2><div class="tdl-cm">{extra["tinh-huong"]}</div>'

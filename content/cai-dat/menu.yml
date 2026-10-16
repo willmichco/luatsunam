@@ -48,6 +48,14 @@ tieu_de_cot:
   ve_chung_toi: Về chúng tôi
   linh_vuc: Lĩnh vực hoạt động
   van_phong: Văn phòng
+linh_vuc_chan_trang:
+  - thua-ke
+  - tranh-tung-giai-quyet-tranh-chap
+  - hon-nhan-gia-dinh
+  - dat-dai-bat-dong-san
+  - hinh-su
+  - dan-su
+  - cong-chung
 chan_trang:
   - nhan: Giới thiệu Luật Sư Nam
     trang: /gioi-thieu/

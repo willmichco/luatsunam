@@ -696,6 +696,14 @@ def settings_files():
             obj("tieu_de_cot", "Tiêu đề các cột chân trang", [
                 string("ve_chung_toi", "Cột liên kết", maxlength=40), string("linh_vuc", "Cột lĩnh vực (tự động)", maxlength=40),
                 string("van_phong", "Cột văn phòng", maxlength=40)], collapsed=True),
+            # Danh sách kéo-thả (thấy được thứ tự) thay ô tích nhiều lựa chọn (thứ tự = thứ tự tích, không nhìn thấy).
+            # Chỉ quyết định thứ tự – cột luôn có đủ lĩnh vực đã đăng – nên không báo lỗi khi chọn lĩnh vực nháp:
+            # lĩnh vực đó hiện đúng vị trí đã xếp khi được đăng.
+            lst("linh_vuc_chan_trang", "Thứ tự lĩnh vực ở chân trang",
+                field=_f("select", "linh_vuc", "Lĩnh vực", options=[], _options="services", dropdown_threshold=0),
+                hint="Kéo để đổi thứ tự. Cột luôn có đủ lĩnh vực: lĩnh vực chưa có trong danh sách tự nằm cuối; "
+                     "để trống = theo ô “Thứ tự” của từng lĩnh vực.",
+                max=20, label_singular="lĩnh vực", summary="{{fields.linh_vuc}}", collapsed=True),
             lst("chan_trang", "Cột liên kết ở chân trang", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
                 min=1, max=10, label_singular="liên kết", _item_rules=[_rule_link]),
             lst("lien_ket_phap_ly", "Liên kết cuối chân trang", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
@@ -920,7 +928,7 @@ def validate(value, field, src, path, ctx):
             elif dynamic == "services":
                 if not isinstance(it, str) or not SLUG_RE.match(it):
                     add(f"Lĩnh vực “{it}” không hợp lệ. Chọn từ danh sách.")
-                else:
+                elif field.get("_relation"):  # ô chỉ để xếp thứ tự thì không bắt lĩnh vực phải tồn tại / đã đăng
                     ctx.relations.append((src, label, field["_relation"], it))
             elif str(it) not in [str(x) for x in values]:
                 add(f"Giá trị “{it}” không có trong danh sách chọn.")

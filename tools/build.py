@@ -217,7 +217,10 @@ def footer_html(ctx):
     f, r, m = F(), ctx.r, S.menu
     c = ctx.at(src="content/cai-dat/menu.yml", where="Cột liên kết ở chân trang")
     cols = m.get("tieu_de_cot") or {}
-    services = "".join(f'<li><a href="{r}dich-vu/{s["slug"]}/">{esc(s["ten"])}</a></li>' for s in S.services)
+    # Thứ tự riêng cho chân trang (Cài đặt → Menu và chân trang); lĩnh vực chưa xếp nằm cuối theo ô "Thứ tự"
+    pick = [x for x in dict.fromkeys(m.get("linh_vuc_chan_trang") or []) if x in S.service_by_slug]
+    ordered = [S.service_by_slug[x] for x in pick] + [s for s in S.services if s["slug"] not in pick]
+    services = "".join(f'<li><a href="{r}dich-vu/{s["slug"]}/">{esc(s["ten"])}</a></li>' for s in ordered)
     about_links = "".join(f'<li><a href="{tpl.link_href(c, x)}">{esc(x["nhan"])}</a></li>' for x in m.get("chan_trang") or [])
     legal = "".join(f'<a href="{tpl.link_href(c.at(where="Liên kết cuối chân trang"), x)}">{esc(x["nhan"])}</a>' for x in m.get("lien_ket_phap_ly") or [])
     about = M.inline(f["footer_about"], ctx.at(src="content/cai-dat/cong-ty.yml", where="Giới thiệu ngắn ở chân trang"))

@@ -1,7 +1,0 @@
-# Công Ty Luật TNHH Luật Sư Nam
-User-agent: *
-Allow: /
-Disallow: /luatsunam/admin/
-Disallow: /luatsunam/nhap/
-
-Sitemap: https://willmichco.github.io/luatsunam/sitemap.xml

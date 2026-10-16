@@ -1,0 +1,64 @@
+name: Đo Lighthouse (site thật)
+
+# Chạy tay: GitHub → Actions → "Đo Lighthouse (site thật)" → Run workflow.
+# Mốc GĐ4 (github.io) ghi trong docs/NGHIEM-THU.md; sau khi chuyển tên miền (G5) chạy lại với địa chỉ mới để so sánh.
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "Các trang cần đo, cách nhau dấu cách (để trống = trang chủ + 1 bài viết)"
+        required: false
+        default: ""
+      so_lan:
+        description: "Số lần đo mỗi trang, lấy trung vị (điểm Lighthouse dao động giữa các lần)"
+        required: false
+        default: "5"
+
+permissions:
+  contents: read
+
+jobs:
+  do:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      URLS: ${{ inputs.urls || 'https://willmichco.github.io/luatsunam/ https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/' }}
+      SO_LAN: ${{ inputs.so_lan || '5' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Khóa phiên bản: đổi phiên bản Lighthouse làm điểm lệch, không so được với mốc cũ
+      - name: Cài Lighthouse
+        run: npm install -g lighthouse@13.5.0
+
+      - name: Đo
+        run: |
+          mkdir -p ket-qua
+          i=0
+          for url in $URLS; do
+            i=$((i + 1))
+            for n in $(seq 1 "$SO_LAN"); do
+              for che_do in mobile desktop; do
+                extra=""
+                if [ "$che_do" = desktop ]; then extra="--preset=desktop"; fi
+                lighthouse "$url" $extra --quiet --chrome-flags="--headless=new --no-sandbox" \
+                  --output=json --output=html --output-path="ket-qua/trang$i-$che_do-$n" \
+                  || echo "::warning::Lần đo lỗi: $url $che_do lần $n"
+              done
+            done
+          done
+
+      - name: Tổng hợp (trung vị)
+        shell: bash
+        run: python3 tools/lighthouse_tom_tat.py ket-qua | tee ket-qua/tom-tat.md | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Lưu báo cáo chi tiết (tải về ở cuối trang kết quả)
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-${{ github.run_number }}
+          path: ket-qua
+          retention-days: 90

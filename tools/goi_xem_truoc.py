@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Đóng gói cho khung mô phỏng trong /admin: dist/admin/xem-truoc/goi.zip.
 
-Gồm đúng code build (tools/*.py), nội dung đang có (content/*.yml, *.md), thư viện Python thuần cần để dựng trang
+Gồm đúng code build (tools/*.py, assets/css/style.css), nội dung đang có (content/*.yml, *.md), thư viện Python thuần cần để dựng trang
 (PyYAML, markdown-it-py, mdurl – bỏ phần biên dịch C) và xem-truoc.json (kích thước ảnh, mã phiên bản CSS/JS lấy từ
 lượt build này). admin/xem-truoc-worker.js giải nén gói trong Pyodide rồi gọi tools/xem_truoc.py.
 """
@@ -27,6 +27,8 @@ def package(out, photo_sizes, uploads, file_hashes):
         for name in sorted(os.listdir(os.path.join(ROOT, "tools"))):
             if name.endswith(".py"):
                 _add(z, f"repo/tools/{name}", open(os.path.join(ROOT, "tools", name), "rb").read())
+        # CSS của site: build nhúng thẳng vào <head> mỗi trang (build.site_css), mô phỏng cũng vậy
+        _add(z, "repo/assets/css/style.css", open(os.path.join(ROOT, "assets", "css", "style.css"), "rb").read())
         for d, dirs, files in sorted(os.walk(os.path.join(ROOT, "content"))):
             dirs.sort()
             for f in sorted(files):

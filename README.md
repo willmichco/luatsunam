@@ -36,7 +36,7 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `content/hoi-dap.yml` | Kho hỏi đáp chung |
 | `content/anh-thuong-hieu/` | Ảnh gốc: logo, luật sư tại văn phòng, tại phiên tòa (build tự cắt favicon, ảnh thẻ, ảnh chia sẻ) |
 | `assets/uploads/` | Ảnh tải lên qua CMS (tự đổi WebP khi tải lên; build sinh thêm bản 480/960/1600) |
-| `assets/css/style.css`, `assets/js/main.js`, `assets/fonts/` | Giao diện – chỉ sửa bằng code |
+| `assets/css/style.css`, `assets/js/main.js`, `assets/fonts/` | Giao diện – chỉ sửa bằng code. Build rút gọn `style.css` và **nhúng thẳng vào `<head>` mỗi trang** (không chờ tải CSS riêng); mỗi trang có quy tắc tải trước trang khi rê chuột/chạm liên kết và hiệu ứng chuyển trang mờ dần |
 | `admin/index.html` | Trang quản trị: Sveltia CMS khóa phiên bản 0.221.8, thành phần “Ảnh” (bắt buộc mô tả) và “Bảng”, ô `lsn_nhom` (tiêu đề phần, ghi chú “chữ này sửa ở đâu” có nút mở thẳng chỗ sửa – chỉ để nhìn, không ghi gì vào tệp), chống mất bài đang soạn, nút Hướng dẫn, giao diện màu thương hiệu + phông Be Vietnam Pro, form chia thẻ rõ ràng |
 | `admin/xem-truoc.js`, `admin/xem-truoc-worker.js` | Khung mô phỏng trong /admin: dựng trang bằng chính code build (Python chạy trong trình duyệt qua Pyodide 0.29.5 từ jsDelivr), đóng khung đỏ chỗ đang sửa, danh sách “Các phần” của trang (số khớp trên trang và trong form), bấm trên mô phỏng → nhảy tới ô; thẻ lấy chữ từ tệp khác (thẻ lĩnh vực, bài viết, câu hỏi) → mở đúng tệp, đúng ô; máy tính/điện thoại, mẫu kết quả Google, báo lỗi trước khi Lưu |
 | `admin/dieu-huong.js` | Cột trái theo menu website: thứ tự mục do build sinh từ Menu chính (`schema.sidebar_plan`), tiêu đề nhóm / mục thụt vào / mục một trang đọc từ `/admin/cot-trai.json` (build sinh); nút Tối/Sáng |

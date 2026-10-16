@@ -110,7 +110,14 @@ Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
 Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một trang – khoảng 5 phút.
 
-1. Ở cột trái chọn trang (ví dụ **Trang chủ**, hoặc **Giới thiệu** → *Vì sao chọn chúng tôi*) → mục **Các khối trên trang**. Mẹo: bấm **☰ Các phần** ở khung mô phỏng rồi bấm thẳng vào khối muốn sửa.
+> **Hai chế độ soạn** (nút trên thanh trên cùng, cạnh nút Sáng/Tối – trang quản trị nhớ lựa chọn):
+> - **Sửa chữ** (mặc định): mỗi khối chỉ hiện ô chữ, ảnh, liên kết. Ẩn/hiện khối, mã neo, màu nền, số cột… nằm trong dòng
+>   **⚙ Cài đặt khối** đầu mỗi khối (bấm để mở). Không có nút thêm, xóa, kéo khối – khó bấm nhầm làm lệch trang.
+> - **Sửa bố cục**: hiện đủ mọi nút và ô như các bước dưới đây. Tạo trang mới luôn mở ở chế độ này.
+>
+> Hai chế độ chỉ khác cách hiện form, nội dung lưu ra y hệt nhau.
+
+1. Bấm **Sửa bố cục** ở thanh trên cùng. Ở cột trái chọn trang (ví dụ **Trang chủ**, hoặc **Giới thiệu** → *Vì sao chọn chúng tôi*) → mục **Các khối trên trang**. Mẹo: bấm **☰ Các phần** ở khung mô phỏng rồi bấm thẳng vào khối muốn sửa.
 2. Giữ chuột vào **═** (1) rồi kéo để đổi thứ tự. **×** (2) để xóa khối. **Thêm khối** (3) → chọn loại khối → điền nội dung.
 
    ![Danh sách khối trên Trang chủ](them-khoi-1.webp)

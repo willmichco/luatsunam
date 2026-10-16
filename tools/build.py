@@ -1301,6 +1301,8 @@ def write_extras(out, pages, rendered):
         write(out, "admin/config.yml", header + yaml.dump(cfg, Dumper=NoAlias, allow_unicode=True, sort_keys=False, width=10 ** 6))
         # Cột trái xếp theo Menu chính: tiêu đề nhóm, mục thụt vào, mục một trang (admin/dieu-huong.js đọc tệp này)
         write(out, "admin/cot-trai.json", json.dumps(schema.sidebar_decor(schema.collections()), ensure_ascii=False))
+        # Chế độ Sửa chữ / Sửa bố cục: trường bố cục giấu khi Sửa chữ (admin/che-do.js đọc tệp này)
+        write(out, "admin/bo-cuc.json", json.dumps({"o": schema.bo_cuc_paths(schema.collections())}, ensure_ascii=False))
         huong_dan.build(out, ENV["site_url"])  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
         # /admin/xem-truoc/goi.zip: code build + nội dung cho khung mô phỏng (chạy trong trình duyệt)
         import goi_xem_truoc

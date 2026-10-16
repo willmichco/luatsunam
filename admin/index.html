@@ -116,6 +116,34 @@
   [data-lsn-so]::before { content: attr(data-lsn-so); display: inline-flex; align-items: center; justify-content: center; flex: none;
     min-width: 22px; height: 22px; margin-inline-end: 8px; padding: 0 6px; box-sizing: border-box; border-radius: 999px;
     background: #b5000b; color: #fff; font: 700 12px/1 var(--sui-font-family-default); vertical-align: 1px; }
+  /* ---------- Chế độ Sửa chữ / Sửa bố cục (admin/che-do.js) ---------- */
+  #lsn-che-do { display: inline-flex; flex: none; height: 32px; margin-inline-end: 6px; border: 1px solid var(--sui-control-border-color);
+    border-radius: 999px; overflow: hidden; }
+  #lsn-che-do button { display: inline-flex; align-items: center; gap: 5px; padding: 0 12px 0 9px; border: 0; background: transparent;
+    color: inherit; font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
+  #lsn-che-do button + button { border-inline-start: 1px solid var(--sui-control-border-color); }
+  #lsn-che-do button:hover, #lsn-che-do button:focus-visible { background: var(--sui-hover-background-color); }
+  #lsn-che-do button[aria-pressed="true"] { background: #b5000b; color: #fff; font-weight: 600; }
+  #lsn-che-do .icon, .lsn-cai-dat__icon, .lsn-cai-dat__mui { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal;
+    font-size: 18px; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
+  @media (max-width: 1100px) { #lsn-che-do .chu { display: none; } #lsn-che-do button { padding: 0 9px; } }
+  .lsn-cai-dat { display: none; align-items: center; gap: 8px; width: calc(100% - 32px); margin: 10px 16px 4px; padding: 8px 12px;
+    border: 1px dashed var(--sui-control-border-color); border-radius: 8px; background: transparent; color: inherit; text-align: start;
+    font: 600 13.5px/1.3 var(--sui-font-family-default); cursor: pointer; }
+  :root[data-lsn-che-do="chu"] .lsn-cai-dat { display: flex; }
+  .lsn-cai-dat:hover, .lsn-cai-dat:focus-visible { background: var(--sui-hover-background-color); }
+  .lsn-cai-dat__phu { flex: 1; min-width: 0; font-weight: 400; font-size: 12.5px; color: var(--sui-secondary-foreground-color);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lsn-cai-dat--an { border-color: #b5000b; border-style: solid; }
+  .lsn-cai-dat--an .lsn-cai-dat__phu { color: #b5000b; font-weight: 600; }
+  .lsn-mo-cai-dat .lsn-cai-dat { border-style: solid; }
+  /* Sửa chữ: nhắc cách thêm / xóa / đổi thứ tự khối ngay trên danh sách khối */
+  :root[data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before {
+    content: "Đang ở chế độ Sửa chữ: bấm một khối để sửa chữ. Muốn thêm, xóa, kéo đổi thứ tự khối – bấm “Sửa bố cục” ở thanh trên cùng.";
+    display: block; margin: 0 0 10px; padding: 9px 13px; border-radius: 8px; background: hsl(45 90% 95%); color: hsl(35 60% 22%);
+    font-size: 13px; line-height: 1.45; }
+  :root[data-theme="dark"][data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before { background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
+  :root[data-theme="dark"] { --lsn-bo-cuc: #e0a92e; }
   #lsn-sang-toi { display: inline-flex; align-items: center; gap: 5px; height: 32px; margin-inline-end: 6px; padding: 0 12px 0 9px;
     border: 1px solid var(--sui-control-border-color); border-radius: 999px; background: transparent; color: inherit;
     font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
@@ -240,6 +268,8 @@
 <script src="xem-truoc.js"></script>
 <!-- Cột trái theo menu website, mở thẳng trang một tệp, nút Sáng / Tối -->
 <script src="dieu-huong.js"></script>
+<!-- Chế độ Sửa chữ (mặc định, form gọn) / Sửa bố cục (hiện đủ): chỉ đổi cách hiện form, không đổi dữ liệu -->
+<script src="che-do.js"></script>
 <!-- Nút hướng dẫn: mở trang hướng dẫn có ảnh chụp ở tab mới (không mất phần đang soạn).
      Ở màn danh sách hiện chữ "? Hướng dẫn"; khi đang soạn thu thành nút tròn nhỏ để không che ô nhập. -->
 <a id="nut-huong-dan" href="huong-dan/" target="_blank" rel="noopener" title="Hướng dẫn sử dụng trang quản trị" aria-label="Hướng dẫn sử dụng">

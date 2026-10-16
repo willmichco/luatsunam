@@ -11,7 +11,7 @@ Ký hiệu: **Đạt** = đã kiểm xong · **Đạt phần máy** = đã chạ
 | 4 | CMS không bao giờ lệch site | **Đạt** | GĐ4 thêm ô “Đường dẫn bài viết” chỉ ở `tools/schema.py` → build sinh `admin/config.yml` mới → ô hiện trong CMS ngay lượt sau. Cấu hình kiểm theo schema Sveltia: 0 lỗi |
 | 5 | Nhập sai không làm sập site; email ≤ 10 phút, lỗi tiếng Việt chỉ rõ tệp + trường | **Đạt** – báo lỗi sau 19 giây (issue #23), site giữ bản cũ; sửa xong thì issue tự đóng sau 20 giây | Cố ý xóa tiêu đề bài viết trên `main` (commit thử nghiệm) rồi hoàn tác |
 | 6 | Luật sư duyệt nháp đúng bố cục thật tại `/nhap/<slug>/`, không bị Google index | **Đạt phần code** – chờ bản thử Cloudflare (bước A) để có link thật | Bản thử (`CF_PAGES`): nháp dựng tại đường dẫn thật, `/nhap/<slug>/` chuyển 302 tới đó, thẻ `noindex`, header `X-Robots-Tag: noindex`, `robots.txt` chặn toàn bộ. Bản chính thức: nháp không xuất, không vào sitemap, tìm kiếm, menu |
-| 9 | Bấm Lưu → lên site ≤ 3 phút | **Đạt** – 51 giây và 48 giây (đo đầu-cuối 2 lần); chậm nhất ước khoảng 2 phút | Thời điểm push → workflow build xong → GitHub Pages đăng xong (API GitHub Actions) |
+| 9 | Bấm Lưu → lên site ≤ 3 phút | **Đạt** – 51, 48 và 50 giây (đo đầu-cuối 3 lần); chậm nhất ước khoảng 2 phút | Thời điểm push → workflow build xong → GitHub Pages đăng xong (API GitHub Actions) |
 
 ## Tiêu chí 9 – thời gian từ lúc lưu tới lúc lên site
 
@@ -19,10 +19,11 @@ Ký hiệu: **Đạt** = đã kiểm xong · **Đạt phần máy** = đã chạ
 |---|---|---|---|---|---|
 | 1 | `cb4ea96` sửa CMS + hướng dẫn | 01:07:00 | 01:07:23 | 01:07:51 | **51 giây** |
 | 2 | `184713d` bài tập làm quen | 01:12:22 | 01:12:43 | 01:13:10 | **48 giây** |
+| 3 | `5873796` kết quả nghiệm thu | 01:18:45 | 01:19:01 | 01:19:35 | **50 giây** |
 
 Giờ UTC ngày 16/10/2026, lấy từ GitHub Actions. Hai phần của một lượt lưu, theo các lượt gần nhất:
-- Build + kiểm trên GitHub Actions: 19–24 giây (6 lượt).
-- GitHub Pages đăng: 22–92 giây, trung vị khoảng 31 giây (11 lượt).
+- Build + kiểm trên GitHub Actions: 19–24 giây (7 lượt).
+- GitHub Pages đăng: 22–92 giây, trung vị khoảng 31 giây (12 lượt).
 
 Trường hợp chậm nhất ước khoảng 2 phút, vẫn dưới mức 3 phút.
 

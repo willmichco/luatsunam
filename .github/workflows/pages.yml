@@ -98,12 +98,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_MSG: ${{ github.event.head_commit.message || '(chạy tay)' }}
           ACTOR: ${{ github.actor }}
         run: |
           gh label create build-loi --color B5000B --description "Build website bị lỗi" --force >/dev/null 2>&1 || true
           {
-            echo "**Lần lưu gây lỗi:** ${COMMIT_MSG:-(không rõ)} – bởi @${ACTOR}"
+            echo "**Lần lưu gây lỗi:** ${COMMIT_MSG%%$'\n'*} – bởi @${ACTOR}"
             echo ""
             if [ -f build-errors.md ]; then cat build-errors.md; else echo "Build hoặc bước kiểm bị lỗi. Xem chi tiết: ${RUN_URL}"; fi
             echo ""

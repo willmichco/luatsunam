@@ -455,7 +455,7 @@ def collections():
                         f"[Hướng dẫn đăng bài]({GUIDE}#dang-bai)",
          "folder": "content/bai-viet", "extension": "md", "format": "yaml-frontmatter",
          "identifier_field": "tieu_de", "slug": dict(slug_opts("duong_dan"), pattern=ARTICLE_SLUG_PATTERN),
-         "summary": "{{tieu_de}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}}",
+         "summary": "{{tieu_de}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}} · {{ngay_dang | date('DD/MM/YYYY')}}",
          "sortable_fields": {"fields": ["ngay_dang", "tieu_de", "ngay_cap_nhat"], "default": {"field": "ngay_dang", "direction": "descending"}},
          "view_filters": [{"name": "nhap", "label": "Bản nháp", "field": "nhap", "eq": True},
                           {"name": "da-dang", "label": "Đã đăng", "field": "nhap", "ne": True}],
@@ -490,7 +490,7 @@ def collections():
                  "Khi nào Tòa án giải quyết ly hôn theo yêu cầu của một bên, hồ sơ cần chuẩn bị và nguyên tắc giao con."),
          ], "_rules": [_rule_dates]},
         {"name": "dich_vu", "label": "Lĩnh vực dịch vụ", "label_singular": "lĩnh vực", "icon": "balance",
-         "editor": {"preview": False}, "description": "Mỗi lĩnh vực có trang /dich-vu/<đường-dẫn>/, thẻ ở trang chủ, menu và chân trang. Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
+         "description": "Mỗi lĩnh vực có trang /dich-vu/<đường-dẫn>/, thẻ ở trang chủ, menu và chân trang. Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
          "folder": "content/dich-vu", "extension": "yml", "format": "yml",
          "identifier_field": "ten", "slug": slug_opts("ten"),
          "summary": "{{ten}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}}",
@@ -540,7 +540,7 @@ def collections():
                  "Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản, giải quyết tranh chấp thừa kế."),
          ]},
         {"name": "hoi_dap", "label": "Hỏi đáp chung", "icon": "quiz",
-         "editor": {"preview": False}, "description": "Kho câu hỏi dùng chung: trang Câu hỏi thường gặp hiện tất cả; các trang khác chọn câu từ đây.",
+         "description": "Kho câu hỏi dùng chung: trang Câu hỏi thường gặp hiện tất cả; các trang khác chọn câu từ đây.",
          "files": [{"name": "hoi_dap", "label": "Kho hỏi đáp", "file": "content/hoi-dap.yml", "format": "yml", "fields": [
              lst("cau_hoi", "Câu hỏi (kéo để đổi thứ tự trên trang Câu hỏi thường gặp)", fields=[
                  string("hoi", "Câu hỏi", maxlength=140),
@@ -551,7 +551,7 @@ def collections():
          ]}]},
         {"divider": True, "name": "divider-trang"},
         {"name": "trang", "label": "Trang dựng từ khối", "label_singular": "trang", "icon": "dashboard_customize",
-         "editor": {"preview": False}, "description": "Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp. "
+         "description": "Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp. "
                         f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi) · [Tạo trang mới]({GUIDE}#tao-trang)",
          "folder": "content/trang", "extension": "yml", "format": "yml",
          "identifier_field": "tieu_de", "slug": slug_opts("tieu_de"),
@@ -571,7 +571,7 @@ def collections():
              seo("Phí dịch vụ luật sư và cách tính thù lao", "Cách Luật Sư Nam tính thù lao theo Điều 55 Luật Luật sư, khoản nào báo trước."),
          ]},
         {"name": "trang_tong_hop", "label": "Trang tổng hợp", "icon": "view_list",
-         "editor": {"preview": False}, "description": "Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp: sửa chữ; danh sách bên dưới tự động.",
+         "description": "Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp: sửa chữ; danh sách bên dưới tự động.",
          "files": [
              {"name": "dich_vu", "label": "Trang Dịch vụ (/dich-vu/)", "file": "content/trang-tong-hop/dich-vu.yml", "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
@@ -624,7 +624,7 @@ def collections():
          ]},
         {"divider": True, "name": "divider-cai-dat"},
         {"name": "cai_dat", "label": "Cài đặt", "icon": "settings",
-         "editor": {"preview": False}, "description": "Thông tin công ty, menu, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng, ảnh thương hiệu. "
+         "description": "Thông tin công ty, menu, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng, ảnh thương hiệu. "
                         f"[Đổi hotline]({GUIDE}#doi-hotline) · [Chuyển hướng]({GUIDE}#chuyen-huong)",
          "files": settings_files()},
     ]

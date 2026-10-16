@@ -9,7 +9,7 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 
 ## 1. Đăng nhập
 
-**Biên tập viên:** bấm **Đăng nhập bằng GitHub** (1). Lần đầu GitHub hỏi cấp quyền: bấm *Authorize*. Chưa có tài khoản: xem [mục 10](#tao-tai-khoan-github).
+**Biên tập viên:** bấm **Đăng nhập bằng GitHub** (1). Lần đầu GitHub hỏi cấp quyền: bấm *Authorize*. Chưa có tài khoản: xem [mục 11](#tao-tai-khoan-github).
 
 ![Màn hình đăng nhập có nút Đăng nhập bằng GitHub](dang-nhap-3.webp "Đăng nhập bằng GitHub – có sau khi quản trị cài Worker đăng nhập")
 
@@ -25,7 +25,25 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 
 > Mã truy cập như chìa khóa văn phòng: không gửi qua Zalo/email, không lưu trên máy công cộng (dùng xong: ảnh đại diện góc phải trên → Đăng xuất). Hết hạn thì tạo mã mới.
 
-## 2. Đăng bài
+## 2. Khung mô phỏng – thấy ngay đang sửa chỗ nào
+
+Khi mở một bài/trang, nửa phải màn hình là **Xem trước**: trang web dựng bằng đúng bộ build của site, cập nhật sau khoảng 0,3 giây mỗi lần gõ – chưa cần bấm Lưu.
+
+![Khung mô phỏng: khối đang sửa được đóng khung đỏ](mo-phong-1.webp "Bấm vào một khối bên trái → khung mô phỏng cuộn tới và đóng khung đỏ đúng phần đó trên trang")
+
+- Bấm hoặc rê chuột vào một khối/ô bên trái (1) → nhãn **✎ Đang sửa** (2) ghi tên phần đó, và trang bên phải cuộn tới, **đóng khung đỏ** đúng chỗ (3). Rê chuột qua khối khác: khung nét đứt cho biết khối đó nằm đâu.
+- Ngược lại: **bấm vào một chỗ trên trang mô phỏng** → form bên trái mở đúng khối/ô đó. Bấm link trong mô phỏng không rời trang quản trị.
+- **Máy tính / Điện thoại** (4): xem bố cục 390 px như trên điện thoại. Nút ↗ mở trang thật trên website (bản đã lưu).
+- Khối đang tắt *Hiển thị khối này* vẫn hiện mờ kèm nhãn **Đang ẩn – không hiện trên website**.
+- Khi sửa ô SEO, phía trên mô phỏng có **mẫu kết quả Google** kèm số ký tự.
+
+Nếu nội dung đang có lỗi, khung đỏ phía trên liệt kê từng lỗi (1) – **Lưu lúc này thì website giữ bản cũ**. Sửa ô báo lỗi (2) đến khi khung đỏ biến mất rồi mới Lưu.
+
+![Bảng lỗi phía trên mô phỏng](mo-phong-2.webp "Xóa trống ô bắt buộc → bảng lỗi nêu đúng khối và ô cần sửa")
+
+> Lần đầu mở trong ngày, khung mô phỏng cần **5–15 giây** để tải bộ dựng trang (khoảng 10 MB, từ lần sau trình duyệt dùng lại). Cần có mạng. Nếu khung báo lỗi tải, vẫn soạn và Lưu bình thường – kiểm tra lại trên site sau 1–3 phút.
+
+## 3. Đăng bài
 
 Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
@@ -58,12 +76,12 @@ Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
    ![Danh sách bài viết có bài BẢN NHÁP](dang-bai-6.webp)
 
-8. Gửi luật sư phụ trách link xem trước `/nhap/<đường-dẫn>/` (trên bản thử Cloudflare, khi đã cài). Luật sư duyệt → bỏ dấu **Bản nháp** → **Lưu** → bài lên site sau 1–3 phút.
+8. Khung mô phỏng bên phải đã cho thấy bài như trên site (có dải BẢN NHÁP). Gửi luật sư phụ trách link xem trước `/nhap/<đường-dẫn>/` (trên bản thử Cloudflare, khi đã cài). Luật sư duyệt → bỏ dấu **Bản nháp** → **Lưu** → bài lên site sau 1–3 phút.
 9. Mở bài trên site kiểm tra, cả trên điện thoại; Google Search Console → *Kiểm tra URL* → *Yêu cầu lập chỉ mục*.
 
 > **Bảng:** Chèn → Bảng; mỗi dòng một hàng, các ô cách nhau dấu `|`, dòng đầu là tiêu đề cột. **Liên kết trong site:** bôi đen chữ → nút liên kết → dán `/dich-vu/thua-ke/`.
 
-## 3. Thêm khối
+## 4. Thêm khối
 
 Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một trang – khoảng 5 phút.
 
@@ -82,7 +100,7 @@ Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một tra
 
 > **Lỡ xóa hoặc sửa nhầm (chưa lưu):** nút **⋮** góc phải trên → **Hoàn tác tất cả thay đổi**. Đã lưu rồi: báo quản trị (mọi lần lưu đều có lịch sử, lấy lại được).
 
-## 4. Tạo trang
+## 5. Tạo trang
 
 Khoảng 20 phút.
 
@@ -90,13 +108,13 @@ Khoảng 20 phút.
 
    ![Form tạo trang mới](tao-trang-1.webp)
 
-2. Thêm khối như [mục 3](#them-khoi) – thường dùng *Đoạn văn tự do*, *Lưới thẻ*, *Hỏi đáp*. Khối liên hệ đỏ cuối trang có sẵn.
+2. Thêm khối như [mục 4](#them-khoi) – thường dùng *Đoạn văn tự do*, *Lưới thẻ*, *Hỏi đáp*. Khối liên hệ đỏ cuối trang có sẵn.
 3. Điền **SEO** → **Lưu**. Duyệt xong → bỏ dấu **Bản nháp** → **Lưu**.
 4. **Đưa lên menu:** chờ 2–3 phút cho website build xong, **tải lại trang quản trị (F5)** để trang mới có trong danh sách chọn. **Cài đặt → Menu và chân trang** → mở mục cha (ví dụ *Giới thiệu ▾*) → **Thêm mục con** (1) → điền **Chữ** (2) → chọn **Trang** (3) → **Lưu**.
 
    ![Thêm mục con vào menu](tao-trang-2.webp)
 
-## 5. Đổi hotline
+## 6. Đổi hotline
 
 **Cài đặt → Thông tin công ty** → sửa **Hotline** (1) → **Lưu**. Tự cập nhật trên mọi trang: nút Gọi, nút Zalo, chân trang, bản đồ, mô tả trên Google, dữ liệu cho Google.
 
@@ -105,7 +123,7 @@ Khoảng 20 phút.
 - Ô **Liên kết Zalo** để trống thì Zalo tự theo hotline; chỉ điền khi Zalo dùng số khác.
 - Trong mọi ô chữ, viết mã `{{hotline}}`, `{{email}}`, `{{luat_su}}`, `{{dia_chi}}`, `{{gio_lam_viec}}` thay vì gõ số hoặc tên. Gõ thẳng số hotline/email: build báo lỗi và chỉ đúng ô cần sửa.
 
-## 6. Chuyển hướng
+## 7. Chuyển hướng
 
 Dùng khi phải đổi đường dẫn của trang/bài đã đăng (hiếm khi cần, vì làm mất thứ hạng tạm thời).
 
@@ -116,7 +134,7 @@ Dùng khi phải đổi đường dẫn của trang/bài đã đăng (hiếm khi
 
 3. Xóa trang/bài cũ → **Lưu**. Build tự kiểm: đích phải có thật, không vòng lặp.
 
-## 7. Khi build lỗi
+## 8. Khi build lỗi
 
 Dấu hiệu: đã bấm Lưu 5 phút mà website chưa đổi.
 
@@ -134,23 +152,23 @@ Dấu hiệu: đã bấm Lưu 5 phút mà website chưa đổi.
   Mở đúng mục đó trong /admin → sửa → **Lưu**. Build lại thành công thì issue tự đóng. Không hiểu lỗi: chụp màn hình gửi Claude.
 - **Bản nháp có lỗi không chặn website chính thức.** Lỗi của bản nháp hiện ở phần *cảnh báo* của lượt build (GitHub → Actions) và phải sửa trước khi bỏ dấu nháp.
 
-## 8. Quy tắc nội dung pháp lý
+## 9. Quy tắc nội dung pháp lý
 
 - Bài hoặc câu trả lời có dẫn điều luật phải được luật sư duyệt trước khi bỏ dấu nháp.
 - Không hứa hẹn kết quả (Quy tắc 9.1.6 Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam).
 - Mỗi quý: rà ngày cập nhật và hiệu lực văn bản pháp luật trong bài cũ; cập nhật *Ngày cập nhật*.
 
-## 9. Mời biên tập viên
+## 10. Mời biên tập viên
 
 Việc của quản trị, khoảng 5 phút mỗi người.
 
-1. Người được mời tạo tài khoản GitHub và bật xác thực 2 lớp ([mục 10](#tao-tai-khoan-github)), rồi gửi tên tài khoản cho quản trị.
+1. Người được mời tạo tài khoản GitHub và bật xác thực 2 lớp ([mục 11](#tao-tai-khoan-github)), rồi gửi tên tài khoản cho quản trị.
 2. Quản trị: [github.com/willmichco/luatsunam/settings/access](https://github.com/willmichco/luatsunam/settings/access) → **Add people** → nhập tên tài khoản → **Add to repository** (cộng tác viên của kho cá nhân có quyền ghi).
 3. Người được mời mở email *invited you to collaborate* → **Accept invitation** → vào /admin → **Đăng nhập bằng GitHub**.
 
 Người nghỉ việc: cùng trang đó → **Remove**, ngay trong ngày.
 
-## 10. Tạo tài khoản GitHub
+## 11. Tạo tài khoản GitHub
 
 3 bước, dành cho biên tập viên.
 

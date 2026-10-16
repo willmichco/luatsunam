@@ -37,7 +37,9 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `content/anh-thuong-hieu/` | Ảnh gốc: logo, luật sư tại văn phòng, tại phiên tòa (build tự cắt favicon, ảnh thẻ, ảnh chia sẻ) |
 | `assets/uploads/` | Ảnh tải lên qua CMS (tự đổi WebP khi tải lên; build sinh thêm bản 480/960/1600) |
 | `assets/css/style.css`, `assets/js/main.js`, `assets/fonts/` | Giao diện – chỉ sửa bằng code |
-| `admin/index.html` | Trang quản trị: Sveltia CMS khóa phiên bản 0.221.8, thành phần “Ảnh” (bắt buộc mô tả) và “Bảng”, chống mất bài đang soạn, nút Hướng dẫn |
+| `admin/index.html` | Trang quản trị: Sveltia CMS khóa phiên bản 0.221.8, thành phần “Ảnh” (bắt buộc mô tả) và “Bảng”, chống mất bài đang soạn, nút Hướng dẫn, giao diện màu thương hiệu + phông Be Vietnam Pro |
+| `admin/xem-truoc.js`, `admin/xem-truoc-worker.js` | Khung mô phỏng trong /admin: dựng trang bằng chính code build (Python chạy trong trình duyệt qua Pyodide 0.29.5 từ jsDelivr), đóng khung đỏ chỗ đang sửa, bấm trên mô phỏng → nhảy tới ô, máy tính/điện thoại, mẫu kết quả Google, báo lỗi trước khi Lưu |
+| `tools/xem_truoc.py`, `tools/goi_xem_truoc.py` | Phần Python của khung mô phỏng; build đóng gói `tools/` + `content/` + thư viện vào `/admin/xem-truoc/goi.zip` (~280 KB) |
 | `docs/huong-dan/` | Hướng dẫn sử dụng có ảnh chụp; build dựng thành `/admin/huong-dan/` (`tools/huong_dan.py`) |
 | `tools/schema.py` | Khai báo mọi trường: nhãn, gợi ý, giới hạn, quy tắc kiểm; 15 khối dựng trang |
 | `tools/build.py` | Build: đọc `content/`, kiểm, dựng trang, ảnh, sitemap, `_redirects`, `_headers`, `/admin/config.yml` |
@@ -89,5 +91,6 @@ Trên Cloudflare Pages (có biến `CF_PAGES`) mà chưa đặt `SITE_URL`, buil
 - Chống mất bài đang soạn: Esc, nút ←, đóng tab khi còn thay đổi chưa lưu đều được hỏi lại.
 - Mã theo dõi (GA4, Meta Pixel, Zalo OA) chỉ xuất ra site khi đã tích “Đã cập nhật Chính sách bảo mật và thông báo cookie” (Nghị định 13/2023).
 - Build lỗi: liệt kê **mọi** lỗi một lần, kèm tệp + tên trường như trong CMS; không ghi `dist/`.
+- Khung mô phỏng hiện cùng danh sách lỗi đó **trước khi Lưu** (chỉ cảnh báo, không chặn Lưu). Mô phỏng thêm thuộc tính `data-cms` chỉ trong trình duyệt; HTML xuất ra site không đổi.
 
 > ⚖️ Không thêm cụm cam kết kết quả (“cam kết thắng kiện”…) và không đăng số liệu chưa kiểm chứng (Quy tắc 9.1.6 Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam). Bài có dẫn điều luật phải được luật sư duyệt trước khi bỏ dấu nháp.

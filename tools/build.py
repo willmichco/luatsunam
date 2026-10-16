@@ -1276,7 +1276,9 @@ def write_extras(out, pages, rendered):
     if ENV["admin"]:
         import yaml
         os.makedirs(os.path.join(out, "admin"), exist_ok=True)
-        shutil.copy2(os.path.join(ROOT, "admin", "index.html"), os.path.join(out, "admin", "index.html"))
+        for name in sorted(os.listdir(os.path.join(ROOT, "admin"))):  # index.html + khung mô phỏng (xem-truoc*.js)
+            if name.endswith((".html", ".js", ".css")):
+                shutil.copy2(os.path.join(ROOT, "admin", name), os.path.join(out, "admin", name))
         cfg = schema.cms_config(cms_options(), ENV)
         header = ("# TỆP TỰ SINH từ tools/schema.py mỗi lần build – không sửa tay.\n"
                   "# Thêm/sửa trường: sửa tools/schema.py rồi build lại.\n")
@@ -1285,6 +1287,9 @@ def write_extras(out, pages, rendered):
                 return True
         write(out, "admin/config.yml", header + yaml.dump(cfg, Dumper=NoAlias, allow_unicode=True, sort_keys=False, width=10 ** 6))
         huong_dan.build(out, ENV["site_url"])  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
+        # /admin/xem-truoc/goi.zip: code build + nội dung cho khung mô phỏng (chạy trong trình duyệt)
+        import goi_xem_truoc
+        goi_xem_truoc.package(out, tpl.PHOTO_SIZE, tpl.UPLOADS, {r: file_hash(r) for r in ("assets/css/style.css", "assets/js/main.js")})
 
 
 # ---------------------------------------------------------------------------

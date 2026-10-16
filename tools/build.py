@@ -1282,7 +1282,8 @@ def write_extras(out, pages, rendered):
         cfg = schema.cms_config(cms_options(), ENV)
         header = ("# TỆP TỰ SINH từ tools/schema.py mỗi lần build – không sửa tay.\n"
                   "# Thêm/sửa trường: sửa tools/schema.py rồi build lại.\n")
-        class NoAlias(yaml.SafeDumper):  # danh sách chọn dùng lại nhiều chỗ: ghi đầy đủ, không dùng &id/*id
+        # Danh sách chọn dùng lại nhiều chỗ: ghi đầy đủ, không dùng &id/*id. Bản C (libyaml) nhanh ~15 lần, cùng kết quả.
+        class NoAlias(getattr(yaml, "CSafeDumper", yaml.SafeDumper)):
             def ignore_aliases(self, data):
                 return True
         write(out, "admin/config.yml", header + yaml.dump(cfg, Dumper=NoAlias, allow_unicode=True, sort_keys=False, width=10 ** 6))

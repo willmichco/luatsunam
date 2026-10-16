@@ -5,6 +5,7 @@ Kết quả là đối tượng Site: thông tin công ty, menu, câu chữ, lĩ
 Mọi lỗi được gom vào LOI (tools/loi.py) kèm tên tệp + tên trường theo đúng nhãn trong CMS.
 """
 import glob
+import json
 import os
 import re
 import urllib.parse
@@ -51,12 +52,42 @@ def _int12(loader, node):
 Yaml12Loader.add_constructor("tag:yaml.org,2002:int", _int12)
 
 
+if getattr(yaml, "__with_libyaml__", False):
+    class _Yaml12CLoader(yaml.CSafeLoader):
+        """Cùng quy tắc YAML 1.2 nhưng phần phân tích chạy bằng libyaml (C): nhanh ~10 lần. Pyodide (khung mô phỏng)
+        không có libyaml → dùng Yaml12Loader (Python thuần), kết quả như nhau."""
+    _Yaml12CLoader.yaml_implicit_resolvers = Yaml12Loader.yaml_implicit_resolvers
+    _Yaml12CLoader.yaml_constructors = Yaml12Loader.yaml_constructors
+    _LOADER = _Yaml12CLoader
+else:
+    _LOADER = Yaml12Loader
+
+
 def yaml_load(text):
-    return yaml.load(text, Loader=Yaml12Loader)
+    if text.lstrip().startswith("{"):  # bản đang sửa do khung mô phỏng ghi (JSON = YAML 1.2 hợp lệ): đọc thẳng, nhanh hơn nhiều
+        try:
+            return json.loads(text)
+        except ValueError:
+            pass
+    return yaml.load(text, Loader=_LOADER)
 
 
 def rel(path):
     return os.path.relpath(path, ROOT)
+
+
+def _copy(v):
+    """Bản sao sâu cho dữ liệu đọc từ YAML (dict/list lồng nhau; giá trị đơn – chữ, số, ngày – không đổi được nên dùng chung)."""
+    if isinstance(v, dict):
+        return {k: _copy(x) for k, x in v.items()}
+    if isinstance(v, list):
+        return [_copy(x) for x in v]
+    return v
+
+
+# Tệp đã đọc: đường dẫn → (nội dung chữ, dữ liệu). Khung mô phỏng dựng lại trang theo từng chữ gõ: chỉ tệp đang sửa
+# đổi nội dung, các tệp khác lấy lại từ đây thay vì phân tích YAML lại (phần tốn thời gian nhất trong Pyodide).
+_PARSED = {}
 
 
 def read_file(path):
@@ -67,6 +98,16 @@ def read_file(path):
     except OSError as e:
         LOI.them(rel(path), "", f"Không đọc được tệp: {e}")
         return None
+    hit = _PARSED.get(path)
+    if hit and hit[0] == text:
+        return _copy(hit[1])  # bản sao: bước kiểm và dựng trang có thể sửa dữ liệu
+    data = _parse(path, text)
+    if data is not None:
+        _PARSED[path] = (text, _copy(data))
+    return data
+
+
+def _parse(path, text):
     try:
         if path.endswith(".md"):
             m = re.match(r"^---\s*\n(.*?)\n---\s*\n?(.*)$", text, re.S)

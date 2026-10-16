@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Quản trị website Luật Sư Nam</title>
+<!-- Mở sẵn kết nối: Sveltia tải bản dịch + thư viện từ unpkg; khung mô phỏng tải Pyodide, phông biểu tượng từ jsDelivr -->
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <!-- Trang quản trị nội dung. Cấu hình (config.yml) TỰ SINH từ tools/schema.py mỗi lần build: không sửa tay. -->
 <script>
   /* ---------- Chống mất bài đang soạn ----------
@@ -37,7 +40,8 @@
       nhac('Còn thay đổi chưa lưu. Bấm “Lưu” để giữ lại; muốn bỏ thì bấm nút ← ở góc trái trên.');
     }, true);
     window.addEventListener('click', function (e) {
-      var b = e.target.closest && e.target.closest('button[aria-label="Hủy chỉnh sửa"]');
+      // Nút ← của trình soạn: nhận theo lớp "back" (không phụ thuộc ngôn ngữ – bản dịch tiếng Việt tải từ mạng, lỗi thì Sveltia hiện tiếng Anh)
+      var b = e.target.closest && e.target.closest('button[aria-label="Hủy chỉnh sửa"], button[aria-label="Cancel Editing"], [role=toolbar] button.back');
       if (!b || !con_thay_doi()) return;
       if (!window.confirm('Thoát mà không lưu? Các thay đổi chưa lưu sẽ mất.')) {
         e.preventDefault(); e.stopImmediatePropagation();

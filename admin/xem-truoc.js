@@ -422,7 +422,7 @@
           data: JSON.stringify(data && data.toJS ? data.toJS() : {}),
         }, function (res) { self.apply(res); });
         if (!self.state.result) self.setState({ status: engine.ready ? 'dang-dung' : 'tai' });
-      }, this.state.result ? 280 : 0);
+      }, this.state.result ? 120 : 0); // dựng mất ~30 ms (tệp không đổi lấy từ bộ nhớ đệm): chờ ngắn sau lần gõ cuối là đủ
     },
     apply: function (res) {
       var frame = this.frame;

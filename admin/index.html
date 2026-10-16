@@ -124,26 +124,17 @@
   #lsn-che-do button + button { border-inline-start: 1px solid var(--sui-control-border-color); }
   #lsn-che-do button:hover, #lsn-che-do button:focus-visible { background: var(--sui-hover-background-color); }
   #lsn-che-do button[aria-pressed="true"] { background: #b5000b; color: #fff; font-weight: 600; }
-  #lsn-che-do .icon, .lsn-cai-dat__icon, .lsn-cai-dat__mui { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal;
-    font-size: 18px; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
+  #lsn-che-do .icon { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 18px; line-height: 1;
+    letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
   @media (max-width: 1100px) { #lsn-che-do .chu { display: none; } #lsn-che-do button { padding: 0 9px; } }
-  .lsn-cai-dat { display: none; align-items: center; gap: 8px; width: calc(100% - 32px); margin: 10px 16px 4px; padding: 8px 12px;
-    border: 1px dashed var(--sui-control-border-color); border-radius: 8px; background: transparent; color: inherit; text-align: start;
-    font: 600 13.5px/1.3 var(--sui-font-family-default); cursor: pointer; }
-  :root[data-lsn-che-do="chu"] .lsn-cai-dat { display: flex; }
-  .lsn-cai-dat:hover, .lsn-cai-dat:focus-visible { background: var(--sui-hover-background-color); }
-  .lsn-cai-dat__phu { flex: 1; min-width: 0; font-weight: 400; font-size: 12.5px; color: var(--sui-secondary-foreground-color);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .lsn-cai-dat--an { border-color: #b5000b; border-style: solid; }
-  .lsn-cai-dat--an .lsn-cai-dat__phu { color: #b5000b; font-weight: 600; }
-  .lsn-mo-cai-dat .lsn-cai-dat { border-style: solid; }
-  /* Sửa chữ: nhắc cách thêm / xóa / đổi thứ tự khối ngay trên danh sách khối */
+  /* Lời nhắc ngay trên danh sách khối: chế độ đang dùng làm được gì */
+  :root[data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { display: block; margin: 0 0 10px; padding: 9px 13px;
+    border-radius: 8px; background: hsl(45 90% 95%); color: hsl(35 60% 22%); font-size: 13px; line-height: 1.45; }
+  :root[data-theme="dark"][data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
   :root[data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before {
-    content: "Đang ở chế độ Sửa chữ: bấm một khối để sửa chữ. Muốn thêm, xóa, kéo đổi thứ tự khối – bấm “Sửa bố cục” ở thanh trên cùng.";
-    display: block; margin: 0 0 10px; padding: 9px 13px; border-radius: 8px; background: hsl(45 90% 95%); color: hsl(35 60% 22%);
-    font-size: 13px; line-height: 1.45; }
-  :root[data-theme="dark"][data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before { background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
-  :root[data-theme="dark"] { --lsn-bo-cuc: #e0a92e; }
+    content: "Sửa chữ: bấm một khối để sửa chữ, ảnh, liên kết. Thêm, xóa, đổi thứ tự, ẩn khối, màu nền… → bấm “Sửa bố cục” ở thanh trên cùng."; }
+  :root[data-lsn-che-do="bo-cuc"] section.field[data-key-path="cac_khoi"]::before {
+    content: "Sửa bố cục: kéo ═ để đổi thứ tự, × để xóa, “Thêm khối” ở cuối; bấm một khối để ẩn/hiện, đổi màu nền, số cột… Sửa chữ → bấm “Sửa chữ”."; }
   #lsn-sang-toi { display: inline-flex; align-items: center; gap: 5px; height: 32px; margin-inline-end: 6px; padding: 0 12px 0 9px;
     border: 1px solid var(--sui-control-border-color); border-radius: 999px; background: transparent; color: inherit;
     font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }

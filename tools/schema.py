@@ -201,8 +201,9 @@ def ghi_chu(name, text, mo=None, chu_mo="Mở chỗ sửa ›"):
 
 
 def bo_cuc(f):
-    """Trường bố cục (ẩn/hiện, mã neo, màu nền, số cột, kiểu, vị trí ảnh…): chế độ “Sửa chữ” của trang quản trị giấu đi,
-    gom vào dòng “Cài đặt khối” thu gọn; chế độ “Sửa bố cục” hiện đủ. Chỉ đổi cách hiện form, không đổi dữ liệu."""
+    """Trường bố cục (ẩn/hiện, mã neo, màu nền, số cột, kiểu, vị trí ảnh…). Trang quản trị có hai chế độ tách hẳn:
+    “Sửa chữ” chỉ hiện ô chữ/ảnh/liên kết (giấu trường bố cục), “Sửa bố cục” chỉ hiện trường bố cục + thêm/xóa/kéo khối.
+    Chỉ đổi cách hiện form, không đổi dữ liệu."""
     f["_bo_cuc"] = True
     return f
 
@@ -297,7 +298,7 @@ def seo(title_example, desc_example):
 
 def contact_band_fields():
     return obj("lien_he_cuoi_trang", "Khối liên hệ cuối trang", [
-        boolean("hien", "Hiện khối liên hệ đỏ ở cuối trang", default=True),
+        bo_cuc(boolean("hien", "Hiện khối liên hệ đỏ ở cuối trang", default=True)),
         string("nhan", "Nhãn nhỏ", "Để trống = dùng câu chữ dùng chung", required=False, maxlength=60),
         string("tieu_de", "Tiêu đề", "Để trống = dùng câu chữ dùng chung", required=False, maxlength=110),
         text("doan_moi", "Đoạn mời liên hệ", "Để trống = dùng câu chữ dùng chung", required=False, maxlength=320),
@@ -621,7 +622,7 @@ def data_collections():
              string("nhan_dau_trang", "Nhãn nhỏ trên tiêu đề trang", "Ví dụ: Luật sư thừa kế", maxlength=60),
              red_title("tieu_de_trang", "Tiêu đề trang (H1)", example="Chia di sản thừa kế đúng luật, *giữ được tình thân*"),
              text("mo_dau", "Đoạn mở đầu", minlength=80, maxlength=600),
-             boolean("viec_gap", "Hiện ô “Việc gấp?” dưới tiêu đề", "Dùng cho lĩnh vực cần gọi ngay, vd. Hình sự.", default=False),
+             bo_cuc(boolean("viec_gap", "Hiện ô “Việc gấp?” dưới tiêu đề", "Dùng cho lĩnh vực cần gọi ngay, vd. Hình sự.", default=False)),
              ghi_chu("ui_tieu_de_muc", "Nhãn nhỏ, tiêu đề, mô tả của 6 phần dưới đây (vd. “Những tình huống thường gặp”) và thanh mục lục "
                                        "dùng chung cho mọi lĩnh vực.", mo=SERVICE_TEXTS, chu_mo="Mở tiêu đề các mục ›"),
              nhom("ui_tinh_huong", "Tình huống thường gặp", phan="tinh_huong"),

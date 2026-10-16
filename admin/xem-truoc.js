@@ -126,6 +126,8 @@
       if (!el) continue;
       if (pending(el)) { el.scrollIntoView({ block: 'center' }); return again(); }
       if (n === parts.length && expand(el)) return again();
+      // Ô đang bị giấu vì thuộc chế độ soạn kia (Sửa chữ / Sửa bố cục – admin/che-do.js): chuyển chế độ rồi nhảy tới
+      if (!el.getClientRects().length && window.LSN_HIEN_O && window.LSN_HIEN_O(el)) return again();
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
       el.animate([{ boxShadow: '0 0 0 3px ' + RED }, { boxShadow: '0 0 0 3px transparent' }], { duration: 1600 });
       var input = el.querySelector('input:not([type=hidden]):not([type=file]), textarea, [contenteditable=true]') ||

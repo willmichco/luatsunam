@@ -200,6 +200,13 @@ def ghi_chu(name, text, mo=None, chu_mo="Mở chỗ sửa ›"):
     return f
 
 
+def bo_cuc(f):
+    """Trường bố cục (ẩn/hiện, mã neo, màu nền, số cột, kiểu, vị trí ảnh…): chế độ “Sửa chữ” của trang quản trị giấu đi,
+    gom vào dòng “Cài đặt khối” thu gọn; chế độ “Sửa bố cục” hiện đủ. Chỉ đổi cách hiện form, không đổi dữ liệu."""
+    f["_bo_cuc"] = True
+    return f
+
+
 def _rule_no_dupes(label):
     def rule(items, add):
         seen = set()
@@ -304,16 +311,16 @@ def page_head_fields(label="Đầu trang tiêu chuẩn", with_card=True, hint=No
         text("mo_dau", "Đoạn mở đầu", "1–3 câu nói rõ trang này giúp gì cho người đọc.", required=False, maxlength=420),
     ]
     if with_card:
-        f.append(boolean("the_luat_su", "Hiện thẻ “Luật sư phụ trách” bên phải", default=True))
+        f.append(bo_cuc(boolean("the_luat_su", "Hiện thẻ “Luật sư phụ trách” bên phải", default=True)))
     return obj("dau_trang", label, f, hint=hint, required=required)
 
 
 def common(bg=BG, default_bg="trang"):
-    f = [boolean("hien_thi", "Hiển thị khối này", "Tắt để tạm ẩn mà vẫn giữ nội dung", default=True),
-         string("ma_neo", "Mã neo (tùy chọn)", "Để trang khác link thẳng tới khối này, vd. ho-so-can-chuan-bi → /trang/#ho-so-can-chuan-bi",
-                required=False, pattern=ANCHOR_PATTERN)]
+    f = [bo_cuc(boolean("hien_thi", "Hiển thị khối này", "Tắt để tạm ẩn mà vẫn giữ nội dung", default=True)),
+         bo_cuc(string("ma_neo", "Mã neo (tùy chọn)", "Để trang khác link thẳng tới khối này, vd. ho-so-can-chuan-bi → /trang/#ho-so-can-chuan-bi",
+                       required=False, pattern=ANCHOR_PATTERN))]
     if bg:
-        f.append(select("nen", "Màu nền", bg, default=default_bg, required=False))
+        f.append(bo_cuc(select("nen", "Màu nền", bg, default=default_bg, required=False)))
     return f
 
 
@@ -334,9 +341,9 @@ BLOCK_TYPES = [
          string("nhan", "Nhãn nhỏ", "Ví dụ: Luật sư tư vấn & tranh tụng tại TP.HCM", required=False, maxlength=70),
          red_title("tieu_de", "Tiêu đề lớn (H1)", example="Gặp chuyện pháp lý, *có luật sư bên cạnh*"),
          text("doan_mo_dau", "Đoạn mở đầu", "Mỗi đoạn cách nhau một dòng trống.", maxlength=900),
-         boolean("nut_lien_he", "Hiện nút Gọi / Nhắn Zalo (số lấy từ Thông tin công ty)", default=True),
-         boolean("dai_thong_tin", "Hiện dải địa chỉ + giờ làm việc", default=False),
-         select("vi_tri_anh", "Vị trí ảnh", [("phai", "Bên phải"), ("trai", "Bên trái")], default="phai", required=False),
+         bo_cuc(boolean("nut_lien_he", "Hiện nút Gọi / Nhắn Zalo (số lấy từ Thông tin công ty)", default=True)),
+         bo_cuc(boolean("dai_thong_tin", "Hiện dải địa chỉ + giờ làm việc", default=False)),
+         bo_cuc(select("vi_tri_anh", "Vị trí ảnh", [("phai", "Bên phải"), ("trai", "Bên trái")], default="phai", required=False)),
          *photo_fields(),
          lst("so_lieu", "Dải số liệu dưới đầu trang (tùy chọn)", fields=[
              string("so", "Con số / mốc", "Ví dụ: 01/2019", maxlength=20),
@@ -351,8 +358,8 @@ BLOCK_TYPES = [
      ]},
     {"name": "luoi_the", "label": "Lưới thẻ", "summary": "Lưới thẻ: {{fields.tieu_de}}",
      "fields": common(bg=BG_DARK) + section_head("Nguyên tắc làm việc", "Bốn điều anh chị có thể yên tâm") + [
-         boolean("can_giua", "Căn giữa tiêu đề", default=False),
-         select("so_cot", "Số cột", [("2", "2 cột (biểu tượng bên trái)"), ("3", "3 cột"), ("4", "4 cột")], default="3", required=False),
+         bo_cuc(boolean("can_giua", "Căn giữa tiêu đề", default=False)),
+         bo_cuc(select("so_cot", "Số cột", [("2", "2 cột (biểu tượng bên trái)"), ("3", "3 cột"), ("4", "4 cột")], default="3", required=False)),
          lst("the", "Các thẻ", fields=[
              icon(required=False, hint="Nền tối không hiện biểu tượng"),
              string("tieu_de", "Tiêu đề thẻ", maxlength=80),
@@ -364,7 +371,7 @@ BLOCK_TYPES = [
      ]},
     {"name": "anh_chu", "label": "Ảnh + chữ", "summary": "Ảnh + chữ: {{fields.tieu_de}}",
      "fields": common() + section_head("Về chúng tôi", "Văn phòng luật do {{luat_su}} trực tiếp điều hành", with_text=False) + [
-         select("vi_tri_anh", "Vị trí ảnh", [("trai", "Bên trái"), ("phai", "Bên phải")], default="trai", required=False),
+         bo_cuc(select("vi_tri_anh", "Vị trí ảnh", [("trai", "Bên trái"), ("phai", "Bên phải")], default="trai", required=False)),
          text("noi_dung", "Đoạn văn", "Mỗi đoạn cách nhau một dòng trống. " + TOKEN_HINT, required=False, maxlength=1600),
          strings("dau_tich", "Danh sách dấu tích (tùy chọn)", max=8, maxlength=200),
          lst("so_lieu", "Ô thông tin (tùy chọn)", fields=[string("nhan", "Nhãn", "Ví dụ: Thành lập", maxlength=40),
@@ -377,8 +384,8 @@ BLOCK_TYPES = [
     {"name": "cac_buoc", "label": "Các bước", "summary": "Các bước: {{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Bốn bước", "Từ cuộc gọi đầu tiên đến khi xong việc") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
-         boolean("can_giua", "Căn giữa tiêu đề", default=False),
-         select("kieu", "Kiểu hiển thị", [("ngang", "Hàng ngang, số tròn"), ("the", "Thẻ có số + biểu tượng")], default="ngang", required=False),
+         bo_cuc(boolean("can_giua", "Căn giữa tiêu đề", default=False)),
+         bo_cuc(select("kieu", "Kiểu hiển thị", [("ngang", "Hàng ngang, số tròn"), ("the", "Thẻ có số + biểu tượng")], default="ngang", required=False)),
          lst("buoc", "Các bước (tự đánh số)", fields=[
              string("tieu_de", "Tên bước", maxlength=70), text("mo_ta", "Mô tả", maxlength=420),
              string("ket_qua", "Kết quả của bước (tùy chọn)", "Hiện kèm dấu tích dưới mô tả", required=False, maxlength=90),
@@ -397,8 +404,8 @@ BLOCK_TYPES = [
      ]},
     {"name": "doi_ngu", "label": "Đội ngũ", "summary": "Đội ngũ: {{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Đội ngũ", "Đội ngũ Luật Sư Nam") + [
-         select("kieu", "Cách trình bày", [("noi_bat", "Người đầu tiên nổi bật có ảnh, người khác là thẻ nhỏ"), ("luoi", "Lưới thẻ đều nhau")],
-                default="noi_bat", required=False),
+         bo_cuc(select("kieu", "Cách trình bày", [("noi_bat", "Người đầu tiên nổi bật có ảnh, người khác là thẻ nhỏ"),
+                                                  ("luoi", "Lưới thẻ đều nhau")], default="noi_bat", required=False)),
          lst("thanh_vien", "Thành viên", fields=[
              string("ten", "Họ tên", "Ví dụ: Luật sư Nguyễn Trọng Nam", maxlength=70),
              string("chuc_danh", "Chức danh", "Ví dụ: Giám đốc · Luật sư điều hành", maxlength=90),
@@ -410,7 +417,7 @@ BLOCK_TYPES = [
      ]},
     {"name": "dau_tich", "label": "Danh sách dấu tích", "summary": "Danh sách: {{fields.tieu_de}}",
      "fields": common() + section_head("Chuẩn bị trước", "Giấy tờ nên mang theo buổi gặp đầu tiên") + [
-         select("so_cot", "Số cột", [("1", "1 cột"), ("2", "2 cột")], default="1", required=False),
+         bo_cuc(select("so_cot", "Số cột", [("1", "1 cột"), ("2", "2 cột")], default="1", required=False)),
          strings("muc", "Các dòng", min=1, max=16, maxlength=220),
          string("ghi_chu_cuoi", "Ghi chú nhỏ dưới danh sách (tùy chọn)", required=False, maxlength=220),
          obj("hop_meo", "Hộp mẹo bên cạnh (tùy chọn)", [
@@ -421,7 +428,7 @@ BLOCK_TYPES = [
      ]},
     {"name": "doan_van", "label": "Đoạn văn tự do", "summary": "Đoạn văn",
      "fields": common() + [
-         select("do_rong", "Độ rộng", [("hep", "Hẹp – dễ đọc"), ("rong", "Rộng")], default="hep", required=False),
+         bo_cuc(select("do_rong", "Độ rộng", [("hep", "Hẹp – dễ đọc"), ("rong", "Rộng")], default="hep", required=False)),
          editor("noi_dung", "Nội dung", "Đề mục, đậm, liên kết, danh sách, bảng, ảnh. " + TOKEN_HINT),
      ]},
     {"name": "hoi_dap", "label": "Hỏi đáp", "summary": "Hỏi đáp: {{fields.tieu_de}}",
@@ -439,9 +446,9 @@ BLOCK_TYPES = [
                         mo=SERVICE_CARDS, chu_mo="Mở chỗ sửa chữ trong thẻ ›")]
      + common(default_bg="kem") + section_head("Theo lĩnh vực", "Anh chị đang gặp chuyện gì?") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
-         select("kieu", "Kiểu thẻ", [("tinh_huong", "Tình huống – “Anh chị đang gặp chuyện gì?”"),
-                                     ("dich_vu", "Tên lĩnh vực + mô tả ngắn (chữ lấy từ ô Mô tả ngắn của từng lĩnh vực)")],
-                default="tinh_huong", required=False),
+         bo_cuc(select("kieu", "Kiểu thẻ", [("tinh_huong", "Tình huống – “Anh chị đang gặp chuyện gì?”"),
+                                            ("dich_vu", "Tên lĩnh vực + mô tả ngắn (chữ lấy từ ô Mô tả ngắn của từng lĩnh vực)")],
+                       default="tinh_huong", required=False)),
      ]},
     {"name": "bai_viet_moi", "label": "Bài viết mới nhất (tự động)", "summary": "Bài viết mới: {{fields.tieu_de}}",
      "fields": [ghi_chu("ui_nguon", "Thẻ bài tự lấy từ các bài đã đăng mới nhất (tiêu đề ngắn + tóm tắt của từng bài). "
@@ -449,25 +456,25 @@ BLOCK_TYPES = [
                         mo="bai_viet", chu_mo="Mở danh sách bài viết ›")]
      + common(default_bg="kem") + section_head("Bài viết", "Kiến thức pháp luật dễ hiểu") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
-         number("so_bai", "Số bài hiện", min=1, max=12, default=3, required=False),
-         select("so_cot", "Số cột", [("2", "2 cột"), ("3", "3 cột")], default="3", required=False),
-         relation_service("linh_vuc", "Chỉ lấy bài thuộc lĩnh vực (tùy chọn)", required=False),
+         bo_cuc(number("so_bai", "Số bài hiện", min=1, max=12, default=3, required=False)),
+         bo_cuc(select("so_cot", "Số cột", [("2", "2 cột"), ("3", "3 cột")], default="3", required=False)),
+         bo_cuc(relation_service("linh_vuc", "Chỉ lấy bài thuộc lĩnh vực (tùy chọn)", required=False)),
      ]},
     {"name": "giay_to_linh_vuc", "label": "Giấy tờ theo lĩnh vực (tự động)", "summary": "Giấy tờ theo lĩnh vực",
      "fields": [ghi_chu("ui_nguon", "Danh sách giấy tờ của mỗi thẻ lấy từ mục “Giấy tờ” của từng lĩnh vực "
                                     "(Dịch vụ › <tên lĩnh vực> › phần “Giấy tờ và kết quả nhận được”).", mo="dich_vu", chu_mo="Mở danh sách lĩnh vực ›")]
      + common(default_bg="kem") + section_head("Theo lĩnh vực", "Giấy tờ theo từng loại vụ việc") + [
-         pick_list("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", "services", "Lĩnh vực", relation="dich_vu"),
+         bo_cuc(pick_list("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", "services", "Lĩnh vực", relation="dich_vu")),
      ]},
     {"name": "kenh_lien_he", "label": "Kênh liên hệ", "summary": "Kênh liên hệ",
      "fields": [ghi_chu("ui_nguon", "Số điện thoại, Zalo, email, địa chỉ tự lấy từ Cài đặt chung › Thông tin công ty.",
                         mo="cai_dat/entries/cong_ty", chu_mo="Mở Thông tin công ty ›")] + common() + [
-         select("kenh", "Kênh hiện", [("goi", "Gọi điện"), ("zalo", "Nhắn Zalo"), ("email", "Gửi email"), ("van_phong", "Đến văn phòng")],
-                multiple=True, min=1, default=["goi", "zalo", "email"], hint="Số điện thoại, email, địa chỉ tự lấy từ Thông tin công ty"),
+         bo_cuc(select("kenh", "Kênh hiện", [("goi", "Gọi điện"), ("zalo", "Nhắn Zalo"), ("email", "Gửi email"), ("van_phong", "Đến văn phòng")],
+                       multiple=True, min=1, default=["goi", "zalo", "email"], hint="Số điện thoại, email, địa chỉ tự lấy từ Thông tin công ty")),
          string("ghi_chu_goi", "Ghi chú dưới Gọi điện", required=False, maxlength=120, default="{{gio_lam_viec}}. Việc gấp, hãy gọi trực tiếp."),
          string("ghi_chu_zalo", "Ghi chú dưới Nhắn Zalo", required=False, maxlength=120),
          string("ghi_chu_email", "Ghi chú dưới Gửi email", required=False, maxlength=120),
-         boolean("viec_gap", "Hiện ô “Việc gấp?”", default=True),
+         bo_cuc(boolean("viec_gap", "Hiện ô “Việc gấp?”", default=True)),
          rich("noi_dung_viec_gap", "Nội dung ô Việc gấp", required=False, maxlength=420),
      ]},
     {"name": "ban_do", "label": "Bản đồ văn phòng", "summary": "Bản đồ: {{fields.tieu_de}}",
@@ -924,6 +931,31 @@ def collections(menu=None):
                          f"[Đổi hotline]({GUIDE}#doi-hotline) · [Chuyển hướng]({GUIDE}#chuyen-huong)",
              files=[settings[n] for n in SETTINGS_ORDER]),
     ]
+
+
+def bo_cuc_paths(cols):
+    """Đường dẫn (dạng data-typed-key-path của Sveltia, vd. "cac_khoi.*<dau_trang>.ma_neo") của mọi trường bố cục,
+    cho chế độ Sửa chữ / Sửa bố cục trong trang quản trị (admin/che-do.js đọc admin/bo-cuc.json)."""
+    out = set()
+
+    def walk(fields, prefix):
+        for f in fields or []:
+            path = prefix + f["name"]
+            if f.get("_bo_cuc"):
+                out.add(path)
+            if f.get("widget") == "object":
+                walk(f.get("fields"), path + ".")
+            elif f.get("widget") == "list":
+                for t in f.get("types") or []:
+                    walk(t.get("fields"), f"{path}.*<{t['name']}>.")
+                walk(f.get("fields"), path + ".*.")
+
+    for c in cols:
+        for f in c.get("files") or []:
+            walk(f.get("fields"), "")
+        walk(c.get("fields"), "")
+        walk((c.get("index_file") or {}).get("fields"), "")
+    return sorted(out)
 
 
 def sidebar_decor(cols):

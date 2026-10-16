@@ -470,7 +470,8 @@
     },
     componentDidMount: function () {
       var self = this;
-      this.onEngine = function () { self.forceUpdate(); };
+      // Bộ dựng vừa tải xong mà trang chưa dựng (yêu cầu gửi lúc đang tải): gửi lại, không đợi người dùng gõ
+      this.onEngine = function () { self.forceUpdate(); if (engine.ready && !self.state.result) self.request(); };
       this.onKey = function (k) { self.setState({ key: k }, function () { self.highlight(true); }); };
       this.onHover = function (k) { self.hoverForm(k); };
       this.onTheme = function () { self.forceUpdate(); };
@@ -490,6 +491,7 @@
       themeSubs = themeSubs.filter(function (f) { return f !== this.onTheme; }, this);
       if (this.ro) this.ro.disconnect();
       clearTimeout(this.t);
+      this.dead = true;
     },
     componentDidUpdate: function (prev) {
       if (prev.entry !== this.props.entry) this.request();
@@ -514,7 +516,7 @@
     },
     apply: function (res) {
       var frame = this.frame;
-      if (!frame) return;
+      if (this.dead || !frame) return;
       var self = this, base = SITE + (res.path && !/\.html$/.test(res.path) ? res.path : '');
       var prev = this.state.result;
       this.setState({ result: res, status: 'xong' });
@@ -695,7 +697,24 @@
             h('span', { style: { flex: 'none', width: '22px', textAlign: 'center' } }, '•'), h('span', null, x.label, x.note ? h('span', { style: S.sub }, x.note) : null));
         }));
     },
+    /* Lỗi khi vẽ khung (dữ liệu lạ, Sveltia đổi giao diện…) không bao giờ để lại khung trắng: hiện thông báo + nút Thử lại */
     render: function () {
+      try {
+        return this.view();
+      } catch (err) {
+        if (window.console) console.error('[Mô phỏng]', err);
+        var self = this, P = pal();
+        return h('div', { style: { position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', padding: '24px', textAlign: 'center',
+          background: P.bg, color: P.ink, font: '14px/1.5 "Be Vietnam Pro",system-ui,sans-serif' } },
+          h('div', null, h('strong', null, 'Khung mô phỏng gặp lỗi khi hiển thị.'), h('br'),
+            'Vẫn sửa và Lưu bình thường được. Chi tiết: ' + (err && err.message ? err.message : String(err)), h('br'),
+            h('button', { type: 'button', style: { marginTop: '10px', padding: '6px 14px', border: '1px solid ' + P.segLine, borderRadius: '8px',
+              background: P.segOff, color: P.ink, font: 'inherit', fontWeight: 600, cursor: 'pointer' },
+              onClick: function () { self.setState({ result: null, parts: null, note: '', label: '', seo: false }, function () { self.request(); }); } },
+            'Thử lại')));
+      }
+    },
+    view: function () {
       var self = this, st = this.state, res = st.result, e = this.props.entry;
       var P = pal(), S = styles(P);
       var errs = (res && res.loi) || [], warns = (res && res.canh) || [];

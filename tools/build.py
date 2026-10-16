@@ -109,8 +109,11 @@ def menu_items():
         if it.get("loai") == "menu_xo":
             it["muc_con"] = [x for x in it.get("muc_con") or [] if S.drafts or p2path(x.get("trang")) not in S.draft_paths]
         if it.get("loai") == "menu_linh_vuc":
-            groups = [dict(g, linh_vuc=[x for x in g.get("linh_vuc") or [] if x in S.service_by_slug]) for g in it.get("nhom") or []]
-            placed = {x for g in groups for x in g["linh_vuc"]}
+            groups, placed = [], set()
+            for g in it.get("nhom") or []:  # lĩnh vực nằm ở 2 nhóm: chỉ hiện ở nhóm đầu (kiểm nội dung có cảnh báo)
+                keep = [x for x in dict.fromkeys(g.get("linh_vuc") or []) if x in S.service_by_slug and x not in placed]
+                placed.update(keep)
+                groups.append(dict(g, linh_vuc=keep))
             missing = [s["slug"] for s in S.services if s["slug"] not in placed]
             if missing and groups:
                 groups[-1]["linh_vuc"] += missing
@@ -131,9 +134,14 @@ def menu_members(it):
 
 
 def section_of(path):
-    for i, it in enumerate(menu_items()):
-        if path in menu_members(it):
-            return i, it["nhan"]
+    """Mục menu được tô sáng: mục chứa trang này; trang không có trên menu thì theo “Nằm trong mục” (trang cha)."""
+    seen = set()
+    while path is not None and path not in seen:
+        seen.add(path)
+        for i, it in enumerate(menu_items()):
+            if path in menu_members(it):
+                return i, it["nhan"]
+        path = (getattr(S, "registry", None) or {}).get(path, {}).get("parent")
     return None, ""
 
 
@@ -622,7 +630,7 @@ def service_page(s):
     steps_ = s.get("cac_buoc") or []
     steps = "".join(f'<li class="reveal"><span class="steps__num">{i}</span><h3>{P(x["tieu_de"], ctx)}</h3><p>{P(x["mo_ta"], ctx)}</p></li>'
                     for i, x in enumerate(steps_, 1))
-    faq = "".join(f"""<details class="faq__item" id="hoi-dap-{i}">
+    faq = "".join(f"""<details class="faq__item" id="hoi-dap-{i}"{tpl.cms(s["_src"], f"hoi_dap.{i - 1}", f"Câu hỏi {i}")}>
   <summary><span>{P(x["hoi"], ctx)}</span>{ico("i-chevron", "faq__chev")}</summary>
   <div class="faq__answer">{re.sub(r">\n<", "><", M.block(x["dap"], ctx.at(where=f"Hỏi đáp riêng › Câu hỏi {i}")).strip())}</div>
 </details>""" for i, x in enumerate(s.get("hoi_dap") or [], 1))
@@ -633,7 +641,9 @@ def service_page(s):
     cards = "".join(f'<a class="rcard reveal" href="{href}"><span class="tag">{esc(label)}</span><h3>{esc(title)}</h3>'
                     f'<p>{esc(text)}</p><span class="icard__more">Xem chi tiết {ARROW}</span></a>' for href, label, title, text in resources)
     related = "".join(tpl.icard(f'{r}dich-vu/{x}/', S.service_by_slug[x]["bieu_tuong"], esc(S.service_by_slug[x]["ten"]),
-                                esc(S.service_by_slug[x]["mo_ta_ngan"])) for x in s.get("linh_vuc_lien_quan") or [] if x in S.service_by_slug)
+                                esc(S.service_by_slug[x]["mo_ta_ngan"]),
+                                mark=tpl.cms(S.service_by_slug[x]["_src"], "mo_ta_ngan", f'Thẻ {S.service_by_slug[x]["ten"]} (mô tả ngắn)'))
+                      for x in s.get("linh_vuc_lien_quan") or [] if x in S.service_by_slug)
     urgent = ""
     if s.get("viec_gap"):
         vg = S.text.get("viec_gap") or {}
@@ -647,10 +657,12 @@ def service_page(s):
     link_qt = tpl.link_href(tc, {"trang": "/quy-trinh-lam-viec/"})
     link_hs = tpl.link_href(tc, {"trang": "/quy-trinh-lam-viec/", "ma_neo": "ho-so-can-chuan-bi"})
     link_cp = tpl.link_href(tc, {"trang": "/cau-hoi-thuong-gap/", "ma_neo": "chi-phi-thue-luat-su"})
+    own = lambda key, label: tpl.cms(s["_src"], key, label)  # noqa: E731 – chỉ khung mô phỏng
+    shared = lambda key, label: tpl.cms("content/cai-dat/cau-chu.yml", "trang_linh_vuc." + key, label)  # noqa: E731
     body = f"""
-<nav class="subnav" aria-label="Nội dung trang"><div class="container">{nav}</div></nav>
+<nav class="subnav"{shared("muc_luc", "Thanh mục lục (dùng chung mọi lĩnh vực)")} aria-label="Nội dung trang"><div class="container">{nav}</div></nav>
 
-<section class="section svc-section" id="tinh-huong">
+<section class="section svc-section" id="tinh-huong"{own("tinh_huong", "Tình huống thường gặp")}>
   <div class="container">
     {tpl.shead(P(th.get("nhan")), P(th.get("tieu_de")), P(th.get("mo_ta")))}
     <ul class="situations">{situations}</ul>
@@ -658,14 +670,14 @@ def service_page(s):
   </div>
 </section>
 
-<section class="section section--cream svc-section" id="pham-vi">
+<section class="section section--cream svc-section" id="pham-vi"{own("pham_vi", "Luật sư giúp được gì")}>
   <div class="container">
     {tpl.shead(P(pvh.get("nhan")), P(pvh.get("tieu_de")), P(pv.get("gioi_thieu"), ctx))}
     <div class="grid grid--3">{scope}</div>
   </div>
 </section>
 
-<section class="section svc-section" id="viec-nen-lam">
+<section class="section svc-section" id="viec-nen-lam"{own("viec_nen_lam", "Việc nên làm ngay")}>
   <div class="container split">
     <div class="reveal">
       <p class="eyebrow">{P(vn.get("nhan"))}</p>
@@ -680,14 +692,14 @@ def service_page(s):
   </div>
 </section>
 
-<section class="section section--cream svc-section" id="quy-trinh">
+<section class="section section--cream svc-section" id="quy-trinh"{own("cac_buoc", "Các bước làm việc")}>
   <div class="container">
     {tpl.shead(P(qt.get("nhan")), P(qt.get("tieu_de")), P(qt.get("mo_ta")), link=(link_qt, P(qt.get("lien_ket"))))}
     <ol class="steps{" steps--5" if len(steps_) == 5 else ""}">{steps}</ol>
   </div>
 </section>
 
-<section class="section svc-section" id="ho-so">
+<section class="section svc-section" id="ho-so"{own("giay_to", "Giấy tờ và kết quả nhận được")}>
   <div class="container">
     {tpl.shead(P(hs.get("nhan")), P(hs.get("tieu_de")), P(hs.get("mo_ta")))}
     <div class="docs">
@@ -697,7 +709,7 @@ def service_page(s):
   </div>
 </section>
 
-<section class="section section--cream svc-section" id="hoi-dap">
+<section class="section section--cream svc-section" id="hoi-dap"{own("hoi_dap", "Hỏi đáp")}>
   <div class="container split">
     <div class="reveal">
       <p class="eyebrow">{P(hd.get("nhan"))}</p>
@@ -709,7 +721,7 @@ def service_page(s):
   </div>
 </section>
 
-<section class="section svc-section" id="tham-khao">
+<section class="section svc-section" id="tham-khao"{shared("tham_khao", "Mục Đọc thêm (tự lấy bài viết của lĩnh vực)")}>
   <div class="container">
     {tpl.shead(P(tk.get("nhan")), P(tk.get("tieu_de")), link=(tpl.link_href(tc, {"trang": "/kien-thuc-phap-ly/"}), P(tk.get("lien_ket"))))}
     <div class="grid grid--3">{cards}</div>
@@ -718,7 +730,7 @@ def service_page(s):
 """
     if related:
         body += f"""
-<section class="section section--cream svc-section" id="lien-quan">
+<section class="section section--cream svc-section" id="lien-quan"{own("linh_vuc_lien_quan", "Lĩnh vực liên quan")}>
   <div class="container">
     {tpl.shead(P(lq.get("nhan")), P(lq.get("tieu_de")), link=(tpl.link_href(tc, {"trang": "/dich-vu/"}), P(lq.get("lien_ket"))))}
     <div class="grid grid--3">{related}</div>
@@ -778,14 +790,14 @@ def services_hub():
     mode_html = "".join(f'<article class="icard reveal"><span class="ichip">{ico(x["bieu_tuong"], "")}</span><h3 class="icard__title">{M.plain(x["tieu_de"], ctx)}</h3>'
                         f'<p class="icard__text">{M.plain(x["mo_ta"], ctx)}</p></article>' for x in ht.get("the") or [])
     body = f"""
-<section class="section section--cream">
+<section class="section section--cream"{tpl.cms(d["_src"], "luoi", "Khối lưới lĩnh vực")}>
   <div class="container">
     {tpl.shead(M.plain(lw.get("nhan"), ctx), M.plain(lw.get("tieu_de"), ctx), M.plain(lw.get("mo_ta"), ctx))}
     {tpl.problems_grid(ctx.r)}
   </div>
 </section>
 
-<section class="section">
+<section class="section"{tpl.cms(d["_src"], "hinh_thuc", "Khối “Hình thức hỗ trợ”")}>
   <div class="container">
     {tpl.shead(M.plain(ht.get("nhan"), ctx), M.plain(ht.get("tieu_de"), ctx), M.plain(ht.get("mo_ta"), ctx), center=True)}
     <div class="grid grid--3">{mode_html}</div>
@@ -796,7 +808,7 @@ def services_hub():
             "webpage_extra": {"mainEntity": {
                 "@type": "ItemList", "numberOfItems": len(S.services),
                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"dich-vu/{s['slug']}/"), "name": s["ten"]}
-                                    for i, s in enumerate(S.services)]}}}
+                                    for i, (s, _, _) in enumerate(tpl.grid_cards())]}}}
     return hub_head(page, d, ctx)
 
 
@@ -817,20 +829,20 @@ def knowledge_hub():
     </a>""")
     tl_link = tl.get("lien_ket")
     body = f"""
-<section class="section section--cream">
+<section class="section section--cream"{tpl.cms(d["_src"], "bai_viet", "Khối danh sách bài viết")}>
   <div class="container">
     {tpl.shead(M.plain(bv.get("nhan"), ctx), M.plain(bv.get("tieu_de"), ctx), M.plain(bv.get("mo_ta"), ctx))}
     {tpl.articles_grid(ctx.r)}
   </div>
 </section>
 
-<section class="section">
+<section class="section"{tpl.cms(d["_src"], "the_cong_cu", "Hai thẻ lớn giữa trang")}>
   <div class="container grid grid--2">
     {(chr(10) + "    ").join(tools_html)}
   </div>
 </section>
 
-<section class="section section--cream">
+<section class="section section--cream"{tpl.cms(d["_src"], "theo_linh_vuc", "Khối “Theo lĩnh vực”")}>
   <div class="container">
     {tpl.shead(M.plain(tl.get("nhan"), ctx), M.plain(tl.get("tieu_de"), ctx), M.plain(tl.get("mo_ta"), ctx),
                link=(tpl.link_href(ctx, tl_link), M.plain(tl_link.get("nhan"), ctx)) if tl_link else None)}
@@ -856,10 +868,10 @@ def faq_page():
     body = f"""
 <section class="section">
   <div class="container faq-layout">
-    <div>{tpl.faq_list(ctx)}
-      {f'<p class="faq__foot">{foot}</p>' if foot else ""}
+    <div>{tpl.faq_list(ctx, mark=tpl.cms("content/hoi-dap.yml", "cau_hoi", "Danh sách câu hỏi (Kho câu hỏi dùng chung)"))}
+      {f'<p class="faq__foot"{tpl.cms(d["_src"], "ghi_chu_cuoi", "Ghi chú dưới danh sách câu hỏi")}>{foot}</p>' if foot else ""}
     </div>
-    <aside class="faq-aside">
+    <aside class="faq-aside"{tpl.cms(d["_src"], "tim_hieu_them", "Cột “Tìm hiểu thêm”")}>
       <div class="aside-card">
         <p class="aside-card__title">Tìm hiểu thêm</p>
         <ul class="rel-list">
@@ -1287,6 +1299,8 @@ def write_extras(out, pages, rendered):
             def ignore_aliases(self, data):
                 return True
         write(out, "admin/config.yml", header + yaml.dump(cfg, Dumper=NoAlias, allow_unicode=True, sort_keys=False, width=10 ** 6))
+        # Cột trái xếp theo Menu chính: tiêu đề nhóm, mục thụt vào, mục một trang (admin/dieu-huong.js đọc tệp này)
+        write(out, "admin/cot-trai.json", json.dumps(schema.sidebar_decor(schema.collections()), ensure_ascii=False))
         huong_dan.build(out, ENV["site_url"])  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
         # /admin/xem-truoc/goi.zip: code build + nội dung cho khung mô phỏng (chạy trong trình duyệt)
         import goi_xem_truoc

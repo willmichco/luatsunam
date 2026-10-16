@@ -7,7 +7,8 @@ Chạy trên máy để thử:  python3 tools/xem_truoc.py content/trang/trang-c
 
 Khác bản build thật (chỉ trong mô phỏng, không đụng tools/build.py):
   - mỗi khối, đầu trang, khối liên hệ, menu, chân trang được đánh dấu data-cms="<đường dẫn trường>"
-    để khung mô phỏng tô sáng đúng chỗ đang sửa;
+    để khung mô phỏng tô sáng đúng chỗ đang sửa; thẻ lấy chữ từ tệp khác (thẻ lĩnh vực, thẻ bài viết, câu hỏi…) mang
+    thêm data-cms-mo="<mục>/entries/<tệp>" + data-cms-o="<ô>" để bấm vào là mở đúng tệp, đúng ô đó (tpl.cms);
   - khối đang ẩn vẫn hiện (mờ, có nhãn) để thấy vị trí; khối chưa dựng được hiện thẻ báo lỗi thay vì làm hỏng cả trang;
   - không xử lý ảnh (kích thước ảnh lấy từ bản build gần nhất).
 """
@@ -43,6 +44,39 @@ ROOT = content.ROOT
 SNAP = {"sizes": {}, "uploads": {}, "anh": {}, "hash": {}}
 ORIGINAL = {}  # tệp đã bị thay bằng bản đang sửa → nội dung gốc (None: tệp mới)
 _PATCHED = False
+CUR = {"rel": ""}  # tệp đang sửa
+_ENTRIES = {}
+
+
+def entry_of(src):
+    """Tệp nội dung → (địa chỉ mở trong trang quản trị “<mục>/entries/<tệp>”, tên chỗ sửa) theo cột trái hiện tại."""
+    if not _ENTRIES:
+        for c in schema.collections():
+            if c.get("divider"):
+                continue
+            for f in c.get("files") or []:
+                _ENTRIES.setdefault(f["file"], (f'{c["name"]}/entries/{f["name"]}', f'{c["label"]} › {f["label"]}'))
+            if c.get("folder"):
+                _ENTRIES.setdefault("folder:" + c["folder"], (c["name"], c["label"]))
+                if c.get("index_file"):
+                    _ENTRIES.setdefault(f'{c["folder"]}/_index.{c["extension"]}', (f'{c["name"]}/entries/_index', c["index_file"]["label"]))
+    if src in _ENTRIES:
+        return _ENTRIES[src]
+    folder, name = src.rsplit("/", 1)
+    hit = _ENTRIES.get("folder:" + folder)
+    return (f'{hit[0]}/entries/{name.rsplit(".", 1)[0]}', hit[1]) if hit else None
+
+
+def cms_mark(src, key, label=""):
+    """tpl.cms trong mô phỏng: ô của tệp đang sửa → data-cms="<ô>"; ô ở tệp khác → kèm địa chỉ mở tệp đó."""
+    lab = M.esc(label)
+    if src == CUR["rel"]:
+        return f' data-cms="{key}" data-cms-ten="{lab}"'
+    hit = entry_of(src)
+    if not hit:
+        return ""
+    return (f' data-cms="@mo:{hit[0]}#{key}" data-cms-ten="{lab}" data-cms-mo="{hit[0]}" data-cms-o="{key}"'
+            f' data-cms-tep="{M.esc(hit[1])}"')
 
 
 # ---------------------------------------------------------------------------
@@ -93,6 +127,7 @@ def patch():
     _wrap(build, "header_html", "@dau-trang-site", "Menu và đầu trang")
     _wrap(build, "footer_html", "@chan-trang", "Chân trang")
     _wrap(tpl, "contact_band", "lien_he_cuoi_trang", "Khối liên hệ cuối trang")
+    tpl.cms = cms_mark
     build.file_hash = lambda rel: SNAP["hash"].get(rel, "xem-truoc")
 
 
@@ -254,6 +289,7 @@ def render(collection, slug, file_name, data_json, is_new=False, path=None):
     restore()
     data = json.loads(data_json) if isinstance(data_json, str) else (data_json or {})
     rel = path if path and path.startswith("content/") and ".." not in path else target_path(collection, slug, file_name, data)
+    CUR["rel"] = rel
     env = build.read_env()
     env.update(drafts=True, noindex=False, nhap_rieng=False)  # bản nháp hiện như đã đăng
     build.ENV = env

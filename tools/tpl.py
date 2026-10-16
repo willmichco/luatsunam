@@ -35,6 +35,12 @@ def ico(name, cls="ico"):
 ARROW = ico("i-arrow")
 
 
+def cms(src, key, label=""):
+    """Đánh dấu chỗ sửa cho khung mô phỏng trong /admin (tools/xem_truoc.py thay hàm này): thuộc tính data-cms để bấm vào
+    thẻ/khối trên trang mô phỏng là mở đúng ô trong form (kể cả ô nằm ở tệp khác). Site thật: chuỗi rỗng, HTML không đổi."""
+    return ""
+
+
 # ---------------------------------------------------------------------------
 # Ảnh
 # ---------------------------------------------------------------------------
@@ -208,33 +214,50 @@ def shead_from(ctx, b, hid="", link=None, center=False):
                  link=ln, center=center, hid=hid)
 
 
-def icard(href, icon, title, text, more="Xem chi tiết", heading="h3"):
-    return (f'<a class="icard reveal" href="{href}"><span class="ichip">{ico(icon, "")}</span>'
+def icard(href, icon, title, text, more="Xem chi tiết", heading="h3", mark=""):
+    return (f'<a class="icard reveal"{mark} href="{href}"><span class="ichip">{ico(icon, "")}</span>'
             f'<{heading} class="icard__title">{title}</{heading}><p class="icard__text">{text}</p>'
             f'<span class="icard__more">{more} {ARROW}</span></a>')
 
 
-def problem_card(s, r):
+SERVICES_HUB_SRC = "content/dich-vu/_index.yml"
+
+
+def grid_cards():
+    """Lưới lĩnh vực (Trang chủ, trang Dịch vụ, trang Kiến thức pháp lý): đúng thứ tự thẻ ở Trang tổng quan Dịch vụ ›
+    Khối lưới lĩnh vực. Lĩnh vực đã đăng chưa có thẻ nằm cuối, chữ tạm = tên + mô tả ngắn (build có cảnh báo).
+    Trả về [(lĩnh vực, thẻ hoặc None, vị trí thẻ trong danh sách hoặc None)]."""
+    cards = ((S.hubs.get("dich_vu") or {}).get("luoi") or {}).get("the") or []
+    out, seen = [], set()
+    for i, c in enumerate(cards):
+        s = S.service_by_slug.get((c or {}).get("linh_vuc"))
+        if s and s["slug"] not in seen:  # lĩnh vực nháp (bản chính thức) hoặc đã xóa: bỏ qua thẻ
+            seen.add(s["slug"])
+            out.append((s, c, i))
+    return out + [(s, None, None) for s in S.services if s["slug"] not in seen]
+
+
+def problem_card(s, card, i, r):
     """Thẻ "anh chị đang gặp chuyện gì": tình huống đời thường dẫn tới trang lĩnh vực."""
-    t = s.get("the_tinh_huong") or {}
-    return (f'<a class="icard reveal" href="{r}dich-vu/{s["slug"]}/"><span class="ichip">{ico(s.get("bieu_tuong_tinh_huong") or s["bieu_tuong"], "")}</span>'
+    t = card or {}
+    mark = cms(SERVICES_HUB_SRC, f"luoi.the.{i}" if i is not None else "luoi.the", f"Thẻ {s['ten']}")
+    return (f'<a class="icard reveal"{mark} href="{r}dich-vu/{s["slug"]}/"><span class="ichip">{ico(t.get("bieu_tuong") or s["bieu_tuong"], "")}</span>'
             f'<span class="icard__tag">{esc(s["ten"])}</span>'
-            f'<h3 class="icard__title">{esc(t.get("tieu_de", ""))}</h3><p class="icard__text">{esc(t.get("mo_ta", ""))}</p>'
+            f'<h3 class="icard__title">{esc(t.get("tieu_de") or s["ten"])}</h3><p class="icard__text">{esc(t.get("mo_ta") or s["mo_ta_ngan"])}</p>'
             f'<span class="icard__more">Xem cách giải quyết {ARROW}</span></a>')
 
 
-def problems_grid(r, items=None):
-    items = S.services if items is None else items
-    return '<div class="grid grid--4 grid--problems">' + "".join(problem_card(s, r) for s in items) + "</div>"
+def problems_grid(r):
+    return '<div class="grid grid--4 grid--problems">' + "".join(problem_card(s, c, i, r) for s, c, i in grid_cards()) + "</div>"
 
 
 def service_card(s, r, heading="h3"):
-    return icard(f'{r}dich-vu/{s["slug"]}/', s["bieu_tuong"], esc(s["ten"]), esc(s["mo_ta_ngan"]), heading=heading)
+    return icard(f'{r}dich-vu/{s["slug"]}/', s["bieu_tuong"], esc(s["ten"]), esc(s["mo_ta_ngan"]), heading=heading,
+                 mark=cms(s["_src"], "mo_ta_ngan", f"Thẻ {s['ten']} (tên + mô tả ngắn)"))
 
 
-def services_grid(r, items=None, cls="grid grid--4"):
-    items = S.services if items is None else items
-    return f'<div class="{cls}">' + "".join(service_card(s, r) for s in items) + "</div>"
+def services_grid(r, cls="grid grid--4"):
+    return f'<div class="{cls}">' + "".join(service_card(s, r) for s, _, _ in grid_cards()) + "</div>"
 
 
 def vi_date(iso):
@@ -244,7 +267,7 @@ def vi_date(iso):
 
 def article_card(a, r, heading="h3"):
     svc = S.service_by_slug.get(a["linh_vuc"], {"ten": ""})
-    return f"""<article class="post reveal">
+    return f"""<article class="post reveal"{cms(a["_src"], "tom_tat", "Thẻ bài: " + (a.get("tieu_de_ngan") or a["tieu_de"]))}>
   <p class="post__meta"><a class="tag" href="{r}dich-vu/{a["linh_vuc"]}/">{esc(svc["ten"])}</a><time datetime="{a["ngay_dang"]}">{ico("i-calendar")}{vi_date(a["ngay_dang"])}</time></p>
   <{heading} class="post__title"><a href="{r}kien-thuc-phap-ly/{a["slug"]}/">{esc(a.get("tieu_de_ngan") or a["tieu_de"])}</a></{heading}>
   <p class="post__excerpt">{esc(a["tom_tat"])}</p>
@@ -257,16 +280,17 @@ def articles_grid(r, items=None, cls="grid grid--3"):
     return f'<div class="{cls}">' + "".join(article_card(a, r) for a in items) + "</div>"
 
 
-def faq_list(ctx, items=None):
+def faq_list(ctx, items=None, mark=""):
     out = []
     for f in (S.faq if items is None else items):
         c = ctx.at(src="content/hoi-dap.yml", where=f"Câu hỏi “{f['hoi']}” › Câu trả lời")
         body = re.sub(r">\n<", "><", M.block(f["dap"], c).strip())
-        out.append(f"""<details class="faq__item" id="{f["ma"]}">
+        mark = cms("content/hoi-dap.yml", f"cau_hoi.{S.faq.index(f)}", f"Câu hỏi: {f['hoi']}") if f in S.faq else ""
+        out.append(f"""<details class="faq__item" id="{f["ma"]}"{mark}>
   <summary><span>{esc(f["hoi"])}</span>{ico("i-chevron", "faq__chev")}</summary>
   <div class="faq__answer">{body}</div>
 </details>""")
-    return '<div class="faq">' + "".join(out) + "</div>"
+    return f'<div class="faq"{mark}>' + "".join(out) + "</div>"
 
 
 def check_list(items, cls="check-list", ctx=None):

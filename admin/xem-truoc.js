@@ -99,31 +99,81 @@
     if (!list) return null;
     return [].filter.call(list.children, function (x) { return x.classList.contains('item-wrapper'); })[+m[2]] || null;
   }
-  function jumpToField(key) {
+  function findField(k) { return document.querySelector('[data-key-path="' + CSS.escape(k) + '"]') || itemOf(k); }
+  function expand(el) {
+    // Nút mở rộng của chính nhóm / mục này (không phải của nhóm con bên trong)
+    var t = [].filter.call(el.querySelectorAll('button[aria-expanded="false"][aria-controls]'), function (b) {
+      return b.closest('[data-key-path], .item-wrapper') === el || (el.classList.contains('item-wrapper') && b.closest('.item-wrapper') === el);
+    })[0];
+    if (t) { t.click(); return true; }
+    return false;
+  }
+  function jumpToField(key, tries) {
+    tries = tries || 0;
     var parts = key.split('.');
+    // Sveltia dựng nhóm / mục danh sách dần dần: mục ngoài màn hình chỉ là khung trống, nhóm thu gọn chưa có ô con.
+    // Mỗi lần mở một lớp thì đợi Sveltia dựng xong rồi gọi lại.
+    var again = function () { if (tries < 40) setTimeout(function () { jumpToField(key, tries + 1); }, 120); return true; };
+    var pending = function (el) { return el.classList.contains('item-wrapper') && !el.querySelector(':scope > .item'); };
+    for (var i = 1; i < parts.length; i++) {
+      var outer = findField(parts.slice(0, i).join('.'));
+      if (!outer || findField(parts.slice(0, i + 1).join('.'))) continue;
+      if (pending(outer)) { outer.scrollIntoView({ block: 'center' }); return again(); }
+      if (expand(outer)) return again();
+    }
     for (var n = parts.length; n > 0; n--) {
-      var k = parts.slice(0, n).join('.');
-      var el = document.querySelector('[data-key-path="' + CSS.escape(k) + '"]') || itemOf(k);
+      var el = findField(parts.slice(0, n).join('.'));
       if (!el) continue;
-      var toggle = el.querySelector('.header button[aria-expanded="false"], button[aria-expanded="false"][aria-label="Mở rộng"]');
-      if (toggle && n === parts.length) toggle.click();
+      if (pending(el)) { el.scrollIntoView({ block: 'center' }); return again(); }
+      if (n === parts.length && expand(el)) return again();
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
       el.animate([{ boxShadow: '0 0 0 3px ' + RED }, { boxShadow: '0 0 0 3px transparent' }], { duration: 1600 });
-      var input = el.querySelector('input:not([type=hidden]), textarea, [contenteditable=true], select, button');
+      var input = el.querySelector('input:not([type=hidden]):not([type=file]), textarea, [contenteditable=true]') ||
+        el.querySelector('select, button');
       if (input && input.focus) input.focus({ preventScroll: true });
       setKey(key);
       return true;
     }
     return false;
   }
+  // Tiêu đề phần trong form (ô lsn_nhom có data-phan = mã phần trên trang): dùng khi phần trên trang không ứng với một ô
+  function headingOf(phan) { return phan ? document.querySelector('.lsn-phan[data-phan="' + CSS.escape(phan) + '"]') : null; }
+  function jumpToHeading(phan) {
+    var h = headingOf(phan);
+    if (!h) return false;
+    var sec = h.closest('[data-key-path]') || h;
+    sec.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    h.animate([{ boxShadow: '0 0 0 3px ' + RED }, { boxShadow: '0 0 0 3px transparent' }], { duration: 1600 });
+    return true;
+  }
 
   function unsaved() {
     var b = document.querySelector('button[aria-keyshortcuts$="+S"]');
     return !!b && b.getAttribute('aria-disabled') === 'false';
   }
-  function openEntry(hash) {
+  var pendingJump = null;
+  function openEntry(hash, key) {
     if (unsaved() && !window.confirm('Còn thay đổi chưa lưu ở trang đang sửa. Rời đi thì các thay đổi đó sẽ mất. Vẫn mở?')) return;
     var col = hash.split('/')[0];
+    if (key && hash.indexOf('/entries/') > 0) {
+      // Đợi form của tệp mới dựng xong (ô gốc xuất hiện) rồi nhảy tới ô
+      pendingJump = { hash: '#/collections/' + hash, key: key, until: Date.now() + 12000 };
+      clearInterval(openEntry.t);
+      openEntry.t = setInterval(function () {
+        var pj = pendingJump;
+        if (!pj || Date.now() > pj.until) { clearInterval(openEntry.t); pendingJump = null; return; }
+        if (decodeURIComponent(location.hash) !== pj.hash || !formHas(pj.key)) return;
+        clearInterval(openEntry.t); pendingJump = null;
+        // Sveltia tự đặt con trỏ vào ô đầu tiên khi vừa mở tệp (kéo form về đầu): nhảy tới ô, rồi kiểm lại vài lần
+        var landed = function () {
+          var el = findField(pj.key);
+          return el && document.activeElement && el.contains(document.activeElement);
+        };
+        [500, 1500, 3000].forEach(function (t, i) {
+          setTimeout(function () { if (!i || !landed()) jumpToField(pj.key); }, t);
+        });
+      }, 200);
+    }
     // Sveltia 0.221.8 không dựng lại form khi nhảy thẳng giữa hai tệp cùng một mục: đi qua danh sách của mục trước
     if (location.hash.indexOf('#/collections/' + col + '/') === 0) {
       location.hash = '#/collections/' + col;
@@ -132,9 +182,40 @@
       location.hash = '#/collections/' + hash;
     }
   }
+  // Địa chỉ dạng "<mục>/entries/<tệp>#<ô>" (ghi chú trong form, thẻ trên trang mô phỏng) hoặc "<mục>" (danh sách)
+  function openTarget(t) {
+    var i = t.indexOf('#');
+    openEntry(i < 0 ? t : t.slice(0, i), i < 0 ? '' : t.slice(i + 1));
+  }
+  window.LSN_MO = openTarget;
   function formHas(key) {
     var root = key.split('.')[0];
     return !!document.querySelector('[data-key-path="' + CSS.escape(root) + '"]');
+  }
+  function formKey(key, name) {
+    var root = key.split('.')[0], a = ALIAS[name] && ALIAS[name][root];
+    return a && !formHas(key) ? a + key.slice(root.length) : key;
+  }
+  /* Đánh số form khớp số đỏ trên trang mô phỏng: phần số 3 trên trang = nhóm / ô / khối số 3 trong form.
+     Số gắn bằng thuộc tính data-lsn-so (CSS trong admin/index.html vẽ vòng tròn số), không đổi nội dung Sveltia quản lý. */
+  var formNums = [];
+  function numberForm(items, name) {
+    formNums.forEach(function (el) { el.removeAttribute('data-lsn-so'); });
+    formNums = [];
+    items.forEach(function (it, i) {
+      if (it.chung || it.mo) return;
+      var key = formKey(it.key, name), target = null, hd = headingOf(key);
+      if (hd) target = hd.querySelector('.lsn-phan__tieu-de');
+      else {
+        var el = findField(key);
+        if (el && el.classList.contains('item-wrapper')) {
+          var item = el.querySelector(':scope > .item') || el;
+          target = item.querySelector(':scope > .summary') || item.querySelector(':scope > .header');
+        }
+        else if (el) target = el.querySelector(':scope > header h4');
+      }
+      if (target) { target.setAttribute('data-lsn-so', String(i + 1)); formNums.push(target); }
+    });
   }
   function formLabel(key) {
     var f = document.querySelector('[data-key-path="' + CSS.escape(key) + '"]');
@@ -147,7 +228,7 @@
   var BAND = ['[data-cms="lien_he_cuoi_trang"]', 'Khối liên hệ cuối trang'];
   var HEAD = ['[data-cms="@dau-trang-site"]', 'Menu và đầu trang'];
   var FOOT = ['[data-cms="@chan-trang"]', 'Chân trang'];
-  var ELSEWHERE_SVC = 'Ô này hiện ở thẻ lĩnh vực trên Trang chủ và trang Dịch vụ, không nằm trên trang này.';
+  var ELSEWHERE_SVC = 'Ô này hiện ở menu Dịch vụ, chân trang, khung cạnh bài viết, thẻ “Lĩnh vực liên quan” – không nằm trên trang này.';
   var TARGETS = {
     bai_viet: {
       tieu_de: HERO, tieu_de_ngan: HERO, linh_vuc: HERO, ngay_dang: HERO, ngay_cap_nhat: HERO,
@@ -158,22 +239,14 @@
     },
     dich_vu: {
       ten: HERO, nhan_dau_trang: HERO, tieu_de_trang: HERO, mo_dau: HERO, viec_gap: HERO,
-      bieu_tuong: ELSEWHERE_SVC, mo_ta_ngan: ELSEWHERE_SVC, the_tinh_huong: ELSEWHERE_SVC, bieu_tuong_tinh_huong: ELSEWHERE_SVC,
-      thu_tu: 'Thứ tự quyết định vị trí lĩnh vực trong menu, lưới lĩnh vực và chân trang.',
-      tinh_huong: ['#tinh-huong', 'Tình huống thường gặp'], pham_vi: ['#pham-vi', 'Phạm vi hỗ trợ'],
-      viec_nen_lam: ['#viec-nen-lam', 'Việc nên làm'], luu_y: ['#viec-nen-lam', 'Lưu ý'], nguyen_tac: ['#viec-nen-lam', 'Nguyên tắc'],
-      cac_buoc: ['#quy-trinh', 'Quy trình'], giay_to: ['#ho-so', 'Hồ sơ cần chuẩn bị'], nhan_duoc: ['#ho-so', 'Anh chị nhận được'],
-      hoi_dap: function (p) { return p.length > 1 ? ['#hoi-dap-' + (+p[1] + 1), 'Câu hỏi ' + (+p[1] + 1)] : ['#hoi-dap', 'Hỏi đáp']; },
-      can_cu_phap_ly: ['#tham-khao', 'Căn cứ pháp lý'], linh_vuc_lien_quan: ['#lien-quan', 'Lĩnh vực liên quan'], lien_he: BAND,
+      bieu_tuong: ELSEWHERE_SVC, mo_ta_ngan: ELSEWHERE_SVC,
+      thu_tu: 'Thứ tự mặc định: danh sách Dịch vụ trong trang quản trị và nơi chưa xếp riêng (menu, chân trang, lưới thẻ có thứ tự riêng).',
+      luu_y: ['#viec-nen-lam .note', 'Hộp lưu ý'], nguyen_tac: ['#viec-nen-lam .context__dark', 'Hộp “Cách luật sư làm việc”'],
+      nhan_duoc: ['#ho-so .docs > article:nth-child(2)', 'Anh chị sẽ nhận được'],
+      can_cu_phap_ly: ['#hoi-dap .laws-box', 'Căn cứ pháp luật'], lien_he: BAND,
     },
     trang: { tieu_de: HERO, trang_cha: HERO, loai_trang: 'Loại trang dùng cho Google (dữ liệu có cấu trúc), không hiện trên trang.' },
-    kien_thuc: { bai_viet: ['main > section:nth-of-type(2)', 'Danh sách bài viết'], the_cong_cu: ['main > section:nth-of-type(3)', 'Thẻ công cụ'],
-      theo_linh_vuc: ['main > section:nth-of-type(4)', 'Theo lĩnh vực'] },
-    dich_vu_hub: { luoi: ['main > section:nth-of-type(2)', 'Lưới lĩnh vực'], hinh_thuc: ['main > section:nth-of-type(3)', 'Hình thức làm việc'] },
-    hoi_dap_hub: { cau_hoi: ['.faq', 'Danh sách câu hỏi (kho câu hỏi dùng chung)'], ghi_chu_cuoi: ['.faq-aside', 'Ghi chú cuối'],
-      tim_hieu_them: ['.faq-aside', 'Tìm hiểu thêm'] },
-    hoi_dap: { cau_hoi: function (p) { return p.length > 1 ? ['.faq__item:nth-of-type(' + (+p[1] + 1) + ')', 'Câu hỏi ' + (+p[1] + 1)] : ['.faq', 'Câu hỏi thường gặp']; },
-      tim_hieu_them: ['.faq-aside', 'Ghi chú, cột Tìm hiểu thêm'] },
+    kien_thuc: {}, dich_vu_hub: {}, hoi_dap_hub: {}, hoi_dap: {},
     van_ban: { tieu_de: HERO, nhan: HERO, tieu_de_trang: HERO, mo_dau: HERO, ngay_cap_nhat: HERO, body: ['.legal-doc', 'Nội dung văn bản'] },
     trang_404: { tieu_de: ['main', 'Thông báo lỗi 404'], noi_dung: ['main', 'Thông báo lỗi 404'],
       seo: 'Tiêu đề tab trình duyệt của trang 404, không hiện trong nội dung.' },
@@ -190,11 +263,10 @@
     '@chan-trang': [['Liên kết, cột lĩnh vực', 'cai_dat/entries/menu'], ['Địa chỉ, giới thiệu ngắn', 'cai_dat/entries/cong_ty'],
       ['Dòng miễn trừ', 'cai_dat/entries/cau_chu']],
   };
-  // Trang ghép từ 2 tệp (trang Câu hỏi thường gặp = phần chữ + kho câu hỏi): phần thuộc tệp kia mở tệp kia
-  var OTHER_FILE = {
-    hoi_dap: { '*': 'hoi_dap/entries/trang-hoi-dap' },
-    hoi_dap_hub: { cau_hoi: 'hoi_dap/entries/kho-cau-hoi' },
-  };
+  // Đầu trang, khối liên hệ của trang Câu hỏi thường gặp thuộc phần chữ của trang: đang sửa kho câu hỏi thì mở tệp kia
+  var OTHER_FILE = { hoi_dap: { '*': 'hoi_dap/entries/trang-hoi-dap' } };
+  // Phần trên trang ứng với ô mang tên khác trong form của loại nội dung này
+  var ALIAS = { dich_vu: { lien_he_cuoi_trang: 'lien_he' } };
 
   // Loại nội dung theo tệp đang sửa (cùng một tệp có thể mở từ nhiều mục trong cột trái)
   var BY_PATH = {
@@ -240,7 +312,7 @@
     [].forEach.call(doc.querySelectorAll('[data-cms]'), function (el) {
       if (el.parentElement && el.parentElement.closest('[data-cms]')) return; // phần con nằm trong phần khác
       var k = el.getAttribute('data-cms');
-      add(el, k, el.getAttribute('data-cms-ten') || k, { an: el.hasAttribute('data-cms-an'), chung: k.charAt(0) === '@' });
+      add(el, k, el.getAttribute('data-cms-ten') || k, { an: el.hasAttribute('data-cms-an'), chung: !!SHARED[k], mo: moOf(el), nguon: sources(el) });
     });
     var map = TARGETS[name] || {}, notes = [];
     Object.keys(map).forEach(function (f) {
@@ -260,6 +332,22 @@
       return a.el.compareDocumentPosition(b.el) & 2 ? 1 : -1;
     });
     return { items: items, notes: notes };
+  }
+  // Phần lấy chữ từ tệp khác: địa chỉ mở tệp đó + ô cần sửa
+  function moOf(el) {
+    var t = el && el.getAttribute('data-cms-mo');
+    return t ? { hash: t, key: el.getAttribute('data-cms-o') || '', tep: el.getAttribute('data-cms-tep') || '' } : null;
+  }
+  // Thẻ bên trong một phần mà chữ nằm ở tệp khác (vd. thẻ lĩnh vực trong khối Lưới lĩnh vực của Trang chủ)
+  function sources(el) {
+    var out = [], seen = {};
+    [].forEach.call(el.querySelectorAll('[data-cms-mo]'), function (x) {
+      var m = moOf(x);
+      if (seen[m.hash]) return;
+      seen[m.hash] = 1;
+      out.push(m);
+    });
+    return out;
   }
   function badges(doc, items) {
     [].slice.call(doc.querySelectorAll('.cms-so')).forEach(function (b) { b.remove(); });
@@ -461,8 +549,10 @@
         var a = e.target.closest('a,button,summary,form');
         if (a) e.preventDefault(); // mô phỏng: không rời trang
         var t = e.target.closest('[data-cms]');
-        if (t && !/^@/.test(t.getAttribute('data-cms'))) self.goPart({ key: t.getAttribute('data-cms') });
-        else if (t) self.setState({ note: 'Phần này dùng chung cho mọi trang – sửa ở Cài đặt chung: ' + SHARED[t.getAttribute('data-cms')].map(function (x) { return x[0]; }).join(' · ') + ' (xem danh sách “Các phần” bên trái).' });
+        if (!t) return;
+        var k = t.getAttribute('data-cms');
+        if (SHARED[k]) self.setState({ note: 'Phần này dùng chung cho mọi trang – sửa ở Cài đặt chung: ' + SHARED[k].map(function (x) { return x[0]; }).join(' · ') + ' (xem danh sách “Các phần” bên trái).' });
+        else self.goPart({ key: k, mo: moOf(t) });
       }, true);
       doc.addEventListener('submit', function (e) { e.preventDefault(); }, true);
       doc.addEventListener('mousemove', function (e) {
@@ -470,7 +560,9 @@
         var k = t ? t.getAttribute('data-cms') : '';
         if (k === self.hoverKey) return;
         self.hoverKey = k;
-        box(doc, 'cms-tro', t && k !== self.activeKey ? t : null, t ? 'Bấm để sửa · ' + (t.getAttribute('data-cms-ten') || '') : '');
+        var m = t && moOf(t);
+        box(doc, 'cms-tro', t && k !== self.activeKey ? t : null, !t ? '' : m ? 'Bấm để mở ' + m.tep + ' · ' + (t.getAttribute('data-cms-ten') || '')
+          : 'Bấm để sửa · ' + (t.getAttribute('data-cms-ten') || ''));
       });
       doc.addEventListener('mouseleave', function () { self.hoverKey = ''; box(doc, 'cms-tro', null); });
       doc.defaultView.addEventListener('resize', function () { self.highlight(false); });
@@ -492,6 +584,7 @@
       // Danh sách các phần của trang + số thứ tự trên trang mô phỏng
       var parts = this.parts = SETTINGS_FILES.indexOf(name) < 0 ? outline(doc, name) : null;
       badges(doc, this.state.map && parts ? parts.items : null);
+      numberForm(parts ? parts.items : [], name);
       var sig = parts ? parts.items.map(function (x) { return x.key + (x.an ? '~' : '') + x.label; }).join('|') : '';
       var note = r && r.note ? r.note : '';
       if (sig !== this.partsSig || note !== this.state.note || label !== this.state.label || !!(r && r.seo) !== !!this.state.seo) {
@@ -517,12 +610,15 @@
     goPart: function (it) {
       var name = mapName(this.props.entry);
       if (it.chung) return; // phần dùng chung: dùng các liên kết “sửa ở …”
-      if (!formHas(it.key)) {
-        var other = OTHER_FILE[name] && (OTHER_FILE[name][it.key.split('.')[0]] || OTHER_FILE[name]['*']);
+      if (it.mo) { openEntry(it.mo.hash, it.mo.key); return; }
+      var key = formKey(it.key, name);
+      if (!formHas(key)) {
+        if (jumpToHeading(key.split('.')[0])) return;
+        var other = OTHER_FILE[name] && (OTHER_FILE[name][key.split('.')[0]] || OTHER_FILE[name]['*']);
         if (other) openEntry(other);
         return;
       }
-      if (!jumpToField(it.key)) setKey(it.key);
+      if (!jumpToField(key)) setKey(key);
     },
     toggleMap: function () {
       var on = !this.state.map;
@@ -550,8 +646,12 @@
       var self = this, parts = this.state.parts, name = mapName(this.props.entry);
       var activeRoot = (this.state.key || '').split('.').slice(0, this.state.key && /^cac_khoi\./.test(this.state.key) ? 2 : 1).join('.');
       var rows = parts.items.map(function (it, i) {
-        var inForm = it.chung || formHas(it.key);
+        var inForm = it.chung || it.mo || formHas(formKey(it.key, name)) || !!headingOf(it.key);
         var other = !inForm && OTHER_FILE[name] && (OTHER_FILE[name][it.key.split('.')[0]] || OTHER_FILE[name]['*']);
+        var pill = function (m, text, j) {
+          return h('a', { key: j, role: 'link', tabIndex: 0, style: S.pill, title: 'Mở ' + m.tep,
+            onClick: function (e) { e.stopPropagation(); openEntry(m.hash, m.key); } }, text + ' ›');
+        };
         var live = self.parts && self.parts.items[i];
         var active = !it.chung && (it.key === activeRoot || (!!live && live.el === self.activeEl));
         var sub = null;
@@ -561,8 +661,14 @@
               return h('a', { key: j, role: 'link', tabIndex: 0, style: S.pill, title: 'Mở Cài đặt chung → ' + x[0],
                 onClick: function (e) { e.stopPropagation(); openEntry(x[1]); } }, x[0] + ' ›');
             })));
+        } else if (it.mo) {
+          sub = h('span', { style: S.sub }, 'Chữ của phần này sửa ở:',
+            h('span', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' } }, pill(it.mo, it.mo.tep, 0)));
         } else if (it.an) {
           sub = h('span', { style: S.sub }, 'Đang ẩn – không hiện trên website');
+        } else if (it.nguon && it.nguon.length) {
+          sub = h('span', { style: S.sub }, it.nguon.length === 1 ? 'Chữ trong các thẻ sửa ở:' : 'Chữ trong từng thẻ sửa ở nơi khác – bấm thẻ trên trang để mở đúng chỗ.',
+            it.nguon.length === 1 ? h('span', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' } }, pill(it.nguon[0], it.nguon[0].tep, 0)) : null);
         } else if (other) {
           sub = h('span', { style: S.sub }, 'Sửa ở tệp khác của trang này – bấm để mở');
         }

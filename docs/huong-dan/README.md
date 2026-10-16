@@ -8,6 +8,7 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 > **Luôn bấm Lưu trước khi rời khung soạn thảo.** Trang quản trị không tự lưu bản đang soạn. Nếu bấm Esc, nút ← hoặc đóng tab khi còn thay đổi chưa lưu, trang sẽ hỏi lại. Bài dài nên soạn trong Word/Google Docs rồi dán vào, và bấm Lưu mỗi 10 phút (bài vẫn là nháp nên chưa lên site).
 
 **Tìm chỗ cần sửa:** cột trái xếp đúng như menu trên website, từ trái sang phải; phần dùng chung cho mọi trang nằm cuối.
+Cột trái **tự xếp theo Menu chính**: đổi thứ tự menu ở *Cài đặt chung → Menu và chân trang* thì 2–3 phút sau cột trái đổi theo (tải lại trang quản trị).
 
 ![Cột trái của trang quản trị, xếp theo menu website](cot-trai.webp "Cột trái theo menu website; nút Tối / Sáng ở góc phải trên")
 
@@ -15,12 +16,12 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 |---|---|
 | Trang chủ | **Trang chủ** – bấm là mở ngay |
 | Giới thiệu ▾ (Về Luật Sư Nam, Vì sao chọn chúng tôi, Quy trình làm việc) | **Giới thiệu** → chọn 1 trong 3 trang |
-| Dịch vụ ▾ | **Dịch vụ** → dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/, bên dưới là từng lĩnh vực |
+| Dịch vụ ▾ | **Dịch vụ** → dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/ – nơi sửa **chữ và thứ tự 7 thẻ lĩnh vực** ([mục 12](#the-linh-vuc-va-thu-tu-hien-thi)); bên dưới là từng lĩnh vực |
 | Thư viện pháp lý ▾ → Bài viết pháp lý | **Bài viết pháp lý** → dòng đầu là trang danh sách bài, bên dưới là từng bài |
 | Thư viện pháp lý ▾ → Câu hỏi thường gặp | **Câu hỏi thường gặp** → phần chữ của trang, hoặc kho câu hỏi |
 | Liên hệ | **Liên hệ** – bấm là mở ngay |
 | Chính sách bảo mật, Điều khoản, Miễn trừ (cuối chân trang), trang lỗi 404 | **Chính sách & 404** |
-| Trang mới tự tạo | **Trang tự tạo** |
+| Trang mới tự tạo | **Trang tự tạo** (nhóm *Trang khác*) |
 | Hotline, địa chỉ, giờ làm việc, menu, chân trang, logo – hiện trên mọi trang | **Cài đặt chung** |
 
 Nút **Tối / Sáng** (1) ở góc phải trên đổi giao diện tối hoặc sáng (trình duyệt nhớ lựa chọn).
@@ -52,6 +53,11 @@ Khi mở một bài/trang, nửa phải màn hình là **Xem trước**: trang w
 - **Trang này gồm những phần nào:** nút **☰ Các phần** (4) mở danh sách mọi phần sửa được của trang (1), theo thứ tự từ trên xuống; số đỏ trên trang mô phỏng khớp với số trong danh sách. Bấm một phần → form bên trái mở đúng ô đó (2). Phần số xám (đầu trang, chân trang) dùng chung mọi trang: bấm nút bên dưới nó để mở đúng mục trong **Cài đặt chung**. Cuối danh sách là các ô **không hiện trên trang này** (SEO, mô tả ngắn hiện ở trang khác…).
 - Bấm hoặc rê chuột vào một khối/ô bên trái → nhãn **✎ Đang sửa** ghi tên phần đó, và trang bên phải cuộn tới, **đóng khung đỏ** đúng chỗ (3). Rê chuột qua khối khác: khung nét đứt cho biết khối đó nằm đâu.
 - Ngược lại: **bấm vào một chỗ trên trang mô phỏng** → form bên trái mở đúng khối/ô đó. Bấm link trong mô phỏng không rời trang quản trị.
+- **Số đỏ trong form = số đỏ trên trang.** Mỗi khối, mỗi phần của form mang cùng số với phần đó trên trang mô phỏng (vd. khối số 4 trong form là phần số 4 trên trang). Form dài (lĩnh vực, bài viết) được chia bằng các **dải tiêu đề màu đỏ nhạt** theo đúng thứ tự từ trên xuống của trang.
+- **Chữ lấy từ nơi khác:** ô ghi chú màu vàng (2) cho biết chữ của khối đó sửa ở đâu, nút đỏ trong ô mở thẳng chỗ sửa. Trong danh sách **☰ Các phần**, dòng *Chữ trong các thẻ sửa ở:* (3) cũng có nút mở. Trên trang mô phỏng, **bấm thẳng vào một thẻ** (thẻ lĩnh vực, thẻ bài viết, câu hỏi) → trang quản trị mở đúng tệp chứa chữ của thẻ đó và đặt con trỏ vào ô cần sửa.
+
+  ![Khối Lưới lĩnh vực trên Trang chủ: số khối, ô ghi chú, dòng trong danh sách các phần](ghi-chu.webp "Khối số 4 (1) lấy chữ thẻ từ trang Dịch vụ: ô ghi chú (2) và danh sách các phần (3) đều có nút mở chỗ sửa")
+
 - **Máy tính / Điện thoại** (5): xem bố cục 390 px như trên điện thoại. Nút ↗ mở trang thật trên website (bản đã lưu).
 - Khối đang tắt *Hiển thị khối này* vẫn hiện mờ kèm nhãn **Đang ẩn – không hiện trên website**.
 - Khi sửa ô SEO, phía trên mô phỏng có **mẫu kết quả Google** kèm số ký tự.
@@ -194,3 +200,27 @@ Người nghỉ việc: cùng trang đó → **Remove**, ngay trong ngày.
 1. Mở [github.com/signup](https://github.com/signup) → nhập email công việc, mật khẩu, tên tài khoản (ví dụ `nguyenvana-lsn`) → nhập mã xác minh gửi qua email.
 2. Bật xác thực 2 lớp: ảnh đại diện → **Settings** → **Password and authentication** → **Enable two-factor authentication** → quét mã QR bằng ứng dụng xác thực (Google Authenticator, Microsoft Authenticator…) → **lưu mã khôi phục** ở nơi an toàn.
 3. Gửi tên tài khoản cho quản trị → mở email mời → **Accept invitation** → vào /admin → **Đăng nhập bằng GitHub**.
+
+## 12. Thẻ lĩnh vực và thứ tự hiển thị
+
+Lưới thẻ **“Anh chị đang gặp chuyện gì?”** (7 thẻ lĩnh vực) hiện ở 3 nơi: Trang chủ, trang Dịch vụ, trang Kiến thức pháp lý (khối *Theo lĩnh vực*). Chữ và thứ tự thẻ sửa ở **một chỗ duy nhất**:
+
+1. Cột trái **Dịch vụ** → dòng đầu **Trang tổng quan Dịch vụ (/dich-vu/)** → khối **Khối lưới lĩnh vực** → **Các thẻ lĩnh vực**. Mỗi dòng ghi *Lĩnh vực · Tình huống*, ví dụ *Hình sự · Người nhà bị công an mời, bị bắt*. Cách nhanh hơn: đang ở Trang chủ, bấm thẳng vào thẻ trên trang mô phỏng.
+2. Bấm vào thẻ để mở (1): sửa **Tình huống** (dòng chữ đậm), **Mô tả**, **Biểu tượng** (để trống = biểu tượng của lĩnh vực). Thẻ đang sửa được đóng khung đỏ trên mô phỏng (2).
+3. Đổi thứ tự thẻ: giữ chuột vào nút **═** (3) trên thanh xám rồi kéo lên/xuống. **Lưu** → cả 3 trang cùng đổi.
+
+![Sửa thẻ Hình sự trong Khối lưới lĩnh vực](the-linh-vuc.webp "Thẻ đang mở (1), thẻ đó trên trang được đóng khung đỏ (2), nút kéo để đổi thứ tự (3)")
+
+Lĩnh vực mới tạo chưa có thẻ: lưới tự thêm thẻ tạm (tên + mô tả ngắn) ở cuối và khung mô phỏng nhắc **Thêm thẻ**.
+
+**Thứ tự lĩnh vực ở từng nơi** (mọi danh sách đều kéo **═** để đổi thứ tự, thứ tự trong form là thứ tự trên website):
+
+| Nơi hiện trên website | Sửa thứ tự ở |
+|---|---|
+| Lưới thẻ (Trang chủ, Dịch vụ, Kiến thức pháp lý) | Trang tổng quan Dịch vụ → Khối lưới lĩnh vực → Các thẻ lĩnh vực |
+| Menu xổ **Dịch vụ ▾** | Cài đặt chung → Menu và chân trang → mục *Dịch vụ* → Nhóm lĩnh vực → **Lĩnh vực trong nhóm** |
+| Cột lĩnh vực ở chân trang | Cài đặt chung → Menu và chân trang → **Thứ tự lĩnh vực ở chân trang** |
+| Lĩnh vực liên quan (cuối trang lĩnh vực, cột phải bài viết) | Trong chính lĩnh vực / bài viết đó → **Lĩnh vực liên quan** |
+| Danh sách Dịch vụ trong trang quản trị, nơi chưa xếp riêng | Ô **Thứ tự mặc định** của từng lĩnh vực (hoặc nút *Sắp xếp lại* ở danh sách Dịch vụ) |
+
+Khi sửa **Menu và chân trang**, khung mô phỏng tự kiểm tra và nhắc (không chặn Lưu) nếu: một trang nằm ở 2 mục menu, một lĩnh vực nằm ở 2 nhóm, lĩnh vực chưa xếp vào nhóm nào, hoặc menu trỏ tới trang còn là bản nháp.

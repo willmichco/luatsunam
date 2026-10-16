@@ -1,21 +1,33 @@
 /* Điều hướng trang quản trị (bổ sung cho Sveltia, không đổi dữ liệu):
-   - Cột trái chia nhóm có tiêu đề, đúng thứ tự menu website; "Bài viết pháp lý" và "Câu hỏi thường gặp" thụt vào
-     dưới nhãn "Thư viện pháp lý" như menu xổ trên site.
-   - Mục chỉ có một trang (Trang chủ, Liên hệ): bấm là mở thẳng trình soạn, không qua danh sách một dòng.
+   - Cột trái xếp theo đúng Menu chính của website (build sinh thứ tự mục trong config.yml và admin/cot-trai.json từ
+     Cài đặt chung → Menu và chân trang): tiêu đề nhóm, mục thuộc một menu xổ thụt vào dưới tên menu xổ.
+   - Mục chỉ có một trang (Trang chủ, Liên hệ…): bấm là mở thẳng trình soạn, không qua danh sách một dòng.
    - Nút Sáng / Tối luôn thấy ở thanh trên cùng (Sveltia giấu lựa chọn này trong Cài đặt của tài khoản).
    Dựa vào giao diện Sveltia 0.221.8 (data-label của mục, thanh công cụ "Dùng chung"): nâng cấp Sveltia phải thử lại. */
 (function () {
   'use strict';
-  // Tiêu đề chèn TRƯỚC mục có nhãn tương ứng (nhãn = label trong admin/config.yml)
+  // Mặc định (khi chưa tải được cot-trai.json): đúng menu lúc dựng web. Tiêu đề chèn TRƯỚC mục có nhãn tương ứng.
   var HEADINGS = {
     'Trang chủ': ['Trang theo menu website', ''],
     'Bài viết pháp lý': ['Thư viện pháp lý', 'con'],
-    'Trang tự tạo': ['Trang ngoài menu', ''],
+    'Trang tự tạo': ['Trang khác', ''],
     'Cài đặt chung': ['Dùng chung mọi trang', ''],
   };
   var INDENT = ['Bài viết pháp lý', 'Câu hỏi thường gặp'];
   // Mục một tệp → mở thẳng tệp đó
   var SINGLE = { 'Trang chủ': 'trang_chu/entries/trang-chu', 'Liên hệ': 'lien_he/entries/lien-he' };
+  fetch(new URL('cot-trai.json', location.href).href, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d) return;
+      HEADINGS = {};
+      (d.tieu_de || []).forEach(function (x) { HEADINGS[x[0]] = [x[1], x[2]]; });
+      INDENT = d.thut || [];
+      SINGLE = d.mot_tep || {};
+      var nav = document.querySelector('nav.primary-sidebar');
+      if (nav) [].forEach.call(nav.querySelectorAll('.lsn-nhom'), function (h) { h.remove(); });
+      if (nav) [].forEach.call(nav.querySelectorAll('.lsn-con, .lsn-mot-tep'), function (x) { x.classList.remove('lsn-con', 'lsn-mot-tep'); });
+      decorate();
+    }).catch(function () { /* giữ mặc định */ });
 
   function decorate() {
     var nav = document.querySelector('nav.primary-sidebar');

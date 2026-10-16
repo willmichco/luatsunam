@@ -56,7 +56,7 @@ content/bai-viet/ly-hon-don-phuong.md
 - Tiêu đề bài viết: Không được để trống.
 ```
 
-Cần anh/chị xác nhận đã nhận email lúc 01:13 (08:13 giờ VN). Không nhận được: GitHub → **Watch** → *All Activity*; [cài đặt thông báo](https://github.com/settings/notifications) → bật email.
+**Quản trị đã xác nhận nhận được email** lúc 01:13 (08:13 giờ VN) – tiêu chí 5 đạt cả phía người nhận. Người khác cần nhận email: GitHub → **Watch** → *All Activity*; [cài đặt thông báo](https://github.com/settings/notifications) → bật email.
 
 ## Lighthouse – mốc so sánh cho G5 (chuyển tên miền)
 

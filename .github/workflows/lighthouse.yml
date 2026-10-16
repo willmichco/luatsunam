@@ -1,8 +1,14 @@
 name: Đo Lighthouse (site thật)
 
-# Chạy tay: GitHub → Actions → "Đo Lighthouse (site thật)" → Run workflow.
+# Chạy tay: GitHub → Actions → "Đo Lighthouse (site thật)" → Run workflow (chọn nhánh main).
+# Tự chạy khi sửa cấu hình đo (tệp này hoặc tools/lighthouse_tom_tat.py) trên main.
 # Mốc GĐ4 (github.io) ghi trong docs/NGHIEM-THU.md; sau khi chuyển tên miền (G5) chạy lại với địa chỉ mới để so sánh.
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/lighthouse.yml
+      - tools/lighthouse_tom_tat.py
   workflow_dispatch:
     inputs:
       urls:

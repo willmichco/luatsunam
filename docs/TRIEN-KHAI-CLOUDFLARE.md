@@ -52,7 +52,7 @@ Kiểm: `https://luatsunam.pages.dev/robots.txt` phải ghi `Disallow: /`.
 
 1. GitHub repo → **Settings** → **Secrets and variables** → **Actions** → tab **Variables** → **New repository variable**: `CMS_OAUTH_URL` = địa chỉ Worker (bước C.3, không có `/` cuối).
 2. Cloudflare Pages project `luatsunam` → **Settings** → **Environment variables** → thêm `CMS_OAUTH_URL` cùng giá trị.
-3. Lưu bất kỳ nội dung nào trong /admin (hoặc GitHub → Actions → **Build và đăng website** → **Run workflow**) để build lại.
+3. Lưu bất kỳ nội dung nào trong /admin (hoặc GitHub → Actions → **Build và đăng website** → **Run workflow** → *Use workflow from*: **main**) để build lại.
 4. Mở /admin: có nút **Đăng nhập bằng GitHub**. Biên tập viên cần là cộng tác viên của repo (quyền **Write**).
 
 Muốn /admin chỉ còn trên bản thử pages.dev (theo kế hoạch ban đầu): thêm repository variable `CMS_ADMIN` = `0`.

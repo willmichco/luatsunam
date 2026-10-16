@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Trang hướng dẫn sử dụng /admin/huong-dan/ – dựng từ docs/huong-dan/README.md.
+"""Trang hướng dẫn sử dụng /admin/huong-dan/ – dựng từ docs/huong-dan/README.md; kèm bài tập /admin/bai-tap/.
 
 Một nguồn duy nhất: đọc được ngay trên GitHub (ảnh cùng thư mục), build dựng thành trang có mục lục,
 ảnh bấm để phóng to, in được; nút "? Hướng dẫn" trong /admin mở trang này. Không lập chỉ mục Google.
@@ -176,3 +176,8 @@ def build(out):
 """
     with open(os.path.join(dst, "index.html"), "w", encoding="utf-8") as fh:
         fh.write(html)
+    # Bài tập làm quen có bấm giờ (trang tĩnh, tự chứa): /admin/bai-tap/
+    bai_tap = os.path.join(ROOT, "docs", "bai-tap", "index.html")
+    if os.path.isfile(bai_tap):
+        os.makedirs(os.path.join(out, "admin", "bai-tap"), exist_ok=True)
+        shutil.copy2(bai_tap, os.path.join(out, "admin", "bai-tap", "index.html"))

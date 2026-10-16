@@ -112,6 +112,10 @@
     border-radius: 12px; background: var(--sui-primary-background-color); box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
   section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header h4 { font-size: 16px; }
   section.field:not([data-key-path*="."]) > header h4 { font-size: 15px; }
+  /* Ô con (khối, thẻ, mục danh sách, nhóm): cả hàng tiêu đề và dòng tóm tắt khi thu gọn đều bấm để mở (script cuối trang) */
+  [role=group] > .header:has(> .start > button[aria-controls]) { cursor: pointer; }
+  [role=group] > :is(.item-body, .item-list) > .summary { cursor: pointer; }
+  [role=group] > :is(.item-body, .item-list) > .summary:hover { background: var(--sui-hover-background-color); }
   /* Số phần (khớp số đỏ trên trang mô phỏng) */
   [data-lsn-so]::before { content: attr(data-lsn-so); display: inline-flex; align-items: center; justify-content: center; flex: none;
     min-width: 22px; height: 22px; margin-inline-end: 8px; padding: 0 6px; box-sizing: border-box; border-radius: 999px;
@@ -261,6 +265,27 @@
 <script src="dieu-huong.js"></script>
 <!-- Chế độ Sửa chữ (mặc định, form gọn) / Sửa bố cục (hiện đủ): chỉ đổi cách hiện form, không đổi dữ liệu -->
 <script src="che-do.js"></script>
+<script>
+  /* ---------- Ô con thu gọn (khối, thẻ, mục danh sách, nhóm): bấm bất kỳ đâu trên ô để mở ----------
+     Sveltia chỉ mở / thu khi bấm đúng mũi tên + tên ở đầu ô. Lớp này cho cả hàng tiêu đề (chỗ trống, số đỏ) và dòng tóm tắt
+     bên dưới cũng bấm được: bấm hộ nút mũi tên của chính ô đó. Nút trong hàng (kéo ═, ⋮, ×) vẫn làm việc của nó.
+     Dựa vào giao diện Sveltia 0.221.8: [role=group] > .header > .start > button[aria-controls] + khung có id đó chứa .summary. */
+  (function () {
+    var BO_QUA = 'button, a, input, textarea, select, label, [role=button], [role=menu], [role=menuitem], [contenteditable]:not([contenteditable=false])';
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || !t.closest || t.closest(BO_QUA)) return;
+      var head = t.closest('[role=group] > .header');
+      var sum = !head && t.closest('[role=group] > :is(.item-body, .item-list) > .summary');
+      var o = head ? head.parentElement : sum ? sum.parentElement.parentElement : null;
+      var nut = o && o.querySelector(':scope > .header > .start > button[aria-expanded][aria-controls]');
+      if (!nut || nut.disabled) return;
+      // Dòng tóm tắt chỉ có khi ô đang thu gọn; phải đúng khung nút này điều khiển (không đụng ô cha / ô con)
+      if (sum && (nut.getAttribute('aria-expanded') !== 'false' || sum.parentElement.id !== nut.getAttribute('aria-controls'))) return;
+      nut.click();
+    });
+  })();
+</script>
 <!-- Nút hướng dẫn: mở trang hướng dẫn có ảnh chụp ở tab mới (không mất phần đang soạn).
      Ở màn danh sách hiện chữ "? Hướng dẫn"; khi đang soạn thu thành nút tròn nhỏ để không che ô nhập. -->
 <a id="nut-huong-dan" href="huong-dan/" target="_blank" rel="noopener" title="Hướng dẫn sử dụng trang quản trị" aria-label="Hướng dẫn sử dụng">

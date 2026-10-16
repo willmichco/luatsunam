@@ -904,3 +904,7 @@ a.icard:hover .icard__more { gap: 10px; }
 @media (max-width: 760px) { .check-list--2col { grid-template-columns: minmax(0, 1fr); } }
 .team-card__photo picture { display: block; height: 100%; }
 .prose img { max-width: 100%; height: auto; border-radius: var(--radius-sm); }
+.prose-figure { margin: 1.7em 0 0; }
+.prose-figure + * { margin-top: 1.7em; }
+.prose-figure img { display: block; width: 100%; height: auto; border-radius: var(--radius-sm); background: var(--cream); }
+.prose-figure figcaption { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--muted); text-align: center; }

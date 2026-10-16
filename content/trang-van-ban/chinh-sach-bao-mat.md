@@ -3,7 +3,7 @@ tieu_de: Chính sách bảo mật
 nhan: Quyền riêng tư & bảo mật
 tieu_de_trang: Chính sách bảo mật
 mo_dau: Thông tin được tiếp nhận thận trọng, sử dụng đúng mục đích và giới hạn trong phạm vi cần thiết để phản hồi yêu cầu tư vấn.
-ngay_cap_nhat: '2026-10-07'
+ngay_cap_nhat: 2026-10-07
 seo:
   tieu_de: Chính sách bảo mật
   mo_ta: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân của khách hàng trên website Công Ty Luật TNHH Luật Sư Nam.

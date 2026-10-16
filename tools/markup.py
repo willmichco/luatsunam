@@ -201,14 +201,22 @@ def _process_inline(children, ctx):
                 c.attrSet("rel", "noopener")
         elif c.type == "image":
             src = c.attrGet("src") or ""
-            c.attrSet("src", href(src, ctx))
+            url = href(src, ctx)
+            c.attrSet("src", url)
             alt = "".join(x.content for x in (c.children or []))
             if not alt.strip():
-                ctx.error(f"Ảnh “{src}” trong nội dung thiếu mô tả ảnh (alt). Bấm vào ảnh → điền ô Mô tả.")
+                ctx.error(f"Ảnh “{src}” trong nội dung thiếu mô tả. Bấm vào khung ảnh → điền ô “Mô tả ảnh (bắt buộc)”.")
             info = ctx.site.image_size(src)
             if info:
                 c.attrSet("width", str(info[0]))
                 c.attrSet("height", str(info[1]))
+                if src.startswith("/assets/uploads/"):  # ảnh tải lên: build đã sinh bản 480/960/1600 cho điện thoại
+                    from images import UPLOAD_WIDTHS
+                    widths = [w for w in UPLOAD_WIDTHS if w < info[0]]
+                    if widths:
+                        stem = url.rsplit(".", 1)[0]
+                        c.attrSet("srcset", ", ".join([f"{stem}-{w}.webp {w}w" for w in widths] + [f"{url} {info[0]}w"]))
+                        c.attrSet("sizes", "(max-width: 800px) calc(100vw - 40px), 760px")
             c.attrSet("loading", "lazy")
             c.attrSet("decoding", "async")
 
@@ -236,7 +244,19 @@ def block(text, ctx, toc=None, ids=None):
                     toc.append((hid, re.sub(r"^\d+[.)]\s*", "", text_).strip()))
         elif tok.type == "inline":
             _process_inline(tok.children, ctx)
-    return MD.renderer.render(tokens, MD.options, {})
+    return FIGURE_RE.sub(_figure, MD.renderer.render(tokens, MD.options, {}))
+
+
+# Ảnh đứng riêng một đoạn → <figure>; "Chú thích dưới ảnh" (title của ảnh Markdown) → <figcaption>
+FIGURE_RE = re.compile(r"<p>(<img [^>]*>)</p>")
+
+
+def _figure(m):
+    img = m.group(1)
+    cap = re.search(r' title="([^"]*)"', img)
+    if not cap:
+        return f'<figure class="prose-figure">{img}</figure>'
+    return f'<figure class="prose-figure">{img.replace(cap.group(0), "")}<figcaption>{cap.group(1)}</figcaption></figure>'
 
 
 def inline(text, ctx):

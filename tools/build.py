@@ -27,6 +27,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import blocks  # noqa: E402
 import content  # noqa: E402
+import huong_dan  # noqa: E402
 import markup as M  # noqa: E402
 import schema  # noqa: E402
 import tpl  # noqa: E402
@@ -1122,7 +1123,10 @@ def cms_options():
             entries.append((path, {"title": f"{title} (bản nháp)"}))
     pages = [{"label": f'{info["title"]} — /{path}', "value": "/" + path} for path, info in entries]
     faq = [{"label": f["hoi"], "value": f["ma"]} for f in S.faq]
-    return {"pages": pages, "faq": faq}
+    drafts = [x for x in S.draft_items if x["_src"].startswith("content/dich-vu/") and x["slug"] not in S.service_by_slug]
+    services = [{"label": s["ten"] + (" (bản nháp)" if s.get("nhap") else ""), "value": s["slug"]}
+                for s in S.services + sorted(drafts, key=lambda s: (s.get("thu_tu") or 99, s.get("ten") or ""))]
+    return {"pages": pages, "faq": faq, "services": services}
 
 
 # ---------------------------------------------------------------------------
@@ -1256,7 +1260,11 @@ def write_extras(out, pages, rendered):
         cfg = schema.cms_config(cms_options(), ENV)
         header = ("# TỆP TỰ SINH từ tools/schema.py mỗi lần build – không sửa tay.\n"
                   "# Thêm/sửa trường: sửa tools/schema.py rồi build lại.\n")
-        write(out, "admin/config.yml", header + yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False, width=10 ** 6))
+        class NoAlias(yaml.SafeDumper):  # danh sách chọn dùng lại nhiều chỗ: ghi đầy đủ, không dùng &id/*id
+            def ignore_aliases(self, data):
+                return True
+        write(out, "admin/config.yml", header + yaml.dump(cfg, Dumper=NoAlias, allow_unicode=True, sort_keys=False, width=10 ** 6))
+        huong_dan.build(out)  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
 
 
 # ---------------------------------------------------------------------------
@@ -1265,6 +1273,39 @@ def write_extras(out, pages, rendered):
 def copy_static(out):
     for d in ("css", "js", "fonts"):
         shutil.copytree(os.path.join(ROOT, "assets", d), os.path.join(out, "assets", d))
+
+
+def try_drafts():
+    """Bản chính thức không xuất bản nháp, nhưng vẫn dựng thử trong bộ nhớ để báo sớm lỗi chỉ lộ ra khi dựng trang
+    (ảnh thiếu mô tả, mã chèn sai…). Liên kết của bản nháp được kiểm ở bản thử (Cloudflare)."""
+    n = len(S.link_refs)
+    for x in S.draft_items:
+        src = x["_src"]
+        try:
+            if src.startswith("content/bai-viet/"):
+                layout(article_page(x))
+            elif src.startswith("content/dich-vu/"):
+                layout(service_page(x))
+            elif src.startswith("content/trang/"):
+                layout(block_page(x))
+        except Exception as e:  # dữ liệu nháp dở dang: chỉ cảnh báo
+            LOI.canh(src, "", f"Chưa dựng thử được bản nháp ({type(e).__name__}: {e}).")
+    del S.link_refs[n:]
+
+
+def drafts_never_block():
+    """Bản nháp không bao giờ chặn site chính thức: lỗi của tệp đang là nháp chuyển thành cảnh báo
+    (bản thử trên Cloudflare vẫn coi là lỗi để luật sư xem nháp đúng như sẽ đăng)."""
+    if S.drafts:
+        return
+    srcs = {x["_src"] for x in S.draft_items}
+    keep = []
+    for tep, truong, tb in LOI.loi:
+        if tep in srcs:
+            LOI.canh(tep, truong, "Bản nháp – cần sửa trước khi bỏ dấu nháp: " + tb)
+        else:
+            keep.append((tep, truong, tb))
+    LOI.loi = keep
 
 
 def fail():
@@ -1319,6 +1360,9 @@ def main():
             rendered[p["path"]] = html
             write(tmp, p["path"] if p["path"].endswith(".html") else p["path"] + "index.html", html)
         check_links(rendered, tmp)
+        if not S.drafts:
+            try_drafts()
+        drafts_never_block()
         if LOI:
             fail()
     except SystemExit:
@@ -1327,7 +1371,9 @@ def main():
     except Exception:
         shutil.rmtree(tmp, ignore_errors=True)
         if invalid:
-            fail()  # dữ liệu sai làm bước dựng trang không chạy tiếp được: báo các lỗi đã gom
+            drafts_never_block()
+            if LOI:
+                fail()  # dữ liệu sai làm bước dựng trang không chạy tiếp được: báo các lỗi đã gom
         raise
     try:
         IMG.run_og()

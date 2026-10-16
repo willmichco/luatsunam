@@ -3,7 +3,7 @@ tieu_de: Miễn trừ trách nhiệm
 nhan: Lưu ý pháp lý quan trọng
 tieu_de_trang: Tuyên bố miễn trừ trách nhiệm
 mo_dau: Vui lòng đọc kỹ tuyên bố này trước khi sử dụng thông tin trên website.
-ngay_cap_nhat: '2026-10-07'
+ngay_cap_nhat: 2026-10-07
 seo:
   tieu_de: Tuyên bố miễn trừ trách nhiệm
   mo_ta: Tuyên bố miễn trừ trách nhiệm của Công Ty Luật TNHH Luật Sư Nam về tính chất thông tin đăng tải trên website và điều kiện xác lập quan hệ luật sư – khách hàng.

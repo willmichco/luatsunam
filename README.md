@@ -3,7 +3,9 @@
 Website tĩnh, nội dung sửa trong trang quản trị **/admin** (Sveltia CMS), build bằng Python, đăng lên GitHub Pages.
 
 - Site chính thức: <https://willmichco.github.io/luatsunam/>
-- Trang quản trị: <https://willmichco.github.io/luatsunam/admin/> – hướng dẫn: [docs/HUONG-DAN-CMS.md](docs/HUONG-DAN-CMS.md)
+- Trang quản trị: <https://willmichco.github.io/luatsunam/admin/>
+- Hướng dẫn có ảnh chụp: <https://willmichco.github.io/luatsunam/admin/huong-dan/> (nguồn: [docs/huong-dan/README.md](docs/huong-dan/README.md))
+- Kết quả nghiệm thu GĐ4: [docs/NGHIEM-THU.md](docs/NGHIEM-THU.md)
 - Triển khai bản thử Cloudflare + đăng nhập GitHub: [docs/TRIEN-KHAI-CLOUDFLARE.md](docs/TRIEN-KHAI-CLOUDFLARE.md)
 
 ## Cách hoạt động
@@ -34,7 +36,8 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `content/anh-thuong-hieu/` | Ảnh gốc: logo, luật sư tại văn phòng, tại phiên tòa (build tự cắt favicon, ảnh thẻ, ảnh chia sẻ) |
 | `assets/uploads/` | Ảnh tải lên qua CMS (tự đổi WebP khi tải lên; build sinh thêm bản 480/960/1600) |
 | `assets/css/style.css`, `assets/js/main.js`, `assets/fonts/` | Giao diện – chỉ sửa bằng code |
-| `admin/index.html` | Trang quản trị (Sveltia CMS khóa phiên bản 0.221.8 + thành phần “Bảng”) |
+| `admin/index.html` | Trang quản trị: Sveltia CMS khóa phiên bản 0.221.8, thành phần “Ảnh” (bắt buộc mô tả) và “Bảng”, chống mất bài đang soạn, nút Hướng dẫn |
+| `docs/huong-dan/` | Hướng dẫn sử dụng có ảnh chụp; build dựng thành `/admin/huong-dan/` (`tools/huong_dan.py`) |
 | `tools/schema.py` | Khai báo mọi trường: nhãn, gợi ý, giới hạn, quy tắc kiểm; 15 khối dựng trang |
 | `tools/build.py` | Build: đọc `content/`, kiểm, dựng trang, ảnh, sitemap, `_redirects`, `_headers`, `/admin/config.yml` |
 | `tools/blocks.py`, `tools/tpl.py` | Template các khối và thành phần dùng chung |
@@ -74,7 +77,12 @@ Trên Cloudflare Pages (có biến `CF_PAGES`) mà chưa đặt `SITE_URL`, buil
 - Đường dẫn tự tạo từ tiêu đề, bỏ dấu, khóa sau khi lưu; build chặn đường dẫn sai dạng hoặc trùng trang cố định.
 - Ô chữ không nhận HTML; tô đỏ tiêu đề bằng `*dấu sao*`; mã chèn `{{hotline}}`, `{{luat_su}}`… tự cập nhật khi đổi thông tin công ty.
 - Liên kết nội bộ, mã neo, chuyển hướng (đích có thật, không vòng lặp) đều được build kiểm.
-- Bài viết, trang, lĩnh vực mới mặc định là **bản nháp**.
+- Bài viết, trang, lĩnh vực mới mặc định là **bản nháp**. Lỗi trong bản nháp **không chặn** site chính thức (chỉ cảnh báo); bản thử vẫn chặn để luật sư xem nháp đúng như khi đăng.
+- Bài viết có ô **Đường dẫn** riêng (2–8 từ, khóa sau khi lưu; build bắt lỗi nếu ô bị sửa lệch tên tệp).
+- Ảnh trong bài: **bắt buộc mô tả ảnh** (CMS không cho lưu khi thiếu), có chú thích dưới ảnh; build sinh bản 480/960/1600 cho điện thoại. Tắt kho ảnh stock.
+- Chọn lĩnh vực bằng danh sách tích (không còn nút “Thêm lĩnh vực” dễ bấm nhầm tạo lĩnh vực mới).
+- Hotline/email gõ thẳng vào nội dung → build báo lỗi, yêu cầu dùng `{{hotline}}`/`{{email}}`; mô tả SEO dùng được mã chèn.
+- Chống mất bài đang soạn: Esc, nút ←, đóng tab khi còn thay đổi chưa lưu đều được hỏi lại.
 - Mã theo dõi (GA4, Meta Pixel, Zalo OA) chỉ xuất ra site khi đã tích “Đã cập nhật Chính sách bảo mật và thông báo cookie” (Nghị định 13/2023).
 - Build lỗi: liệt kê **mọi** lỗi một lần, kèm tệp + tên trường như trong CMS; không ghi `dist/`.
 

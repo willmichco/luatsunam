@@ -1,9 +1,10 @@
 ---
 tieu_de: 'Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con'
+duong_dan: ly-hon-don-phuong
 nhap: false
 linh_vuc: hon-nhan-gia-dinh
-ngay_dang: '2026-09-10'
-ngay_cap_nhat: '2026-10-07'
+ngay_dang: 2026-09-10
+ngay_cap_nhat: 2026-10-07
 tieu_de_ngan: 'Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con'
 tom_tat: Căn cứ ly hôn theo Điều 56 Luật Hôn nhân và Gia đình 2014, hồ sơ khởi kiện, quyền nuôi con và chia tài sản chung.
 tom_tat_nhanh:

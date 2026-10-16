@@ -6,6 +6,57 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Quản trị website Luật Sư Nam</title>
 <!-- Trang quản trị nội dung. Cấu hình (config.yml) TỰ SINH từ tools/schema.py mỗi lần build: không sửa tay. -->
+<script>
+  /* ---------- Chống mất bài đang soạn ----------
+     Sveltia (bản đang khóa) thoát khung soạn thảo và BỎ mọi thay đổi chưa lưu khi bấm Esc hoặc nút ←,
+     không hỏi lại, và không giữ bản đang soạn khi tải lại trang. Lớp này chỉ can thiệp khi nút Lưu đang sáng
+     (= còn thay đổi chưa lưu): Esc bị chặn kèm lời nhắc; nút ← hỏi xác nhận; đóng tab/tải lại thì trình duyệt hỏi.
+     Phải đặt TRƯỚC script Sveltia: bộ nghe cấp window chạy theo thứ tự đăng ký, Sveltia cũng nghe ở cấp window. */
+  (function () {
+    function con_thay_doi() {
+      var b = document.querySelector('button[aria-keyshortcuts$="+S"]');
+      return !!b && b.getAttribute('aria-disabled') === 'false' && /#\/collections\/.+\/(entries|new)/.test(location.hash);
+    }
+    function dang_mo_hop_chon() {
+      return [].some.call(document.querySelectorAll('dialog[open], [role=menu], [role=listbox], [role=dialog]'), function (e) {
+        return e.tagName === 'DIALOG' || e.getClientRects().length > 0;
+      });
+    }
+    function nhac(chu) {
+      var d = document.getElementById('nhac-luu') || document.createElement('div');
+      d.id = 'nhac-luu'; d.setAttribute('role', 'status'); d.textContent = chu;
+      d.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483001;max-width:min(560px,90vw);' +
+        'padding:10px 16px;border-radius:8px;background:#2e1e22;color:#fff;font:500 14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;' +
+        'box-shadow:0 4px 16px rgba(0,0,0,.3);text-align:center';
+      document.body.appendChild(d);
+      clearTimeout(nhac.t); nhac.t = setTimeout(function () { d.remove(); }, 5000);
+    }
+    window.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || !con_thay_doi() || dang_mo_hop_chon()) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      nhac('Còn thay đổi chưa lưu. Bấm “Lưu” để giữ lại; muốn bỏ thì bấm nút ← ở góc trái trên.');
+    }, true);
+    window.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('button[aria-label="Hủy chỉnh sửa"]');
+      if (!b || !con_thay_doi()) return;
+      if (!window.confirm('Thoát mà không lưu? Các thay đổi chưa lưu sẽ mất.')) {
+        e.preventDefault(); e.stopImmediatePropagation();
+      }
+    }, true);
+    window.addEventListener('beforeunload', function (e) {
+      if (con_thay_doi()) { e.preventDefault(); e.returnValue = ''; }
+    });
+  })();
+</script>
+<style>
+  #nut-huong-dan { position: fixed; left: 12px; bottom: 12px; z-index: 2147483000; display: inline-flex; align-items: center;
+    justify-content: center; gap: 5px; min-width: 30px; height: 30px; padding: 0 13px; border-radius: 999px; background: #93000a; color: #fff;
+    font: 600 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+  #nut-huong-dan.gon { padding: 0; width: 30px; opacity: .85; }
+  #nut-huong-dan.gon .chu { display: none; }
+  #nut-huong-dan:hover, #nut-huong-dan:focus-visible { opacity: 1; }
+  @media print { #nut-huong-dan { display: none; } }
+</style>
 </head>
 <body>
 <!-- Sveltia CMS khóa phiên bản cố định; nâng cấp: đổi số phiên bản, thử ở bản thử trước khi đưa lên chính thức -->
@@ -45,7 +96,35 @@
       return [line(rows[0]), sep].concat(rows.slice(1).map(line)).join('\n');
     }
 
-    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    /* ---------- Thành phần "Ảnh" (thay ảnh mặc định của CMS) ----------
+       Ô "Mô tả ảnh" bắt buộc: CMS chặn lưu khi bỏ trống (Google và người khiếm thị đọc dòng này).
+       Lưu dạng Markdown chuẩn ![mô tả](đường-dẫn "chú thích") – build dựng thành ảnh + chú thích dưới ảnh. */
+    CMS.registerEditorComponent({
+      id: 'anh',
+      label: 'Ảnh',
+      icon: 'image',
+      fields: [
+        { name: 'src', label: 'Ảnh', widget: 'image', choose_url: false,
+          hint: 'Kéo thả ảnh vào khung hoặc bấm Duyệt tệp → Tải lên. Ảnh ≤ 5 MB, tự đổi sang WebP.' },
+        { name: 'alt', label: 'Mô tả ảnh (bắt buộc)', widget: 'string',
+          hint: 'Tả ngắn nội dung ảnh, ví dụ: Luật sư xem hồ sơ đặt cọc cùng khách hàng.' },
+        { name: 'title', label: 'Chú thích dưới ảnh (tùy chọn)', widget: 'string', required: false,
+          hint: 'Hiện chữ nhỏ dưới ảnh. Để trống nếu không cần.' }
+      ],
+      pattern: /^!\[([^\]\n]*)\]\(([^)\s]+)(?:\s+"([^"\n]*)")?\)$/m,
+      fromBlock: function (m) { return { alt: m[1], src: m[2], title: m[3] || '' }; },
+      toBlock: function (d) {
+        var alt = (d.alt || '').replace(/[\[\]]/g, '');
+        var title = (d.title || '').replace(/"/g, '”');
+        return '![' + alt + '](' + (d.src || '') + (title ? ' "' + title + '"' : '') + ')';
+      },
+      toPreview: function (d) {
+        return '<figure style="margin:0"><img src="' + esc(d.src || '') + '" alt="' + esc(d.alt || '') + '" style="max-width:100%">' +
+          (d.title ? '<figcaption>' + esc(d.title) + '</figcaption>' : '') + '</figure>';
+      }
+    });
 
     CMS.registerEditorComponent({
       id: 'bang',
@@ -68,6 +147,17 @@
         }).join('') + '</table>';
       }
     });
+  })();
+</script>
+<!-- Nút hướng dẫn: mở trang hướng dẫn có ảnh chụp ở tab mới (không mất phần đang soạn).
+     Ở màn danh sách hiện chữ "? Hướng dẫn"; khi đang soạn thu thành nút tròn nhỏ để không che ô nhập. -->
+<a id="nut-huong-dan" href="huong-dan/" target="_blank" rel="noopener" title="Hướng dẫn sử dụng trang quản trị" aria-label="Hướng dẫn sử dụng">
+  <span aria-hidden="true">?</span><span class="chu">Hướng dẫn</span></a>
+<script>
+  (function () {
+    var a = document.getElementById('nut-huong-dan');
+    function cap() { a.classList.toggle('gon', /\/(entries|new)(\/|$|\?)/.test(location.hash)); }
+    window.addEventListener('hashchange', cap); cap();
   })();
 </script>
 </body>

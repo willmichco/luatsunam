@@ -3,7 +3,7 @@ tieu_de: Điều khoản sử dụng
 nhan: Quy định sử dụng website
 tieu_de_trang: Điều khoản sử dụng
 mo_dau: Các nguyên tắc dưới đây giúp người dùng hiểu đúng phạm vi thông tin và cách sử dụng website của Công Ty Luật TNHH Luật Sư Nam.
-ngay_cap_nhat: '2026-07-11'
+ngay_cap_nhat: 2026-07-11
 seo:
   tieu_de: Điều khoản sử dụng
   mo_ta: 'Điều khoản sử dụng website Công Ty Luật TNHH Luật Sư Nam: phạm vi thông tin, xác lập dịch vụ pháp lý, trách nhiệm người dùng và quyền sở hữu nội dung.'

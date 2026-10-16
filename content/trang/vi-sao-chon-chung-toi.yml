@@ -1,6 +1,7 @@
 tieu_de: Vì sao chọn chúng tôi
 nhap: false
 trang_cha: /gioi-thieu/
+loai_trang: WebPage
 dau_trang:
   nhan: Vì sao chọn chúng tôi
   tieu_de: Gặp chuyện đã đủ mệt. *Làm việc với luật sư phải nhẹ nhõm.*
@@ -8,10 +9,12 @@ dau_trang:
   the_luat_su: true
 cac_khoi:
   - loai: luoi_the
-    nen: kem
+    hien_thi: true
     nhan: Nguyên tắc làm việc
     tieu_de: Bốn điều anh chị có thể yên tâm
+    nen: kem
     mo_ta: Áp dụng như nhau cho một buổi tư vấn ngắn hay một vụ kiện kéo dài nhiều năm.
+    can_giua: false
     so_cot: '2'
     the:
       - bieu_tuong: i-user
@@ -27,25 +30,28 @@ cac_khoi:
         tieu_de: Giữ kín và độc lập
         mo_ta: Thông tin chỉ dùng trong phạm vi cần thiết để giải quyết việc của anh chị. Xung đột lợi ích được kiểm tra trước khi nhận việc.
   - loai: anh_chu
-    nen: trang
+    hien_thi: true
     nhan: Quyền của anh chị
     tieu_de: Trong suốt quá trình, anh chị có quyền yêu cầu
     vi_tri_anh: phai
+    anh_co_san: phien-toa
+    mo_ta_anh: '{{luat_su}} tại ghế người bào chữa trong phòng xử án'
+    chu_thich: '{{luat_su}}'
+    chu_thich_phu: Tại ghế người bào chữa
+    nen: trang
     noi_dung: Đây là những điều anh chị nên đòi hỏi ở bất kỳ luật sư nào, kể cả chúng tôi.
     dau_tich:
       - Được giải thích bằng lời dễ hiểu, không phải “nghe luật sư nói mà không hiểu gì”.
       - Được biết hồ sơ đang ở bước nào, việc gì sắp tới và anh chị cần chuẩn bị gì – không phải tự đi hỏi.
       - Được hỏi lại bất cứ điều gì chưa rõ về hồ sơ và quyền lợi của mình.
       - Được báo trước mọi thay đổi về phạm vi công việc và chi phí.
-    anh_co_san: phien-toa
-    mo_ta_anh: '{{luat_su}} tại ghế người bào chữa trong phòng xử án'
-    chu_thich: '{{luat_su}}'
-    chu_thich_phu: Tại ghế người bào chữa
   - loai: luoi_the
-    nen: toi
+    hien_thi: true
     nhan: Giới hạn nghề nghiệp
     tieu_de: Những điều chúng tôi không làm
+    nen: toi
     mo_ta: Chuẩn mực đạo đức nghề nghiệp luật sư là giới hạn chúng tôi không vượt qua, dù khách hàng yêu cầu. Điều đó cũng là để bảo vệ chính anh chị.
+    can_giua: false
     so_cot: '3'
     the:
       - tieu_de: Không hứa chắc thắng

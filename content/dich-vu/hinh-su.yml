@@ -1,6 +1,6 @@
+thu_tu: 4
 ten: Hình sự
 nhap: false
-thu_tu: 4
 bieu_tuong: i-shield-check
 bieu_tuong_tinh_huong: i-shield
 mo_ta_ngan: Bào chữa, bảo vệ người bị hại và đồng hành cùng khách hàng trong các giai đoạn điều tra, truy tố, xét xử.
@@ -86,4 +86,4 @@ linh_vuc_lien_quan:
   - dan-su
 seo:
   tieu_de: Luật sư bào chữa vụ án Hình sự
-  mo_ta: Luật sư bào chữa cho người bị buộc tội và bảo vệ quyền lợi bị hại qua các giai đoạn điều tra, truy tố, xét xử, kháng cáo. Hỗ trợ khẩn cấp 0983 498 499.
+  mo_ta: Luật sư bào chữa cho người bị buộc tội và bảo vệ quyền lợi bị hại qua các giai đoạn điều tra, truy tố, xét xử, kháng cáo. Hỗ trợ khẩn cấp {{hotline}}.

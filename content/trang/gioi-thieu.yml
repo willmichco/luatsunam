@@ -8,10 +8,11 @@ dau_trang:
   the_luat_su: true
 cac_khoi:
   - loai: dau_trang
+    hien_thi: true
     ma_neo: cong-ty
     nhan: Giới thiệu Luật Sư Nam
     tieu_de: Văn phòng luật do *{{luat_su}}* trực tiếp điều hành
-    doan_mo_dau: |
+    doan_mo_dau: |-
       Công Ty Luật TNHH Luật Sư Nam thành lập tháng 01 năm 2019 tại Thành phố Hồ Chí Minh. Chúng tôi tư vấn pháp luật, tham gia tố tụng và đại diện theo ủy quyền cho người dân và doanh nghiệp.
 
       Luật sư Nguyễn Trọng Nam (sinh năm 1976, quê Hà Nội) là Giám đốc, người đại diện theo pháp luật của công ty, gắn bó với TP. Hồ Chí Minh từ năm 1999. Nhiều năm trực tiếp làm thủ tục và giải quyết tranh chấp đất đai, thừa kế giúp luật sư hiểu rõ những vướng mắc thực tế mà người dân thường gặp.
@@ -31,10 +32,11 @@ cac_khoi:
       - so: '1'
         mo_ta: Luật sư phụ trách xuyên suốt mỗi hồ sơ
   - loai: dong_thoi_gian
+    hien_thi: true
     ma_neo: hanh-trinh
-    nen: trang
     nhan: Hành trình
     tieu_de: Chặng đường hơn 25 năm tại TP. Hồ Chí Minh
+    nen: trang
     mo_ta: Những dấu mốc trong quá trình làm việc của Luật sư Nguyễn Trọng Nam và sự ra đời của Công Ty Luật TNHH Luật Sư Nam.
     moc:
       - thoi_gian: 09/1999
@@ -50,10 +52,11 @@ cac_khoi:
         tieu_de: Thành lập Công Ty Luật TNHH Luật Sư Nam
         mo_ta: Luật sư Nguyễn Trọng Nam là Giám đốc và đại diện theo pháp luật. Công ty hoạt động trong lĩnh vực tư vấn pháp luật, tham gia tố tụng, đại diện theo ủy quyền và các dịch vụ pháp lý khác.
   - loai: doi_ngu
+    hien_thi: true
     ma_neo: doi-ngu-luat-su
-    nen: kem
     nhan: Đội ngũ
     tieu_de: Đội ngũ Luật Sư Nam
+    nen: kem
     mo_ta: 'Một văn phòng gọn nhẹ, hai người cùng theo một hồ sơ: luật sư lo phần chuyên môn, chuyên viên pháp lý lo giấy tờ và tiến độ.'
     kieu: noi_bat
     thanh_vien:
@@ -77,10 +80,12 @@ cac_khoi:
         mo_ta: Hỗ trợ luật sư chuẩn bị, rà soát giấy tờ; theo dõi tiến độ hồ sơ và giữ liên lạc với anh chị.
         bieu_tuong: i-doc
   - loai: luoi_the
+    hien_thi: true
     ma_neo: cach-lam-viec
-    nen: trang
     nhan: Cách làm việc
     tieu_de: Khi làm việc với chúng tôi, anh chị sẽ được
+    nen: trang
+    can_giua: false
     so_cot: '3'
     the:
       - bieu_tuong: i-user

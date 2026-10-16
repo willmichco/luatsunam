@@ -1,9 +1,10 @@
 ---
 tieu_de: 'Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm theo Bộ luật Dân sự 2015'
+duong_dan: thoi-hieu-chia-di-san-thua-ke
 nhap: false
 linh_vuc: thua-ke
-ngay_dang: '2026-09-15'
-ngay_cap_nhat: '2026-09-24'
+ngay_dang: 2026-09-15
+ngay_cap_nhat: 2026-09-24
 tieu_de_ngan: 'Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm'
 tom_tat: Mốc tính thời hiệu, ba loại thời hiệu tại Điều 623 Bộ luật Dân sự 2015 và điều gì xảy ra với di sản khi hết thời hạn.
 tom_tat_nhanh:

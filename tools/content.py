@@ -13,7 +13,7 @@ import yaml
 
 import schema
 from loi import LOI
-from markup import SLUG_RE, company_tokens, slugify
+from markup import SLUG_RE, Ctx, company_tokens, expand, slugify
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -183,6 +183,42 @@ def _hours_text(days, opens, closes):
     return f'{", ".join(parts)}: {opens} – {closes}'
 
 
+def literal_patterns(firm):
+    """Mẫu tìm hotline/email gõ thẳng vào nội dung (thay vì mã chèn) – chúng sẽ không đổi theo Thông tin công ty."""
+    out = []
+    digits = firm["phone_tel"]
+    if len(digits) == 10:
+        sep = r"[\s.\-]?"
+        body = sep.join(digits[1:])
+        out.append((re.compile(rf"(?<!\d)(?:0|\+?84{sep}){body}(?!\d)"),
+                    "Đang ghi thẳng số hotline “{}”. Thay bằng mã {{{{hotline}}}} (chữ) hoặc {{{{tel}}}} / {{{{zalo}}}} "
+                    "(địa chỉ liên kết) để số tự đổi khi sửa ở Cài đặt → Thông tin công ty."))
+    if firm["email"]:
+        out.append((re.compile(re.escape(firm["email"]), re.I),
+                    "Đang ghi thẳng email “{}”. Thay bằng mã {{{{email}}}} (chữ) hoặc {{{{mailto}}}} (địa chỉ liên kết) "
+                    "để tự đổi khi sửa ở Cài đặt → Thông tin công ty."))
+    return out
+
+
+SEO_LABELS = (("tieu_de", "SEO – hiển thị trên Google và khi chia sẻ › Tiêu đề trên Google"),
+              ("mo_ta", "SEO – hiển thị trên Google và khi chia sẻ › Mô tả trên Google"))
+
+
+def expand_seo(site, item):
+    """Cho phép mã chèn ({{hotline}}…) trong tiêu đề, mô tả SEO; kiểm độ dài sau khi thay."""
+    seo = item.get("seo") if isinstance(item, dict) else None
+    if not isinstance(seo, dict):
+        return
+    src = item.get("_src", "")
+    for key, where in SEO_LABELS:
+        v = seo.get(key)
+        if isinstance(v, str) and "{{" in v:
+            seo[key] = expand(v, Ctx(site, "", "", src, where))
+            limit = 160 if key == "mo_ta" else 60
+            if len(seo[key]) > limit:
+                LOI.them(src, where, f"Sau khi thay mã chèn, dài {len(seo[key])} ký tự (tối đa {limit}). Rút ngắn câu chữ.")
+
+
 def load(env):
     site = Site(env)
     cols = _collections()
@@ -190,6 +226,7 @@ def load(env):
     site.company = load_file(cd, "cong_ty", site)
     site.firm = firm_from(site.company)
     site.tokens = company_tokens(site.firm)
+    site.literals = literal_patterns(site.firm)
     site.menu = load_file(cd, "menu", site)
     site.text = load_file(cd, "cau_chu", site)
     site.seo = load_file(cd, "seo", site)
@@ -217,18 +254,36 @@ def load(env):
     def visible(items):
         return [x for x in items if site.drafts or not x.get("nhap")]
 
+    for a in all_articles:
+        a["ngay_cap_nhat"] = a.get("ngay_cap_nhat") or a.get("ngay_dang")
+        a["linh_vuc_lien_quan"] = a.get("linh_vuc_lien_quan") or ([a["linh_vuc"]] if a.get("linh_vuc") else [])
+        _check_article_path(a)
+    for x in all_services + all_articles + all_pages + list(site.hubs.values()) + list(site.legal.values()) + [site.not_found]:
+        expand_seo(site, x)
     site.draft_items = [x for x in all_services + all_articles + all_pages if x.get("nhap")]
     site.services = sorted(visible(all_services), key=lambda s: (s.get("thu_tu") or 99, s.get("ten") or ""))
     site.service_by_slug = {s["slug"]: s for s in site.services}
     site.all_service_slugs = {s["slug"] for s in all_services}
     site.articles = sorted(visible(all_articles), key=lambda a: (a.get("ngay_dang") or "", a.get("tieu_de") or ""), reverse=True)
-    for a in site.articles:
-        a["ngay_cap_nhat"] = a.get("ngay_cap_nhat") or a.get("ngay_dang")
-        a["linh_vuc_lien_quan"] = a.get("linh_vuc_lien_quan") or ([a["linh_vuc"]] if a.get("linh_vuc") else [])
     site.pages = {p["slug"]: p for p in visible(all_pages)}
 
     _check(site, all_pages)
     return site
+
+
+def _check_article_path(a):
+    """Ô “Đường dẫn bài viết” phải khớp tên tệp (CMS đặt tên tệp từ ô này lúc tạo bài, sau đó khóa)."""
+    want, slug = a.get("duong_dan"), a["slug"]
+    if not want or want == slug:
+        return
+    where = "Đường dẫn bài viết (đặt 1 lần)"
+    if re.fullmatch(re.escape(want) + r"-\d+", slug):
+        LOI.them(a["_src"], where, f"Đường dẫn “{want}” đã có bài khác dùng nên CMS lưu bài này thành “{slug}”. "
+                                   f"Xóa bài này rồi tạo lại với đường dẫn khác.")
+    else:
+        LOI.them(a["_src"], where, f"Ô này đã đổi thành “{want}” nhưng địa chỉ bài vẫn là “{slug}” – đường dẫn không đổi được "
+                                   f"sau khi lưu. Trả ô về “{slug}”. Cần đổi địa chỉ: tạo bài mới và thêm chuyển hướng "
+                                   f"(Cài đặt → Chuyển hướng).")
 
 
 def _check(site, all_pages):

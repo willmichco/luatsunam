@@ -1,6 +1,7 @@
 tieu_de: Quy trình làm việc
 nhap: false
 trang_cha: /gioi-thieu/
+loai_trang: WebPage
 dau_trang:
   nhan: Quy trình làm việc
   tieu_de: 'Làm việc với luật sư: *bốn bước, không phức tạp*'
@@ -8,10 +9,12 @@ dau_trang:
   the_luat_su: true
 cac_khoi:
   - loai: cac_buoc
-    nen: kem
+    hien_thi: true
     nhan: Bốn bước
     tieu_de: Từ cuộc gọi đầu tiên đến khi xong việc
+    nen: kem
     mo_ta: Áp dụng cho cả yêu cầu tư vấn và vụ việc tranh tụng; thời gian của từng bước tùy tính chất và mức độ phức tạp của hồ sơ.
+    can_giua: false
     kieu: ngang
     buoc:
       - tieu_de: Gọi điện hoặc nhắn Zalo
@@ -27,11 +30,13 @@ cac_khoi:
         mo_ta: Luật sư làm theo kế hoạch, báo tiến độ theo các mốc đã thống nhất, trao đổi trước khi có thay đổi và bàn giao kết quả kèm hướng dẫn việc tiếp theo.
         ket_qua: Một luật sư theo hồ sơ đến cùng
   - loai: dau_tich
+    hien_thi: true
     ma_neo: ho-so-can-chuan-bi
-    nen: trang
     nhan: Chuẩn bị trước
     tieu_de: Giấy tờ nên mang theo buổi gặp đầu tiên
+    nen: trang
     mo_ta: Mang bản sao là đủ. Chưa có đủ giấy tờ cũng không sao – cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.
+    so_cot: '1'
     muc:
       - Giấy tờ tùy thân của người cần tư vấn (căn cước, hộ chiếu)
       - Hợp đồng, thỏa thuận, giấy tờ về tài sản liên quan đến sự việc
@@ -55,17 +60,19 @@ cac_khoi:
         - dam: Anh chị mong muốn điều gì?
           noi_dung: Kết quả mà anh chị hướng tới.
   - loai: luoi_linh_vuc
-    nen: kem
+    hien_thi: true
     nhan: Theo lĩnh vực
     tieu_de: Giấy tờ theo từng loại vụ việc
+    nen: kem
     mo_ta: Mỗi lĩnh vực có danh sách giấy tờ riêng, kèm việc nên làm ngay.
     lien_ket:
       nhan: Tổng quan 7 lĩnh vực
       trang: /dich-vu/
     kieu: tinh_huong
   - loai: hoi_dap
-    nen: trang
+    hien_thi: true
     tieu_de: Trước khi bắt đầu, anh chị thường hỏi
+    nen: trang
     mo_ta: Chi phí, giữ bí mật và thời gian phản hồi.
     lien_ket:
       nhan: Tất cả câu hỏi thường gặp

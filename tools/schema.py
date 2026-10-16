@@ -69,10 +69,12 @@ def rich(name, label, hint=None, **kw):
 
 
 def editor(name, label, hint=None, **kw):
-    """Khung soạn thảo đầy đủ (bài viết, trang văn bản): đề mục, danh sách, trích dẫn, ảnh, bảng."""
+    """Khung soạn thảo đầy đủ (bài viết, trang văn bản): đề mục, danh sách, trích dẫn, ảnh, bảng.
+    "anh" và "bang" là thành phần tự viết trong admin/index.html: ảnh bắt buộc mô tả (CMS chặn lưu khi thiếu),
+    bảng sửa dạng chữ để không vỡ khi lưu."""
     return _f("richtext", name, label, hint,
               buttons=["bold", "italic", "link", "heading-two", "heading-three", "bulleted-list", "numbered-list", "quote"],
-              editor_components=["image", "bang"], linked_images=False, **kw)
+              editor_components=["anh", "bang"], **kw)
 
 
 def boolean(name, label, hint=None, default=False, **kw):
@@ -101,10 +103,13 @@ def image(name, label, hint=None, **kw):
 
 
 def relation_service(name, label, hint=None, multiple=False, **kw):
+    """Chọn lĩnh vực dịch vụ từ danh sách sinh lúc build (ô "liên kết" của CMS có nút “Thêm lĩnh vực”
+    mở form tạo cả một lĩnh vực mới – người biên tập rất dễ bấm nhầm). Lĩnh vực vừa tạo có trong danh sách
+    sau lần build kế tiếp."""
     if multiple:
         kw["multiple"] = True
-    return _f("relation", name, label, hint, collection="dich_vu", value_field="{{slug}}",
-              display_fields=["{{ten}}"], search_fields=["ten"], **kw)
+    return _f("select", name, label, hint, options=[], _options="services", _relation="dich_vu",
+              dropdown_threshold=10, **kw)
 
 
 def page_link(name, label, hint=None, **kw):
@@ -226,7 +231,8 @@ def seo(title_example, desc_example):
                f"Dòng chữ xanh trên Google. 15–60 ký tự; đuôi “ | Luật Sư Nam” tự thêm. Ví dụ: {title_example}",
                minlength=15, maxlength=60),
         text("mo_ta", "Mô tả trên Google",
-             f"Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: {desc_example}",
+             f"Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{{{hotline}}}}. "
+             f"Ví dụ: {desc_example}",
              minlength=70, maxlength=160),
         image("anh_chia_se", "Ảnh chia sẻ Facebook/Zalo (tùy chọn)",
               "Để trống = tự tạo ảnh từ tiêu đề. Ảnh riêng nên ngang 1200×630.", required=False),
@@ -274,7 +280,7 @@ def section_head(eyebrow_ex="Hành trình", title_ex="Chặng đường hơn 25 
 # 16 khối dựng trang (mục 5 kế hoạch). Khối 16 "Liên hệ cuối trang" là nhóm cố định cuối mỗi trang.
 # ---------------------------------------------------------------------------
 BLOCK_TYPES = [
-    {"name": "dau_trang", "label": "1 · Đầu trang lớn (Hero)", "summary": "Đầu trang: {{fields.tieu_de}}",
+    {"name": "dau_trang", "label": "Đầu trang lớn (Hero)", "summary": "Đầu trang: {{fields.tieu_de}}",
      "fields": common(bg=None) + [
          string("nhan", "Nhãn nhỏ", "Ví dụ: Luật sư tư vấn & tranh tụng tại TP.HCM", required=False, maxlength=70),
          red_title("tieu_de", "Tiêu đề lớn (H1)", example="Gặp chuyện pháp lý, *có luật sư bên cạnh*"),
@@ -288,13 +294,13 @@ BLOCK_TYPES = [
              string("mo_ta", "Ý nghĩa", "Ví dụ: Thành lập công ty luật", maxlength=70)],
              summary="{{fields.so}} – {{fields.mo_ta}}", max=4, label_singular="số liệu"),
      ], "_rules": [_rule_photo]},
-    {"name": "dai_cam_ket", "label": "2 · Dải cam kết", "summary": "Dải cam kết",
+    {"name": "dai_cam_ket", "label": "Dải cam kết", "summary": "Dải cam kết",
      "fields": common(bg=None) + [
          lst("muc", "Các cam kết", fields=[icon(), string("tieu_de", "Dòng đậm", maxlength=50),
                                           string("mo_ta", "Dòng giải thích", maxlength=120)],
              summary="{{fields.tieu_de}}", min=3, max=5, label_singular="cam kết"),
      ]},
-    {"name": "luoi_the", "label": "3 · Lưới thẻ", "summary": "Lưới thẻ: {{fields.tieu_de}}",
+    {"name": "luoi_the", "label": "Lưới thẻ", "summary": "Lưới thẻ: {{fields.tieu_de}}",
      "fields": common(bg=BG_DARK) + section_head("Nguyên tắc làm việc", "Bốn điều anh chị có thể yên tâm") + [
          boolean("can_giua", "Căn giữa tiêu đề", default=False),
          select("so_cot", "Số cột", [("2", "2 cột (biểu tượng bên trái)"), ("3", "3 cột"), ("4", "4 cột")], default="3", required=False),
@@ -307,7 +313,7 @@ BLOCK_TYPES = [
          lst("lien_ket_cuoi", "Liên kết dưới lưới (tùy chọn)", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
              max=3, label_singular="liên kết", _item_rules=[_rule_link]),
      ]},
-    {"name": "anh_chu", "label": "4 · Ảnh + chữ", "summary": "Ảnh + chữ: {{fields.tieu_de}}",
+    {"name": "anh_chu", "label": "Ảnh + chữ", "summary": "Ảnh + chữ: {{fields.tieu_de}}",
      "fields": common() + section_head("Về chúng tôi", "Văn phòng luật do {{luat_su}} trực tiếp điều hành", with_text=False) + [
          select("vi_tri_anh", "Vị trí ảnh", [("trai", "Bên trái"), ("phai", "Bên phải")], default="trai", required=False),
          text("noi_dung", "Đoạn văn", "Mỗi đoạn cách nhau một dòng trống. " + TOKEN_HINT, required=False, maxlength=1600),
@@ -319,7 +325,7 @@ BLOCK_TYPES = [
              label_singular="liên kết", _item_rules=[_rule_link]),
          *photo_fields(),
      ], "_rules": [_rule_photo]},
-    {"name": "cac_buoc", "label": "5 · Các bước", "summary": "Các bước: {{fields.tieu_de}}",
+    {"name": "cac_buoc", "label": "Các bước", "summary": "Các bước: {{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Bốn bước", "Từ cuộc gọi đầu tiên đến khi xong việc") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
          boolean("can_giua", "Căn giữa tiêu đề", default=False),
@@ -333,14 +339,14 @@ BLOCK_TYPES = [
              icon(), string("dam", "Phần in đậm", maxlength=60), string("noi_dung", "Nội dung", maxlength=220)],
              summary="{{fields.dam}}", max=3, label_singular="ghi chú"),
      ]},
-    {"name": "dong_thoi_gian", "label": "6 · Dòng thời gian", "summary": "Dòng thời gian: {{fields.tieu_de}}",
+    {"name": "dong_thoi_gian", "label": "Dòng thời gian", "summary": "Dòng thời gian: {{fields.tieu_de}}",
      "fields": common() + section_head() + [
          lst("moc", "Các mốc (mốc cuối được tô nổi bật)", fields=[
              string("thoi_gian", "Thời gian", "Ví dụ: 09/1999", maxlength=20), string("tieu_de", "Tiêu đề", maxlength=90),
              text("mo_ta", "Mô tả", maxlength=500)], summary="{{fields.thoi_gian}} – {{fields.tieu_de}}", min=2, max=12,
              label_singular="mốc"),
      ]},
-    {"name": "doi_ngu", "label": "7 · Đội ngũ", "summary": "Đội ngũ: {{fields.tieu_de}}",
+    {"name": "doi_ngu", "label": "Đội ngũ", "summary": "Đội ngũ: {{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Đội ngũ", "Đội ngũ Luật Sư Nam") + [
          select("kieu", "Cách trình bày", [("noi_bat", "Người đầu tiên nổi bật có ảnh, người khác là thẻ nhỏ"), ("luoi", "Lưới thẻ đều nhau")],
                 default="noi_bat", required=False),
@@ -353,7 +359,7 @@ BLOCK_TYPES = [
                  summary="{{fields.nhan}}: {{fields.gia_tri}}", max=6, label_singular="ô thông tin"),
              *photo_fields(None)], summary="{{fields.ten}}", min=1, max=12, label_singular="thành viên", _item_rules=[_rule_photo]),
      ]},
-    {"name": "dau_tich", "label": "8 · Danh sách dấu tích", "summary": "Danh sách: {{fields.tieu_de}}",
+    {"name": "dau_tich", "label": "Danh sách dấu tích", "summary": "Danh sách: {{fields.tieu_de}}",
      "fields": common() + section_head("Chuẩn bị trước", "Giấy tờ nên mang theo buổi gặp đầu tiên") + [
          select("so_cot", "Số cột", [("1", "1 cột"), ("2", "2 cột")], default="1", required=False),
          strings("muc", "Các dòng", min=1, max=16, maxlength=220),
@@ -364,36 +370,36 @@ BLOCK_TYPES = [
              lst("y", "Các ý (tự đánh số)", fields=[string("dam", "Phần in đậm", maxlength=70), string("noi_dung", "Nội dung", maxlength=200)],
                  summary="{{fields.dam}}", max=8, label_singular="ý")], collapsed="auto", required=False),
      ]},
-    {"name": "doan_van", "label": "9 · Đoạn văn tự do", "summary": "Đoạn văn",
+    {"name": "doan_van", "label": "Đoạn văn tự do", "summary": "Đoạn văn",
      "fields": common() + [
          select("do_rong", "Độ rộng", [("hep", "Hẹp – dễ đọc"), ("rong", "Rộng")], default="hep", required=False),
          editor("noi_dung", "Nội dung", "Đề mục, đậm, liên kết, danh sách, bảng, ảnh. " + TOKEN_HINT),
      ]},
-    {"name": "hoi_dap", "label": "10 · Hỏi đáp", "summary": "Hỏi đáp: {{fields.tieu_de}}",
+    {"name": "hoi_dap", "label": "Hỏi đáp", "summary": "Hỏi đáp: {{fields.tieu_de}}",
      "fields": common() + section_head("Hỏi đáp", "Những câu anh chị hay hỏi") + [
          link("lien_ket", "Liên kết dưới mô tả (tùy chọn)", required=False),
          _f("select", "cau_hoi", "Chọn câu hỏi từ kho Hỏi đáp chung",
             "Tích các câu muốn hiện, theo thứ tự tích. Sửa nội dung câu hỏi tại mục Hỏi đáp chung.",
             options=[], multiple=True, min=1, max=10, _options="faq", dropdown_threshold=20),
      ]},
-    {"name": "luoi_linh_vuc", "label": "11 · Lưới lĩnh vực (tự động)", "summary": "Lưới lĩnh vực: {{fields.tieu_de}}",
+    {"name": "luoi_linh_vuc", "label": "Lưới lĩnh vực (tự động)", "summary": "Lưới lĩnh vực: {{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Theo lĩnh vực", "Anh chị đang gặp chuyện gì?") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
          select("kieu", "Kiểu thẻ", [("tinh_huong", "Tình huống – “Anh chị đang gặp chuyện gì?”"), ("dich_vu", "Tên lĩnh vực + mô tả ngắn")],
                 default="tinh_huong", required=False),
      ]},
-    {"name": "bai_viet_moi", "label": "12 · Bài viết mới nhất (tự động)", "summary": "Bài viết mới: {{fields.tieu_de}}",
+    {"name": "bai_viet_moi", "label": "Bài viết mới nhất (tự động)", "summary": "Bài viết mới: {{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Bài viết", "Kiến thức pháp luật dễ hiểu") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
          number("so_bai", "Số bài hiện", min=1, max=12, default=3, required=False),
          select("so_cot", "Số cột", [("2", "2 cột"), ("3", "3 cột")], default="3", required=False),
          relation_service("linh_vuc", "Chỉ lấy bài thuộc lĩnh vực (tùy chọn)", required=False),
      ]},
-    {"name": "giay_to_linh_vuc", "label": "13 · Giấy tờ theo lĩnh vực (tự động)", "summary": "Giấy tờ theo lĩnh vực",
+    {"name": "giay_to_linh_vuc", "label": "Giấy tờ theo lĩnh vực (tự động)", "summary": "Giấy tờ theo lĩnh vực",
      "fields": common(default_bg="kem") + section_head("Theo lĩnh vực", "Giấy tờ theo từng loại vụ việc") + [
-         relation_service("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", multiple=True, required=False),
+         relation_service("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", "Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.", multiple=True, required=False),
      ]},
-    {"name": "kenh_lien_he", "label": "14 · Kênh liên hệ", "summary": "Kênh liên hệ",
+    {"name": "kenh_lien_he", "label": "Kênh liên hệ", "summary": "Kênh liên hệ",
      "fields": common() + [
          select("kenh", "Kênh hiện", [("goi", "Gọi điện"), ("zalo", "Nhắn Zalo"), ("email", "Gửi email"), ("van_phong", "Đến văn phòng")],
                 multiple=True, min=1, default=["goi", "zalo", "email"], hint="Số điện thoại, email, địa chỉ tự lấy từ Thông tin công ty"),
@@ -403,7 +409,7 @@ BLOCK_TYPES = [
          boolean("viec_gap", "Hiện ô “Việc gấp?”", default=True),
          rich("noi_dung_viec_gap", "Nội dung ô Việc gấp", required=False, maxlength=420),
      ]},
-    {"name": "ban_do", "label": "15 · Bản đồ văn phòng", "summary": "Bản đồ: {{fields.tieu_de}}",
+    {"name": "ban_do", "label": "Bản đồ văn phòng", "summary": "Bản đồ: {{fields.tieu_de}}",
      "fields": common() + section_head("Đường đến văn phòng", "Văn phòng Luật Sư Nam") + [
          string("ghi_chu_hotline", "Ghi chú dưới hotline", required=False, maxlength=100, default="Ưu tiên gọi trực tiếp với việc gấp"),
      ]},
@@ -432,7 +438,10 @@ SERVICE_TEXT_HINT = "Dùng {{ten_linh_vuc}} để chèn tên lĩnh vực (chữ 
 # Các chuyên mục (collections)
 # ---------------------------------------------------------------------------
 SLUG_HINT = ("Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. "
-             "**Sau khi lưu không đổi được** (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.")
+             "Sau khi lưu KHÔNG đổi được (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.")
+ARTICLE_SLUG_PATTERN = ["^[a-z0-9]+(-[a-z0-9]+){1,7}$",
+                        "2–8 từ, chỉ chữ a–z không dấu, số và gạch nối, ví dụ: hop-dong-dat-coc-mua-nha"]
+GUIDE = "huong-dan/"  # trang hướng dẫn, tương đối với /admin/
 
 
 def slug_opts(field):
@@ -442,9 +451,10 @@ def slug_opts(field):
 def collections():
     return [
         {"name": "bai_viet", "label": "Bài viết", "label_singular": "bài viết", "icon": "article",
-         "description": "Bài viết pháp lý tại /kien-thuc-phap-ly/. Bài mới luôn là bản nháp cho tới khi luật sư duyệt.",
+         "description": "Bài viết pháp lý tại /kien-thuc-phap-ly/. Bài mới luôn là **bản nháp** cho tới khi luật sư duyệt. "
+                        f"[Hướng dẫn đăng bài]({GUIDE}#dang-bai)",
          "folder": "content/bai-viet", "extension": "md", "format": "yaml-frontmatter",
-         "identifier_field": "tieu_de", "slug": slug_opts("tieu_de"),
+         "identifier_field": "tieu_de", "slug": dict(slug_opts("duong_dan"), pattern=ARTICLE_SLUG_PATTERN),
          "summary": "{{tieu_de}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}}",
          "sortable_fields": {"fields": ["ngay_dang", "tieu_de", "ngay_cap_nhat"], "default": {"field": "ngay_dang", "direction": "descending"}},
          "view_filters": [{"name": "nhap", "label": "Bản nháp", "field": "nhap", "eq": True},
@@ -454,6 +464,10 @@ def collections():
              string("tieu_de", "Tiêu đề bài viết",
                     "Hiện ở đầu bài. Ví dụ: Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con",
                     minlength=20, maxlength=110),
+             string("duong_dan", "Đường dẫn bài viết (đặt 1 lần)",
+                    "2–8 từ khóa chính, không dấu, nối bằng gạch ngang. Ví dụ: hop-dong-dat-coc-mua-nha → địa chỉ bài là "
+                    "/kien-thuc-phap-ly/hop-dong-dat-coc-mua-nha/. Sau khi lưu KHÔNG đổi được (đổi làm mất thứ hạng Google).",
+                    maxlength=60, pattern=ARTICLE_SLUG_PATTERN),
              boolean("nhap", "Bản nháp – chưa đăng lên site",
                      "Bài mới luôn là nháp. Chỉ bỏ dấu khi luật sư phụ trách đã duyệt bản xem trước tại /nhap/<đường-dẫn>/.",
                      default=True),
@@ -467,16 +481,16 @@ def collections():
                      min=3, max=4, maxlength=160, item_label="Ý"),
              text("doan_dan", "Đoạn dẫn đầu bài", "Đoạn mở đầu in to hơn, giới thiệu vấn đề.", minlength=80, maxlength=700),
              editor("body", "Nội dung bài viết",
-                    "Dùng **Tiêu đề 2** cho mục chính (tự vào mục lục), **Tiêu đề 3** cho mục nhỏ; nút **Trích dẫn** = hộp lưu ý. "
-                    "Bảng: nút + → Bảng. Liên kết trong site: /dich-vu/thua-ke/. Khẳng định pháp lý luôn kèm điều luật; "
-                    "không hứa hẹn kết quả (Quy tắc 9.1.6)."),
-             relation_service("linh_vuc_lien_quan", "Lĩnh vực liên quan (cột phải)", "Tối đa 3. Để trống = chỉ lĩnh vực chính.",
+                    "Nút ¶ → **Tiêu đề 2** cho mục chính (tự vào mục lục), **Tiêu đề 3** cho mục nhỏ, **Trích dẫn** = hộp lưu ý. "
+                    "**Chèn → Ảnh** (bắt buộc mô tả ảnh), **Chèn → Bảng**. Liên kết trong site: /dich-vu/thua-ke/. "
+                    "Khẳng định pháp lý luôn kèm điều luật; không hứa hẹn kết quả (Quy tắc 9.1.6)."),
+             relation_service("linh_vuc_lien_quan", "Lĩnh vực liên quan (cột phải)", "Tối đa 3. Để trống = chỉ lĩnh vực chính. Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.",
                               multiple=True, max=3, required=False),
              seo("Ly hôn đơn phương: căn cứ, hồ sơ, quyền nuôi con",
                  "Khi nào Tòa án giải quyết ly hôn theo yêu cầu của một bên, hồ sơ cần chuẩn bị và nguyên tắc giao con."),
          ], "_rules": [_rule_dates]},
         {"name": "dich_vu", "label": "Lĩnh vực dịch vụ", "label_singular": "lĩnh vực", "icon": "balance",
-         "description": "Mỗi lĩnh vực có trang /dich-vu/<đường-dẫn>/, thẻ ở trang chủ, menu và chân trang. Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
+         "editor": {"preview": False}, "description": "Mỗi lĩnh vực có trang /dich-vu/<đường-dẫn>/, thẻ ở trang chủ, menu và chân trang. Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
          "folder": "content/dich-vu", "extension": "yml", "format": "yml",
          "identifier_field": "ten", "slug": slug_opts("ten"),
          "summary": "{{ten}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}}",
@@ -520,13 +534,13 @@ def collections():
              strings("can_cu_phap_ly", "Căn cứ pháp luật chủ yếu", min=1, max=8, maxlength=140, item_label="Văn bản"),
              obj("lien_he", "Lời mời liên hệ cuối trang", [string("tieu_de", "Tiêu đề", maxlength=110),
                                                            text("doan_moi", "Đoạn mời", maxlength=320)], collapsed=True),
-             relation_service("linh_vuc_lien_quan", "Lĩnh vực liên quan", "Tối đa 3, hiện cuối trang theo thứ tự chọn.",
+             relation_service("linh_vuc_lien_quan", "Lĩnh vực liên quan", "Tối đa 3, hiện cuối trang. Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.",
                               multiple=True, max=3, required=False),
              seo("Luật sư tư vấn Thừa kế tại TP.HCM",
                  "Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản, giải quyết tranh chấp thừa kế."),
          ]},
         {"name": "hoi_dap", "label": "Hỏi đáp chung", "icon": "quiz",
-         "description": "Kho câu hỏi dùng chung: trang Câu hỏi thường gặp hiện tất cả; các trang khác chọn câu từ đây.",
+         "editor": {"preview": False}, "description": "Kho câu hỏi dùng chung: trang Câu hỏi thường gặp hiện tất cả; các trang khác chọn câu từ đây.",
          "files": [{"name": "hoi_dap", "label": "Kho hỏi đáp", "file": "content/hoi-dap.yml", "format": "yml", "fields": [
              lst("cau_hoi", "Câu hỏi (kéo để đổi thứ tự trên trang Câu hỏi thường gặp)", fields=[
                  string("hoi", "Câu hỏi", maxlength=140),
@@ -537,7 +551,8 @@ def collections():
          ]}]},
         {"divider": True, "name": "divider-trang"},
         {"name": "trang", "label": "Trang dựng từ khối", "label_singular": "trang", "icon": "dashboard_customize",
-         "description": "Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp.",
+         "editor": {"preview": False}, "description": "Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp. "
+                        f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi) · [Tạo trang mới]({GUIDE}#tao-trang)",
          "folder": "content/trang", "extension": "yml", "format": "yml",
          "identifier_field": "tieu_de", "slug": slug_opts("tieu_de"),
          "summary": "{{tieu_de}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}}",
@@ -556,7 +571,7 @@ def collections():
              seo("Phí dịch vụ luật sư và cách tính thù lao", "Cách Luật Sư Nam tính thù lao theo Điều 55 Luật Luật sư, khoản nào báo trước."),
          ]},
         {"name": "trang_tong_hop", "label": "Trang tổng hợp", "icon": "view_list",
-         "description": "Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp: sửa chữ; danh sách bên dưới tự động.",
+         "editor": {"preview": False}, "description": "Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp: sửa chữ; danh sách bên dưới tự động.",
          "files": [
              {"name": "dich_vu", "label": "Trang Dịch vụ (/dich-vu/)", "file": "content/trang-tong-hop/dich-vu.yml", "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
@@ -609,7 +624,8 @@ def collections():
          ]},
         {"divider": True, "name": "divider-cai-dat"},
         {"name": "cai_dat", "label": "Cài đặt", "icon": "settings",
-         "description": "Thông tin công ty, menu, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng, ảnh thương hiệu.",
+         "editor": {"preview": False}, "description": "Thông tin công ty, menu, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng, ảnh thương hiệu. "
+                        f"[Đổi hotline]({GUIDE}#doi-hotline) · [Chuyển hướng]({GUIDE}#chuyen-huong)",
          "files": settings_files()},
     ]
 
@@ -642,7 +658,8 @@ def settings_files():
             string("chuc_danh_luat_su", "Chức danh trên thẻ “Luật sư phụ trách”", maxlength=90),
             string("hotline", "Hotline", "Số di động 10 số, có thể có dấu cách: 0983 498 499. Nút Gọi, Zalo, dữ liệu Google tự cập nhật.",
                    pattern=["^0[0-9 .]{9,13}$", "Số điện thoại Việt Nam bắt đầu bằng 0, ví dụ 0983 498 499"]),
-            string("zalo", "Liên kết Zalo", "Để trống = https://zalo.me/<hotline>.", required=False,
+            string("zalo", "Liên kết Zalo (tùy chọn)",
+                   "Chỉ điền khi Zalo dùng số KHÁC hotline. Để trống = https://zalo.me/<số hotline>, tự đổi theo hotline.", required=False,
                    pattern=["^(https://zalo\\.me/.+)?$", "Bắt đầu bằng https://zalo.me/"]),
             string("email", "Email", pattern=["^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$", "Email chưa đúng định dạng"]),
             obj("dia_chi", "Địa chỉ văn phòng", [
@@ -671,7 +688,7 @@ def settings_files():
                 {"name": "menu_linh_vuc", "label": "Mục lĩnh vực (menu xổ lớn)", "summary": "{{fields.nhan}} ▾ (lĩnh vực)",
                  "fields": [string("nhan", "Chữ trên menu", maxlength=30), page_link("trang", "Trang tổng quan"),
                             lst("nhom", "Nhóm lĩnh vực", fields=[string("ten_nhom", "Tên nhóm", maxlength=40),
-                                                                 relation_service("linh_vuc", "Lĩnh vực trong nhóm", multiple=True, min=1)],
+                                                                 relation_service("linh_vuc", "Lĩnh vực trong nhóm", "Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.", multiple=True, min=1)],
                                 summary="{{fields.ten_nhom}}", min=1, max=4, label_singular="nhóm",
                                 hint="Lĩnh vực mới chưa xếp vào nhóm nào sẽ tự nằm cuối nhóm cuối cùng."),
                             string("nhan_tat_ca", "Chữ liên kết “xem tất cả”", maxlength=50)]},
@@ -782,6 +799,19 @@ def _len_msg(n, lo, hi):
     return None
 
 
+COMPANY_SRC = "content/cai-dat/cong-ty.yml"
+
+
+def _check_literals(value, src, add, ctx):
+    """Hotline, email gõ thẳng vào nội dung sẽ không đổi theo Cài đặt → Thông tin công ty: bắt dùng mã chèn."""
+    if src == COMPANY_SRC:
+        return
+    for rx, msg in getattr(ctx, "literals", ()):
+        m = rx.search(value)
+        if m:
+            add(msg.format(m.group(0)))
+
+
 def validate(value, field, src, path, ctx):
     """Kiểm một giá trị theo định nghĩa trường; trả về giá trị đã chuẩn hóa (điền mặc định)."""
     w = field["widget"]
@@ -830,6 +860,7 @@ def validate(value, field, src, path, ctx):
             add(field["pattern"][1] + f" (đang là “{value}”).")
         if field.get("_red") and value.count("*") % 2:
             add("Dấu * dùng để tô đỏ phải đi theo cặp, ví dụ: Chia di sản đúng luật, *giữ được tình thân*.")
+        _check_literals(value, src, add, ctx)
         return value
     if w == "richtext":
         if not isinstance(value, str):
@@ -842,6 +873,7 @@ def validate(value, field, src, path, ctx):
         msg = _len_msg(len(value), None, field.get("_maxlength"))
         if msg:
             add(msg)
+        _check_literals(value, src, add, ctx)
         return value
     if w == "boolean":
         if isinstance(value, str):
@@ -885,6 +917,11 @@ def validate(value, field, src, path, ctx):
             elif dynamic == "faq":
                 if not isinstance(it, str) or not SLUG_RE.match(it):
                     add(f"Câu hỏi “{it}” không hợp lệ. Chọn từ danh sách.")
+            elif dynamic == "services":
+                if not isinstance(it, str) or not SLUG_RE.match(it):
+                    add(f"Lĩnh vực “{it}” không hợp lệ. Chọn từ danh sách.")
+                else:
+                    ctx.relations.append((src, label, field["_relation"], it))
             elif str(it) not in [str(x) for x in values]:
                 add(f"Giá trị “{it}” không có trong danh sách chọn.")
         if field.get("multiple"):
@@ -1009,7 +1046,8 @@ def cms_config(dynamic, env):
         "public_folder": "/assets/uploads",
         "media_libraries": {"default": {"config": {
             "max_file_size": MAX_IMAGE_BYTES, "slugify_filename": True,
-            "transformations": {"raster_image": {"format": "webp", "quality": 82, "width": 2400, "height": 2400}}}}},
+            "transformations": {"raster_image": {"format": "webp", "quality": 82, "width": 2400, "height": 2400}}}},
+            "stock_assets": {"providers": []}},
         "slug": {"encoding": "ascii", "clean_accents": True, "sanitize_replacement": "-", "maxlength": 60},
         "output": {"omit_empty_optional_fields": True, "yaml": {"indent_size": 2, "indent_sequences": True}},
         "collections": _clean(collections(), dynamic),

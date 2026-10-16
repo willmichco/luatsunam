@@ -1,9 +1,10 @@
 ---
 tieu_de: 'Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền'
+duong_dan: dat-coc-mua-ban-nha-dat
 nhap: false
 linh_vuc: dat-dai-bat-dong-san
-ngay_dang: '2026-09-05'
-ngay_cap_nhat: '2026-09-24'
+ngay_dang: 2026-09-05
+ngay_cap_nhat: 2026-09-24
 tom_tat: Phạt cọc hoạt động thế nào, điều kiện chuyển nhượng theo Luật Đất đai 2024 và những điều khoản nên có trong hợp đồng đặt cọc.
 tom_tat_nhanh:
   - 'Bên bán từ chối thực hiện: trả lại cọc và thêm một khoản tương đương; bên mua từ chối: mất cọc – trừ khi có thỏa thuận khác.'

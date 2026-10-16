@@ -1,6 +1,6 @@
+thu_tu: 1
 ten: Thừa kế
 nhap: false
-thu_tu: 1
 bieu_tuong: i-inherit
 mo_ta_ngan: Tư vấn lập di chúc, phân chia di sản, khai nhận thừa kế và giải quyết tranh chấp giữa các bên liên quan.
 the_tinh_huong:
@@ -87,4 +87,4 @@ linh_vuc_lien_quan:
   - cong-chung
 seo:
   tieu_de: Luật sư tư vấn Thừa kế tại TP.HCM
-  mo_ta: Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản thừa kế, giải quyết tranh chấp thừa kế theo Bộ luật Dân sự. Liên hệ 0983 498 499.
+  mo_ta: Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản thừa kế, giải quyết tranh chấp thừa kế theo Bộ luật Dân sự. Liên hệ {{hotline}}.

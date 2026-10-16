@@ -196,10 +196,12 @@ Người mới: làm <a href="../bai-tap/">4 bài tập làm quen</a> (có bấm
 <p><strong>Biên tập viên:</strong> không cần lo – website vẫn chạy bản cũ. Báo quản trị tên trang/bài vừa sửa.</p>
 </li>
 <li>
-<p><strong>Quản trị:</strong> mở email <em>Build website lỗi – site vẫn giữ bản cũ</em> (issue trên GitHub). Mỗi dòng ghi <strong>tệp + tên trường</strong> đúng như trong trang quản trị, ví dụ:</p>
-<pre><code>content/hoi-dap.yml
-- Câu hỏi 1 › Câu trả lời: Đang ghi thẳng số hotline “0983.498.499”. Thay bằng mã {{hotline}} …
+<p><strong>Quản trị:</strong> mở email <em>Build website lỗi – site vẫn giữ bản cũ</em> (issue trên GitHub, đến sau khoảng 20 giây). Mỗi dòng ghi <strong>tệp + tên trường</strong> đúng như trong trang quản trị. Ví dụ thật (thử nghiệm ngày 16/10, cố ý xóa tiêu đề một bài):</p>
+<pre><code>Build dừng: 1 lỗi cần sửa
+content/bai-viet/ly-hon-don-phuong.md
+- Tiêu đề bài viết: Không được để trống.
 </code></pre>
+<p>Một ví dụ khác: <code>content/hoi-dap.yml – Câu hỏi 1 › Câu trả lời: Đang ghi thẳng số hotline “0983.498.499”. Thay bằng mã {{hotline}} …</code></p>
 <p>Mở đúng mục đó trong /admin → sửa → <strong>Lưu</strong>. Build lại thành công thì issue tự đóng. Không hiểu lỗi: chụp màn hình gửi Claude.</p>
 </li>
 <li>

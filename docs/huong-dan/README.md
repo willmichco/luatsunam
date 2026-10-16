@@ -2,7 +2,7 @@
 
 Mọi việc sửa nội dung làm tại **[willmichco.github.io/luatsunam/admin](https://willmichco.github.io/luatsunam/admin/)**, không cần biết code, không cần vào GitHub.
 Bấm **Lưu** → website tự cập nhật sau **1–3 phút**. Nhập sai → website **giữ nguyên bản cũ**, quản trị nhận email báo lỗi.
-Trong trang quản trị luôn có nút **? Hướng dẫn** ở góc dưới bên trái để mở lại trang này.
+Trong trang quản trị luôn có nút **? Hướng dẫn** ở góc dưới bên trái để mở lại trang này, cạnh đó là nút **Lịch sử chỉnh sửa** ([mục 13](#hoan-tac-va-lich-su-chinh-sua)).
 Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, không ảnh hưởng website) trước khi sửa nội dung thật.
 
 > **Luôn bấm Lưu trước khi rời khung soạn thảo.** Trang quản trị không tự lưu bản đang soạn. Nếu bấm Esc, nút ← hoặc đóng tab khi còn thay đổi chưa lưu, trang sẽ hỏi lại. Bài dài nên soạn trong Word/Google Docs rồi dán vào, và bấm Lưu mỗi 10 phút (bài vẫn là nháp nên chưa lên site).
@@ -231,3 +231,23 @@ Lĩnh vực mới tạo chưa có thẻ: lưới tự thêm thẻ tạm (tên + 
 | Danh sách Dịch vụ trong trang quản trị, nơi chưa xếp riêng | Ô **Thứ tự mặc định** của từng lĩnh vực (hoặc nút *Sắp xếp lại* ở danh sách Dịch vụ) |
 
 Khi sửa **Menu và chân trang**, khung mô phỏng tự kiểm tra và nhắc (không chặn Lưu) nếu: một trang nằm ở 2 mục menu, một lĩnh vực nằm ở 2 nhóm, lĩnh vực chưa xếp vào nhóm nào, hoặc menu trỏ tới trang còn là bản nháp.
+
+## 13. Hoàn tác và Lịch sử chỉnh sửa
+
+**Chưa bấm Lưu – sửa nhầm một ô:** ô vừa sửa hiện nút **↶ Hoàn tác** ở đầu ô. Bấm → riêng ô đó trở về như lần Lưu gần nhất, các ô khác giữ nguyên.
+Ô danh sách (các khối, các thẻ…) cũng có nút này khi vừa thêm, xóa hoặc kéo đổi chỗ một mục: bấm là trả cả danh sách về như cũ.
+
+- Muốn bỏ hết mọi thay đổi chưa lưu của trang: nút **↶ Hoàn tác tất cả** ở thanh trên cùng (cạnh nút Lưu). Trang hỏi lại trước khi bỏ.
+- Trong ô chữ, **Ctrl+Z** (Mac: **⌘+Z**) vẫn lùi từng bước gõ như bình thường.
+
+**Đã bấm Lưu – muốn lấy lại bản cũ:** mở **Lịch sử chỉnh sửa** (nút góc dưới bên trái, hoặc nút **Lịch sử** trên thanh trên cùng khi đang sửa một trang → mở sẵn lịch sử của đúng trang đó, ở tab mới nên không mất phần đang soạn).
+
+1. Mỗi dòng là một lần bấm Lưu: ai, lúc nào, trang nào. Ô **Xem lịch sử của** chọn một trang để chỉ xem trang đó.
+2. Bấm một dòng → thấy từng ô đã đổi: <del>chữ cũ</del> → <ins>chữ mới</ins>; khối/thẻ **Thêm**, **Xóa**, **Dời chỗ**.
+3. **↶ Khôi phục trang này về trước lần lưu** → trang trở về đúng như trước lần lưu đó. Lần lưu đổi nhiều trang cùng lúc có thêm nút **Hoàn tác cả lần lưu này**.
+4. Website cập nhật sau 1–3 phút. **Nếu trang đó đang mở ở tab quản trị: tải lại tab (F5) trước khi sửa tiếp**, nếu không bấm Lưu sẽ ghi đè bản vừa khôi phục.
+
+> - Khôi phục cũng được ghi thành một dòng trong lịch sử → khôi phục nhầm thì hoàn tác lại dòng đó.
+> - Trang đã được sửa thêm sau lần lưu muốn hoàn tác: trang hỏi lại, vì khôi phục sẽ bỏ luôn các lần sửa sau.
+> - Hoàn tác lần lưu **tạo trang mới** = xóa trang đó; hoàn tác lần **xóa trang** = lấy lại trang. Ảnh đã tải lên không bị xóa.
+> - Khôi phục cần đăng nhập trang quản trị trong cùng trình duyệt. Chưa đăng nhập vẫn xem được lịch sử.

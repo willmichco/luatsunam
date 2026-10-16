@@ -2,7 +2,7 @@ name: Đo Lighthouse (site thật)
 
 # Chạy tay: GitHub → Actions → "Đo Lighthouse (site thật)" → Run workflow (chọn nhánh main).
 # Tự chạy khi sửa cấu hình đo (tệp này hoặc tools/lighthouse_tom_tat.py) trên main.
-# Mốc GĐ4 (github.io) ghi trong docs/NGHIEM-THU.md; sau khi chuyển tên miền (G5) chạy lại với địa chỉ mới để so sánh.
+# Mốc GĐ4 (github.io) ghi trong docs/NGHIEM-THU.md; sau khi chuyển tên miền (G5) chạy lại để so sánh (tự đo tên miền khi đã đặt CHUYEN_HUONG_TOI).
 on:
   push:
     branches: [main]
@@ -28,7 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      URLS: ${{ inputs.urls || 'https://willmichco.github.io/luatsunam/ https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/' }}
+      # Đã chuyển tên miền (biến repo CHUYEN_HUONG_TOI): mặc định đo trên tên miền để so với mốc github.io
+      URLS: ${{ inputs.urls || (vars.CHUYEN_HUONG_TOI && format('{0}/ {0}/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/', vars.CHUYEN_HUONG_TOI)) || 'https://willmichco.github.io/luatsunam/ https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/' }}
       SO_LAN: ${{ inputs.so_lan || '5' }}
     steps:
       - uses: actions/checkout@v4

@@ -45,6 +45,7 @@ def main():
     dist = os.path.join(ROOT, sys.argv[1] if len(sys.argv) > 1 else "dist")
     site_url = (os.environ.get("SITE_URL") or "https://willmichco.github.io/luatsunam").rstrip("/")
     errors = []
+    warnings = []  # bản nháp riêng dưới /nhap/: không bao giờ chặn site chính thức
     pages = {}
     for d, _, files in os.walk(dist):
         for f in files:
@@ -76,7 +77,7 @@ def main():
             if os.path.isdir(full):
                 full = os.path.join(full, "index.html")
             if not os.path.isfile(full):
-                errors.append(f"{rel}: liên kết hỏng “{link}”")
+                (warnings if rel.startswith("nhap/") else errors).append(f"{rel}: liên kết hỏng “{link}”")
                 continue
             if anchor and full.endswith(".html"):
                 trel = os.path.relpath(full, dist)
@@ -94,6 +95,8 @@ def main():
         robots = open(os.path.join(dist, "robots.txt"), encoding="utf-8").read()
         if f"Sitemap: {site_url}/sitemap.xml" not in robots:
             errors.append("robots.txt không trỏ đúng sitemap")
+    for w in warnings:
+        print("  ! cảnh báo (bản nháp):", w)
     if errors:
         print(f"✗ {len(errors)} lỗi:")
         for e in errors:

@@ -2,6 +2,8 @@ name: Build và đăng website (GitHub Pages)
 
 # Mỗi lần lưu trong /admin (hoặc push vào main): build từ content/ → kiểm → đăng dist/ lên nhánh gh-pages.
 # Build lỗi: KHÔNG đăng (site giữ bản cũ) và mở issue "Build lỗi" kèm lỗi tiếng Việt → GitHub gửi email cho quản trị.
+# Sau khi chuyển sang tên miền riêng (GĐ5): đặt biến repo CHUYEN_HUONG_TOI = https://<tên miền> → github.io chỉ còn trang
+# chuyển hướng từng URL cũ sang tên miền (site thật do Cloudflare build); workflow vẫn build để kiểm lỗi và báo email.
 on:
   push:
     branches: [main]
@@ -49,6 +51,21 @@ jobs:
         shell: bash  # bật pipefail: bước kiểm lỗi thì dừng, không đăng
         run: python3 tools/kiem_tra.py | tee -a "$GITHUB_STEP_SUMMARY"
 
+      # Biến repo CHUYEN_HUONG_TOI (Settings → Secrets and variables → Actions → Variables): GĐ5, đã chuyển sang tên miền riêng
+      - name: Chọn bản đăng lên GitHub Pages
+        id: dang
+        env:
+          CHUYEN_HUONG_TOI: ${{ vars.CHUYEN_HUONG_TOI }}
+        run: |
+          if [ -z "$CHUYEN_HUONG_TOI" ]; then
+            echo "dir=dist" >> "$GITHUB_OUTPUT"; echo "nhan=website" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if ! python3 tools/chuyen_huong.py dist dist-chuyen-huong "$CHUYEN_HUONG_TOI" > "$RUNNER_TEMP/chuyen-huong.txt" 2> build-errors.md; then
+            msg=$(cat build-errors.md); echo "Biến repo CHUYEN_HUONG_TOI: $msg" | tee build-errors.md; exit 1
+          fi
+          tee -a "$GITHUB_STEP_SUMMARY" < "$RUNNER_TEMP/chuyen-huong.txt"
+          echo "dir=dist-chuyen-huong" >> "$GITHUB_OUTPUT"; echo "nhan=trang chuyển hướng" >> "$GITHUB_OUTPUT"
+
       - name: Xem GitHub Pages đang đọc nhánh nào
         id: pages
         env:
@@ -66,9 +83,9 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./${{ steps.dang.outputs.dir }}
           force_orphan: true
-          commit_message: "Đăng website từ ${{ github.sha }}"
+          commit_message: "Đăng ${{ steps.dang.outputs.nhan }} từ ${{ github.sha }}"
 
       # Pages đã đọc gh-pages: gỡ bản build cũ còn ở gốc main (1 lần, khi còn .ban-build.txt) để main chỉ còn mã nguồn.
       # Chỉ chạy khi API xác nhận đúng gh-pages; không đọc được cấu hình thì không đụng tới main.
@@ -104,18 +121,20 @@ jobs:
       # .ban-build.txt ghi danh sách tệp do build sinh ra để xóa đúng tệp của trang đã gỡ.
       - name: Đăng vào gốc nhánh main (Pages đang đọc main)
         if: steps.pages.outputs.branch == 'main'
+        env:
+          DIR: ${{ steps.dang.outputs.dir }}
         run: |
-          (cd dist && find . -type f | sed 's#^\./##' | sort) > /tmp/moi.txt
+          (cd "$DIR" && find . -type f | sed 's#^\./##' | sort) > /tmp/moi.txt
           if [ -f .ban-build.txt ]; then
             # Chỉ xóa tệp do build sinh ra; không bao giờ xóa tệp nguồn trùng tên (admin, CSS, JS, phông, ảnh tải lên)
             comm -23 <(sort .ban-build.txt) /tmp/moi.txt | { grep -Ev '^(admin/index\.html|assets/(css|js|fonts)/|assets/uploads/[^/]+$)' || true; } \
               | while read -r f; do git rm -q --ignore-unmatch -- "$f"; done
           fi
-          cp -r dist/. .
+          cp -r "$DIR"/. .
           cp /tmp/moi.txt .ban-build.txt
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A   # dist/, .cache/, build-errors.md đã nằm trong .gitignore
+          git add -A   # dist/, dist-*/, .cache/, build-errors.md đã nằm trong .gitignore
           if git diff --cached --quiet; then echo "Bản build không đổi"; exit 0; fi
           git commit -q -m "Cập nhật bản build cho GitHub Pages từ ${GITHUB_SHA::7} [skip ci]"
           for i in 1 2 3 4; do

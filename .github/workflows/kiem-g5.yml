@@ -1,0 +1,33 @@
+name: Kiểm chuyển tên miền (G5)
+
+# Chạy tay sau khi chuyển sang tên miền riêng (docs/CHUYEN-TEN-MIEN.md, bước 9): GitHub → Actions → "Kiểm chuyển tên miền (G5)"
+# → Run workflow. Kiểm tiêu chí 7, 8: mọi URL github.io cũ chuyển đúng trang, mọi trang trên tên miền trả 200, canonical đúng.
+# Kết quả ĐẠT/CHƯA ĐẠT hiện ngay trên trang kết quả của lượt chạy.
+on:
+  workflow_dispatch:
+    inputs:
+      ten_mien:
+        description: "Tên miền mới, vd. https://luatsunam.vn (để trống = biến repo CHUYEN_HUONG_TOI)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  kiem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Kiểm G5
+        env:
+          TEN_MIEN: ${{ inputs.ten_mien || vars.CHUYEN_HUONG_TOI }}
+        shell: bash  # pipefail: chưa đạt thì lượt chạy báo đỏ
+        run: |
+          if [ -z "$TEN_MIEN" ]; then
+            echo "Chưa có tên miền: điền ô ten_mien khi bấm Run workflow, hoặc đặt biến repo CHUYEN_HUONG_TOI." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          python3 tools/kiem_g5.py "$TEN_MIEN" | tee -a "$GITHUB_STEP_SUMMARY"

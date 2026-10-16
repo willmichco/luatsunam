@@ -8,8 +8,10 @@
 
 Một lệnh dùng chung cho máy, GitHub Actions và Cloudflare. Biến môi trường:
     SITE_URL       Địa chỉ gốc, không có / cuối (mặc định https://willmichco.github.io/luatsunam)
-    BASE_PATH      Thư mục gốc trên máy chủ (mặc định /luatsunam/; tên miền riêng: /)
-    DRAFTS=1       Xuất cả bản nháp (xem trước tại /nhap/<đường-dẫn>/)
+    BASE_PATH      Thư mục gốc trên máy chủ (mặc định: phần đường dẫn của SITE_URL – /luatsunam/ trên github.io, / trên tên miền riêng)
+    DRAFTS=1       Xuất cả bản nháp. Kèm NOINDEX=1 (bản thử): nháp dựng ngay tại đường dẫn thật như đã đăng,
+                   /nhap/<đường-dẫn>/ chuyển tới đó. Không kèm NOINDEX (bản chính thức trên tên miền riêng): nháp chỉ
+                   dựng dưới /nhap/ (noindex, khóa bằng Cloudflare Access), không lộ ra menu, danh sách, sitemap.
     NOINDEX=1      Chặn Google lập chỉ mục toàn bộ (bản thử)
     CMS_OAUTH_URL  Địa chỉ Worker đăng nhập GitHub cho /admin (để trống: đăng nhập bằng mã truy cập)
     CMS_REPO, CMS_BRANCH  Repo nội dung (mặc định willmichco/luatsunam, main)
@@ -23,6 +25,7 @@ import os
 import re
 import shutil
 import sys
+from urllib.parse import urlsplit
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import blocks  # noqa: E402
@@ -47,13 +50,18 @@ def read_env():
     e = os.environ
     preview = bool(e.get("CF_PAGES")) and not e.get("SITE_URL")
     site_url = (e.get("SITE_URL") or (e.get("CF_PAGES_URL") if preview else "") or "https://willmichco.github.io/luatsunam").rstrip("/")
-    base_path = e.get("BASE_PATH") or ("/" if preview else "/luatsunam/")
+    # Suy từ SITE_URL để đổi sang tên miền chỉ cần 1 biến (quên BASE_PATH thì 404, robots, _redirects sẽ sai thư mục)
+    base_path = e.get("BASE_PATH") or (urlsplit(site_url).path.rstrip("/") + "/")
     if not base_path.endswith("/"):
         base_path += "/"
     flag = (lambda k, d: (e.get(k) or ("1" if d else "0")).strip().lower() in ("1", "true", "yes"))
     return {
         "site_url": site_url, "base_path": base_path,
-        "drafts": flag("DRAFTS", preview), "noindex": flag("NOINDEX", preview),
+        # drafts: nháp hiện trong cấu trúc site như đã đăng (chỉ bản thử noindex toàn site);
+        # nhap_rieng: bản chính thức vẫn xuất nháp nhưng chỉ dưới /nhap/ – DRAFTS=1 không bao giờ làm lộ nháp ra site thật
+        "drafts": flag("DRAFTS", preview) and flag("NOINDEX", preview),
+        "nhap_rieng": flag("DRAFTS", preview) and not flag("NOINDEX", preview),
+        "noindex": flag("NOINDEX", preview),
         "oauth_url": e.get("CMS_OAUTH_URL", "").rstrip("/"),
         "repo": e.get("CMS_REPO") or "willmichco/luatsunam", "branch": e.get("CMS_BRANCH") or "main",
         "admin": flag("CMS_ADMIN", True),
@@ -76,8 +84,11 @@ def F():
     return S.firm
 
 
+PREFIX = ""  # thư mục chứa trang đang dựng: "nhap/" khi dựng bản nháp riêng (bản chính thức trên tên miền riêng)
+
+
 def root_of(path):
-    return "../" * path.count("/")
+    return "../" * (PREFIX + path).count("/")
 
 
 # ---------------------------------------------------------------------------
@@ -1204,6 +1215,11 @@ def write_extras(out, pages, rendered):
         for path in S.draft_paths:
             slug = path.rstrip("/").rsplit("/", 1)[-1]
             lines.append(f"{bp}nhap/{slug}/ {bp}{path} 302")
+    nhap = getattr(S, "nhap_rieng", None) or {}
+    for path in nhap:  # link ngắn /nhap/<đường-dẫn>/ → bản nháp riêng (bài viết, lĩnh vực nằm sâu hơn 1 cấp)
+        slug = path.rstrip("/").rsplit("/", 1)[-1]
+        if slug + "/" != path and slug + "/" not in nhap:
+            lines.append(f"{bp}nhap/{slug}/ {bp}nhap/{path} 302")
     write(out, "_redirects", "\n".join(lines) + "\n")
     headers = [f"{bp}assets/fonts/*", "  Cache-Control: public, max-age=31536000, immutable",
                f"{bp}assets/*", "  Cache-Control: public, max-age=604800",
@@ -1246,9 +1262,10 @@ def write_extras(out, pages, rendered):
         index.append({"t": f["hoi"], "u": f"cau-hoi-thuong-gap/#{f['ma']}", "d": first[:180], "s": "Câu hỏi thường gặp", "k": ""})
     write(out, "assets/search-index.json", json.dumps(index, ensure_ascii=False, separators=(",", ":")))
 
-    # Trang danh sách bản nháp (chỉ bản thử)
-    if S.drafts and S.draft_paths:
-        rows = "".join(f'<li><a href="../{p}">{esc(t or p)}</a> <small>/{p}</small></li>' for p, t in S.draft_paths.items())
+    # Trang danh sách bản nháp: bản thử (nháp ở đường dẫn thật) hoặc bản chính thức có nháp riêng dưới /nhap/
+    if (S.drafts and S.draft_paths) or nhap:
+        listed, pre = (S.draft_paths, "../") if S.drafts else (nhap, "")
+        rows = "".join(f'<li><a href="{pre}{p}">{esc(t or p)}</a> <small>/{p}</small></li>' for p, t in listed.items())
         write(out, "nhap/index.html", '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow">'
                                       '<meta name="viewport" content="width=device-width, initial-scale=1"><title>Bản nháp chờ duyệt</title>'
                                       '<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;color:#2b1d21}'
@@ -1267,7 +1284,7 @@ def write_extras(out, pages, rendered):
             def ignore_aliases(self, data):
                 return True
         write(out, "admin/config.yml", header + yaml.dump(cfg, Dumper=NoAlias, allow_unicode=True, sort_keys=False, width=10 ** 6))
-        huong_dan.build(out)  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
+        huong_dan.build(out, ENV["site_url"])  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
 
 
 # ---------------------------------------------------------------------------
@@ -1278,22 +1295,40 @@ def copy_static(out):
         shutil.copytree(os.path.join(ROOT, "assets", d), os.path.join(out, "assets", d))
 
 
-def try_drafts():
-    """Bản chính thức không xuất bản nháp, nhưng vẫn dựng thử trong bộ nhớ để báo sớm lỗi chỉ lộ ra khi dựng trang
-    (ảnh thiếu mô tả, mã chèn sai…). Liên kết của bản nháp được kiểm ở bản thử (Cloudflare)."""
+def try_drafts(out=None):
+    """Bản chính thức không đưa bản nháp vào site, nhưng vẫn dựng thử để báo sớm lỗi chỉ lộ ra khi dựng trang
+    (ảnh thiếu mô tả, mã chèn sai…). Có `out` (DRAFTS=1 trên bản chính thức – tên miền riêng): ghi từng bản nháp
+    riêng tại /nhap/<đường-dẫn>/ (noindex), menu, danh sách, sitemap vẫn như bản chính thức.
+    Trả về {đường dẫn thật: tiêu đề} của các bản nháp đã ghi."""
+    global PREFIX
     n = len(S.link_refs)
-    for x in S.draft_items:
-        src = x["_src"]
-        try:
-            if src.startswith("content/bai-viet/"):
-                layout(article_page(x))
-            elif src.startswith("content/dich-vu/"):
-                layout(service_page(x))
-            elif src.startswith("content/trang/"):
-                layout(block_page(x))
-        except Exception as e:  # dữ liệu nháp dở dang: chỉ cảnh báo
-            LOI.canh(src, "", f"Chưa dựng thử được bản nháp ({type(e).__name__}: {e}).")
-    del S.link_refs[n:]
+    written = {}
+    PREFIX = S.nhap_prefix = "nhap/" if out else ""
+    try:
+        for x in S.draft_items:
+            src = x["_src"]
+            try:
+                if src.startswith("content/bai-viet/"):
+                    page = article_page(x)
+                elif src.startswith("content/dich-vu/"):
+                    page = service_page(x)
+                elif src.startswith("content/trang/"):
+                    page = block_page(x)
+                else:
+                    continue
+                if out:
+                    page.update(noindex=True, is_draft=True)
+                html = layout(page)
+            except Exception as e:  # dữ liệu nháp dở dang: chỉ cảnh báo
+                LOI.canh(src, "", f"Chưa dựng thử được bản nháp ({type(e).__name__}: {e}).")
+                continue
+            if out:
+                write(out, "nhap/" + page["path"] + "index.html", html)
+                written[page["path"]] = S.draft_paths.get(page["path"]) or page["title"]
+    finally:
+        PREFIX = S.nhap_prefix = ""
+        del S.link_refs[n:]
+    return written
 
 
 def drafts_never_block():
@@ -1364,7 +1399,7 @@ def main():
             write(tmp, p["path"] if p["path"].endswith(".html") else p["path"] + "index.html", html)
         check_links(rendered, tmp)
         if not S.drafts:
-            try_drafts()
+            S.nhap_rieng = try_drafts(tmp if ENV["nhap_rieng"] else None)
         drafts_never_block()
         if LOI:
             fail()
@@ -1389,7 +1424,8 @@ def main():
         raise
     shutil.rmtree(out, ignore_errors=True)
     os.replace(tmp, out)
-    drafts = f", {len(S.draft_paths)} bản nháp" + (" (đã xuất để xem trước)" if S.drafts else " (không xuất)")
+    drafts = f", {len(S.draft_paths)} bản nháp" + (" (đã xuất để xem trước)" if S.drafts else
+                                                 f" (xuất riêng {len(S.nhap_rieng)} bản tại /nhap/)" if ENV["nhap_rieng"] else " (không xuất)")
     print(f"Đã tạo {len(pages) + 1} trang, sitemap {0 if ENV['noindex'] else len([p for p in pages if not p.get('is_draft')])} URL{drafts} → {os.path.relpath(out, ROOT)}/")
     print(f"Địa chỉ gốc: {ENV['site_url']}/  ·  noindex: {'có' if ENV['noindex'] else 'không'}")
     if LOI.canh_bao:

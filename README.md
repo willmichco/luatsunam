@@ -7,6 +7,7 @@ Website tĩnh, nội dung sửa trong trang quản trị **/admin** (Sveltia CMS
 - Hướng dẫn có ảnh chụp: <https://willmichco.github.io/luatsunam/admin/huong-dan/> (nguồn: [docs/huong-dan/README.md](docs/huong-dan/README.md))
 - Kết quả nghiệm thu GĐ4: [docs/NGHIEM-THU.md](docs/NGHIEM-THU.md)
 - Triển khai bản thử Cloudflare + đăng nhập GitHub: [docs/TRIEN-KHAI-CLOUDFLARE.md](docs/TRIEN-KHAI-CLOUDFLARE.md)
+- Chuyển sang tên miền riêng (GĐ5, code đã sẵn): [docs/CHUYEN-TEN-MIEN.md](docs/CHUYEN-TEN-MIEN.md)
 
 ## Cách hoạt động
 
@@ -44,6 +45,8 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `tools/content.py`, `tools/markup.py`, `tools/loi.py` | Nạp + kiểm nội dung, Markdown/mã chèn/liên kết, báo lỗi tiếng Việt |
 | `tools/images.py` | Ảnh thương hiệu, ảnh chia sẻ tự sinh, ảnh tải lên (lưu đệm `.cache/`) |
 | `tools/kiem_tra.py` | Kiểm sau build: canonical, og:url, sitemap, robots, liên kết, mã neo |
+| `tools/chuyen_huong.py` | GĐ5: dựng bản chuyển hướng github.io → tên miền (mỗi URL cũ 1 trang, 404 bắt đường dẫn lạ) |
+| `tools/kiem_g5.py`, `docs/g5/` | GĐ5: kiểm tiêu chí 7, 8 trên site thật; mốc URL github.io trước khi chuyển |
 | `cloudflare/oauth-worker/` | Worker đăng nhập GitHub cho /admin |
 
 Các tệp HTML, `sitemap.xml`, ảnh trong `assets/img/` do build sinh vào `dist/`, **không sửa tay**.
@@ -65,8 +68,8 @@ Biến môi trường của build:
 | Biến | Mặc định | Dùng khi |
 |---|---|---|
 | `SITE_URL` | `https://willmichco.github.io/luatsunam` | Đổi sang tên miền riêng (GĐ5) |
-| `BASE_PATH` | `/luatsunam/` | Tên miền riêng: `/` |
-| `DRAFTS=1` | tắt | Bản thử: xuất cả bản nháp, xem tại `/nhap/<đường-dẫn>/` |
+| `BASE_PATH` | phần đường dẫn của `SITE_URL` | Gần như không cần đặt: github.io → `/luatsunam/`, tên miền riêng → `/` |
+| `DRAFTS=1` | tắt | Xuất cả bản nháp. Bản thử (kèm `NOINDEX=1`): nháp dựng như đã đăng, `/nhap/<đường-dẫn>/` chuyển tới. Bản chính thức trên tên miền: nháp **chỉ** dựng dưới `/nhap/` (noindex), không lộ ra menu, danh sách, sitemap |
 | `NOINDEX=1` | tắt | Bản thử: chặn Google toàn bộ |
 | `CMS_OAUTH_URL` | trống | Địa chỉ Worker đăng nhập; trống = /admin chỉ đăng nhập bằng mã truy cập |
 

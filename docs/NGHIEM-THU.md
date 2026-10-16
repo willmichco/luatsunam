@@ -93,4 +93,4 @@ Lighthouse 13.5.0, trung vị 5 lần đo mỗi trang, chạy trên máy GitHub 
 
 1. **Người dùng thật làm 4 bài tập** tại `/admin/bai-tap/` (bấm giờ tự động) → gửi kết quả để chốt tiêu chí 1–3.
 2. **Bản thử Cloudflare + Worker đăng nhập** (docs/TRIEN-KHAI-CLOUDFLARE.md, mục A–D) → chốt tiêu chí 6 bằng link thật và để biên tập viên đăng nhập bằng GitHub.
-3. **Đổi nhánh mặc định của repo sang `main`** (đang là nhánh cũ `claude/pensive-knuth-z2sfu9`).
+3. ~~Đổi nhánh mặc định của repo sang `main`~~ – đã đổi (16/10/2026).

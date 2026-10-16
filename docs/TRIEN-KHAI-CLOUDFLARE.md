@@ -1,7 +1,7 @@
 # Triển khai bản thử Cloudflare + đăng nhập GitHub cho /admin (GĐ3 – phần việc của quản trị, khoảng 30 phút)
 
 Code đã sẵn trong repo. Các bước dưới chỉ là bấm trên giao diện Cloudflare/GitHub, làm theo thứ tự A → E.
-Toàn bộ dùng gói **Free**: 0 đ/tháng.
+Toàn bộ dùng gói **Free**: 0 đ/tháng. Khi đã mua tên miền: làm tiếp [CHUYEN-TEN-MIEN.md](CHUYEN-TEN-MIEN.md) (GĐ5).
 
 ## 0. Cho GitHub Pages đọc nhánh `gh-pages` – đã làm (16/10/2026)
 

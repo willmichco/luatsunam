@@ -146,6 +146,8 @@ def href(url, ctx):
     if path == "index.html":
         path = ""
     ctx.site.link_refs.append((ctx.src, ctx.where, path, anchor))
+    if getattr(ctx.site, "nhap_prefix", "") and path in ctx.site.draft_paths:
+        path = ctx.site.nhap_prefix + path  # bản nháp riêng dưới /nhap/: liên kết giữa các bản nháp trỏ tới bản nháp
     out = ctx.r + path + (f"#{anchor}" if anchor else "")
     return out or "./"
 

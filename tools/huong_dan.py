@@ -141,12 +141,19 @@ def render(text):
     return title, toc, body
 
 
-def build(out):
-    """Ghi out/admin/huong-dan/index.html và chép ảnh minh họa. Không có nguồn thì bỏ qua."""
+SOURCE_SITE = "https://willmichco.github.io/luatsunam"  # địa chỉ site ghi trong docs/huong-dan/README.md
+
+
+def build(out, site_url=SOURCE_SITE):
+    """Ghi out/admin/huong-dan/index.html và chép ảnh minh họa. Không có nguồn thì bỏ qua.
+    Địa chỉ site trong nguồn được đổi theo địa chỉ đang build (tên miền riêng sau GĐ5)."""
     src_md = os.path.join(SRC, "README.md")
     if not os.path.isfile(src_md):
         return
-    title, toc, body = render(open(src_md, encoding="utf-8").read())
+    md = open(src_md, encoding="utf-8").read()
+    if site_url != SOURCE_SITE:
+        md = md.replace(SOURCE_SITE + "/", site_url + "/").replace(SOURCE_SITE.split("://", 1)[1] + "/", site_url.split("://", 1)[1] + "/")
+    title, toc, body = render(md)
     dst = os.path.join(out, "admin", "huong-dan")
     os.makedirs(dst, exist_ok=True)
     for name in os.listdir(SRC):

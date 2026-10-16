@@ -136,9 +136,9 @@ def check(new_site, old_site=OLD_SITE):
             loi.append(f"{old} → {target}: tên miền trả mã {fcode} ({fbody[:80] if fcode == 0 else final})")
             continue
         same = target[len(new_site):] == path
-        if not same:  # đường dẫn cũ đã đổi (Cài đặt → Chuyển hướng): đích phải là trang thật, đi thẳng 1 bước
+        if not same:  # đường dẫn cũ đã đổi (Cài đặt chung → Chuyển hướng): đích phải là trang thật, đi thẳng 1 bước
             moved.add(path)
-            ghi_chu.append(f"{path} → {target[len(new_site):]} (đường dẫn cũ đã đổi trong Cài đặt → Chuyển hướng)")
+            ghi_chu.append(f"{path} → {target[len(new_site):]} (đường dẫn cũ đã đổi trong Cài đặt chung → Chuyển hướng)")
         ok8 += 1
     rows.append(("8", "URL github.io cũ → đúng trang trên tên miền", f"{ok8}/{len(old_urls)}", ok8 == len(old_urls) and bool(old_urls)))
 
@@ -170,7 +170,7 @@ def check(new_site, old_site=OLD_SITE):
     rows.append(("7", "robots.txt trỏ sitemap mới, không chặn site", "đạt" if robots_ok else "chưa", robots_ok))
     old_paths = {u[len(old_site):] for u in old_urls if u.startswith(old_site)}
     new_paths = {html.unescape(l)[len(new_site):] for l in locs if html.unescape(l).startswith(new_site)}
-    # đường dẫn cũ đã đổi (Cài đặt → Chuyển hướng) không nằm trong sitemap mới là đúng – đã kiểm ở mục 1
+    # đường dẫn cũ đã đổi (Cài đặt chung → Chuyển hướng) không nằm trong sitemap mới là đúng – đã kiểm ở mục 1
     missing = sorted(old_paths - new_paths - moved)
     if missing:
         loi.append("Trang có trên github.io nhưng không có trong sitemap tên miền: " + ", ".join(missing[:10]))

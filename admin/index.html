@@ -70,6 +70,22 @@
   #nut-huong-dan.gon .chu { display: none; }
   #nut-huong-dan:hover, #nut-huong-dan:focus-visible { opacity: 1; }
   @media print { #nut-huong-dan { display: none; } }
+  /* ---------- Cột trái theo menu website (admin/dieu-huong.js chèn tiêu đề nhóm) ---------- */
+  .resizable-pane:has(> nav.primary-sidebar) { min-width: 264px; } /* đủ chỗ cho tên mục thụt vào, không bị cắt */
+  nav.primary-sidebar .lsn-nhom { margin: 14px 10px 4px 14px; font: 600 11px/1.3 var(--sui-font-family-default); letter-spacing: .07em;
+    text-transform: uppercase; color: var(--sui-secondary-foreground-color); }
+  nav.primary-sidebar .lsn-nhom-con { margin: 6px 10px 2px 14px; font-size: 13px; letter-spacing: 0; text-transform: none; }
+  nav.primary-sidebar .lsn-nhom-con::after { content: " ▾"; }
+  nav.primary-sidebar [role=treeitem].lsn-con { margin-inline-start: 12px; border-inline-start: 2px solid var(--sui-control-border-color); }
+  nav.primary-sidebar [role=treeitem].lsn-mot-tep .count { visibility: hidden; }
+  /* Mô tả của mục (dòng chữ cạnh tên mục ở trên danh sách): hiện đủ 2 dòng thay vì cắt ngang */
+  [role=toolbar][aria-label="Chuyên mục"] .description .truncated-text { -webkit-line-clamp: 2 !important; }
+  #lsn-sang-toi { display: inline-flex; align-items: center; gap: 5px; height: 32px; margin-inline-end: 6px; padding: 0 12px 0 9px;
+    border: 1px solid var(--sui-control-border-color); border-radius: 999px; background: transparent; color: inherit;
+    font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
+  #lsn-sang-toi:hover, #lsn-sang-toi:focus-visible { background: var(--sui-hover-background-color); }
+  #lsn-sang-toi .icon { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 19px; line-height: 1;
+    letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
 </style>
 </head>
 <body>
@@ -165,6 +181,8 @@
 </script>
 <!-- Khung mô phỏng (cột phải khi soạn): dựng trang bằng đúng code build trong trình duyệt, tô sáng chỗ đang sửa -->
 <script src="xem-truoc.js"></script>
+<!-- Cột trái theo menu website, mở thẳng trang một tệp, nút Sáng / Tối -->
+<script src="dieu-huong.js"></script>
 <!-- Nút hướng dẫn: mở trang hướng dẫn có ảnh chụp ở tab mới (không mất phần đang soạn).
      Ở màn danh sách hiện chữ "? Hướng dẫn"; khi đang soạn thu thành nút tròn nhỏ để không che ô nhập. -->
 <a id="nut-huong-dan" href="huong-dan/" target="_blank" rel="noopener" title="Hướng dẫn sử dụng trang quản trị" aria-label="Hướng dẫn sử dụng">

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Sinh toàn bộ hình ảnh lúc build (thay cho tools/make_images.py cũ).
 
-Nguồn (sửa trong CMS → Cài đặt → Ảnh thương hiệu):
+Nguồn (sửa trong CMS → Cài đặt chung → Ảnh thương hiệu):
     content/anh-thuong-hieu/logo-lsn.webp   Logo, nền trong suốt
     content/anh-thuong-hieu/van-phong.webp  Luật sư tại văn phòng
     content/anh-thuong-hieu/phien-toa.webp  Luật sư tại phiên tòa (ảnh thẻ và ảnh tròn cắt theo "Vị trí khuôn mặt")

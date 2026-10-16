@@ -76,7 +76,7 @@ Chưa đạt thì dừng ở đây (github.io vẫn chạy bình thường), s�
    `CHUYEN_HUONG_TOI` = `https://tenmien.vn`.
 2. **Actions** → **Build và đăng website (GitHub Pages)** → **Run workflow** (nhánh `main`).
 3. 1–2 phút sau, mọi địa chỉ `willmichco.github.io/luatsunam/…` chuyển ngay tới đúng trang tương ứng trên tên miền
-   (giữ cả `?utm_…` và `#mục`); đường dẫn đã đổi trong *Cài đặt → Chuyển hướng* đi thẳng tới trang mới. Mỗi lần lưu,
+   (giữ cả `?utm_…` và `#mục`); đường dẫn đã đổi trong *Cài đặt chung → Chuyển hướng* đi thẳng tới trang mới. Mỗi lần lưu,
    workflow vẫn build để kiểm lỗi và gửi email khi lỗi như trước.
 
 ## 8. Google Search Console (10 phút)

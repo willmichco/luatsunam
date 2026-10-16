@@ -378,8 +378,8 @@ BLOCK_TYPES = [
     {"name": "hoi_dap", "label": "Hỏi đáp", "summary": "Hỏi đáp: {{fields.tieu_de}}",
      "fields": common() + section_head("Hỏi đáp", "Những câu anh chị hay hỏi") + [
          link("lien_ket", "Liên kết dưới mô tả (tùy chọn)", required=False),
-         _f("select", "cau_hoi", "Chọn câu hỏi từ kho Hỏi đáp chung",
-            "Tích các câu muốn hiện, theo thứ tự tích. Sửa nội dung câu hỏi tại mục Hỏi đáp chung.",
+         _f("select", "cau_hoi", "Chọn câu hỏi từ Kho câu hỏi dùng chung",
+            "Tích các câu muốn hiện, theo thứ tự tích. Sửa nội dung câu hỏi tại Câu hỏi thường gặp → Kho câu hỏi dùng chung.",
             options=[], multiple=True, min=1, max=10, _options="faq", dropdown_threshold=20),
      ]},
     {"name": "luoi_linh_vuc", "label": "Lưới lĩnh vực (tự động)", "summary": "Lưới lĩnh vực: {{fields.tieu_de}}",
@@ -437,8 +437,18 @@ SERVICE_TEXT_HINT = "Dùng {{ten_linh_vuc}} để chèn tên lĩnh vực (chữ 
 # ---------------------------------------------------------------------------
 # Các chuyên mục (collections)
 # ---------------------------------------------------------------------------
+# Trang tổng quan Dịch vụ và Thư viện pháp lý nằm ngay trong thư mục các lĩnh vực / bài viết (tệp _index):
+# CMS hiện chúng ở đầu danh sách của mục đó, đúng như menu website (Dịch vụ ▾ → trang tổng quan + từng lĩnh vực).
+HUB_FILES = {"dich_vu": "content/dich-vu/_index.yml", "kien_thuc": "content/bai-viet/_index.yml",
+             "hoi_dap": "content/trang-tong-hop/cau-hoi-thuong-gap.yml"}
+# Trang cố định trên menu website: mỗi trang có mục riêng trong CMS theo đúng thứ tự menu, luôn được đăng
+# (menu trỏ tới chúng), không cần các ô Bản nháp / Nằm trong mục / Loại trang.
+FIXED_PAGES = [("trang-chu", "Trang chủ"), ("gioi-thieu", "Về Luật Sư Nam"), ("vi-sao-chon-chung-toi", "Vì sao chọn chúng tôi"),
+               ("quy-trinh-lam-viec", "Quy trình làm việc"), ("lien-he", "Liên hệ")]
+FIXED_SLUGS = [s for s, _ in FIXED_PAGES]
+
 SLUG_HINT = ("Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. "
-             "Sau khi lưu KHÔNG đổi được (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.")
+             "Sau khi lưu KHÔNG đổi được (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt chung → Chuyển hướng.")
 ARTICLE_SLUG_PATTERN = ["^[a-z0-9]+(-[a-z0-9]+){1,7}$",
                         "2–8 từ, chỉ chữ a–z không dấu, số và gạch nối, ví dụ: hop-dong-dat-coc-mua-nha"]
 GUIDE = "huong-dan/"  # trang hướng dẫn, tương đối với /admin/
@@ -448,7 +458,9 @@ def slug_opts(field):
     return {"template": "{{" + field + "}}", "editable": ["create"], "hint": SLUG_HINT, "pattern": SLUG_PATTERN}
 
 
-def collections():
+def data_collections():
+    """Định nghĩa dữ liệu mà build đọc và kiểm (tên khóa, tệp, trường) – không phụ thuộc cách xếp mục trong CMS.
+    Cách xếp mục trong trang quản trị: collections()."""
     return [
         {"name": "bai_viet", "label": "Bài viết", "label_singular": "bài viết", "icon": "article",
          "description": "Bài viết pháp lý tại /kien-thuc-phap-ly/. Bài mới luôn là **bản nháp** cho tới khi luật sư duyệt. "
@@ -573,7 +585,7 @@ def collections():
         {"name": "trang_tong_hop", "label": "Trang tổng hợp", "icon": "view_list",
          "description": "Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp: sửa chữ; danh sách bên dưới tự động.",
          "files": [
-             {"name": "dich_vu", "label": "Trang Dịch vụ (/dich-vu/)", "file": "content/trang-tong-hop/dich-vu.yml", "format": "yml",
+             {"name": "dich_vu", "label": "Trang Dịch vụ (/dich-vu/)", "file": HUB_FILES["dich_vu"], "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
                          _sec("luoi", "Khối lưới lĩnh vực"),
                          obj("hinh_thuc", "Khối “Hình thức hỗ trợ”", [
@@ -583,7 +595,7 @@ def collections():
                                  summary="{{fields.tieu_de}}", min=1, max=6, label_singular="thẻ")], collapsed=True),
                          contact_band_fields(),
                          seo("Lĩnh vực hoạt động – Dịch vụ pháp lý", "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực.")]},
-             {"name": "kien_thuc", "label": "Trang Kiến thức pháp lý (/kien-thuc-phap-ly/)", "file": "content/trang-tong-hop/kien-thuc-phap-ly.yml",
+             {"name": "kien_thuc", "label": "Trang Kiến thức pháp lý (/kien-thuc-phap-ly/)", "file": HUB_FILES["kien_thuc"],
               "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
                          _sec("bai_viet", "Khối danh sách bài viết"),
@@ -595,7 +607,7 @@ def collections():
                          _sec("theo_linh_vuc", "Khối “Theo lĩnh vực”", link("lien_ket", "Liên kết cạnh tiêu đề", required=False)),
                          contact_band_fields(),
                          seo("Kiến thức pháp lý – Bài viết, tra cứu luật", "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai.")]},
-             {"name": "hoi_dap", "label": "Trang Câu hỏi thường gặp (/cau-hoi-thuong-gap/)", "file": "content/trang-tong-hop/cau-hoi-thuong-gap.yml",
+             {"name": "hoi_dap", "label": "Trang Câu hỏi thường gặp (/cau-hoi-thuong-gap/)", "file": HUB_FILES["hoi_dap"],
               "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
                          rich("ghi_chu_cuoi", "Ghi chú dưới danh sách câu hỏi", required=False, maxlength=400),
@@ -629,6 +641,112 @@ def collections():
          "files": settings_files()},
     ]
 
+
+
+# ---------------------------------------------------------------------------
+# Cách xếp mục trong trang quản trị: theo đúng menu website (trái → phải), rồi trang phụ, rồi cài đặt chung
+# ---------------------------------------------------------------------------
+SETTINGS_ORDER = ["cong_ty", "menu", "anh_thuong_hieu", "cau_chu", "seo", "theo_doi", "chuyen_huong"]
+
+
+def _hidden(f, **kw):
+    """Ô không cần sửa ở trang cố định: ẩn khỏi form nhưng giữ nguyên giá trị trong tệp."""
+    return dict({"name": f["name"], "label": f["label"], "widget": "hidden"}, **kw)
+
+
+def fixed_page_fields(fields, home=False):
+    out = []
+    for f in fields:
+        n = f["name"]
+        if n == "nhap":
+            out.append(_hidden(f, default=False))
+        elif n in ("trang_cha", "loai_trang") or (home and n in ("tieu_de", "dau_trang")):
+            out.append(_hidden(f))
+        else:
+            out.append(f)
+    return out
+
+
+def collections():
+    """Các mục trong cột trái trang quản trị. Cùng tệp, cùng trường với data_collections() (build kiểm theo đó),
+    chỉ khác cách nhóm: mỗi mục ứng với một mục menu website."""
+    d = {c["name"]: c for c in data_collections() if not c.get("divider")}
+    page_fields = d["trang"]["fields"]
+    hubs = {f["name"]: f for f in d["trang_tong_hop"]["files"]}
+    labels = dict(FIXED_PAGES)
+
+    def fixed(slug, preview):
+        return {"name": slug, "label": labels[slug], "file": f"content/trang/{slug}.yml", "format": "yml",
+                "preview_path": preview, "fields": fixed_page_fields(page_fields, home=slug == "trang-chu")}
+
+    def index_file(hub, label):
+        return {"name": "_index", "label": label, "icon": "home", "extension": "yml", "format": "yml", "fields": hub["fields"]}
+
+    blocks_help = f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi)"
+    services = dict(d["dich_vu"], label="Dịch vụ", label_singular="lĩnh vực", icon="balance",
+                    description="Menu **Dịch vụ ▾**: dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/, bên dưới là "
+                                "từng lĩnh vực /dich-vu/<đường-dẫn>/ – cũng hiện ở thẻ Trang chủ và chân trang. "
+                                "Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
+                    index_file=index_file(hubs["dich_vu"], "Trang tổng quan Dịch vụ (/dich-vu/)"),
+                    preview_path="dich-vu/{{slug}}")
+    articles = dict(d["bai_viet"], label="Bài viết pháp lý", icon="menu_book",
+                    description="Menu **Thư viện pháp lý ▾ → Bài viết pháp lý**: dòng đầu là trang danh sách /kien-thuc-phap-ly/, "
+                                "bên dưới là từng bài. Bài mới luôn là **bản nháp** cho tới khi luật sư duyệt. "
+                                f"[Hướng dẫn đăng bài]({GUIDE}#dang-bai)",
+                    index_file=index_file(hubs["kien_thuc"], "Trang Bài viết pháp lý (/kien-thuc-phap-ly/)"),
+                    preview_path="kien-thuc-phap-ly/{{slug}}")
+    faq_page = dict(hubs["hoi_dap"], name="trang-hoi-dap", label="Trang Câu hỏi thường gặp (phần chữ)", preview_path="cau-hoi-thuong-gap/")
+    faq_pool = dict(d["hoi_dap"]["files"][0], name="kho-cau-hoi", label="Kho câu hỏi dùng chung", preview_path="cau-hoi-thuong-gap/")
+    legal = [dict(f, preview_path=f["file"].split("/")[-1].rsplit(".", 1)[0] + "/") if f["name"] != "trang_404" else f
+             for f in d["trang_van_ban"]["files"]]
+    settings = {f["name"]: f for f in d["cai_dat"]["files"]}
+    fixed_pattern = "^(?!(" + "|".join(FIXED_SLUGS) + ")$)"
+    return [
+        {"name": "trang_chu", "label": "Trang chủ", "icon": "home",
+         "description": "Trang đầu tiên của website. Ghép từ các khối xếp từ trên xuống: bấm một khối để sửa, kéo để đổi thứ tự. "
+                        + blocks_help,
+         "files": [fixed("trang-chu", "./")]},
+        {"name": "gioi_thieu", "label": "Giới thiệu", "icon": "info",
+         "description": "Ba trang trong menu **Giới thiệu ▾**, đúng thứ tự trên website. " + blocks_help,
+         "files": [fixed("gioi-thieu", "gioi-thieu/"), fixed("vi-sao-chon-chung-toi", "vi-sao-chon-chung-toi/"),
+                   fixed("quy-trinh-lam-viec", "quy-trinh-lam-viec/")]},
+        services,
+        articles,
+        {"name": "hoi_dap", "label": "Câu hỏi thường gặp", "icon": "quiz",
+         "description": "Menu **Thư viện pháp lý ▾ → Câu hỏi thường gặp** (/cau-hoi-thuong-gap/): phần chữ của trang, và kho câu hỏi "
+                        "dùng chung (trang này hiện tất cả; Trang chủ và các trang khác chọn câu từ kho).",
+         "files": [faq_page, faq_pool]},
+        {"name": "lien_he", "label": "Liên hệ", "icon": "call",
+         "description": "Trang Liên hệ – mục cuối của menu. Hotline, địa chỉ, giờ làm việc sửa ở Cài đặt chung → Thông tin công ty.",
+         "files": [fixed("lien-he", "lien-he/")]},
+        {"divider": True, "name": "divider-trang"},
+        dict(d["trang"], label="Trang tự tạo", label_singular="trang", icon="note_add",
+             description="Trang mới ghép từ khối (vd. Phí dịch vụ), mặc định là bản nháp. Muốn trang hiện trên menu: "
+                         f"Cài đặt chung → Menu và chân trang. [Tạo trang mới]({GUIDE}#tao-trang)",
+             filter={"field": "slug", "pattern": fixed_pattern}),
+        dict(d["trang_van_ban"], label="Chính sách & 404", icon="policy",
+             description="Các trang ở cuối chân trang (Chính sách bảo mật, Điều khoản sử dụng, Miễn trừ trách nhiệm) và trang "
+                         "báo lỗi 404. Bố cục cố định, mục lục tự động.",
+             files=legal),
+        {"divider": True, "name": "divider-cai-dat"},
+        dict(d["cai_dat"], label="Cài đặt chung", icon="settings",
+             description="Dùng chung cho mọi trang: thông tin công ty (hotline, địa chỉ), menu và chân trang, ảnh thương hiệu, "
+                         "câu chữ dùng chung; SEO mặc định, mã theo dõi, chuyển hướng. "
+                         f"[Đổi hotline]({GUIDE}#doi-hotline) · [Chuyển hướng]({GUIDE}#chuyen-huong)",
+             files=[settings[n] for n in SETTINGS_ORDER]),
+    ]
+
+
+def fields_for_path(rel):
+    """Trường của một tệp nội dung (theo định nghĩa build kiểm)."""
+    for c in data_collections():
+        for f in c.get("files", []):
+            if f["file"] == rel:
+                return f["fields"]
+    for c in data_collections():
+        if c.get("folder") and rel.startswith(c["folder"] + "/") and not rel.rsplit("/", 1)[-1].startswith("_"):
+            return c["fields"]
+    return []
 
 def _rule_dates(v, add):
     a, b = v.get("ngay_dang"), v.get("ngay_cap_nhat")
@@ -811,7 +929,7 @@ COMPANY_SRC = "content/cai-dat/cong-ty.yml"
 
 
 def _check_literals(value, src, add, ctx):
-    """Hotline, email gõ thẳng vào nội dung sẽ không đổi theo Cài đặt → Thông tin công ty: bắt dùng mã chèn."""
+    """Hotline, email gõ thẳng vào nội dung sẽ không đổi theo Cài đặt chung → Thông tin công ty: bắt dùng mã chèn."""
     if src == COMPANY_SRC:
         return
     for rx, msg in getattr(ctx, "literals", ()):

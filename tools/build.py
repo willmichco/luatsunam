@@ -228,7 +228,7 @@ def footer_html(ctx):
     f, r, m = F(), ctx.r, S.menu
     c = ctx.at(src="content/cai-dat/menu.yml", where="Cột liên kết ở chân trang")
     cols = m.get("tieu_de_cot") or {}
-    # Thứ tự riêng cho chân trang (Cài đặt → Menu và chân trang); lĩnh vực chưa xếp nằm cuối theo ô "Thứ tự"
+    # Thứ tự riêng cho chân trang (Cài đặt chung → Menu và chân trang); lĩnh vực chưa xếp nằm cuối theo ô "Thứ tự"
     pick = [x for x in dict.fromkeys(m.get("linh_vuc_chan_trang") or []) if x in S.service_by_slug]
     ordered = [S.service_by_slug[x] for x in pick] + [s for s in S.services if s["slug"] not in pick]
     services = "".join(f'<li><a href="{r}dich-vu/{s["slug"]}/">{esc(s["ten"])}</a></li>' for s in ordered)
@@ -1290,6 +1290,9 @@ def write_extras(out, pages, rendered):
         # /admin/xem-truoc/goi.zip: code build + nội dung cho khung mô phỏng (chạy trong trình duyệt)
         import goi_xem_truoc
         goi_xem_truoc.package(out, tpl.PHOTO_SIZE, tpl.UPLOADS, {r: file_hash(r) for r in ("assets/css/style.css", "assets/js/main.js")})
+        thieu = goi_xem_truoc.missing_previews()
+        if thieu:
+            LOI.canh("admin/xem-truoc.js", "PREVIEW_NAMES", "Chưa đăng ký khung mô phỏng cho: " + ", ".join(thieu))
 
 
 # ---------------------------------------------------------------------------

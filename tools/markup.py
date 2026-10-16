@@ -4,7 +4,7 @@
 Quy ước cho người biên tập (không ô nào chứa mã HTML):
     *chữ*                 Trong ô tiêu đề: phần giữa hai dấu sao được tô đỏ nhấn mạnh.
     **đậm**, *nghiêng*    Trong ô có nút định dạng (bài viết, câu trả lời…), giống Word.
-    {{hotline}} …         Mã chèn thông tin công ty, tự cập nhật khi sửa ở Cài đặt → Thông tin công ty.
+    {{hotline}} …         Mã chèn thông tin công ty, tự cập nhật khi sửa ở Cài đặt chung → Thông tin công ty.
     /dich-vu/thua-ke/     Liên kết trong site: viết đường dẫn bắt đầu bằng "/" hoặc dán nguyên địa chỉ trang;
                           build tự đổi cho đúng thư mục và báo lỗi nếu trang hoặc mã neo không tồn tại.
 """

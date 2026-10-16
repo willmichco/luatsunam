@@ -7,6 +7,24 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 
 > **Luôn bấm Lưu trước khi rời khung soạn thảo.** Trang quản trị không tự lưu bản đang soạn. Nếu bấm Esc, nút ← hoặc đóng tab khi còn thay đổi chưa lưu, trang sẽ hỏi lại. Bài dài nên soạn trong Word/Google Docs rồi dán vào, và bấm Lưu mỗi 10 phút (bài vẫn là nháp nên chưa lên site).
 
+**Tìm chỗ cần sửa:** cột trái xếp đúng như menu trên website, từ trái sang phải; phần dùng chung cho mọi trang nằm cuối.
+
+![Cột trái của trang quản trị, xếp theo menu website](cot-trai.webp "Cột trái theo menu website; nút Tối / Sáng ở góc phải trên")
+
+| Trên website | Sửa ở cột trái |
+|---|---|
+| Trang chủ | **Trang chủ** – bấm là mở ngay |
+| Giới thiệu ▾ (Về Luật Sư Nam, Vì sao chọn chúng tôi, Quy trình làm việc) | **Giới thiệu** → chọn 1 trong 3 trang |
+| Dịch vụ ▾ | **Dịch vụ** → dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/, bên dưới là từng lĩnh vực |
+| Thư viện pháp lý ▾ → Bài viết pháp lý | **Bài viết pháp lý** → dòng đầu là trang danh sách bài, bên dưới là từng bài |
+| Thư viện pháp lý ▾ → Câu hỏi thường gặp | **Câu hỏi thường gặp** → phần chữ của trang, hoặc kho câu hỏi |
+| Liên hệ | **Liên hệ** – bấm là mở ngay |
+| Chính sách bảo mật, Điều khoản, Miễn trừ (cuối chân trang), trang lỗi 404 | **Chính sách & 404** |
+| Trang mới tự tạo | **Trang tự tạo** |
+| Hotline, địa chỉ, giờ làm việc, menu, chân trang, logo – hiện trên mọi trang | **Cài đặt chung** |
+
+Nút **Tối / Sáng** (1) ở góc phải trên đổi giao diện tối hoặc sáng (trình duyệt nhớ lựa chọn).
+
 ## 1. Đăng nhập
 
 **Biên tập viên:** bấm **Đăng nhập bằng GitHub** (1). Lần đầu GitHub hỏi cấp quyền: bấm *Authorize*. Chưa có tài khoản: xem [mục 11](#tao-tai-khoan-github).
@@ -29,11 +47,12 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 
 Khi mở một bài/trang, nửa phải màn hình là **Xem trước**: trang web dựng bằng đúng bộ build của site, cập nhật sau khoảng 0,3 giây mỗi lần gõ – chưa cần bấm Lưu.
 
-![Khung mô phỏng: khối đang sửa được đóng khung đỏ](mo-phong-1.webp "Bấm vào một khối bên trái → khung mô phỏng cuộn tới và đóng khung đỏ đúng phần đó trên trang")
+![Khung mô phỏng: danh sách các phần của trang và khối đang sửa được đóng khung đỏ](mo-phong-1.webp "Bấm “Khối 5 · Các bước” trong danh sách → form mở đúng khối, trang cuộn tới và đóng khung đỏ")
 
-- Bấm hoặc rê chuột vào một khối/ô bên trái (1) → nhãn **✎ Đang sửa** (2) ghi tên phần đó, và trang bên phải cuộn tới, **đóng khung đỏ** đúng chỗ (3). Rê chuột qua khối khác: khung nét đứt cho biết khối đó nằm đâu.
+- **Trang này gồm những phần nào:** nút **☰ Các phần** (4) mở danh sách mọi phần sửa được của trang (1), theo thứ tự từ trên xuống; số đỏ trên trang mô phỏng khớp với số trong danh sách. Bấm một phần → form bên trái mở đúng ô đó (2). Phần số xám (đầu trang, chân trang) dùng chung mọi trang: bấm nút bên dưới nó để mở đúng mục trong **Cài đặt chung**. Cuối danh sách là các ô **không hiện trên trang này** (SEO, mô tả ngắn hiện ở trang khác…).
+- Bấm hoặc rê chuột vào một khối/ô bên trái → nhãn **✎ Đang sửa** ghi tên phần đó, và trang bên phải cuộn tới, **đóng khung đỏ** đúng chỗ (3). Rê chuột qua khối khác: khung nét đứt cho biết khối đó nằm đâu.
 - Ngược lại: **bấm vào một chỗ trên trang mô phỏng** → form bên trái mở đúng khối/ô đó. Bấm link trong mô phỏng không rời trang quản trị.
-- **Máy tính / Điện thoại** (4): xem bố cục 390 px như trên điện thoại. Nút ↗ mở trang thật trên website (bản đã lưu).
+- **Máy tính / Điện thoại** (5): xem bố cục 390 px như trên điện thoại. Nút ↗ mở trang thật trên website (bản đã lưu).
 - Khối đang tắt *Hiển thị khối này* vẫn hiện mờ kèm nhãn **Đang ẩn – không hiện trên website**.
 - Khi sửa ô SEO, phía trên mô phỏng có **mẫu kết quả Google** kèm số ký tự.
 
@@ -47,7 +66,7 @@ Nếu nội dung đang có lỗi, khung đỏ phía trên liệt kê từng lỗ
 
 Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
-1. **Bài viết** → **Tạo mới** (1).
+1. **Bài viết pháp lý** → **Tạo mới** (1).
 
    ![Danh sách bài viết, nút Tạo mới](dang-bai-1.webp)
 
@@ -85,7 +104,7 @@ Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
 Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một trang – khoảng 5 phút.
 
-1. **Trang dựng từ khối** → chọn trang (ví dụ *Trang chủ*) → mục **Các khối trên trang**.
+1. Ở cột trái chọn trang (ví dụ **Trang chủ**, hoặc **Giới thiệu** → *Vì sao chọn chúng tôi*) → mục **Các khối trên trang**. Mẹo: bấm **☰ Các phần** ở khung mô phỏng rồi bấm thẳng vào khối muốn sửa.
 2. Giữ chuột vào **═** (1) rồi kéo để đổi thứ tự. **×** (2) để xóa khối. **Thêm khối** (3) → chọn loại khối → điền nội dung.
 
    ![Danh sách khối trên Trang chủ](them-khoi-1.webp)
@@ -104,19 +123,19 @@ Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một tra
 
 Khoảng 20 phút.
 
-1. **Trang dựng từ khối** → **Tạo mới** → **Tên trang** (1), giữ **Bản nháp** (2), **Nằm trong mục** (3) nếu là trang con, **Tiêu đề lớn của trang** (4).
+1. **Trang tự tạo** → **Tạo mới** → **Tên trang** (1), giữ **Bản nháp** (2), **Nằm trong mục** (3) nếu là trang con, **Tiêu đề lớn của trang** (4).
 
    ![Form tạo trang mới](tao-trang-1.webp)
 
 2. Thêm khối như [mục 4](#them-khoi) – thường dùng *Đoạn văn tự do*, *Lưới thẻ*, *Hỏi đáp*. Khối liên hệ đỏ cuối trang có sẵn.
 3. Điền **SEO** → **Lưu**. Duyệt xong → bỏ dấu **Bản nháp** → **Lưu**.
-4. **Đưa lên menu:** chờ 2–3 phút cho website build xong, **tải lại trang quản trị (F5)** để trang mới có trong danh sách chọn. **Cài đặt → Menu và chân trang** → mở mục cha (ví dụ *Giới thiệu ▾*) → **Thêm mục con** (1) → điền **Chữ** (2) → chọn **Trang** (3) → **Lưu**.
+4. **Đưa lên menu:** chờ 2–3 phút cho website build xong, **tải lại trang quản trị (F5)** để trang mới có trong danh sách chọn. **Cài đặt chung → Menu và chân trang** → mở mục cha (ví dụ *Giới thiệu ▾*) → **Thêm mục con** → điền **Chữ** (1) → chọn **Trang** (2) → **Lưu**.
 
    ![Thêm mục con vào menu](tao-trang-2.webp)
 
 ## 6. Đổi hotline
 
-**Cài đặt → Thông tin công ty** → sửa **Hotline** (1) → **Lưu**. Tự cập nhật trên mọi trang: nút Gọi, nút Zalo, chân trang, bản đồ, mô tả trên Google, dữ liệu cho Google.
+**Cài đặt chung → Thông tin công ty** → sửa **Hotline** (1) → **Lưu**. Tự cập nhật trên mọi trang: nút Gọi, nút Zalo, chân trang, bản đồ, mô tả trên Google, dữ liệu cho Google.
 
 ![Ô Hotline trong Thông tin công ty](doi-hotline.webp)
 
@@ -128,7 +147,7 @@ Khoảng 20 phút.
 Dùng khi phải đổi đường dẫn của trang/bài đã đăng (hiếm khi cần, vì làm mất thứ hạng tạm thời).
 
 1. Tạo trang/bài mới với đường dẫn mới, chép nội dung sang, đăng.
-2. **Cài đặt → Chuyển hướng 301** → **Thêm chuyển hướng** → **Đường dẫn cũ** (1) dạng `/duong-dan-cu/` → **Chuyển tới** (2) dạng `/duong-dan-moi/` → **Lưu**.
+2. **Cài đặt chung → Chuyển hướng 301** → **Thêm chuyển hướng** → **Đường dẫn cũ** (1) dạng `/duong-dan-cu/` → **Chuyển tới** (2) dạng `/duong-dan-moi/` → **Lưu**.
 
    ![Thêm một dòng chuyển hướng](chuyen-huong.webp)
 

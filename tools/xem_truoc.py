@@ -162,7 +162,12 @@ def apply(rel, data):
 def page_for(rel):
     """Trang thể hiện tệp đang sửa (tệp cài đặt, kho hỏi đáp → trang chủ / trang câu hỏi)."""
     S = build.S
-    m = re.match(r"^content/(trang|dich-vu|bai-viet)/([^/]+)\.(yml|md)$", rel)
+    hubs = {schema.HUB_FILES["dich_vu"]: build.services_hub, schema.HUB_FILES["kien_thuc"]: build.knowledge_hub,
+            schema.HUB_FILES["hoi_dap"]: build.faq_page, "content/hoi-dap.yml": build.faq_page,
+            "content/trang-van-ban/404.yml": build.not_found_page}
+    if rel in hubs:
+        return hubs[rel]()
+    m = re.match(r"^content/(trang|dich-vu|bai-viet)/([^/_][^/]*)\.(yml|md)$", rel)
     if m:
         kind, slug = m.group(1), m.group(2)
         if kind == "trang":
@@ -170,11 +175,6 @@ def page_for(rel):
         if kind == "dich-vu":
             return build.service_page(next(s for s in S.services if s["slug"] == slug))
         return build.article_page(next(a for a in S.articles if a["slug"] == slug))
-    hubs = {"content/trang-tong-hop/dich-vu.yml": build.services_hub, "content/trang-tong-hop/kien-thuc-phap-ly.yml": build.knowledge_hub,
-            "content/trang-tong-hop/cau-hoi-thuong-gap.yml": build.faq_page, "content/hoi-dap.yml": build.faq_page,
-            "content/trang-van-ban/404.yml": build.not_found_page}
-    if rel in hubs:
-        return hubs[rel]()
     m = re.match(r"^content/trang-van-ban/([^/]+)\.md$", rel)
     if m:
         return build.legal_page(m.group(1))
@@ -193,13 +193,7 @@ def check_page_links(rel):
 
 
 def _fields_for(rel):
-    for c in schema.collections():
-        for f in c.get("files", []):
-            if f["file"] == rel:
-                return f["fields"]
-        if c.get("folder") and rel.startswith(c["folder"] + "/"):
-            return c["fields"]
-    return []
+    return schema.fields_for_path(rel)
 
 
 def fill_placeholders(fields, data):
@@ -222,7 +216,7 @@ def fill_placeholders(fields, data):
             val = f"[{label}]"
         elif w == "select" and f.get("_options") == "services":
             folder = os.path.join(ROOT, "content", "dich-vu")
-            first = sorted(x[:-4] for x in os.listdir(folder) if x.endswith(".yml"))
+            first = sorted(x[:-4] for x in os.listdir(folder) if x.endswith(".yml") and not x.startswith("_"))
             val = ([first[0]] if f.get("multiple") else first[0]) if first else None
         elif w == "select" and f.get("options"):
             o = f["options"][0]

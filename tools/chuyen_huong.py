@@ -6,7 +6,7 @@
 Đọc bản build vừa dựng (dist/) để lấy đủ mọi đường dẫn đang có trên github.io, ghi vào thư mục đích:
   - mỗi đường dẫn cũ 1 trang chuyển ngay tới đúng đường dẫn đó trên tên miền mới: <link rel="canonical"> +
     <meta http-equiv="refresh" content="0"> (Google coi chuyển hướng tức thì là chuyển hướng vĩnh viễn) + JavaScript
-    giữ ?tham-số và #mã-neo; trang vốn là chuyển hướng (Cài đặt → Chuyển hướng) đi thẳng tới đích cuối, không qua 2 bước;
+    giữ ?tham-số và #mã-neo; trang vốn là chuyển hướng (Cài đặt chung → Chuyển hướng) đi thẳng tới đích cuối, không qua 2 bước;
   - 404.html: đường dẫn lạ (bài đã gỡ, link gõ sai) cũng sang đúng đường dẫn đó trên tên miền mới;
   - sitemap.xml liệt kê URL CŨ để Google vào lại từng URL và thấy chuyển hướng sớm hơn
     (gửi trong Search Console của property github.io);

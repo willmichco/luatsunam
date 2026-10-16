@@ -51,3 +51,18 @@ def package(out, photo_sizes, uploads, file_hashes):
     with open(os.path.join(dst, "goi.zip"), "wb") as fh:
         fh.write(buf.getvalue())
     return len(buf.getvalue())
+
+
+def missing_previews():
+    """Tên mục / tệp trong cấu hình CMS chưa có trong PREVIEW_NAMES của admin/xem-truoc.js (Sveltia tìm khung theo tên)."""
+    import re
+    import schema
+    js = open(os.path.join(ROOT, "admin", "xem-truoc.js"), encoding="utf-8").read()
+    m = re.search(r"PREVIEW_NAMES = \[([^\]]*)\]", js)
+    have = set(re.findall(r"'([^']+)'", m.group(1))) if m else set()
+    need = []
+    for c in schema.collections():
+        if c.get("divider"):
+            continue
+        need += [f["name"] for f in c["files"]] if "files" in c else [c["name"]]
+    return [n for n in need if n not in have]

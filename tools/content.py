@@ -111,13 +111,15 @@ class Site:
 
 
 def _collections():
-    return {c["name"]: c for c in schema.collections() if not c.get("divider")}
+    return {c["name"]: c for c in schema.data_collections() if not c.get("divider")}
 
 
 def load_folder(col, site):
     entries = []
     for path in sorted(glob.glob(os.path.join(ROOT, col["folder"], "*." + col["extension"]))):
         slug = os.path.splitext(os.path.basename(path))[0]
+        if slug.startswith("_"):  # _index: trang tổng quan của mục (Dịch vụ, Bài viết pháp lý), đọc riêng
+            continue
         src = rel(path)
         if not SLUG_RE.match(slug) or len(slug) > 60:
             LOI.them(src, "Đường dẫn", f"Tên tệp/đường dẫn “{slug}” không hợp lệ: chỉ a–z, 0–9, gạch nối, tối đa 60 ký tự.")
@@ -192,11 +194,11 @@ def literal_patterns(firm):
         body = sep.join(digits[1:])
         out.append((re.compile(rf"(?<!\d)(?:0|\+?84{sep}){body}(?!\d)"),
                     "Đang ghi thẳng số hotline “{}”. Thay bằng mã {{{{hotline}}}} (chữ) hoặc {{{{tel}}}} / {{{{zalo}}}} "
-                    "(địa chỉ liên kết) để số tự đổi khi sửa ở Cài đặt → Thông tin công ty."))
+                    "(địa chỉ liên kết) để số tự đổi khi sửa ở Cài đặt chung → Thông tin công ty."))
     if firm["email"]:
         out.append((re.compile(re.escape(firm["email"]), re.I),
                     "Đang ghi thẳng email “{}”. Thay bằng mã {{{{email}}}} (chữ) hoặc {{{{mailto}}}} (địa chỉ liên kết) "
-                    "để tự đổi khi sửa ở Cài đặt → Thông tin công ty."))
+                    "để tự đổi khi sửa ở Cài đặt chung → Thông tin công ty."))
     return out
 
 
@@ -237,6 +239,9 @@ def load(env):
     all_services = load_folder(cols["dich_vu"], site)
     all_articles = load_folder(cols["bai_viet"], site)
     all_pages = load_folder(cols["trang"], site)
+    for p in all_pages:  # trang cố định trên menu luôn được đăng (CMS không có ô Bản nháp cho chúng)
+        if p["slug"] in schema.FIXED_SLUGS:
+            p["nhap"] = False
     site.faq = load_file(cols["hoi_dap"], "hoi_dap", site).get("cau_hoi") or []
     for i, f in enumerate(site.faq, 1):
         if not f.get("ma"):  # câu hỏi mới chưa đặt mã neo: tự tạo từ câu hỏi
@@ -283,7 +288,7 @@ def _check_article_path(a):
     else:
         LOI.them(a["_src"], where, f"Ô này đã đổi thành “{want}” nhưng địa chỉ bài vẫn là “{slug}” – đường dẫn không đổi được "
                                    f"sau khi lưu. Trả ô về “{slug}”. Cần đổi địa chỉ: tạo bài mới và thêm chuyển hướng "
-                                   f"(Cài đặt → Chuyển hướng).")
+                                   f"(Cài đặt chung → Chuyển hướng).")
 
 
 def _check(site, all_pages):
@@ -317,7 +322,7 @@ def _check(site, all_pages):
         for i, b in enumerate(p.get("cac_khoi") or [], 1):
             for fid in b.get("cau_hoi") or []:
                 if fid not in site.faq_by_id:
-                    LOI.them(p["_src"], f"Các khối trên trang › Khối {i} (Hỏi đáp)", f"Câu hỏi “{fid}” không còn trong kho Hỏi đáp chung.")
+                    LOI.them(p["_src"], f"Các khối trên trang › Khối {i} (Hỏi đáp)", f"Câu hỏi “{fid}” không còn trong Kho câu hỏi dùng chung (mục Câu hỏi thường gặp).")
     # Lĩnh vực: không tự liên quan tới chính mình
     for s in site.services:
         if s["slug"] in (s.get("linh_vuc_lien_quan") or []):

@@ -28,8 +28,8 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | Đường dẫn | Nội dung |
 |---|---|
 | `content/cai-dat/` | Thông tin công ty, menu + chân trang, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng 301, ảnh thương hiệu |
-| `content/trang/*.yml` | Trang dựng từ khối: Trang chủ, Giới thiệu, Vì sao chọn chúng tôi, Quy trình, Liên hệ, mọi trang mới |
-| `content/trang-tong-hop/` | Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp (danh sách bên dưới tự động) |
+| `content/trang/*.yml` | Trang ghép từ khối: Trang chủ, Giới thiệu, Vì sao chọn chúng tôi, Quy trình, Liên hệ (mỗi trang một mục riêng trong CMS, luôn đăng), mọi trang tự tạo |
+| `content/dich-vu/_index.yml`, `content/bai-viet/_index.yml`, `content/trang-tong-hop/cau-hoi-thuong-gap.yml` | Trang tổng quan Dịch vụ, Bài viết pháp lý, Câu hỏi thường gặp (danh sách bên dưới tự động). Hai tệp `_index` nằm trong thư mục của mục đó nên CMS hiện chúng ở dòng đầu danh sách |
 | `content/trang-van-ban/` | Chính sách bảo mật, Điều khoản, Miễn trừ trách nhiệm (Markdown), trang 404 |
 | `content/dich-vu/*.yml` | 7 lĩnh vực dịch vụ |
 | `content/bai-viet/*.md` | Bài viết (Markdown + thông tin đầu tệp) |
@@ -38,10 +38,11 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `assets/uploads/` | Ảnh tải lên qua CMS (tự đổi WebP khi tải lên; build sinh thêm bản 480/960/1600) |
 | `assets/css/style.css`, `assets/js/main.js`, `assets/fonts/` | Giao diện – chỉ sửa bằng code |
 | `admin/index.html` | Trang quản trị: Sveltia CMS khóa phiên bản 0.221.8, thành phần “Ảnh” (bắt buộc mô tả) và “Bảng”, chống mất bài đang soạn, nút Hướng dẫn, giao diện màu thương hiệu + phông Be Vietnam Pro |
-| `admin/xem-truoc.js`, `admin/xem-truoc-worker.js` | Khung mô phỏng trong /admin: dựng trang bằng chính code build (Python chạy trong trình duyệt qua Pyodide 0.29.5 từ jsDelivr), đóng khung đỏ chỗ đang sửa, bấm trên mô phỏng → nhảy tới ô, máy tính/điện thoại, mẫu kết quả Google, báo lỗi trước khi Lưu |
+| `admin/xem-truoc.js`, `admin/xem-truoc-worker.js` | Khung mô phỏng trong /admin: dựng trang bằng chính code build (Python chạy trong trình duyệt qua Pyodide 0.29.5 từ jsDelivr), đóng khung đỏ chỗ đang sửa, danh sách “Các phần” của trang (số khớp trên trang), bấm trên mô phỏng → nhảy tới ô, máy tính/điện thoại, mẫu kết quả Google, báo lỗi trước khi Lưu |
+| `admin/dieu-huong.js` | Cột trái theo menu website (tiêu đề nhóm, Thư viện pháp lý thụt vào), Trang chủ/Liên hệ mở thẳng trình soạn, nút Tối/Sáng |
 | `tools/xem_truoc.py`, `tools/goi_xem_truoc.py` | Phần Python của khung mô phỏng; build đóng gói `tools/` + `content/` + thư viện vào `/admin/xem-truoc/goi.zip` (~280 KB) |
 | `docs/huong-dan/` | Hướng dẫn sử dụng có ảnh chụp; build dựng thành `/admin/huong-dan/` (`tools/huong_dan.py`) |
-| `tools/schema.py` | Khai báo mọi trường: nhãn, gợi ý, giới hạn, quy tắc kiểm; 15 khối dựng trang |
+| `tools/schema.py` | Khai báo mọi trường: nhãn, gợi ý, giới hạn, quy tắc kiểm; 15 khối dựng trang. `data_collections()` = dữ liệu build đọc và kiểm; `collections()` = cách xếp mục trong CMS theo menu website (cùng tệp, cùng trường) |
 | `tools/build.py` | Build: đọc `content/`, kiểm, dựng trang, ảnh, sitemap, `_redirects`, `_headers`, `/admin/config.yml` |
 | `tools/blocks.py`, `tools/tpl.py` | Template các khối và thành phần dùng chung |
 | `tools/content.py`, `tools/markup.py`, `tools/loi.py` | Nạp + kiểm nội dung, Markdown/mã chèn/liên kết, báo lỗi tiếng Việt |

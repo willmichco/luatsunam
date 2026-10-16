@@ -5,7 +5,7 @@
   'use strict';
 
   var doc = document.documentElement;
-  doc.classList.add('js');
+  // Không thêm lớp "js" vào <html>: đổi lớp ở gốc trang bắt trình duyệt tính lại giao diện cả trang (~150 ms trên điện thoại yếu)
   var ROOT = doc.getAttribute('data-root') || '';
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -94,7 +94,7 @@
     if (floating) floating.classList.toggle('is-visible', y > 300);
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  requestAnimationFrame(onScroll); // đọc vị trí cuộn ở khung hình kế tiếp: không ép trình duyệt tính bố cục ngay lúc tải
   if (toTop) toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); });
 
   /* ---------- Navigation: disclosure buttons, mouse and keyboard ---------- */
@@ -178,22 +178,27 @@
     else if (!e.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement))) { e.preventDefault(); first.focus(); }
   });
 
-  /* ---------- Hiện dần khi cuộn ---------- */
-  var reveals = $$('.reveal');
+  /* ---------- Hiện dần khi cuộn ----------
+     Chỉ phần NẰM DƯỚI màn hình lúc tải mới được giấu (lớp reveal-cho) rồi hiện dần khi cuộn tới. Phần đang thấy trên màn hình
+     không bao giờ bị giấu: không nháy, không làm chậm lúc trang hiện ra, không tính lại bố cục cả trang. */
   if ('IntersectionObserver' in window && !reduceMotion) {
+    var seen = typeof WeakSet === 'function' ? new WeakSet() : null;
     var io = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
         var el = e.target;
+        if (seen && !seen.has(el)) { // lần báo đầu tiên = vị trí lúc tải trang
+          seen.add(el);
+          if (e.isIntersecting) obs.unobserve(el); else el.classList.add('reveal-cho');
+          return;
+        }
+        if (!e.isIntersecting) return;
         var siblings = $$(':scope > .reveal', el.parentElement);
         el.style.transitionDelay = Math.min(Math.max(siblings.indexOf(el), 0), 4) * 60 + 'ms';
         el.classList.add('is-in');
         obs.unobserve(el);
       });
-    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
-    reveals.forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add('is-in'); });
+    }, { threshold: 0.01 });
+    if (seen) $$('.reveal').forEach(function (el) { io.observe(el); });
   }
 
   /* ---------- Cửa sổ tìm kiếm ---------- */
@@ -333,7 +338,7 @@
     function edge() { bar.classList.toggle('has-more', bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 4); }
     bar.addEventListener('scroll', edge, { passive: true });
     window.addEventListener('resize', edge);
-    edge();
+    requestAnimationFrame(edge);
   });
 
   /* ---------- Bài viết: mục lục đầu bài, tiến độ đọc, chia sẻ ---------- */
@@ -354,7 +359,7 @@
       fill.style.transform = 'scaleX(' + Math.min(1, Math.max(0, -r.top / Math.max(total, 1))) + ')';
     };
     window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(progress); } }, { passive: true });
-    progress();
+    requestAnimationFrame(progress);
   }
   $$('[data-share]').forEach(function (btn) {
     btn.classList.add('is-ready');

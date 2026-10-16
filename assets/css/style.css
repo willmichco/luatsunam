@@ -150,7 +150,7 @@ a.tag:hover { background: var(--brand); color: #fff; }
 
 /* ---------- Header ---------- */
 /* Không dùng backdrop-filter/transform ở header: sẽ làm menu điện thoại (position: fixed) bám theo header */
-.header { position: sticky; top: 0; z-index: 50; background: rgba(255, 253, 249, .98); border-bottom: 1px solid var(--line); transition: box-shadow .3s; }
+.header { view-transition-name: site-header; position: sticky; top: 0; z-index: 50; background: rgba(255, 253, 249, .98); border-bottom: 1px solid var(--line); transition: box-shadow .3s; }
 .header.is-scrolled { box-shadow: 0 6px 20px rgba(60, 30, 20, .07); }
 .header__inner { display: flex; align-items: center; height: var(--header-h); gap: 24px; }
 .logo { display: inline-flex; align-items: center; gap: 14px; flex-shrink: 0; min-width: 0; }
@@ -589,8 +589,8 @@ a.icard:hover .icard__more { gap: 10px; }
 
 /* ---------- Hiện dần khi cuộn (chỉ màn hình lớn) ---------- */
 @media (min-width: 761px) {
-  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s var(--ease), transform .55s var(--ease); }
-  .js .reveal.is-in { opacity: 1; transform: none; }
+  .reveal-cho { opacity: 0; transform: translateY(14px); transition: opacity .55s var(--ease), transform .55s var(--ease); }
+  .reveal-cho.is-in { opacity: 1; transform: none; }
 }
 
 /* ---------- Trạng thái giờ làm việc (main.js điền theo giờ Việt Nam) ---------- */
@@ -825,17 +825,23 @@ a.icard:hover .icard__more { gap: 10px; }
   .logo__tag { display: none; }
 }
 
+/* Chuyển trang mờ dần (Chrome, Edge, Safari 18.2+); đầu trang đứng yên. Trình duyệt khác: chuyển trang như thường */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .js .reveal { opacity: 1; transform: none; }
+  .reveal-cho { opacity: 1; transform: none; }
 }
 
 @media print {
   .header, .footer, .floating, .actionbar, .overlay, .cband, .article-aside, .subnav, .lcard { display: none !important; }
   .phead, .hero { background: none; }
   body { padding: 0; }
-  .js .reveal { opacity: 1; transform: none; }
+  .reveal-cho { opacity: 1; transform: none; }
 }
 
 /* ---------- Trang dịch vụ: tình huống, việc nên làm ngay, tóm tắt bài viết ---------- */

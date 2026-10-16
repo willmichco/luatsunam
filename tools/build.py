@@ -438,7 +438,7 @@ def gio_attr():
 def layout(page):
     r = page.get("root_override", root_of(page["path"]))
     ctx = Ctx(S, r, page["path"], page.get("src", ""))
-    css_v, js_v = file_hash("assets/css/style.css"), file_hash("assets/js/main.js")
+    js_v = file_hash("assets/js/main.js")
     url = abs_url(page["path"])
     noindex = page.get("noindex") or ENV["noindex"]
     robots = "noindex, follow" if noindex else "index, follow, max-image-preview:large, max-snippet:-1"
@@ -493,7 +493,8 @@ def layout(page):
 <link rel="manifest" href="{r}site.webmanifest">
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{r}assets/css/style.css?v={css_v}">{tracking_head(page)}
+<style>{site_css().replace('url("../fonts/', 'url("' + r + 'assets/fonts/')}</style>
+<script type="speculationrules">{speculation_rules()}</script>{tracking_head(page)}
 <script type="application/ld+json">
 {jsonld(page)}
 </script>
@@ -517,6 +518,30 @@ def layout(page):
 </body>
 </html>
 """
+
+
+def speculation_rules():
+    """Tải trước trang khi người xem rê chuột / chạm vào liên kết (Chrome, Edge): bấm là trang hiện gần như ngay.
+    Chỉ tải HTML (không chạy mã theo dõi); bỏ qua /admin, /nhap. Trình duyệt không hỗ trợ thì bỏ qua."""
+    bp = ENV["base_path"]  # đường dẫn tuyệt đối theo thư mục gốc của site: /luatsunam/ trên github.io, / trên tên miền riêng
+    return json.dumps({"prefetch": [{"source": "document", "where": {"and": [
+        {"href_matches": bp + "*"}, {"not": {"href_matches": [bp + "admin/*", bp + "nhap/*"]}}]}, "eagerness": "moderate"}]},
+        separators=(",", ":"))
+
+
+_CSS = []
+
+
+def site_css():
+    """assets/css/style.css rút gọn, nhúng thẳng vào <head> mỗi trang: trang hiện ngay khi HTML về, không chờ thêm một lượt
+    tải CSS (GitHub Pages chỉ cho lưu đệm 10 phút nên tệp CSS riêng gần như lần nào cũng phải hỏi lại máy chủ).
+    Rút gọn an toàn: bỏ chú thích, gộp khoảng trắng, bỏ khoảng trắng quanh { } ; , (không đụng dấu : của bộ chọn)."""
+    if not _CSS:
+        with open(os.path.join(ROOT, "assets", "css", "style.css"), encoding="utf-8") as fh:
+            css = re.sub(r"/\*.*?\*/", "", fh.read(), flags=re.S)
+        css = re.sub(r"\s*([{};,])\s*", r"\1", re.sub(r"\s+", " ", css)).replace(";}", "}")
+        _CSS.append(css.strip())
+    return _CSS[0]
 
 
 def file_hash(rel):

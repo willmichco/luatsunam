@@ -11,7 +11,7 @@ Ký hiệu: **Đạt** = đã kiểm xong · **Đạt phần máy** = đã chạ
 | 4 | CMS không bao giờ lệch site | **Đạt** | GĐ4 thêm ô “Đường dẫn bài viết” chỉ ở `tools/schema.py` → build sinh `admin/config.yml` mới → ô hiện trong CMS ngay lượt sau. Cấu hình kiểm theo schema Sveltia: 0 lỗi |
 | 5 | Nhập sai không làm sập site; email ≤ 10 phút, lỗi tiếng Việt chỉ rõ tệp + trường | **Đạt** – báo lỗi sau 19 giây (issue #23), site giữ bản cũ; sửa xong thì issue tự đóng sau 20 giây | Cố ý xóa tiêu đề bài viết trên `main` (commit thử nghiệm) rồi hoàn tác |
 | 6 | Luật sư duyệt nháp đúng bố cục thật tại `/nhap/<slug>/`, không bị Google index | **Đạt phần code** – chờ bản thử Cloudflare (bước A) để có link thật | Bản thử (`CF_PAGES`): nháp dựng tại đường dẫn thật, `/nhap/<slug>/` chuyển 302 tới đó, thẻ `noindex`, header `X-Robots-Tag: noindex`, `robots.txt` chặn toàn bộ. Bản chính thức: nháp không xuất, không vào sitemap, tìm kiếm, menu |
-| 9 | Bấm Lưu → lên site ≤ 3 phút | **Đạt** – 51, 48 và 50 giây (đo đầu-cuối 3 lần); chậm nhất ước khoảng 2 phút | Thời điểm push → workflow build xong → GitHub Pages đăng xong (API GitHub Actions) |
+| 9 | Bấm Lưu → lên site ≤ 3 phút | **Đạt** – 51, 48, 50 và 76 giây (đo đầu-cuối 4 lần); chậm nhất ước khoảng 2 phút | Thời điểm push → workflow build xong → GitHub Pages đăng xong (API GitHub Actions) |
 
 ## Tiêu chí 9 – thời gian từ lúc lưu tới lúc lên site
 
@@ -20,10 +20,14 @@ Ký hiệu: **Đạt** = đã kiểm xong · **Đạt phần máy** = đã chạ
 | 1 | `cb4ea96` sửa CMS + hướng dẫn | 01:07:00 | 01:07:23 | 01:07:51 | **51 giây** |
 | 2 | `184713d` bài tập làm quen | 01:12:22 | 01:12:43 | 01:13:10 | **48 giây** |
 | 3 | `5873796` kết quả nghiệm thu | 01:18:45 | 01:19:01 | 01:19:35 | **50 giây** |
+| 4 | `99a403b` ghi lượt đo 3 – lần đầu đăng qua nhánh `gh-pages` | 01:23:29 | 01:24:01 | 01:24:45 | **76 giây** |
 
 Giờ UTC ngày 16/10/2026, lấy từ GitHub Actions. Hai phần của một lượt lưu, theo các lượt gần nhất:
-- Build + kiểm trên GitHub Actions: 19–24 giây (7 lượt).
-- GitHub Pages đăng: 22–92 giây, trung vị khoảng 31 giây (12 lượt).
+- Build + kiểm trên GitHub Actions: 19–38 giây (7 lượt).
+- GitHub Pages đăng: 22–92 giây, trung vị 31 giây (13 lượt).
+
+Từ lần 4, GitHub Pages đọc nhánh `gh-pages` (đổi lúc 01:21). Bước đăng lâu hơn khoảng 4 giây; lần 4 chậm hơn chủ yếu vì máy
+GitHub Actions khởi động chậm (cài Python 13 giây, các lần trước 4 giây).
 
 Trường hợp chậm nhất ước khoảng 2 phút, vẫn dưới mức 3 phút.
 
@@ -71,7 +75,7 @@ Lighthouse 13.5.0, trung vị 5 lần đo mỗi trang, chạy trên máy GitHub 
 
 ## Những gì chạy thử phát hiện và đã sửa trong GĐ4
 
-| Phát hiện khi chạy trên CMS thật | Ảnh hưởng | Đã sửa |
+| Phát hiện khi chạy thật (CMS, pipeline) | Ảnh hưởng | Đã sửa |
 |---|---|---|
 | Ảnh chèn vào bài không bắt buộc mô tả; lỗi chỉ lộ ra lúc build | Bài có ảnh bị chặn khi đăng, mất một vòng sửa | Thành phần “Ảnh” riêng: ô *Mô tả ảnh* bắt buộc, CMS không cho lưu khi thiếu; thêm *Chú thích dưới ảnh* |
 | Đường dẫn tự tạo từ tiêu đề dài bị cắt giữa chữ (`…tranh-mat-co`) | URL xấu, không sửa được sau khi lưu | Ô *Đường dẫn bài viết* riêng (2–8 từ); build bắt lỗi khi ô bị sửa lệch tên tệp |
@@ -83,6 +87,7 @@ Lighthouse 13.5.0, trung vị 5 lần đo mỗi trang, chạy trên máy GitHub 
 | Khung “Xem trước” chung chung chiếm nửa màn hình ở form có cấu trúc | Form chật, dễ nhầm là bố cục thật | Tắt ở trang, lĩnh vực, cài đặt; giữ ở bài viết và trang văn bản |
 | Tên khối có số thứ tự danh mục (“11 · Lưới lĩnh vực” ở vị trí 3) | Dễ nhầm là thứ tự trên trang | Bỏ số |
 | Lần lưu đầu của mỗi tệp tạo diff lộn xộn (CMS sắp lại trường) | Khó xem lịch sử để hoàn tác | Chuẩn hóa toàn bộ `content/` theo đúng cách CMS ghi; HTML dựng ra giống hệt từng byte |
+| Đổi nguồn GitHub Pages sang `gh-pages` (16/10, 01:21): nhánh này còn bản build ngày 15/10 | Từ lúc đổi tới lượt đăng kế tiếp (khoảng 3 phút), site hiện bản cũ, `/admin/huong-dan/` báo 404 | Workflow luôn đăng lên `gh-pages` (cả khi Pages đọc `main`); tự gỡ bản build cũ khỏi gốc `main`; báo lỗi nếu chọn nhầm nguồn *GitHub Actions* |
 
 ## Còn chờ
 

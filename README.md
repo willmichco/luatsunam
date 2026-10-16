@@ -47,8 +47,9 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `cloudflare/oauth-worker/` | Worker đăng nhập GitHub cho /admin |
 
 Các tệp HTML, `sitemap.xml`, ảnh trong `assets/img/` do build sinh vào `dist/`, **không sửa tay**.
-GitHub Pages hiện đọc gốc nhánh `main`, nên workflow tạm chép `dist/` vào gốc `main` (danh sách tệp: `.ban-build.txt`);
-khi chuyển nguồn Pages sang `gh-pages` (Settings → Pages), workflow tự đăng lên `gh-pages` và `main` chỉ còn mã nguồn.
+Workflow đăng `dist/` lên nhánh `gh-pages`, nơi GitHub Pages đọc (Settings → Pages → *Deploy from a branch* → `gh-pages`, từ 16/10/2026);
+`main` chỉ chứa mã nguồn. Nếu Pages bị đổi về đọc gốc `main`, workflow chép thêm bản build vào gốc `main` (danh sách tệp: `.ban-build.txt`)
+và tự gỡ khi Pages đọc lại `gh-pages`. Chọn nhầm *Source: GitHub Actions* thì workflow báo lỗi qua issue/email.
 
 ## Chạy trên máy
 

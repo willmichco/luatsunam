@@ -1,5 +1,5 @@
 ---
-tieu_de: 'Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con'
+tieu_de: ''
 duong_dan: ly-hon-don-phuong
 nhap: false
 linh_vuc: hon-nhan-gia-dinh

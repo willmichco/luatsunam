@@ -290,6 +290,12 @@ def render(collection, slug, file_name, data_json, is_new=False, path=None):
 
 def setup(snapshot_json):
     SNAP.update(json.loads(snapshot_json) if isinstance(snapshot_json, str) else snapshot_json)
+    # Đọc sẵn mọi tệp nội dung lúc tải bộ dựng (chạy nền, trước khi mở bài): lần mô phỏng đầu tiên nhanh như các lần sau
+    for d, _, files in os.walk(os.path.join(ROOT, "content")):
+        for f in files:
+            if f.endswith((".yml", ".md")):
+                content.read_file(os.path.join(d, f))
+    LOI.loi, LOI.canh_bao = [], []
 
 
 def snapshot(out, sizes, uploads, img_sizes):

@@ -73,12 +73,18 @@
     b.setAttribute('aria-pressed', dark ? 'true' : 'false');
   }
   function visible(el) { return !!el && el.getClientRects().length > 0; }
+  // Nút tài khoản ở thanh trên cùng: nhận theo tên biểu tượng (không đổi theo ngôn ngữ giao diện)
+  function accountButton() {
+    return document.querySelector('[role=toolbar] button[aria-label="Hiển thị trình đơn tài khoản"]') ||
+      [].filter.call(document.querySelectorAll('[role=toolbar] button[aria-haspopup=menu]'), function (x) {
+        return /account_circle/.test(x.textContent);
+      })[0] || null;
+  }
   function addThemeButton() {
     // Thanh trên cùng ở màn danh sách (trước nút tài khoản), hoặc thanh của trình soạn (trước nút Lưu)
     var save = document.querySelector('button[aria-keyshortcuts$="+S"]');
     // Đang soạn: thanh của trình soạn phủ lên màn danh sách (thanh trên cùng vẫn còn bên dưới) → ưu tiên cạnh nút Lưu
-    var anchor = [save && /\/(entries|new)/.test(location.hash) ? save : null,
-      document.querySelector('[role=toolbar] button[aria-label="Hiển thị trình đơn tài khoản"]')].filter(visible)[0];
+    var anchor = [save && /\/(entries|new)/.test(location.hash) ? save : null, accountButton()].filter(visible)[0];
     var b = document.getElementById('lsn-sang-toi');
     if (anchor === save && anchor.parentElement && /wrapper/.test(anchor.parentElement.className)) anchor = anchor.parentElement;
     if (!anchor || (b && b.nextElementSibling === anchor)) return;

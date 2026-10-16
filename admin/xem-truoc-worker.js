@@ -25,6 +25,7 @@ async function init(msg) {
   );
   xt = py.globals.get('xem_truoc');
   postMessage({ type: 'ready', ms: Date.now() - t0 });
+  next(); // yêu cầu dựng gửi tới trong lúc đang tải (mở thẳng một trang / tải lại trang): dựng ngay, không đợi lần gõ sau
 }
 
 function next() {

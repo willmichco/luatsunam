@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Hướng dẫn sử dụng trang quản trị – Luật Sư Nam</title>
+<style>
+:root { --brand: #b5000b; --brand-700: #93000a; --ink: #2b1d21; --text: #4a4245; --muted: #6b6064; --line: #ebe1d3;
+  --cream: #f8f2e8; --bg: #fffdf9; --note: #fff8e6; --note-line: #e8c46a; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.7 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+a { color: var(--brand); overflow-wrap: anywhere; }
+main { overflow-wrap: break-word; }
+.top { position: sticky; top: 0; z-index: 5; display: flex; gap: 16px; align-items: center; padding: 10px 20px;
+  background: var(--brand-700); color: #fff; font-size: 14px; }
+.top strong { font-size: 15px; margin-right: auto; color: #fff; }
+.top a { color: #fff; text-decoration: none; padding: 4px 10px; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; white-space: nowrap; }
+.top a:hover { background: rgba(255,255,255,.12); }
+.wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; max-width: 1180px; margin: 0 auto; padding: 28px 20px 80px; }
+nav.toc { position: sticky; top: 64px; align-self: start; max-height: calc(100vh - 80px); overflow: auto; font-size: 14.5px; }
+nav.toc p { margin: 0 0 8px; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: .04em; font-size: 12.5px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a { display: block; padding: 6px 10px; border-left: 3px solid transparent; color: var(--text); text-decoration: none; }
+nav.toc a::before { content: counter(toc) ". "; color: var(--muted); }
+nav.toc a:hover, nav.toc a.on { border-left-color: var(--brand); color: var(--ink); background: var(--cream); }
+main { min-width: 0; max-width: 860px; }
+h1 { margin: 0 0 14px; color: var(--ink); font-size: clamp(26px, 3.2vw, 34px); line-height: 1.25; }
+h2 { margin: 52px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink); font-size: 24px; line-height: 1.3; scroll-margin-top: 70px; }
+h3 { margin: 28px 0 8px; color: var(--ink); font-size: 18px; }
+ol, ul { padding-left: 1.4em; }
+li + li { margin-top: .45em; }
+li > p { margin: .3em 0; }
+strong { color: var(--ink); }
+code { padding: .1em .35em; background: var(--cream); border-radius: 4px; font: .92em/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); }
+pre { overflow-x: auto; padding: 12px 14px; background: #2e1e22; color: #f3e9e6; border-radius: 8px; font-size: 13.5px; line-height: 1.6; }
+pre code { padding: 0; background: none; color: inherit; }
+blockquote { margin: 18px 0; padding: 12px 16px; background: var(--note); border: 1px solid var(--note-line); border-left-width: 4px; border-radius: 8px; color: var(--ink); }
+blockquote p { margin: 0; }
+figure { margin: 14px 0 20px; }
+figure a { display: block; }
+figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 20px rgba(43,29,33,.10); background: #fff; }
+figcaption { margin-top: 6px; color: var(--muted); font-size: 13.5px; }
+.note-top { margin: 0 0 6px; color: var(--muted); font-size: 14px; }
+@media (max-width: 900px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 18px 16px 60px; }
+  nav.toc { position: static; max-height: none; padding: 10px 12px; background: var(--cream); border-radius: 10px; }
+  .top strong { display: none; }
+}
+@media print {
+  .top, nav.toc { display: none; }
+  .wrap { display: block; padding: 0; }
+  h2 { break-after: avoid; }
+  figure { break-inside: avoid; }
+  figure img { max-height: 420px; width: auto; box-shadow: none; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<header class="top"><strong>Hướng dẫn sử dụng trang quản trị – Luật Sư Nam</strong><a href="../">← Trang quản trị</a><a href="../../" target="_blank" rel="noopener">Xem website</a></header>
+<div class="wrap">
+<nav class="toc" aria-label="Mục lục"><p>Mục lục</p><ol><li><a href="#dang-nhap">Đăng nhập</a></li><li><a href="#dang-bai">Đăng bài</a></li><li><a href="#them-khoi">Thêm khối</a></li><li><a href="#tao-trang">Tạo trang</a></li><li><a href="#doi-hotline">Đổi hotline</a></li><li><a href="#chuyen-huong">Chuyển hướng</a></li><li><a href="#khi-build-loi">Khi build lỗi</a></li><li><a href="#quy-tac-noi-dung-phap-ly">Quy tắc nội dung pháp lý</a></li><li><a href="#moi-bien-tap-vien">Mời biên tập viên</a></li><li><a href="#tao-tai-khoan-github">Tạo tài khoản GitHub</a></li></ol></nav>
+<main>
+<h1>Hướng dẫn sử dụng trang quản trị – Luật Sư Nam</h1>
+<p>Mọi việc sửa nội dung làm tại <strong><a href="https://willmichco.github.io/luatsunam/admin/" target="_blank" rel="noopener">willmichco.github.io/luatsunam/admin</a></strong>, không cần biết code, không cần vào GitHub.
+Bấm <strong>Lưu</strong> → website tự cập nhật sau <strong>1–3 phút</strong>. Nhập sai → website <strong>giữ nguyên bản cũ</strong>, quản trị nhận email báo lỗi.
+Trong trang quản trị luôn có nút <strong>? Hướng dẫn</strong> ở góc dưới bên trái để mở lại trang này.</p>
+<blockquote>
+<p><strong>Luôn bấm Lưu trước khi rời khung soạn thảo.</strong> Trang quản trị không tự lưu bản đang soạn. Nếu bấm Esc, nút ← hoặc đóng tab khi còn thay đổi chưa lưu, trang sẽ hỏi lại. Bài dài nên soạn trong Word/Google Docs rồi dán vào, và bấm Lưu mỗi 10 phút (bài vẫn là nháp nên chưa lên site).</p>
+</blockquote>
+<h2 id="dang-nhap">1. Đăng nhập</h2>
+<p><strong>Biên tập viên:</strong> bấm <strong>Đăng nhập bằng GitHub</strong> (1). Lần đầu GitHub hỏi cấp quyền: bấm <em>Authorize</em>. Chưa có tài khoản: xem <a href="#tao-tai-khoan-github">mục 10</a>.</p>
+<figure><a href="dang-nhap-3.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-nhap-3.webp" alt="Màn hình đăng nhập có nút Đăng nhập bằng GitHub" width="600" height="460" decoding="async" /></a><figcaption>Đăng nhập bằng GitHub – có sau khi quản trị cài Worker đăng nhập</figcaption></figure>
+<p><strong>Quản trị, trong lúc chưa cài Worker đăng nhập:</strong> dùng <em>mã truy cập</em> (tạo 1 lần, khoảng 3 phút):</p>
+<ol>
+<li>github.com → ảnh đại diện → <strong>Settings</strong> → <strong>Developer settings</strong> → <strong>Personal access tokens</strong> → <strong>Fine-grained tokens</strong> → <strong>Generate new token</strong>.</li>
+<li><em>Token name</em> <code>CMS Luật Sư Nam</code> · <em>Expiration</em> 90 ngày · <em>Repository access</em> <strong>Only select repositories</strong> → <code>luatsunam</code> · <em>Permissions</em> → <em>Repository permissions</em> → <strong>Contents: Read and write</strong> → <strong>Generate token</strong> → chép mã (bắt đầu bằng <code>github_pat_</code>).</li>
+<li>Mở /admin → <strong>Đăng nhập bằng mã truy cập</strong> (1) → dán mã (2) → <strong>Đăng nhập</strong> (3).</li>
+</ol>
+<figure><a href="dang-nhap-1.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-nhap-1.webp" alt="Màn hình đăng nhập bằng mã truy cập" width="600" height="460" decoding="async" /></a><figcaption>Bước 3: bấm Đăng nhập bằng mã truy cập</figcaption></figure>
+<figure><a href="dang-nhap-2.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-nhap-2.webp" alt="Hộp nhập mã truy cập" width="640" height="320" loading="lazy" decoding="async" /></a><figcaption>Dán mã github_pat_… rồi bấm Đăng nhập</figcaption></figure>
+<blockquote>
+<p>Mã truy cập như chìa khóa văn phòng: không gửi qua Zalo/email, không lưu trên máy công cộng (dùng xong: ảnh đại diện góc phải trên → Đăng xuất). Hết hạn thì tạo mã mới.</p>
+</blockquote>
+<h2 id="dang-bai">2. Đăng bài</h2>
+<p>Khoảng 15 phút, chưa tính thời gian luật sư duyệt.</p>
+<ol>
+<li>
+<p><strong>Bài viết</strong> → <strong>Tạo mới</strong> (1).</p>
+<figure><a href="dang-bai-1.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-1.webp" alt="Danh sách bài viết, nút Tạo mới" width="1280" height="330" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p>Điền <strong>Tiêu đề</strong> (1) và <strong>Đường dẫn</strong> (2): 2–8 từ khóa không dấu nối bằng gạch ngang, ví dụ <code>hop-dong-dat-coc-mua-nha</code>. Đường dẫn <strong>không đổi được sau khi lưu</strong>. Giữ nguyên <strong>Bản nháp</strong> (3). Chọn <strong>Lĩnh vực chính</strong> (4).</p>
+<figure><a href="dang-bai-2.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-2.webp" alt="Phần đầu form bài viết" width="1280" height="800" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p>Điền <strong>Tóm tắt trên thẻ</strong>, 3–4 ý <strong>Tóm tắt nhanh</strong> (bấm <em>+ Thêm ý</em>), <strong>Đoạn dẫn đầu bài</strong>.</p>
+</li>
+<li>
+<p><strong>Nội dung bài viết</strong>: dán thân bài. Nút <strong>¶</strong> (1) → <em>Tiêu đề 2</em> cho mục chính (tự vào mục lục), <em>Tiêu đề 3</em> cho mục nhỏ, <em>Trích dẫn</em> = hộp lưu ý. Nút <strong>Chèn</strong> (2) → <strong>Ảnh</strong> hoặc <strong>Bảng</strong>.</p>
+<figure><a href="dang-bai-3.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-3.webp" alt="Thanh công cụ khung soạn thảo" width="1280" height="300" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p><strong>Ảnh:</strong> trong khung ảnh bấm <em>Duyệt tệp</em> → <strong>Tải lên</strong> (1) → chọn ảnh trong máy (≤ 5 MB, tự đổi sang WebP) → <strong>Chèn</strong>.</p>
+<figure><a href="dang-bai-4a.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-4a.webp" alt="Hộp chọn ảnh, nút Tải lên" width="980" height="700" loading="lazy" decoding="async" /></a></figure>
+<p>Điền <strong>Mô tả ảnh</strong> (1) – bắt buộc, thiếu thì không lưu được – và <strong>Chú thích dưới ảnh</strong> (2) nếu cần.</p>
+<figure><a href="dang-bai-4.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-4.webp" alt="Khung ảnh đã tải lên, ô Mô tả ảnh và Chú thích" width="1280" height="506" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p><strong>SEO:</strong> <em>Tiêu đề trên Google</em> (1) 15–60 ký tự, <em>Mô tả trên Google</em> (2) 70–160 ký tự – bộ đếm hiện số ký tự, xanh là đạt. Bấm <strong>Lưu</strong> (3).</p>
+<figure><a href="dang-bai-5.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-5.webp" alt="Phần SEO và nút Lưu" width="1280" height="800" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p>Bài đã lưu hiện trong danh sách kèm chữ <strong>BẢN NHÁP</strong> – chưa lên site.</p>
+<figure><a href="dang-bai-6.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="dang-bai-6.webp" alt="Danh sách bài viết có bài BẢN NHÁP" width="1280" height="330" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p>Gửi luật sư phụ trách link xem trước <code>/nhap/&lt;đường-dẫn&gt;/</code> (trên bản thử Cloudflare, khi đã cài). Luật sư duyệt → bỏ dấu <strong>Bản nháp</strong> → <strong>Lưu</strong> → bài lên site sau 1–3 phút.</p>
+</li>
+<li>
+<p>Mở bài trên site kiểm tra, cả trên điện thoại; Google Search Console → <em>Kiểm tra URL</em> → <em>Yêu cầu lập chỉ mục</em>.</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Bảng:</strong> Chèn → Bảng; mỗi dòng một hàng, các ô cách nhau dấu <code>|</code>, dòng đầu là tiêu đề cột. <strong>Liên kết trong site:</strong> bôi đen chữ → nút liên kết → dán <code>/dich-vu/thua-ke/</code>.</p>
+</blockquote>
+<h2 id="them-khoi">3. Thêm khối</h2>
+<p>Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một trang – khoảng 5 phút.</p>
+<ol>
+<li>
+<p><strong>Trang dựng từ khối</strong> → chọn trang (ví dụ <em>Trang chủ</em>) → mục <strong>Các khối trên trang</strong>.</p>
+</li>
+<li>
+<p>Giữ chuột vào <strong>═</strong> (1) rồi kéo để đổi thứ tự. <strong>×</strong> (2) để xóa khối. <strong>Thêm khối</strong> (3) → chọn loại khối → điền nội dung.</p>
+<figure><a href="them-khoi-1.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="them-khoi-1.webp" alt="Danh sách khối trên Trang chủ" width="1280" height="800" loading="lazy" decoding="async" /></a></figure>
+<figure><a href="them-khoi-2.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="them-khoi-2.webp" alt="Các loại khối có thể thêm" width="304" height="539" loading="lazy" decoding="async" /></a><figcaption>15 loại khối có sẵn</figcaption></figure>
+</li>
+<li>
+<p>Muốn tạm ẩn, <strong>đừng xóa</strong>: bấm vào khối để mở → tắt <strong>Hiển thị khối này</strong> (1).</p>
+<figure><a href="them-khoi-3.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="them-khoi-3.webp" alt="Công tắc Hiển thị khối này" width="1280" height="230" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p><strong>Lưu</strong> → kiểm tra trên site sau 1–3 phút, cả trên điện thoại.</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Lỡ xóa hoặc sửa nhầm (chưa lưu):</strong> nút <strong>⋮</strong> góc phải trên → <strong>Hoàn tác tất cả thay đổi</strong>. Đã lưu rồi: báo quản trị (mọi lần lưu đều có lịch sử, lấy lại được).</p>
+</blockquote>
+<h2 id="tao-trang">4. Tạo trang</h2>
+<p>Khoảng 20 phút.</p>
+<ol>
+<li>
+<p><strong>Trang dựng từ khối</strong> → <strong>Tạo mới</strong> → <strong>Tên trang</strong> (1), giữ <strong>Bản nháp</strong> (2), <strong>Nằm trong mục</strong> (3) nếu là trang con, <strong>Tiêu đề lớn của trang</strong> (4).</p>
+<figure><a href="tao-trang-1.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="tao-trang-1.webp" alt="Form tạo trang mới" width="1280" height="800" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p>Thêm khối như <a href="#them-khoi">mục 3</a> – thường dùng <em>Đoạn văn tự do</em>, <em>Lưới thẻ</em>, <em>Hỏi đáp</em>. Khối liên hệ đỏ cuối trang có sẵn.</p>
+</li>
+<li>
+<p>Điền <strong>SEO</strong> → <strong>Lưu</strong>. Duyệt xong → bỏ dấu <strong>Bản nháp</strong> → <strong>Lưu</strong>.</p>
+</li>
+<li>
+<p><strong>Đưa lên menu:</strong> chờ 2–3 phút cho website build xong, <strong>tải lại trang quản trị (F5)</strong> để trang mới có trong danh sách chọn. <strong>Cài đặt → Menu và chân trang</strong> → mở mục cha (ví dụ <em>Giới thiệu ▾</em>) → <strong>Thêm mục con</strong> (1) → điền <strong>Chữ</strong> (2) → chọn <strong>Trang</strong> (3) → <strong>Lưu</strong>.</p>
+<figure><a href="tao-trang-2.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="tao-trang-2.webp" alt="Thêm mục con vào menu" width="1280" height="800" loading="lazy" decoding="async" /></a></figure>
+</li>
+</ol>
+<h2 id="doi-hotline">5. Đổi hotline</h2>
+<p><strong>Cài đặt → Thông tin công ty</strong> → sửa <strong>Hotline</strong> (1) → <strong>Lưu</strong>. Tự cập nhật trên mọi trang: nút Gọi, nút Zalo, chân trang, bản đồ, mô tả trên Google, dữ liệu cho Google.</p>
+<figure><a href="doi-hotline.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="doi-hotline.webp" alt="Ô Hotline trong Thông tin công ty" width="1280" height="698" loading="lazy" decoding="async" /></a></figure>
+<ul>
+<li>Ô <strong>Liên kết Zalo</strong> để trống thì Zalo tự theo hotline; chỉ điền khi Zalo dùng số khác.</li>
+<li>Trong mọi ô chữ, viết mã <code>{{hotline}}</code>, <code>{{email}}</code>, <code>{{luat_su}}</code>, <code>{{dia_chi}}</code>, <code>{{gio_lam_viec}}</code> thay vì gõ số hoặc tên. Gõ thẳng số hotline/email: build báo lỗi và chỉ đúng ô cần sửa.</li>
+</ul>
+<h2 id="chuyen-huong">6. Chuyển hướng</h2>
+<p>Dùng khi phải đổi đường dẫn của trang/bài đã đăng (hiếm khi cần, vì làm mất thứ hạng tạm thời).</p>
+<ol>
+<li>
+<p>Tạo trang/bài mới với đường dẫn mới, chép nội dung sang, đăng.</p>
+</li>
+<li>
+<p><strong>Cài đặt → Chuyển hướng 301</strong> → <strong>Thêm chuyển hướng</strong> → <strong>Đường dẫn cũ</strong> (1) dạng <code>/duong-dan-cu/</code> → <strong>Chuyển tới</strong> (2) dạng <code>/duong-dan-moi/</code> → <strong>Lưu</strong>.</p>
+<figure><a href="chuyen-huong.webp" target="_blank" rel="noopener" title="Bấm để xem ảnh cỡ lớn"><img src="chuyen-huong.webp" alt="Thêm một dòng chuyển hướng" width="1280" height="800" loading="lazy" decoding="async" /></a></figure>
+</li>
+<li>
+<p>Xóa trang/bài cũ → <strong>Lưu</strong>. Build tự kiểm: đích phải có thật, không vòng lặp.</p>
+</li>
+</ol>
+<h2 id="khi-build-loi">7. Khi build lỗi</h2>
+<p>Dấu hiệu: đã bấm Lưu 5 phút mà website chưa đổi.</p>
+<ul>
+<li>
+<p><strong>Biên tập viên:</strong> không cần lo – website vẫn chạy bản cũ. Báo quản trị tên trang/bài vừa sửa.</p>
+</li>
+<li>
+<p><strong>Quản trị:</strong> mở email <em>Build website lỗi – site vẫn giữ bản cũ</em> (issue trên GitHub). Mỗi dòng ghi <strong>tệp + tên trường</strong> đúng như trong trang quản trị, ví dụ:</p>
+<pre><code>content/hoi-dap.yml
+- Câu hỏi 1 › Câu trả lời: Đang ghi thẳng số hotline “0983.498.499”. Thay bằng mã {{hotline}} …
+</code></pre>
+<p>Mở đúng mục đó trong /admin → sửa → <strong>Lưu</strong>. Build lại thành công thì issue tự đóng. Không hiểu lỗi: chụp màn hình gửi Claude.</p>
+</li>
+<li>
+<p><strong>Bản nháp có lỗi không chặn website chính thức.</strong> Lỗi của bản nháp hiện ở phần <em>cảnh báo</em> của lượt build (GitHub → Actions) và phải sửa trước khi bỏ dấu nháp.</p>
+</li>
+</ul>
+<h2 id="quy-tac-noi-dung-phap-ly">8. Quy tắc nội dung pháp lý</h2>
+<ul>
+<li>Bài hoặc câu trả lời có dẫn điều luật phải được luật sư duyệt trước khi bỏ dấu nháp.</li>
+<li>Không hứa hẹn kết quả (Quy tắc 9.1.6 Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam).</li>
+<li>Mỗi quý: rà ngày cập nhật và hiệu lực văn bản pháp luật trong bài cũ; cập nhật <em>Ngày cập nhật</em>.</li>
+</ul>
+<h2 id="moi-bien-tap-vien">9. Mời biên tập viên</h2>
+<p>Việc của quản trị, khoảng 5 phút mỗi người.</p>
+<ol>
+<li>Người được mời tạo tài khoản GitHub và bật xác thực 2 lớp (<a href="#tao-tai-khoan-github">mục 10</a>), rồi gửi tên tài khoản cho quản trị.</li>
+<li>Quản trị: <a href="https://github.com/willmichco/luatsunam/settings/access" target="_blank" rel="noopener">github.com/willmichco/luatsunam/settings/access</a> → <strong>Add people</strong> → nhập tên tài khoản → <strong>Add to repository</strong> (cộng tác viên của kho cá nhân có quyền ghi).</li>
+<li>Người được mời mở email <em>invited you to collaborate</em> → <strong>Accept invitation</strong> → vào /admin → <strong>Đăng nhập bằng GitHub</strong>.</li>
+</ol>
+<p>Người nghỉ việc: cùng trang đó → <strong>Remove</strong>, ngay trong ngày.</p>
+<h2 id="tao-tai-khoan-github">10. Tạo tài khoản GitHub</h2>
+<p>3 bước, dành cho biên tập viên.</p>
+<ol>
+<li>Mở <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> → nhập email công việc, mật khẩu, tên tài khoản (ví dụ <code>nguyenvana-lsn</code>) → nhập mã xác minh gửi qua email.</li>
+<li>Bật xác thực 2 lớp: ảnh đại diện → <strong>Settings</strong> → <strong>Password and authentication</strong> → <strong>Enable two-factor authentication</strong> → quét mã QR bằng ứng dụng xác thực (Google Authenticator, Microsoft Authenticator…) → <strong>lưu mã khôi phục</strong> ở nơi an toàn.</li>
+<li>Gửi tên tài khoản cho quản trị → mở email mời → <strong>Accept invitation</strong> → vào /admin → <strong>Đăng nhập bằng GitHub</strong>.</li>
+</ol>
+
+</main>
+</div>
+<script>
+(function () {
+  var links = [].slice.call(document.querySelectorAll('nav.toc a'));
+  var heads = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function on() {
+    var y = window.scrollY + 90, cur = 0;
+    heads.forEach(function (h, i) { if (h && h.offsetTop <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
+  }
+  window.addEventListener('scroll', on, {passive: true}); on();
+})();
+</script>
+</body>
+</html>

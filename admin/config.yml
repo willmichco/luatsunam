@@ -29,6 +29,8 @@ media_libraries:
           quality: 82
           width: 2400
           height: 2400
+  stock_assets:
+    providers: []
 slug:
   encoding: ascii
   clean_accents: true
@@ -44,19 +46,19 @@ collections:
   label: Bài viết
   label_singular: bài viết
   icon: article
-  description: Bài viết pháp lý tại /kien-thuc-phap-ly/. Bài mới luôn là bản nháp cho tới khi luật sư duyệt.
+  description: Bài viết pháp lý tại /kien-thuc-phap-ly/. Bài mới luôn là **bản nháp** cho tới khi luật sư duyệt. [Hướng dẫn đăng bài](huong-dan/#dang-bai)
   folder: content/bai-viet
   extension: md
   format: yaml-frontmatter
   identifier_field: tieu_de
   slug:
-    template: '{{tieu_de}}'
+    template: '{{duong_dan}}'
     editable:
     - create
-    hint: 'Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. **Sau khi lưu không đổi được** (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.'
+    hint: 'Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. Sau khi lưu KHÔNG đổi được (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.'
     pattern:
-    - ^[a-z0-9]+(-[a-z0-9]+)*$
-    - 'Chỉ chữ a–z không dấu, số 0–9 và gạch nối, ví dụ: ly-hon-don-phuong'
+    - ^[a-z0-9]+(-[a-z0-9]+){1,7}$
+    - '2–8 từ, chỉ chữ a–z không dấu, số và gạch nối, ví dụ: hop-dong-dat-coc-mua-nha'
   summary: '{{tieu_de}}{{fields.nhap | ternary('' · BẢN NHÁP'', '''')}}'
   sortable_fields:
     fields:
@@ -83,6 +85,14 @@ collections:
     hint: 'Hiện ở đầu bài. Ví dụ: Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con'
     minlength: 20
     maxlength: 110
+  - name: duong_dan
+    label: Đường dẫn bài viết (đặt 1 lần)
+    widget: string
+    hint: '2–8 từ khóa chính, không dấu, nối bằng gạch ngang. Ví dụ: hop-dong-dat-coc-mua-nha → địa chỉ bài là /kien-thuc-phap-ly/hop-dong-dat-coc-mua-nha/. Sau khi lưu KHÔNG đổi được (đổi làm mất thứ hạng Google).'
+    pattern:
+    - ^[a-z0-9]+(-[a-z0-9]+){1,7}$
+    - '2–8 từ, chỉ chữ a–z không dấu, số và gạch nối, ví dụ: hop-dong-dat-coc-mua-nha'
+    maxlength: 60
   - name: nhap
     label: Bản nháp – chưa đăng lên site
     widget: boolean
@@ -91,14 +101,24 @@ collections:
     default: true
   - name: linh_vuc
     label: Lĩnh vực chính
-    widget: relation
+    widget: select
     hint: Làm chuyên mục của bài và khung “Cần luật sư về…” cạnh bài.
-    collection: dich_vu
-    value_field: '{{slug}}'
-    display_fields:
-    - '{{ten}}'
-    search_fields:
-    - ten
+    options:
+    - label: Thừa kế
+      value: thua-ke
+    - label: Đất đai & Bất động sản
+      value: dat-dai-bat-dong-san
+    - label: Hôn nhân & Gia đình
+      value: hon-nhan-gia-dinh
+    - label: Hình sự
+      value: hinh-su
+    - label: Dân sự
+      value: dan-su
+    - label: Tranh tụng & Giải quyết tranh chấp
+      value: tranh-tung-giai-quyet-tranh-chap
+    - label: Công chứng
+      value: cong-chung
+    dropdown_threshold: 10
   - name: ngay_dang
     label: Ngày đăng
     widget: datetime
@@ -146,7 +166,7 @@ collections:
   - name: body
     label: Nội dung bài viết
     widget: richtext
-    hint: 'Dùng **Tiêu đề 2** cho mục chính (tự vào mục lục), **Tiêu đề 3** cho mục nhỏ; nút **Trích dẫn** = hộp lưu ý. Bảng: nút + → Bảng. Liên kết trong site: /dich-vu/thua-ke/. Khẳng định pháp lý luôn kèm điều luật; không hứa hẹn kết quả (Quy tắc 9.1.6).'
+    hint: 'Nút ¶ → **Tiêu đề 2** cho mục chính (tự vào mục lục), **Tiêu đề 3** cho mục nhỏ, **Trích dẫn** = hộp lưu ý. **Chèn → Ảnh** (bắt buộc mô tả ảnh), **Chèn → Bảng**. Liên kết trong site: /dich-vu/thua-ke/. Khẳng định pháp lý luôn kèm điều luật; không hứa hẹn kết quả (Quy tắc 9.1.6).'
     buttons:
     - bold
     - italic
@@ -157,20 +177,29 @@ collections:
     - numbered-list
     - quote
     editor_components:
-    - image
+    - anh
     - bang
-    linked_images: false
   - name: linh_vuc_lien_quan
     label: Lĩnh vực liên quan (cột phải)
-    widget: relation
-    hint: Tối đa 3. Để trống = chỉ lĩnh vực chính.
+    widget: select
+    hint: 'Tối đa 3. Để trống = chỉ lĩnh vực chính. Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.'
     required: false
-    collection: dich_vu
-    value_field: '{{slug}}'
-    display_fields:
-    - '{{ten}}'
-    search_fields:
-    - ten
+    options:
+    - label: Thừa kế
+      value: thua-ke
+    - label: Đất đai & Bất động sản
+      value: dat-dai-bat-dong-san
+    - label: Hôn nhân & Gia đình
+      value: hon-nhan-gia-dinh
+    - label: Hình sự
+      value: hinh-su
+    - label: Dân sự
+      value: dan-su
+    - label: Tranh tụng & Giải quyết tranh chấp
+      value: tranh-tung-giai-quyet-tranh-chap
+    - label: Công chứng
+      value: cong-chung
+    dropdown_threshold: 10
     max: 3
     multiple: true
   - name: seo
@@ -186,7 +215,7 @@ collections:
     - name: mo_ta
       label: Mô tả trên Google
       widget: text
-      hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Khi nào Tòa án giải quyết ly hôn theo yêu cầu của một bên, hồ sơ cần chuẩn bị và nguyên tắc giao con.'
+      hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Khi nào Tòa án giải quyết ly hôn theo yêu cầu của một bên, hồ sơ cần chuẩn bị và nguyên tắc giao con.'
       minlength: 70
       maxlength: 160
     - name: anh_chia_se
@@ -200,6 +229,8 @@ collections:
   label: Lĩnh vực dịch vụ
   label_singular: lĩnh vực
   icon: balance
+  editor:
+    preview: false
   description: Mỗi lĩnh vực có trang /dich-vu/<đường-dẫn>/, thẻ ở trang chủ, menu và chân trang. Bấm “Sắp xếp lại” để kéo đổi thứ tự.
   folder: content/dich-vu
   extension: yml
@@ -209,7 +240,7 @@ collections:
     template: '{{ten}}'
     editable:
     - create
-    hint: 'Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. **Sau khi lưu không đổi được** (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.'
+    hint: 'Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. Sau khi lưu KHÔNG đổi được (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.'
     pattern:
     - ^[a-z0-9]+(-[a-z0-9]+)*$
     - 'Chỉ chữ a–z không dấu, số 0–9 và gạch nối, ví dụ: ly-hon-don-phuong'
@@ -578,15 +609,25 @@ collections:
     collapsed: true
   - name: linh_vuc_lien_quan
     label: Lĩnh vực liên quan
-    widget: relation
-    hint: Tối đa 3, hiện cuối trang theo thứ tự chọn.
+    widget: select
+    hint: 'Tối đa 3, hiện cuối trang. Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.'
     required: false
-    collection: dich_vu
-    value_field: '{{slug}}'
-    display_fields:
-    - '{{ten}}'
-    search_fields:
-    - ten
+    options:
+    - label: Thừa kế
+      value: thua-ke
+    - label: Đất đai & Bất động sản
+      value: dat-dai-bat-dong-san
+    - label: Hôn nhân & Gia đình
+      value: hon-nhan-gia-dinh
+    - label: Hình sự
+      value: hinh-su
+    - label: Dân sự
+      value: dan-su
+    - label: Tranh tụng & Giải quyết tranh chấp
+      value: tranh-tung-giai-quyet-tranh-chap
+    - label: Công chứng
+      value: cong-chung
+    dropdown_threshold: 10
     max: 3
     multiple: true
   - name: seo
@@ -602,7 +643,7 @@ collections:
     - name: mo_ta
       label: Mô tả trên Google
       widget: text
-      hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản, giải quyết tranh chấp thừa kế.'
+      hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản, giải quyết tranh chấp thừa kế.'
       minlength: 70
       maxlength: 160
     - name: anh_chia_se
@@ -615,6 +656,8 @@ collections:
 - name: hoi_dap
   label: Hỏi đáp chung
   icon: quiz
+  editor:
+    preview: false
   description: 'Kho câu hỏi dùng chung: trang Câu hỏi thường gặp hiện tất cả; các trang khác chọn câu từ đây.'
   files:
   - name: hoi_dap
@@ -659,7 +702,9 @@ collections:
   label: Trang dựng từ khối
   label_singular: trang
   icon: dashboard_customize
-  description: 'Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp.'
+  editor:
+    preview: false
+  description: 'Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp. [Thêm, đổi thứ tự khối](huong-dan/#them-khoi) · [Tạo trang mới](huong-dan/#tao-trang)'
   folder: content/trang
   extension: yml
   format: yml
@@ -668,7 +713,7 @@ collections:
     template: '{{tieu_de}}'
     editable:
     - create
-    hint: 'Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. **Sau khi lưu không đổi được** (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.'
+    hint: 'Đường dẫn tự tạo từ tiêu đề, bỏ dấu. Nên rút gọn còn 3–6 từ chính. Sau khi lưu KHÔNG đổi được (đổi đường dẫn làm mất thứ hạng Google); cần đổi: xem Cài đặt → Chuyển hướng.'
     pattern:
     - ^[a-z0-9]+(-[a-z0-9]+)*$
     - 'Chỉ chữ a–z không dấu, số 0–9 và gạch nối, ví dụ: ly-hon-don-phuong'
@@ -690,7 +735,7 @@ collections:
     widget: select
     hint: 'Ví dụ: “Vì sao chọn chúng tôi” nằm trong Giới thiệu → Trang chủ › Giới thiệu › Vì sao chọn chúng tôi. Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).'
     required: false
-    options: &id001
+    options:
     - label: Trang chủ — /
       value: /
     - label: Giới thiệu — /gioi-thieu/
@@ -777,7 +822,7 @@ collections:
     hint: Thêm, xóa, kéo để đổi thứ tự. Muốn tạm ẩn, tắt “Hiển thị khối này” thay vì xóa.
     types:
     - name: dau_trang
-      label: 1 · Đầu trang lớn (Hero)
+      label: Đầu trang lớn (Hero)
       summary: 'Đầu trang: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -884,7 +929,7 @@ collections:
         label_singular: số liệu
         collapsed: auto
     - name: dai_cam_ket
-      label: 2 · Dải cam kết
+      label: Dải cam kết
       summary: Dải cam kết
       fields:
       - name: hien_thi
@@ -976,7 +1021,7 @@ collections:
         label_singular: cam kết
         collapsed: auto
     - name: luoi_the
-      label: 3 · Lưới thẻ
+      label: Lưới thẻ
       summary: 'Lưới thẻ: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -1125,7 +1170,49 @@ collections:
             widget: select
             hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
             required: false
-            options: *id001
+            options:
+            - label: Trang chủ — /
+              value: /
+            - label: Giới thiệu — /gioi-thieu/
+              value: /gioi-thieu/
+            - label: Liên hệ — /lien-he/
+              value: /lien-he/
+            - label: Quy trình làm việc — /quy-trinh-lam-viec/
+              value: /quy-trinh-lam-viec/
+            - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+              value: /vi-sao-chon-chung-toi/
+            - label: Lĩnh vực hoạt động — /dich-vu/
+              value: /dich-vu/
+            - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+              value: /dich-vu/thua-ke/
+            - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+              value: /dich-vu/dat-dai-bat-dong-san/
+            - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+              value: /dich-vu/hon-nhan-gia-dinh/
+            - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+              value: /dich-vu/hinh-su/
+            - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+              value: /dich-vu/dan-su/
+            - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+              value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+              value: /dich-vu/cong-chung/
+            - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+              value: /kien-thuc-phap-ly/
+            - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+              value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+            - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+              value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+            - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+              value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+            - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+              value: /cau-hoi-thuong-gap/
+            - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+              value: /chinh-sach-bao-mat/
+            - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+              value: /dieu-khoan-su-dung/
+            - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+              value: /mien-tru-trach-nhiem/
           - name: ma_neo
             label: Mã neo (tùy chọn)
             widget: string
@@ -1161,7 +1248,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -1180,7 +1309,7 @@ collections:
         label_singular: liên kết
         collapsed: auto
     - name: anh_chu
-      label: 4 · Ảnh + chữ
+      label: Ảnh + chữ
       summary: 'Ảnh + chữ: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -1280,7 +1409,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -1333,7 +1504,7 @@ collections:
         required: false
         maxlength: 120
     - name: cac_buoc
-      label: 5 · Các bước
+      label: Các bước
       summary: 'Các bước: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -1391,7 +1562,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -1579,7 +1792,7 @@ collections:
         label_singular: ghi chú
         collapsed: auto
     - name: dong_thoi_gian
-      label: 6 · Dòng thời gian
+      label: Dòng thời gian
       summary: 'Dòng thời gian: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -1645,7 +1858,7 @@ collections:
         label_singular: mốc
         collapsed: auto
     - name: doi_ngu
-      label: 7 · Đội ngũ
+      label: Đội ngũ
       summary: 'Đội ngũ: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -1832,7 +2045,7 @@ collections:
         label_singular: thành viên
         collapsed: auto
     - name: dau_tich
-      label: 8 · Danh sách dấu tích
+      label: Danh sách dấu tích
       summary: 'Danh sách: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -1941,7 +2154,7 @@ collections:
           collapsed: auto
         collapsed: auto
     - name: doan_van
-      label: 9 · Đoạn văn tự do
+      label: Đoạn văn tự do
       summary: Đoạn văn
       fields:
       - name: hien_thi
@@ -1992,11 +2205,10 @@ collections:
         - numbered-list
         - quote
         editor_components:
-        - image
+        - anh
         - bang
-        linked_images: false
     - name: hoi_dap
-      label: 10 · Hỏi đáp
+      label: Hỏi đáp
       summary: 'Hỏi đáp: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -2054,7 +2266,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -2094,7 +2348,7 @@ collections:
         max: 10
         dropdown_threshold: 20
     - name: luoi_linh_vuc
-      label: 11 · Lưới lĩnh vực (tự động)
+      label: Lưới lĩnh vực (tự động)
       summary: 'Lưới lĩnh vực: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -2152,7 +2406,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -2179,7 +2475,7 @@ collections:
         - label: Tên lĩnh vực + mô tả ngắn
           value: dich_vu
     - name: bai_viet_moi
-      label: 12 · Bài viết mới nhất (tự động)
+      label: Bài viết mới nhất (tự động)
       summary: 'Bài viết mới: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -2237,7 +2533,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -2273,16 +2611,26 @@ collections:
           value: '3'
       - name: linh_vuc
         label: Chỉ lấy bài thuộc lĩnh vực (tùy chọn)
-        widget: relation
+        widget: select
         required: false
-        collection: dich_vu
-        value_field: '{{slug}}'
-        display_fields:
-        - '{{ten}}'
-        search_fields:
-        - ten
+        options:
+        - label: Thừa kế
+          value: thua-ke
+        - label: Đất đai & Bất động sản
+          value: dat-dai-bat-dong-san
+        - label: Hôn nhân & Gia đình
+          value: hon-nhan-gia-dinh
+        - label: Hình sự
+          value: hinh-su
+        - label: Dân sự
+          value: dan-su
+        - label: Tranh tụng & Giải quyết tranh chấp
+          value: tranh-tung-giai-quyet-tranh-chap
+        - label: Công chứng
+          value: cong-chung
+        dropdown_threshold: 10
     - name: giay_to_linh_vuc
-      label: 13 · Giấy tờ theo lĩnh vực (tự động)
+      label: Giấy tờ theo lĩnh vực (tự động)
       summary: Giấy tờ theo lĩnh vực
       fields:
       - name: hien_thi
@@ -2327,17 +2675,28 @@ collections:
         maxlength: 360
       - name: linh_vuc
         label: Chỉ hiện các lĩnh vực (để trống = tất cả)
-        widget: relation
+        widget: select
+        hint: 'Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.'
         required: false
-        collection: dich_vu
-        value_field: '{{slug}}'
-        display_fields:
-        - '{{ten}}'
-        search_fields:
-        - ten
+        options:
+        - label: Thừa kế
+          value: thua-ke
+        - label: Đất đai & Bất động sản
+          value: dat-dai-bat-dong-san
+        - label: Hôn nhân & Gia đình
+          value: hon-nhan-gia-dinh
+        - label: Hình sự
+          value: hinh-su
+        - label: Dân sự
+          value: dan-su
+        - label: Tranh tụng & Giải quyết tranh chấp
+          value: tranh-tung-giai-quyet-tranh-chap
+        - label: Công chứng
+          value: cong-chung
+        dropdown_threshold: 10
         multiple: true
     - name: kenh_lien_he
-      label: 14 · Kênh liên hệ
+      label: Kênh liên hệ
       summary: Kênh liên hệ
       fields:
       - name: hien_thi
@@ -2416,7 +2775,7 @@ collections:
         editor_components: []
         minimal: true
     - name: ban_do
-      label: 15 · Bản đồ văn phòng
+      label: Bản đồ văn phòng
       summary: 'Bản đồ: {{fields.tieu_de}}'
       fields:
       - name: hien_thi
@@ -2511,7 +2870,7 @@ collections:
     - name: mo_ta
       label: Mô tả trên Google
       widget: text
-      hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Cách Luật Sư Nam tính thù lao theo Điều 55 Luật Luật sư, khoản nào báo trước.'
+      hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Cách Luật Sư Nam tính thù lao theo Điều 55 Luật Luật sư, khoản nào báo trước.'
       minlength: 70
       maxlength: 160
     - name: anh_chia_se
@@ -2524,6 +2883,8 @@ collections:
 - name: trang_tong_hop
   label: Trang tổng hợp
   icon: view_list
+  editor:
+    preview: false
   description: 'Dịch vụ, Kiến thức pháp lý, Câu hỏi thường gặp: sửa chữ; danh sách bên dưới tự động.'
   files:
   - name: dich_vu
@@ -2708,7 +3069,7 @@ collections:
       - name: mo_ta
         label: Mô tả trên Google
         widget: text
-        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực.'
+        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực.'
         minlength: 70
         maxlength: 160
       - name: anh_chia_se
@@ -2855,7 +3216,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -2908,7 +3311,49 @@ collections:
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
           required: false
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: ma_neo
           label: Mã neo (tùy chọn)
           widget: string
@@ -2966,7 +3411,7 @@ collections:
       - name: mo_ta
         label: Mô tả trên Google
         widget: text
-        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai.'
+        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai.'
         minlength: 70
         maxlength: 160
       - name: anh_chia_se
@@ -3090,7 +3535,49 @@ collections:
         widget: select
         hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
         required: false
-        options: *id001
+        options:
+        - label: Trang chủ — /
+          value: /
+        - label: Giới thiệu — /gioi-thieu/
+          value: /gioi-thieu/
+        - label: Liên hệ — /lien-he/
+          value: /lien-he/
+        - label: Quy trình làm việc — /quy-trinh-lam-viec/
+          value: /quy-trinh-lam-viec/
+        - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+          value: /vi-sao-chon-chung-toi/
+        - label: Lĩnh vực hoạt động — /dich-vu/
+          value: /dich-vu/
+        - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+          value: /dich-vu/thua-ke/
+        - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+          value: /dich-vu/dat-dai-bat-dong-san/
+        - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+          value: /dich-vu/hon-nhan-gia-dinh/
+        - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+          value: /dich-vu/hinh-su/
+        - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+          value: /dich-vu/dan-su/
+        - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+        - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+          value: /dich-vu/cong-chung/
+        - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+          value: /kien-thuc-phap-ly/
+        - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+          value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+        - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+          value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+        - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+          value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+        - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+          value: /cau-hoi-thuong-gap/
+        - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+          value: /chinh-sach-bao-mat/
+        - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+          value: /dieu-khoan-su-dung/
+        - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+          value: /mien-tru-trach-nhiem/
       - name: ma_neo
         label: Mã neo (tùy chọn)
         widget: string
@@ -3149,7 +3636,7 @@ collections:
       - name: mo_ta
         label: Mô tả trên Google
         widget: text
-        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Giải đáp về chi phí thuê luật sư, bảo mật thông tin, thời hiệu.'
+        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Giải đáp về chi phí thuê luật sư, bảo mật thông tin, thời hiệu.'
         minlength: 70
         maxlength: 160
       - name: anh_chia_se
@@ -3208,9 +3695,8 @@ collections:
       - numbered-list
       - quote
       editor_components:
-      - image
+      - anh
       - bang
-      linked_images: false
     - name: seo
       label: SEO – hiển thị trên Google và khi chia sẻ
       widget: object
@@ -3224,7 +3710,7 @@ collections:
       - name: mo_ta
         label: Mô tả trên Google
         widget: text
-        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân trên website Luật Sư Nam.'
+        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân trên website Luật Sư Nam.'
         minlength: 70
         maxlength: 160
       - name: anh_chia_se
@@ -3278,9 +3764,8 @@ collections:
       - numbered-list
       - quote
       editor_components:
-      - image
+      - anh
       - bang
-      linked_images: false
     - name: seo
       label: SEO – hiển thị trên Google và khi chia sẻ
       widget: object
@@ -3294,7 +3779,7 @@ collections:
       - name: mo_ta
         label: Mô tả trên Google
         widget: text
-        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân trên website Luật Sư Nam.'
+        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân trên website Luật Sư Nam.'
         minlength: 70
         maxlength: 160
       - name: anh_chia_se
@@ -3348,9 +3833,8 @@ collections:
       - numbered-list
       - quote
       editor_components:
-      - image
+      - anh
       - bang
-      linked_images: false
     - name: seo
       label: SEO – hiển thị trên Google và khi chia sẻ
       widget: object
@@ -3364,7 +3848,7 @@ collections:
       - name: mo_ta
         label: Mô tả trên Google
         widget: text
-        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Ví dụ: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân trên website Luật Sư Nam.'
+        hint: 'Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{hotline}}. Ví dụ: Chính sách thu thập, sử dụng và bảo vệ dữ liệu cá nhân trên website Luật Sư Nam.'
         minlength: 70
         maxlength: 160
       - name: anh_chia_se
@@ -3405,7 +3889,9 @@ collections:
 - name: cai_dat
   label: Cài đặt
   icon: settings
-  description: Thông tin công ty, menu, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng, ảnh thương hiệu.
+  editor:
+    preview: false
+  description: Thông tin công ty, menu, câu chữ dùng chung, SEO, mã theo dõi, chuyển hướng, ảnh thương hiệu. [Đổi hotline](huong-dan/#doi-hotline) · [Chuyển hướng](huong-dan/#chuyen-huong)
   files:
   - name: cong_ty
     label: Thông tin công ty
@@ -3446,9 +3932,9 @@ collections:
       - ^0[0-9 .]{9,13}$
       - Số điện thoại Việt Nam bắt đầu bằng 0, ví dụ 0983 498 499
     - name: zalo
-      label: Liên kết Zalo
+      label: Liên kết Zalo (tùy chọn)
       widget: string
-      hint: Để trống = https://zalo.me/<hotline>.
+      hint: Chỉ điền khi Zalo dùng số KHÁC hotline. Để trống = https://zalo.me/<số hotline>, tự đổi theo hotline.
       required: false
       pattern:
       - ^(https://zalo\.me/.+)?$
@@ -3559,7 +4045,49 @@ collections:
           label: Trang
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
       - name: menu_xo
         label: Mục có menu xổ
         summary: '{{fields.nhan}} ▾'
@@ -3572,7 +4100,49 @@ collections:
           label: Trang chính của mục
           widget: select
           hint: Dùng để tô sáng mục khi đang ở trang này. Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: muc_con
           label: Mục con
           widget: list
@@ -3590,7 +4160,49 @@ collections:
             label: Trang
             widget: select
             hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
-            options: *id001
+            options:
+            - label: Trang chủ — /
+              value: /
+            - label: Giới thiệu — /gioi-thieu/
+              value: /gioi-thieu/
+            - label: Liên hệ — /lien-he/
+              value: /lien-he/
+            - label: Quy trình làm việc — /quy-trinh-lam-viec/
+              value: /quy-trinh-lam-viec/
+            - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+              value: /vi-sao-chon-chung-toi/
+            - label: Lĩnh vực hoạt động — /dich-vu/
+              value: /dich-vu/
+            - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+              value: /dich-vu/thua-ke/
+            - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+              value: /dich-vu/dat-dai-bat-dong-san/
+            - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+              value: /dich-vu/hon-nhan-gia-dinh/
+            - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+              value: /dich-vu/hinh-su/
+            - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+              value: /dich-vu/dan-su/
+            - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+              value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+              value: /dich-vu/cong-chung/
+            - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+              value: /kien-thuc-phap-ly/
+            - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+              value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+            - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+              value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+            - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+              value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+            - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+              value: /cau-hoi-thuong-gap/
+            - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+              value: /chinh-sach-bao-mat/
+            - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+              value: /dieu-khoan-su-dung/
+            - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+              value: /mien-tru-trach-nhiem/
           summary: '{{fields.nhan}}'
           min: 1
           max: 8
@@ -3608,7 +4220,49 @@ collections:
           label: Trang tổng quan
           widget: select
           hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
-          options: *id001
+          options:
+          - label: Trang chủ — /
+            value: /
+          - label: Giới thiệu — /gioi-thieu/
+            value: /gioi-thieu/
+          - label: Liên hệ — /lien-he/
+            value: /lien-he/
+          - label: Quy trình làm việc — /quy-trinh-lam-viec/
+            value: /quy-trinh-lam-viec/
+          - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+            value: /vi-sao-chon-chung-toi/
+          - label: Lĩnh vực hoạt động — /dich-vu/
+            value: /dich-vu/
+          - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+            value: /dich-vu/thua-ke/
+          - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+            value: /dich-vu/dat-dai-bat-dong-san/
+          - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+            value: /dich-vu/hon-nhan-gia-dinh/
+          - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+            value: /dich-vu/hinh-su/
+          - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+            value: /dich-vu/dan-su/
+          - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+            value: /dich-vu/cong-chung/
+          - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+            value: /kien-thuc-phap-ly/
+          - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+            value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+          - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+            value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+          - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+            value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+          - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+            value: /cau-hoi-thuong-gap/
+          - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+            value: /chinh-sach-bao-mat/
+          - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+            value: /dieu-khoan-su-dung/
+          - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+            value: /mien-tru-trach-nhiem/
         - name: nhom
           label: Nhóm lĩnh vực
           widget: list
@@ -3620,13 +4274,24 @@ collections:
             maxlength: 40
           - name: linh_vuc
             label: Lĩnh vực trong nhóm
-            widget: relation
-            collection: dich_vu
-            value_field: '{{slug}}'
-            display_fields:
-            - '{{ten}}'
-            search_fields:
-            - ten
+            widget: select
+            hint: 'Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.'
+            options:
+            - label: Thừa kế
+              value: thua-ke
+            - label: Đất đai & Bất động sản
+              value: dat-dai-bat-dong-san
+            - label: Hôn nhân & Gia đình
+              value: hon-nhan-gia-dinh
+            - label: Hình sự
+              value: hinh-su
+            - label: Dân sự
+              value: dan-su
+            - label: Tranh tụng & Giải quyết tranh chấp
+              value: tranh-tung-giai-quyet-tranh-chap
+            - label: Công chứng
+              value: cong-chung
+            dropdown_threshold: 10
             min: 1
             multiple: true
           summary: '{{fields.ten_nhom}}'
@@ -3674,7 +4339,49 @@ collections:
         widget: select
         hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
         required: false
-        options: *id001
+        options:
+        - label: Trang chủ — /
+          value: /
+        - label: Giới thiệu — /gioi-thieu/
+          value: /gioi-thieu/
+        - label: Liên hệ — /lien-he/
+          value: /lien-he/
+        - label: Quy trình làm việc — /quy-trinh-lam-viec/
+          value: /quy-trinh-lam-viec/
+        - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+          value: /vi-sao-chon-chung-toi/
+        - label: Lĩnh vực hoạt động — /dich-vu/
+          value: /dich-vu/
+        - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+          value: /dich-vu/thua-ke/
+        - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+          value: /dich-vu/dat-dai-bat-dong-san/
+        - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+          value: /dich-vu/hon-nhan-gia-dinh/
+        - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+          value: /dich-vu/hinh-su/
+        - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+          value: /dich-vu/dan-su/
+        - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+        - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+          value: /dich-vu/cong-chung/
+        - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+          value: /kien-thuc-phap-ly/
+        - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+          value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+        - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+          value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+        - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+          value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+        - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+          value: /cau-hoi-thuong-gap/
+        - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+          value: /chinh-sach-bao-mat/
+        - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+          value: /dieu-khoan-su-dung/
+        - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+          value: /mien-tru-trach-nhiem/
       - name: ma_neo
         label: Mã neo (tùy chọn)
         widget: string
@@ -3708,7 +4415,49 @@ collections:
         widget: select
         hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
         required: false
-        options: *id001
+        options:
+        - label: Trang chủ — /
+          value: /
+        - label: Giới thiệu — /gioi-thieu/
+          value: /gioi-thieu/
+        - label: Liên hệ — /lien-he/
+          value: /lien-he/
+        - label: Quy trình làm việc — /quy-trinh-lam-viec/
+          value: /quy-trinh-lam-viec/
+        - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+          value: /vi-sao-chon-chung-toi/
+        - label: Lĩnh vực hoạt động — /dich-vu/
+          value: /dich-vu/
+        - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+          value: /dich-vu/thua-ke/
+        - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+          value: /dich-vu/dat-dai-bat-dong-san/
+        - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+          value: /dich-vu/hon-nhan-gia-dinh/
+        - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+          value: /dich-vu/hinh-su/
+        - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+          value: /dich-vu/dan-su/
+        - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+        - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+          value: /dich-vu/cong-chung/
+        - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+          value: /kien-thuc-phap-ly/
+        - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+          value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+        - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+          value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+        - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+          value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+        - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+          value: /cau-hoi-thuong-gap/
+        - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+          value: /chinh-sach-bao-mat/
+        - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+          value: /dieu-khoan-su-dung/
+        - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+          value: /mien-tru-trach-nhiem/
       - name: ma_neo
         label: Mã neo (tùy chọn)
         widget: string
@@ -3741,7 +4490,49 @@ collections:
         widget: select
         hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
         required: false
-        options: *id001
+        options:
+        - label: Trang chủ — /
+          value: /
+        - label: Giới thiệu — /gioi-thieu/
+          value: /gioi-thieu/
+        - label: Liên hệ — /lien-he/
+          value: /lien-he/
+        - label: Quy trình làm việc — /quy-trinh-lam-viec/
+          value: /quy-trinh-lam-viec/
+        - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+          value: /vi-sao-chon-chung-toi/
+        - label: Lĩnh vực hoạt động — /dich-vu/
+          value: /dich-vu/
+        - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+          value: /dich-vu/thua-ke/
+        - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+          value: /dich-vu/dat-dai-bat-dong-san/
+        - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+          value: /dich-vu/hon-nhan-gia-dinh/
+        - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+          value: /dich-vu/hinh-su/
+        - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+          value: /dich-vu/dan-su/
+        - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+          value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+        - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+          value: /dich-vu/cong-chung/
+        - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+          value: /kien-thuc-phap-ly/
+        - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+          value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+        - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+          value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+        - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+          value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+        - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+          value: /cau-hoi-thuong-gap/
+        - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+          value: /chinh-sach-bao-mat/
+        - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+          value: /dieu-khoan-su-dung/
+        - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+          value: /mien-tru-trach-nhiem/
       - name: ma_neo
         label: Mã neo (tùy chọn)
         widget: string
@@ -4068,7 +4859,49 @@ collections:
             widget: select
             hint: Trang vừa tạo sẽ có trong danh sách sau khoảng 2–3 phút (tải lại trang quản trị).
             required: false
-            options: *id001
+            options:
+            - label: Trang chủ — /
+              value: /
+            - label: Giới thiệu — /gioi-thieu/
+              value: /gioi-thieu/
+            - label: Liên hệ — /lien-he/
+              value: /lien-he/
+            - label: Quy trình làm việc — /quy-trinh-lam-viec/
+              value: /quy-trinh-lam-viec/
+            - label: Vì sao chọn chúng tôi — /vi-sao-chon-chung-toi/
+              value: /vi-sao-chon-chung-toi/
+            - label: Lĩnh vực hoạt động — /dich-vu/
+              value: /dich-vu/
+            - label: Dịch vụ › Thừa kế — /dich-vu/thua-ke/
+              value: /dich-vu/thua-ke/
+            - label: Dịch vụ › Đất đai & Bất động sản — /dich-vu/dat-dai-bat-dong-san/
+              value: /dich-vu/dat-dai-bat-dong-san/
+            - label: Dịch vụ › Hôn nhân & Gia đình — /dich-vu/hon-nhan-gia-dinh/
+              value: /dich-vu/hon-nhan-gia-dinh/
+            - label: Dịch vụ › Hình sự — /dich-vu/hinh-su/
+              value: /dich-vu/hinh-su/
+            - label: Dịch vụ › Dân sự — /dich-vu/dan-su/
+              value: /dich-vu/dan-su/
+            - label: Dịch vụ › Tranh tụng & Giải quyết tranh chấp — /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+              value: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+            - label: Dịch vụ › Công chứng — /dich-vu/cong-chung/
+              value: /dich-vu/cong-chung/
+            - label: Kiến thức pháp lý — /kien-thuc-phap-ly/
+              value: /kien-thuc-phap-ly/
+            - label: 'Bài viết › Thời hiệu chia di sản thừa kế: mốc 30 năm, 10 năm và 03 năm — /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/'
+              value: /kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+            - label: 'Bài viết › Ly hôn đơn phương: căn cứ, hồ sơ và quyền nuôi con — /kien-thuc-phap-ly/ly-hon-don-phuong/'
+              value: /kien-thuc-phap-ly/ly-hon-don-phuong/
+            - label: 'Bài viết › Đặt cọc mua bán nhà đất: 6 điểm cần kiểm tra trước khi xuống tiền — /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/'
+              value: /kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+            - label: Câu hỏi thường gặp — /cau-hoi-thuong-gap/
+              value: /cau-hoi-thuong-gap/
+            - label: Chính sách bảo mật — /chinh-sach-bao-mat/
+              value: /chinh-sach-bao-mat/
+            - label: Điều khoản sử dụng — /dieu-khoan-su-dung/
+              value: /dieu-khoan-su-dung/
+            - label: Miễn trừ trách nhiệm — /mien-tru-trach-nhiem/
+              value: /mien-tru-trach-nhiem/
           - name: ma_neo
             label: Mã neo (tùy chọn)
             widget: string

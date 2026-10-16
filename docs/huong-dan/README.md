@@ -121,12 +121,15 @@ Dùng khi phải đổi đường dẫn của trang/bài đã đăng (hiếm khi
 Dấu hiệu: đã bấm Lưu 5 phút mà website chưa đổi.
 
 - **Biên tập viên:** không cần lo – website vẫn chạy bản cũ. Báo quản trị tên trang/bài vừa sửa.
-- **Quản trị:** mở email *Build website lỗi – site vẫn giữ bản cũ* (issue trên GitHub). Mỗi dòng ghi **tệp + tên trường** đúng như trong trang quản trị, ví dụ:
+- **Quản trị:** mở email *Build website lỗi – site vẫn giữ bản cũ* (issue trên GitHub, đến sau khoảng 20 giây). Mỗi dòng ghi **tệp + tên trường** đúng như trong trang quản trị. Ví dụ thật (thử nghiệm ngày 16/10, cố ý xóa tiêu đề một bài):
 
   ```
-  content/hoi-dap.yml
-  - Câu hỏi 1 › Câu trả lời: Đang ghi thẳng số hotline “0983.498.499”. Thay bằng mã {{hotline}} …
+  Build dừng: 1 lỗi cần sửa
+  content/bai-viet/ly-hon-don-phuong.md
+  - Tiêu đề bài viết: Không được để trống.
   ```
+
+  Một ví dụ khác: `content/hoi-dap.yml – Câu hỏi 1 › Câu trả lời: Đang ghi thẳng số hotline “0983.498.499”. Thay bằng mã {{hotline}} …`
 
   Mở đúng mục đó trong /admin → sửa → **Lưu**. Build lại thành công thì issue tự đóng. Không hiểu lỗi: chụp màn hình gửi Claude.
 - **Bản nháp có lỗi không chặn website chính thức.** Lỗi của bản nháp hiện ở phần *cảnh báo* của lượt build (GitHub → Actions) và phải sửa trước khi bỏ dấu nháp.

@@ -84,6 +84,38 @@
   nav.primary-sidebar [role=treeitem].lsn-mot-tep .count { visibility: hidden; }
   /* Mô tả của mục (dòng chữ cạnh tên mục ở trên danh sách): hiện đủ 2 dòng thay vì cắt ngang */
   [role=toolbar][aria-label="Chuyên mục"] .description .truncated-text { -webkit-line-clamp: 2 !important; }
+  /* ---------- Form dễ nhìn: mỗi phần tách bạch ----------
+     Ô cấp 1 (không nằm trong nhóm nào) có khoảng cách rộng; nhóm cấp 1 (object/danh sách) thành thẻ có viền, tên nhóm to;
+     tiêu đề phần (ô lsn_nhom) là dải màu thương hiệu; số tròn đỏ = số của phần đó trên trang mô phỏng. */
+  section.field[data-field-type="lsn_nhom"] > header { display: none !important; }
+  section.field[data-field-type="lsn_nhom"] { padding-top: 0 !important; padding-bottom: 0 !important; border: 0 !important; }
+  section.field[data-field-type="lsn_nhom"] .field-wrapper { margin: 0 !important; }
+  .lsn-phan { margin: 26px 0 6px; padding: 12px 16px; border-radius: 10px; border-inline-start: 5px solid #b5000b;
+    background: hsl(356 60% 96%); color: var(--sui-primary-foreground-color); }
+  :root[data-theme="dark"] .lsn-phan { background: hsl(356 30% 18%); }
+  .lsn-phan__tieu-de { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; line-height: 1.3; }
+  .lsn-phan__mo-ta { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: var(--sui-secondary-foreground-color); }
+  .lsn-ghi-chu { display: flex; gap: 10px; align-items: flex-start; margin: 6px 0 2px; padding: 10px 14px; border-radius: 10px;
+    border: 1px solid hsl(40 70% 78%); background: hsl(45 90% 95%); color: hsl(35 60% 22%); font-size: 13.5px; line-height: 1.5; }
+  :root[data-theme="dark"] .lsn-ghi-chu { border-color: hsl(40 40% 35%); background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
+  .lsn-ghi-chu p { margin: 0; }
+  .lsn-ghi-chu__icon { font-family: "Material Symbols Outlined"; font-size: 20px; line-height: 1; flex: none; margin-top: 1px;
+    font-feature-settings: "liga"; }
+  .lsn-ghi-chu__mo { margin-top: 6px; padding: 4px 12px; border: 1px solid currentColor; border-radius: 999px; background: transparent;
+    color: #b5000b; font: 600 13px/1.4 var(--sui-font-family-default); cursor: pointer; }
+  :root[data-theme="dark"] .lsn-ghi-chu__mo { color: #ff8a93; }
+  .lsn-ghi-chu__mo:hover, .lsn-ghi-chu__mo:focus-visible { background: hsl(356 80% 95%); }
+  :root[data-theme="dark"] .lsn-ghi-chu__mo:hover { background: hsl(356 30% 25%); }
+  /* Nhóm cấp 1: thẻ có viền, tên nhóm to */
+  section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) {
+    margin: 14px 0; padding: 14px 16px 16px !important; border: 1px solid var(--sui-secondary-border-color) !important;
+    border-radius: 12px; background: var(--sui-primary-background-color); box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
+  section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header h4 { font-size: 16px; }
+  section.field:not([data-key-path*="."]) > header h4 { font-size: 15px; }
+  /* Số phần (khớp số đỏ trên trang mô phỏng) */
+  [data-lsn-so]::before { content: attr(data-lsn-so); display: inline-flex; align-items: center; justify-content: center; flex: none;
+    min-width: 22px; height: 22px; margin-inline-end: 8px; padding: 0 6px; box-sizing: border-box; border-radius: 999px;
+    background: #b5000b; color: #fff; font: 700 12px/1 var(--sui-font-family-default); vertical-align: 1px; }
   #lsn-sang-toi { display: inline-flex; align-items: center; gap: 5px; height: 32px; margin-inline-end: 6px; padding: 0 12px 0 9px;
     border: 1px solid var(--sui-control-border-color); border-radius: 999px; background: transparent; color: inherit;
     font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
@@ -181,6 +213,27 @@
         }).join('') + '</table>';
       }
     });
+
+    /* ---------- Ô "lsn_nhom": tiêu đề phần và ghi chú trong form (chỉ để nhìn, không lưu gì vào tệp) ----------
+       Khai báo trong tools/schema.py (nhom(), ghi_chu()). Tiêu đề chia form dài thành từng phần theo đúng thứ tự trên trang;
+       data-phan khớp phần trên trang mô phỏng (admin/xem-truoc.js đánh cùng số). Ghi chú nói chữ lấy từ đâu, nút mở thẳng chỗ sửa. */
+    var h = window.createElement;
+    CMS.registerFieldType('lsn_nhom', window.createClass({
+      render: function () {
+        var f = this.props.field, mo = f.get('mo');
+        if (f.get('kieu') === 'ghi_chu') {
+          return h('div', { className: 'lsn-ghi-chu', role: 'note' },
+            h('span', { className: 'lsn-ghi-chu__icon', 'aria-hidden': 'true' }, 'info'),
+            h('div', null, h('p', null, f.get('mo_ta')),
+              mo ? h('button', { type: 'button', className: 'lsn-ghi-chu__mo',
+                onClick: function () { if (window.LSN_MO) window.LSN_MO(mo); else location.hash = '#/collections/' + mo.split('#')[0]; } },
+              f.get('chu_mo') || 'Mở chỗ sửa ›') : null));
+        }
+        return h('div', { className: 'lsn-phan', 'data-phan': f.get('phan') || '' },
+          h('div', { className: 'lsn-phan__tieu-de' }, f.get('label')),
+          f.get('mo_ta') ? h('p', { className: 'lsn-phan__mo-ta' }, f.get('mo_ta')) : null);
+      }
+    }));
   })();
 </script>
 <!-- Khung mô phỏng (cột phải khi soạn): dựng trang bằng đúng code build trong trình duyệt, tô sáng chỗ đang sửa -->

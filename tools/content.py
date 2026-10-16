@@ -368,3 +368,67 @@ def _check(site, all_pages):
     for s in site.services:
         if s["slug"] in (s.get("linh_vuc_lien_quan") or []):
             LOI.them(s["_src"], "Lĩnh vực liên quan", "Không chọn chính lĩnh vực này.")
+    _check_menu(site, all_pages)
+    _check_service_cards(site)
+
+
+MENU_SRC = "content/cai-dat/menu.yml"
+
+
+def _check_menu(site, all_pages):
+    """Logic menu và thứ tự lĩnh vực. Chỉ cảnh báo (không chặn đăng): những chỗ làm menu hiện khác điều người sửa nghĩ.
+    Chạy cả trong khung mô phỏng: sửa menu là thấy cảnh báo ngay, trước khi Lưu."""
+    items = site.menu.get("menu") or []
+    drafts = {"/" + p["slug"] + "/" for p in all_pages if p.get("nhap")}
+    first_at = {}  # trang → mục menu đầu tiên chứa nó
+    for i, it in enumerate(items, 1):
+        where = f"Menu chính › Mục {i} ({it.get('nhan') or ''})"
+        children = [x.get("trang") for x in it.get("muc_con") or [] if x.get("trang")]
+        dup = {p for p in children if children.count(p) > 1}
+        for p in sorted(dup):
+            LOI.canh(MENU_SRC, where, f"Trang “{p}” có 2 dòng trong cùng menu xổ. Xóa bớt một dòng.")
+        for p in dict.fromkeys(([it["trang"]] if it.get("trang") else []) + children):
+            if p in first_at:
+                LOI.canh(MENU_SRC, where, f"Trang “{p}” đã nằm ở mục “{first_at[p]}”. Khi người đọc ở trang này, menu chỉ tô sáng "
+                                          f"mục “{first_at[p]}”; nên để mỗi trang ở một mục.")
+            else:
+                first_at[p] = it.get("nhan") or ""
+            if p in drafts and not site.drafts:
+                LOI.canh(MENU_SRC, where, f"Trang “{p}” đang là bản nháp nên chưa hiện trên menu của website. Bỏ dấu Bản nháp ở trang đó "
+                                          f"để hiện.")
+        if it.get("loai") != "menu_linh_vuc":
+            continue
+        groups = it.get("nhom") or []
+        placed = {}
+        for g in groups:
+            for slug in g.get("linh_vuc") or []:
+                if slug in placed:
+                    LOI.canh(MENU_SRC, f"{where} › Nhóm “{g.get('ten_nhom') or ''}”",
+                             f"Lĩnh vực “{slug}” đã nằm ở nhóm “{placed[slug]}”: menu chỉ hiện ở nhóm đầu. Xóa dòng trùng.")
+                else:
+                    placed[slug] = g.get("ten_nhom") or ""
+        missing = [s["ten"] for s in site.services if s["slug"] not in placed]
+        if missing and groups:
+            LOI.canh(MENU_SRC, f"{where} › Nhóm lĩnh vực",
+                     f"Chưa xếp vào nhóm nào: {', '.join(missing)} – đang tự nằm cuối nhóm “{groups[-1].get('ten_nhom') or ''}”. "
+                     f"Thêm vào nhóm phù hợp để chọn đúng vị trí.")
+    for slug in dict.fromkeys(site.menu.get("linh_vuc_chan_trang") or []):
+        if slug not in site.all_service_slugs:
+            LOI.canh(MENU_SRC, "Thứ tự lĩnh vực ở chân trang", f"Lĩnh vực “{slug}” không còn tồn tại – dòng này bị bỏ qua. Xóa dòng đó.")
+
+
+def _check_service_cards(site):
+    """Khối lưới lĩnh vực (Trang tổng quan Dịch vụ): mỗi lĩnh vực đã đăng nên có thẻ riêng."""
+    src = schema.HUB_FILES["dich_vu"]
+    where = "Khối lưới lĩnh vực › Các thẻ lĩnh vực"
+    cards = ((site.hubs.get("dich_vu") or {}).get("luoi") or {}).get("the") or []
+    have = set()
+    for i, c in enumerate(cards, 1):
+        slug = (c or {}).get("linh_vuc")
+        if slug and slug not in site.all_service_slugs:
+            LOI.canh(src, f"{where} › Thẻ {i}", f"Lĩnh vực “{slug}” không còn tồn tại – thẻ này bị bỏ qua. Xóa thẻ hoặc chọn lĩnh vực khác.")
+        have.add(slug)
+    missing = [s["ten"] for s in site.services if s["slug"] not in have]
+    if missing:
+        LOI.canh(src, where, f"Chưa có thẻ cho: {', '.join(missing)} – lưới đang tạm hiện tên + mô tả ngắn ở cuối. "
+                             f"Thêm thẻ để viết tình huống và chọn vị trí.")

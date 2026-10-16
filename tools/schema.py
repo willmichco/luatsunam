@@ -102,12 +102,10 @@ def image(name, label, hint=None, **kw):
     return _f("image", name, label, hint, choose_url=False, **kw)
 
 
-def relation_service(name, label, hint=None, multiple=False, **kw):
-    """Chọn lĩnh vực dịch vụ từ danh sách sinh lúc build (ô "liên kết" của CMS có nút “Thêm lĩnh vực”
+def relation_service(name, label, hint=None, **kw):
+    """Chọn MỘT lĩnh vực dịch vụ từ danh sách sinh lúc build (ô "liên kết" của CMS có nút “Thêm lĩnh vực”
     mở form tạo cả một lĩnh vực mới – người biên tập rất dễ bấm nhầm). Lĩnh vực vừa tạo có trong danh sách
-    sau lần build kế tiếp."""
-    if multiple:
-        kw["multiple"] = True
+    sau lần build kế tiếp. Chọn nhiều lĩnh vực có thứ tự: pick_list()."""
     return _f("select", name, label, hint, options=[], _options="services", _relation="dich_vu",
               dropdown_threshold=10, **kw)
 
@@ -171,6 +169,57 @@ def _rule_link(v, add):
         add("Chọn một trang trong site hoặc điền “Hoặc địa chỉ khác”.")
     if v and v.get("trang") and v.get("ngoai"):
         add("Chỉ chọn trang trong site HOẶC điền địa chỉ khác, không dùng cả hai.")
+
+
+# ---------------------------------------------------------------------------
+# Ô chỉ để nhìn (không lưu dữ liệu) và danh sách chọn có thứ tự
+# ---------------------------------------------------------------------------
+UI_WIDGET = "lsn_nhom"  # thành phần tự viết trong admin/index.html; build bỏ qua, CMS không ghi gì vào tệp
+# Chỗ sửa dùng chung (địa chỉ trong trang quản trị: <mục>/entries/<tệp>#<ô>)
+SERVICE_CARDS = "dich_vu/entries/_index#luoi.the"
+FAQ_POOL = "hoi_dap/entries/kho-cau-hoi#cau_hoi"
+SERVICE_TEXTS = "cai_dat/entries/cau_chu#trang_linh_vuc"
+
+
+def nhom(name, label, mo_ta=None, phan=None):
+    """Tiêu đề chia form thành từng phần theo đúng thứ tự trên trang. phan: mã phần trên trang mô phỏng
+    (vd. "tinh_huong") để tiêu đề mang cùng số với danh sách “Các phần” của khung mô phỏng."""
+    f = _f(UI_WIDGET, name, label, required=False, kieu="tieu_de")
+    if mo_ta:
+        f["mo_ta"] = mo_ta
+    if phan:
+        f["phan"] = phan
+    return f
+
+
+def ghi_chu(name, text, mo=None, chu_mo="Mở chỗ sửa ›"):
+    """Ô ghi chú trong form: chữ này lấy từ đâu / sửa ở đâu. mo: "<mục>/entries/<tệp>#<ô>" để mở thẳng chỗ sửa."""
+    f = _f(UI_WIDGET, name, "Ghi chú", required=False, kieu="ghi_chu", mo_ta=text)
+    if mo:
+        f["mo"], f["chu_mo"] = mo, chu_mo
+    return f
+
+
+def _rule_no_dupes(label):
+    def rule(items, add):
+        seen = set()
+        for i, it in enumerate(items or [], 1):
+            if it in seen:
+                add(f"{label} “{it}” được chọn 2 lần (dòng {i}). Xóa dòng trùng.")
+            seen.add(it)
+    return rule
+
+
+def pick_list(name, label, kind, item_label, hint=None, min=None, max=None, relation=None, **kw):
+    """Chọn nhiều mục CÓ THỨ TỰ: mỗi dòng một ô chọn, kéo để đổi thứ tự (ô tích nhiều lựa chọn giấu thứ tự = thứ tự tích).
+    Dữ liệu vẫn là danh sách giá trị như ô chọn nhiều, nên tệp nội dung cũ không phải sửa.
+    kind: "services" (lĩnh vực) hoặc "faq" (kho câu hỏi). relation: "dich_vu" = build bắt lĩnh vực phải tồn tại, đã đăng."""
+    sub = _f("select", "muc", item_label, options=[], _options=kind, dropdown_threshold=0)
+    if relation:
+        sub["_relation"] = relation
+    h = "Kéo nút ═ trên thanh xám để đổi thứ tự – thứ tự trong danh sách là thứ tự hiện trên trang." + (" " + hint if hint else "")
+    return lst(name, label, field=sub, hint=h, min=min, max=max, label_singular=item_label.lower(), collapsed=False,
+               _rules=[_rule_no_dupes(item_label)], **kw)
 
 
 # ---------------------------------------------------------------------------
@@ -376,31 +425,43 @@ BLOCK_TYPES = [
          editor("noi_dung", "Nội dung", "Đề mục, đậm, liên kết, danh sách, bảng, ảnh. " + TOKEN_HINT),
      ]},
     {"name": "hoi_dap", "label": "Hỏi đáp", "summary": "Hỏi đáp: {{fields.tieu_de}}",
-     "fields": common() + section_head("Hỏi đáp", "Những câu anh chị hay hỏi") + [
+     "fields": [ghi_chu("ui_nguon", "Nội dung từng câu hỏi – câu trả lời sửa ở Câu hỏi thường gặp › Kho câu hỏi dùng chung "
+                                    "(một câu sửa ở đó là mọi trang dùng câu đó cùng đổi). Ở đây chỉ chọn câu nào hiện, theo thứ tự nào.",
+                        mo=FAQ_POOL, chu_mo="Mở Kho câu hỏi ›")]
+     + common() + section_head("Hỏi đáp", "Những câu anh chị hay hỏi") + [
          link("lien_ket", "Liên kết dưới mô tả (tùy chọn)", required=False),
-         _f("select", "cau_hoi", "Chọn câu hỏi từ Kho câu hỏi dùng chung",
-            "Tích các câu muốn hiện, theo thứ tự tích. Sửa nội dung câu hỏi tại Câu hỏi thường gặp → Kho câu hỏi dùng chung.",
-            options=[], multiple=True, min=1, max=10, _options="faq", dropdown_threshold=20),
+         pick_list("cau_hoi", "Câu hỏi hiện trong khối", "faq", "Câu hỏi", min=1, max=10),
      ]},
     {"name": "luoi_linh_vuc", "label": "Lưới lĩnh vực (tự động)", "summary": "Lưới lĩnh vực: {{fields.tieu_de}}",
-     "fields": common(default_bg="kem") + section_head("Theo lĩnh vực", "Anh chị đang gặp chuyện gì?") + [
+     "fields": [ghi_chu("ui_nguon", "Chữ trong các thẻ lĩnh vực (tình huống, mô tả, biểu tượng) và thứ tự thẻ sửa ở "
+                                    "Dịch vụ › Trang tổng quan Dịch vụ › Khối lưới lĩnh vực – dùng chung cho Trang chủ, "
+                                    "trang Dịch vụ và trang Kiến thức pháp lý. Ở đây chỉ sửa nhãn, tiêu đề, mô tả của khối.",
+                        mo=SERVICE_CARDS, chu_mo="Mở chỗ sửa chữ trong thẻ ›")]
+     + common(default_bg="kem") + section_head("Theo lĩnh vực", "Anh chị đang gặp chuyện gì?") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
-         select("kieu", "Kiểu thẻ", [("tinh_huong", "Tình huống – “Anh chị đang gặp chuyện gì?”"), ("dich_vu", "Tên lĩnh vực + mô tả ngắn")],
+         select("kieu", "Kiểu thẻ", [("tinh_huong", "Tình huống – “Anh chị đang gặp chuyện gì?”"),
+                                     ("dich_vu", "Tên lĩnh vực + mô tả ngắn (chữ lấy từ ô Mô tả ngắn của từng lĩnh vực)")],
                 default="tinh_huong", required=False),
      ]},
     {"name": "bai_viet_moi", "label": "Bài viết mới nhất (tự động)", "summary": "Bài viết mới: {{fields.tieu_de}}",
-     "fields": common(default_bg="kem") + section_head("Bài viết", "Kiến thức pháp luật dễ hiểu") + [
+     "fields": [ghi_chu("ui_nguon", "Thẻ bài tự lấy từ các bài đã đăng mới nhất (tiêu đề ngắn + tóm tắt của từng bài). "
+                                    "Sửa chữ trên thẻ: mở bài đó ở mục Bài viết pháp lý (hoặc bấm vào thẻ trên trang mô phỏng).",
+                        mo="bai_viet", chu_mo="Mở danh sách bài viết ›")]
+     + common(default_bg="kem") + section_head("Bài viết", "Kiến thức pháp luật dễ hiểu") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
          number("so_bai", "Số bài hiện", min=1, max=12, default=3, required=False),
          select("so_cot", "Số cột", [("2", "2 cột"), ("3", "3 cột")], default="3", required=False),
          relation_service("linh_vuc", "Chỉ lấy bài thuộc lĩnh vực (tùy chọn)", required=False),
      ]},
     {"name": "giay_to_linh_vuc", "label": "Giấy tờ theo lĩnh vực (tự động)", "summary": "Giấy tờ theo lĩnh vực",
-     "fields": common(default_bg="kem") + section_head("Theo lĩnh vực", "Giấy tờ theo từng loại vụ việc") + [
-         relation_service("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", "Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.", multiple=True, required=False),
+     "fields": [ghi_chu("ui_nguon", "Danh sách giấy tờ của mỗi thẻ lấy từ mục “Giấy tờ” của từng lĩnh vực "
+                                    "(Dịch vụ › <tên lĩnh vực> › phần “Giấy tờ và kết quả nhận được”).", mo="dich_vu", chu_mo="Mở danh sách lĩnh vực ›")]
+     + common(default_bg="kem") + section_head("Theo lĩnh vực", "Giấy tờ theo từng loại vụ việc") + [
+         pick_list("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", "services", "Lĩnh vực", relation="dich_vu"),
      ]},
     {"name": "kenh_lien_he", "label": "Kênh liên hệ", "summary": "Kênh liên hệ",
-     "fields": common() + [
+     "fields": [ghi_chu("ui_nguon", "Số điện thoại, Zalo, email, địa chỉ tự lấy từ Cài đặt chung › Thông tin công ty.",
+                        mo="cai_dat/entries/cong_ty", chu_mo="Mở Thông tin công ty ›")] + common() + [
          select("kenh", "Kênh hiện", [("goi", "Gọi điện"), ("zalo", "Nhắn Zalo"), ("email", "Gửi email"), ("van_phong", "Đến văn phòng")],
                 multiple=True, min=1, default=["goi", "zalo", "email"], hint="Số điện thoại, email, địa chỉ tự lấy từ Thông tin công ty"),
          string("ghi_chu_goi", "Ghi chú dưới Gọi điện", required=False, maxlength=120, default="{{gio_lam_viec}}. Việc gấp, hãy gọi trực tiếp."),
@@ -410,7 +471,8 @@ BLOCK_TYPES = [
          rich("noi_dung_viec_gap", "Nội dung ô Việc gấp", required=False, maxlength=420),
      ]},
     {"name": "ban_do", "label": "Bản đồ văn phòng", "summary": "Bản đồ: {{fields.tieu_de}}",
-     "fields": common() + section_head("Đường đến văn phòng", "Văn phòng Luật Sư Nam") + [
+     "fields": [ghi_chu("ui_nguon", "Địa chỉ, hotline, giờ làm việc tự lấy từ Cài đặt chung › Thông tin công ty.",
+                        mo="cai_dat/entries/cong_ty", chu_mo="Mở Thông tin công ty ›")] + common() + section_head("Đường đến văn phòng", "Văn phòng Luật Sư Nam") + [
          string("ghi_chu_hotline", "Ghi chú dưới hotline", required=False, maxlength=100, default="Ưu tiên gọi trực tiếp với việc gấp"),
      ]},
 ]
@@ -425,11 +487,32 @@ def blocks_field():
 # ---------------------------------------------------------------------------
 # Câu chữ dùng chung, trang lĩnh vực
 # ---------------------------------------------------------------------------
-def _sec(name, label, *extra, text_=True):
-    f = [string("nhan", "Nhãn nhỏ", maxlength=60), string("tieu_de", "Tiêu đề", maxlength=110)]
+def _sec(name, label, *extra, text_=True, collapsed=True, note=None):
+    f = [note] if note else []
+    f += [string("nhan", "Nhãn nhỏ", maxlength=60), string("tieu_de", "Tiêu đề", maxlength=110)]
     if text_:
         f.append(text("mo_ta", "Mô tả", required=False, maxlength=300))
-    return obj(name, label, f + list(extra), collapsed=True)
+    return obj(name, label, f + list(extra), collapsed=collapsed, summary="{{fields.tieu_de}}")
+
+
+def service_cards_field():
+    """Khối lưới lĩnh vực ở trang Dịch vụ: chữ của từng thẻ + thứ tự thẻ. Cùng một lưới hiện ở Trang chủ (khối “Lưới lĩnh vực”)
+    và trang Kiến thức pháp lý (khối “Theo lĩnh vực”), nên chỉ sửa ở một chỗ này."""
+    return _sec("luoi", "Khối lưới lĩnh vực", lst("the", "Các thẻ lĩnh vực", fields=[
+        _f("select", "linh_vuc", "Lĩnh vực của thẻ", "Bấm vào thẻ sẽ mở trang lĩnh vực này. Dòng chữ nhỏ màu đỏ trên thẻ = Tên lĩnh vực.",
+           options=[], _options="services", dropdown_threshold=0),
+        string("tieu_de", "Tình huống (dòng chữ đậm)", "Viết như lời người dân kể. Ví dụ: Chia đất, chia nhà sau khi cha mẹ mất",
+               maxlength=70),
+        text("mo_ta", "Mô tả dưới tình huống", "1–2 câu, ví dụ: Anh em tranh chấp di sản, không có di chúc…", maxlength=200),
+        icon(required=False, hint="Để trống = dùng biểu tượng của lĩnh vực."),
+    ], summary="{{fields.linh_vuc}} · {{fields.tieu_de}}", min=1, max=20, label_singular="thẻ",
+        hint="Mỗi lĩnh vực một thẻ. Kéo nút ═ trên thanh xám để đổi thứ tự thẻ trên lưới. Lĩnh vực mới chưa có thẻ ở đây sẽ tự hiện cuối lưới "
+             "với tên + mô tả ngắn của lĩnh vực.",
+        _rules=[_rule_unique("linh_vuc", "Lĩnh vực")]),
+        collapsed=False,
+        note=ghi_chu("ui_dung_chung", "Lưới này hiện ở 3 nơi: trang Dịch vụ, Trang chủ (khối “Lưới lĩnh vực”) và trang Kiến thức "
+                                      "pháp lý (khối “Theo lĩnh vực”). Sửa chữ, đổi thứ tự thẻ ở đây là cả 3 nơi cùng đổi; "
+                                      "nhãn, tiêu đề, mô tả phía trên khối là riêng của từng trang."))
 
 
 SERVICE_TEXT_HINT = "Dùng {{ten_linh_vuc}} để chèn tên lĩnh vực (chữ thường), vd. “thừa kế”."
@@ -473,6 +556,7 @@ def data_collections():
                           {"name": "da-dang", "label": "Đã đăng", "field": "nhap", "ne": True}],
          "preview_path": "kien-thuc-phap-ly/{{slug}}/",
          "fields": [
+             nhom("ui_thong_tin", "Thông tin bài", "Tiêu đề, địa chỉ, chuyên mục, ngày đăng – hiện ở đầu bài.", phan="dau_trang"),
              string("tieu_de", "Tiêu đề bài viết",
                     "Hiện ở đầu bài. Ví dụ: Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con",
                     minlength=20, maxlength=110),
@@ -487,8 +571,11 @@ def data_collections():
              date("ngay_dang", "Ngày đăng", default="{{now}}"),
              date("ngay_cap_nhat", "Ngày cập nhật", "Ngày rà soát nội dung gần nhất; không được trước ngày đăng. Để trống = ngày đăng.",
                   required=False),
+             nhom("ui_the_bai", "Thẻ bài trong danh sách",
+                  "Hiện ở trang Kiến thức pháp lý, khối “Bài viết mới nhất” (Trang chủ) và mục “Đọc thêm” của trang lĩnh vực."),
              string("tieu_de_ngan", "Tiêu đề ngắn trên thẻ bài viết", "Để trống = dùng tiêu đề bài viết.", required=False, maxlength=80),
              text("tom_tat", "Tóm tắt trên thẻ bài viết", "1–2 câu, hiện ở danh sách bài viết.", minlength=60, maxlength=220),
+             nhom("ui_noi_dung", "Nội dung bài", phan="tom_tat_nhanh"),
              strings("tom_tat_nhanh", "Tóm tắt nhanh (3–4 ý)", "Khung “Tóm tắt nhanh” ở đầu bài. Mỗi ý ≤ 160 ký tự.",
                      min=3, max=4, maxlength=160, item_label="Ý"),
              text("doan_dan", "Đoạn dẫn đầu bài", "Đoạn mở đầu in to hơn, giới thiệu vấn đề.", minlength=80, maxlength=700),
@@ -496,8 +583,9 @@ def data_collections():
                     "Nút ¶ → **Tiêu đề 2** cho mục chính (tự vào mục lục), **Tiêu đề 3** cho mục nhỏ, **Trích dẫn** = hộp lưu ý. "
                     "**Chèn → Ảnh** (bắt buộc mô tả ảnh), **Chèn → Bảng**. Liên kết trong site: /dich-vu/thua-ke/. "
                     "Khẳng định pháp lý luôn kèm điều luật; không hứa hẹn kết quả (Quy tắc 9.1.6)."),
-             relation_service("linh_vuc_lien_quan", "Lĩnh vực liên quan (cột phải)", "Tối đa 3. Để trống = chỉ lĩnh vực chính. Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.",
-                              multiple=True, max=3, required=False),
+             nhom("ui_cot_phai", "Cột phải của bài", phan="linh_vuc_lien_quan"),
+             pick_list("linh_vuc_lien_quan", "Lĩnh vực liên quan (tối đa 3)", "services", "Lĩnh vực",
+                       "Để trống = chỉ lĩnh vực chính.", max=3, relation="dich_vu"),
              seo("Ly hôn đơn phương: căn cứ, hồ sơ, quyền nuôi con",
                  "Khi nào Tòa án giải quyết ly hôn theo yêu cầu của một bên, hồ sơ cần chuẩn bị và nguyên tắc giao con."),
          ], "_rules": [_rule_dates]},
@@ -510,44 +598,55 @@ def data_collections():
          "sortable_fields": {"fields": ["thu_tu", "ten"], "default": {"field": "thu_tu", "direction": "ascending"}},
          "preview_path": "dich-vu/{{slug}}/",
          "fields": [
+             nhom("ui_chung", "Thông tin chung của lĩnh vực",
+                  "Tên, biểu tượng, mô tả ngắn hiện ở menu Dịch vụ, chân trang, khung “Cần luật sư về…” cạnh bài viết và ảnh chia sẻ."),
              string("ten", "Tên lĩnh vực", "Ví dụ: Thừa kế. Hiện trên menu, thẻ, chân trang.", minlength=3, maxlength=45),
              boolean("nhap", "Bản nháp – chưa đăng lên site", default=True),
-             number("thu_tu", "Thứ tự hiển thị", "Số nhỏ đứng trước (hoặc kéo thả bằng nút Sắp xếp ở danh sách).", min=1, max=99, default=99),
+             number("thu_tu", "Thứ tự mặc định", "Số nhỏ đứng trước (hoặc bấm “Sắp xếp lại” ở danh sách Dịch vụ). Dùng cho danh sách "
+                    "trong trang quản trị và nơi chưa xếp riêng. Thứ tự trên menu, chân trang, lưới thẻ xếp riêng: xem ghi chú ở "
+                    "Cài đặt chung › Menu và chân trang.", min=1, max=99, default=99),
              icon("bieu_tuong", "Biểu tượng lĩnh vực"),
-             icon("bieu_tuong_tinh_huong", "Biểu tượng trên thẻ tình huống (tùy chọn)", required=False),
-             text("mo_ta_ngan", "Mô tả ngắn", "Hiện ở thẻ lĩnh vực, khung cạnh bài viết, ảnh chia sẻ.", minlength=50, maxlength=180),
-             obj("the_tinh_huong", "Thẻ “Anh chị đang gặp chuyện gì?”", [
-                 string("tieu_de", "Tình huống", "Ví dụ: Chia đất, chia nhà sau khi cha mẹ mất", maxlength=70),
-                 text("mo_ta", "Mô tả", maxlength=200)], collapsed=True),
+             text("mo_ta_ngan", "Mô tả ngắn", "Hiện ở khung cạnh bài viết, thẻ “Lĩnh vực liên quan”, ảnh chia sẻ.", minlength=50, maxlength=180),
+             ghi_chu("ui_the", "Thẻ của lĩnh vực này trên lưới “Anh chị đang gặp chuyện gì?” (Trang chủ, trang Dịch vụ) sửa ở "
+                               "Trang tổng quan Dịch vụ › Khối lưới lĩnh vực – cả 7 thẻ nằm chung một chỗ để sửa và xếp thứ tự.",
+                     mo=SERVICE_CARDS, chu_mo="Mở Khối lưới lĩnh vực ›"),
+             nhom("ui_dau_trang", "Đầu trang", "Phần trên cùng của trang /dich-vu/<đường-dẫn>/.", phan="dau_trang"),
              string("nhan_dau_trang", "Nhãn nhỏ trên tiêu đề trang", "Ví dụ: Luật sư thừa kế", maxlength=60),
              red_title("tieu_de_trang", "Tiêu đề trang (H1)", example="Chia di sản thừa kế đúng luật, *giữ được tình thân*"),
              text("mo_dau", "Đoạn mở đầu", minlength=80, maxlength=600),
              boolean("viec_gap", "Hiện ô “Việc gấp?” dưới tiêu đề", "Dùng cho lĩnh vực cần gọi ngay, vd. Hình sự.", default=False),
+             ghi_chu("ui_tieu_de_muc", "Nhãn nhỏ, tiêu đề, mô tả của 6 phần dưới đây (vd. “Những tình huống thường gặp”) và thanh mục lục "
+                                       "dùng chung cho mọi lĩnh vực.", mo=SERVICE_TEXTS, chu_mo="Mở tiêu đề các mục ›"),
+             nhom("ui_tinh_huong", "Tình huống thường gặp", phan="tinh_huong"),
              strings("tinh_huong", "Tình huống thường gặp", min=3, max=8, maxlength=220, item_label="Tình huống"),
+             nhom("ui_pham_vi", "Luật sư giúp được gì", phan="pham_vi"),
              obj("pham_vi", "Luật sư giúp được gì", [
                  text("gioi_thieu", "Đoạn giới thiệu", maxlength=500),
                  lst("cac_viec", "Các việc", fields=[string("tieu_de", "Tên việc", maxlength=70), text("mo_ta", "Mô tả", maxlength=300)],
-                     summary="{{fields.tieu_de}}", min=2, max=9, label_singular="việc")], collapsed=True),
+                     summary="{{fields.tieu_de}}", min=2, max=9, label_singular="việc")]),
+             nhom("ui_viec_nen_lam", "Việc nên làm ngay", phan="viec_nen_lam"),
              strings("viec_nen_lam", "Việc nên làm ngay", min=2, max=6, maxlength=260, item_label="Việc"),
-             obj("luu_y", "Hộp lưu ý", [string("tieu_de", "Tiêu đề", default="Lưu ý", maxlength=40),
-                                        text("noi_dung", "Nội dung", maxlength=320)], collapsed=True),
-             obj("nguyen_tac", "Hộp “Cách luật sư làm việc”", [string("tieu_de", "Tiêu đề", maxlength=80),
-                                                               text("noi_dung", "Nội dung", maxlength=400)], collapsed=True),
+             obj("luu_y", "Hộp lưu ý (bên phải)", [string("tieu_de", "Tiêu đề", default="Lưu ý", maxlength=40),
+                                                   text("noi_dung", "Nội dung", maxlength=320)]),
+             obj("nguyen_tac", "Hộp nền tối “Cách luật sư làm việc” (bên phải)", [string("tieu_de", "Tiêu đề", maxlength=80),
+                                                                                  text("noi_dung", "Nội dung", maxlength=400)]),
+             nhom("ui_quy_trinh", "Các bước làm việc", phan="cac_buoc"),
              lst("cac_buoc", "Các bước làm việc", fields=[string("tieu_de", "Tên bước", maxlength=50), text("mo_ta", "Mô tả", maxlength=200)],
                  summary="{{fields.tieu_de}}", min=3, max=6, label_singular="bước"),
-             obj("giay_to", "Giấy tờ", [string("tieu_de", "Tiêu đề", default="Giấy tờ nên mang theo", maxlength=60),
-                                        strings("danh_sach", "Danh sách giấy tờ", min=2, max=10, maxlength=160, item_label="Giấy tờ")],
-                 collapsed=True),
-             strings("nhan_duoc", "Anh chị sẽ nhận được", min=2, max=8, maxlength=160),
+             nhom("ui_ho_so", "Giấy tờ và kết quả nhận được", phan="giay_to"),
+             obj("giay_to", "Giấy tờ (cột trái)", [string("tieu_de", "Tiêu đề", default="Giấy tờ nên mang theo", maxlength=60),
+                                                   strings("danh_sach", "Danh sách giấy tờ", min=2, max=10, maxlength=160, item_label="Giấy tờ")]),
+             strings("nhan_duoc", "Anh chị sẽ nhận được (cột phải)", min=2, max=8, maxlength=160),
+             nhom("ui_hoi_dap", "Hỏi đáp", phan="hoi_dap"),
              lst("hoi_dap", "Hỏi đáp riêng của lĩnh vực", fields=[
                  string("hoi", "Câu hỏi", maxlength=140),
                  rich("dap", "Câu trả lời", "Có dẫn điều luật cụ thể, in đậm tên điều luật.", maxlength=1400)],
                  summary="{{fields.hoi}}", min=1, max=8, label_singular="câu hỏi"),
-             strings("can_cu_phap_ly", "Căn cứ pháp luật chủ yếu", min=1, max=8, maxlength=140, item_label="Văn bản"),
-             obj("lien_he", "Lời mời liên hệ cuối trang", [string("tieu_de", "Tiêu đề", maxlength=110),
-                                                           text("doan_moi", "Đoạn mời", maxlength=320)], collapsed=True),
-             relation_service("linh_vuc_lien_quan", "Lĩnh vực liên quan", "Tối đa 3, hiện cuối trang. Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.",
-                              multiple=True, max=3, required=False),
+             strings("can_cu_phap_ly", "Căn cứ pháp luật chủ yếu (hộp bên trái)", min=1, max=8, maxlength=140, item_label="Văn bản"),
+             nhom("ui_cuoi_trang", "Cuối trang", "Mục “Đọc thêm” tự lấy 3 bài viết mới nhất của lĩnh vực này.", phan="linh_vuc_lien_quan"),
+             pick_list("linh_vuc_lien_quan", "Lĩnh vực liên quan (tối đa 3)", "services", "Lĩnh vực", max=3, relation="dich_vu"),
+             obj("lien_he", "Khối liên hệ đỏ cuối trang", [string("tieu_de", "Tiêu đề", maxlength=110),
+                                                           text("doan_moi", "Đoạn mời", maxlength=320)]),
              seo("Luật sư tư vấn Thừa kế tại TP.HCM",
                  "Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản, giải quyết tranh chấp thừa kế."),
          ]},
@@ -587,29 +686,35 @@ def data_collections():
          "files": [
              {"name": "dich_vu", "label": "Trang Dịch vụ (/dich-vu/)", "file": HUB_FILES["dich_vu"], "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
-                         _sec("luoi", "Khối lưới lĩnh vực"),
-                         obj("hinh_thuc", "Khối “Hình thức hỗ trợ”", [
-                             string("nhan", "Nhãn nhỏ", maxlength=60), string("tieu_de", "Tiêu đề", maxlength=110),
-                             text("mo_ta", "Mô tả", required=False, maxlength=300),
-                             lst("the", "Các thẻ", fields=[icon(), string("tieu_de", "Tiêu đề", maxlength=70), text("mo_ta", "Mô tả", maxlength=300)],
-                                 summary="{{fields.tieu_de}}", min=1, max=6, label_singular="thẻ")], collapsed=True),
+                         service_cards_field(),
+                         _sec("hinh_thuc", "Khối “Hình thức hỗ trợ”",
+                              lst("the", "Các thẻ", fields=[icon(), string("tieu_de", "Tiêu đề", maxlength=70), text("mo_ta", "Mô tả", maxlength=300)],
+                                  summary="{{fields.tieu_de}}", min=1, max=6, label_singular="thẻ"), collapsed=False),
                          contact_band_fields(),
                          seo("Lĩnh vực hoạt động – Dịch vụ pháp lý", "Luật Sư Nam tư vấn, đại diện và tham gia tố tụng trong 7 lĩnh vực.")]},
              {"name": "kien_thuc", "label": "Trang Kiến thức pháp lý (/kien-thuc-phap-ly/)", "file": HUB_FILES["kien_thuc"],
               "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
-                         _sec("bai_viet", "Khối danh sách bài viết"),
+                         _sec("bai_viet", "Khối danh sách bài viết", collapsed=False,
+                              note=ghi_chu("ui_nguon", "Danh sách bài tự lấy mọi bài đã đăng, mới nhất trước. Sửa chữ trên thẻ bài: "
+                                                       "mở bài ở mục Bài viết pháp lý.", mo="bai_viet", chu_mo="Mở danh sách bài viết ›")),
                          lst("the_cong_cu", "Hai thẻ lớn giữa trang", fields=[
                              icon(), string("nhan", "Nhãn nhỏ", maxlength=50), string("tieu_de", "Tiêu đề", maxlength=90),
                              text("mo_ta", "Mô tả", maxlength=260), link("lien_ket", "Dẫn tới")],
                              summary="{{fields.tieu_de}}", min=1, max=2, label_singular="thẻ",
                              hint="Thẻ thứ nhất nền tối, thẻ thứ hai nền sáng."),
-                         _sec("theo_linh_vuc", "Khối “Theo lĩnh vực”", link("lien_ket", "Liên kết cạnh tiêu đề", required=False)),
+                         _sec("theo_linh_vuc", "Khối “Theo lĩnh vực”", link("lien_ket", "Liên kết cạnh tiêu đề", required=False),
+                              collapsed=False,
+                              note=ghi_chu("ui_nguon", "Các thẻ lĩnh vực trong khối này dùng chung với trang Dịch vụ: sửa chữ, đổi thứ tự thẻ "
+                                                       "ở Trang tổng quan Dịch vụ › Khối lưới lĩnh vực.", mo=SERVICE_CARDS,
+                                           chu_mo="Mở chỗ sửa chữ trong thẻ ›")),
                          contact_band_fields(),
                          seo("Kiến thức pháp lý – Bài viết, tra cứu luật", "Bài viết phân tích pháp luật về thừa kế, hôn nhân gia đình, đất đai.")]},
              {"name": "hoi_dap", "label": "Trang Câu hỏi thường gặp (/cau-hoi-thuong-gap/)", "file": HUB_FILES["hoi_dap"],
               "format": "yml",
               "fields": [page_head_fields("Đầu trang", with_card=True),
+                         ghi_chu("ui_nguon", "Danh sách câu hỏi trên trang này là toàn bộ Kho câu hỏi dùng chung (thêm, sửa, kéo đổi "
+                                             "thứ tự câu hỏi ở đó).", mo=FAQ_POOL, chu_mo="Mở Kho câu hỏi ›"),
                          rich("ghi_chu_cuoi", "Ghi chú dưới danh sách câu hỏi", required=False, maxlength=400),
                          lst("tim_hieu_them", "Cột “Tìm hiểu thêm”", fields=[icon(), *link("lien_ket")["fields"]],
                              summary="{{fields.nhan}}", max=6, label_singular="liên kết", _item_rules=[_rule_link]),
@@ -667,58 +772,142 @@ def fixed_page_fields(fields, home=False):
     return out
 
 
-def collections():
+MENU_FILE = "content/cai-dat/menu.yml"
+# Trang tổng hợp trên menu → mục trong cột trái
+COLLECTION_OF_PATH = {"dich-vu/": "dich_vu", "kien-thuc-phap-ly/": "bai_viet", "cau-hoi-thuong-gap/": "hoi_dap"}
+
+
+def _menu_from_disk():
+    """Menu chính đang lưu (đọc thẳng tệp: dùng được cả lúc build lẫn trong khung mô phỏng). Tệp hỏng: menu rỗng."""
+    import yaml
+    try:
+        with open(os.path.join(ROOT, MENU_FILE), encoding="utf-8") as fh:
+            return (yaml.safe_load(fh) or {}).get("menu") or []
+    except Exception:
+        return []
+
+
+def _unit_of(page):
+    path = (page or "").lstrip("/")
+    slug = path.rstrip("/") or "trang-chu"
+    if slug in FIXED_SLUGS:
+        return ("trang", slug)
+    if path in COLLECTION_OF_PATH:
+        return ("muc", COLLECTION_OF_PATH[path])
+    return None  # trang tự tạo, trang văn bản: ở mục riêng
+
+
+def sidebar_plan(menu=None):
+    """Cột trái trang quản trị xếp theo đúng Menu chính của website (Cài đặt chung → Menu và chân trang).
+    Trả về các nhóm theo thứ tự menu: {"nhan": chữ trên menu, "xo": có menu xổ, "don_vi": [(loại, tên, chữ trên menu)]},
+    loại "trang" = trang cố định (tên = đường dẫn), "muc" = mục nhiều trang (dich_vu, bai_viet, hoi_dap).
+    Trang cố định / mục không có trên menu nằm ở nhóm cuối (nhan = None)."""
+    menu = _menu_from_disk() if menu is None else menu
+    used, groups = set(), []
+    for it in menu:
+        children = it.get("muc_con") or [] if it.get("loai") == "menu_xo" else []
+        labels = {}
+        for x in children:
+            labels.setdefault(x.get("trang"), x.get("nhan"))
+        labels.setdefault(it.get("trang"), it.get("nhan"))
+        units = []
+        for page in [it.get("trang")] + [x.get("trang") for x in children]:
+            u = _unit_of(page)
+            if u and u not in used:
+                used.add(u)
+                units.append(u + (labels.get(page) or "",))
+        if units:
+            groups.append({"nhan": it.get("nhan") or "", "xo": it.get("loai") != "lien_ket", "don_vi": units})
+    rest = [("trang", x, "") for x in FIXED_SLUGS if ("trang", x) not in used]
+    rest += [("muc", x, "") for x in COLLECTION_OF_PATH.values() if ("muc", x) not in used]
+    if rest:
+        groups.append({"nhan": None, "xo": False, "don_vi": rest})
+    return groups
+
+
+def collections(menu=None):
     """Các mục trong cột trái trang quản trị. Cùng tệp, cùng trường với data_collections() (build kiểm theo đó),
-    chỉ khác cách nhóm: mỗi mục ứng với một mục menu website."""
+    chỉ khác cách nhóm: theo đúng thứ tự Menu chính của website (sidebar_plan). Đổi menu → cột trái đổi theo ở lần build sau.
+    Tên mục (name) giữ cố định cho các mục nhiều trang (dich_vu, bai_viet, hoi_dap, cai_dat…) vì đường dẫn trong trang quản trị dùng tên này."""
     d = {c["name"]: c for c in data_collections() if not c.get("divider")}
     page_fields = d["trang"]["fields"]
     hubs = {f["name"]: f for f in d["trang_tong_hop"]["files"]}
     labels = dict(FIXED_PAGES)
+    blocks_help = f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi)"
 
-    def fixed(slug, preview):
-        return {"name": slug, "label": labels[slug], "file": f"content/trang/{slug}.yml", "format": "yml",
-                "preview_path": preview, "fields": fixed_page_fields(page_fields, home=slug == "trang-chu")}
+    def fixed(slug, label):
+        return {"name": slug, "label": label or labels[slug], "file": f"content/trang/{slug}.yml", "format": "yml",
+                "preview_path": "./" if slug == "trang-chu" else f"{slug}/",
+                "fields": fixed_page_fields(page_fields, home=slug == "trang-chu")}
 
     def index_file(hub, label):
         return {"name": "_index", "label": label, "icon": "home", "extension": "yml", "format": "yml", "fields": hub["fields"]}
 
-    blocks_help = f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi)"
-    services = dict(d["dich_vu"], label="Dịch vụ", label_singular="lĩnh vực", icon="balance",
-                    description="Menu **Dịch vụ ▾**: dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/, bên dưới là "
-                                "từng lĩnh vực /dich-vu/<đường-dẫn>/ – cũng hiện ở thẻ Trang chủ và chân trang. "
-                                "Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
-                    index_file=index_file(hubs["dich_vu"], "Trang tổng quan Dịch vụ (/dich-vu/)"),
-                    preview_path="dich-vu/{{slug}}")
-    articles = dict(d["bai_viet"], label="Bài viết pháp lý", icon="menu_book",
-                    description="Menu **Thư viện pháp lý ▾ → Bài viết pháp lý**: dòng đầu là trang danh sách /kien-thuc-phap-ly/, "
-                                "bên dưới là từng bài. Bài mới luôn là **bản nháp** cho tới khi luật sư duyệt. "
-                                f"[Hướng dẫn đăng bài]({GUIDE}#dang-bai)",
-                    index_file=index_file(hubs["kien_thuc"], "Trang Bài viết pháp lý (/kien-thuc-phap-ly/)"),
-                    preview_path="kien-thuc-phap-ly/{{slug}}")
-    faq_page = dict(hubs["hoi_dap"], name="trang-hoi-dap", label="Trang Câu hỏi thường gặp (phần chữ)", preview_path="cau-hoi-thuong-gap/")
-    faq_pool = dict(d["hoi_dap"]["files"][0], name="kho-cau-hoi", label="Kho câu hỏi dùng chung", preview_path="cau-hoi-thuong-gap/")
+    def where(group, cap=False):
+        w = (f"menu **{group['nhan']} ▾**" if group["xo"] else f"mục **{group['nhan']}** trên menu" if group["nhan"]
+             else "trang không có trên menu")
+        return w[:1].upper() + w[1:] if cap else w
+
+    services_desc = ("dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/ – nơi sửa chữ và thứ tự các thẻ lĩnh vực; bên dưới là "
+                     "từng lĩnh vực /dich-vu/<đường-dẫn>/. Bấm “Sắp xếp lại” để đổi thứ tự mặc định.")
+    collection_of = {
+        "dich_vu": lambda label, g: dict(d["dich_vu"], label=label or "Dịch vụ", label_singular="lĩnh vực", icon="balance",
+                                         description=f"{where(g, True)}: {services_desc}",
+                                         index_file=index_file(hubs["dich_vu"], "Trang tổng quan Dịch vụ (/dich-vu/)"),
+                                         preview_path="dich-vu/{{slug}}"),
+        "bai_viet": lambda label, g: dict(d["bai_viet"], label=label or "Bài viết pháp lý", icon="menu_book",
+                                          description=f"{where(g, True)}: dòng đầu là trang danh sách /kien-thuc-phap-ly/, bên dưới là "
+                                                      "từng bài. Bài mới luôn là **bản nháp** cho tới khi luật sư duyệt. "
+                                                      f"[Hướng dẫn đăng bài]({GUIDE}#dang-bai)",
+                                          index_file=index_file(hubs["kien_thuc"], "Trang Bài viết pháp lý (/kien-thuc-phap-ly/)"),
+                                          preview_path="kien-thuc-phap-ly/{{slug}}"),
+        "hoi_dap": lambda label, g: {
+            "name": "hoi_dap", "label": label or "Câu hỏi thường gặp", "icon": "quiz",
+            "description": f"{where(g, True)} (/cau-hoi-thuong-gap/): phần chữ của trang, và kho câu hỏi dùng chung "
+                           "(trang này hiện tất cả; Trang chủ và các trang khác chọn câu từ kho).",
+            "files": [dict(hubs["hoi_dap"], name="trang-hoi-dap", label="Trang Câu hỏi thường gặp (phần chữ)", preview_path="cau-hoi-thuong-gap/"),
+                      dict(d["hoi_dap"]["files"][0], name="kho-cau-hoi", label="Kho câu hỏi dùng chung", preview_path="cau-hoi-thuong-gap/")]},
+    }
+    page_desc = {
+        "trang-chu": "Trang đầu tiên của website. Ghép từ các khối xếp từ trên xuống: bấm một khối để sửa, kéo để đổi thứ tự. ",
+        "lien-he": "Trang Liên hệ. Hotline, địa chỉ, giờ làm việc sửa ở Cài đặt chung → Thông tin công ty. ",
+    }
+    icons = {"trang-chu": "home", "lien-he": "call"}
+
+    out = []
+    for g in sidebar_plan(menu):
+        run = []  # các trang cố định liền nhau trong cùng mục menu → một mục nhiều tệp
+
+        def flush():
+            if not run:
+                return
+            only = len(run) == 1 and len(g["don_vi"]) == 1
+            slug0 = run[0][1]
+            label = (run[0][2] or labels[slug0]) if only and not g["xo"] else (g["nhan"] if g["nhan"] and len(run) == len(g["don_vi"])
+                                                                                 else run[0][2] or labels[slug0])
+            desc = page_desc.get(slug0, "") if len(run) == 1 else ""
+            if g["nhan"] is None:
+                desc += "Không có trên menu website (vẫn mở được qua liên kết). Thêm vào menu: Cài đặt chung → Menu và chân trang. "
+            elif len(run) > 1:
+                desc += f"{len(run)} trang trong {where(g)}, đúng thứ tự trên website. "
+            elif slug0 not in page_desc:
+                desc += f"Nằm ở {where(g)}. "
+            out.append({"name": slug0.replace("-", "_"), "label": label, "icon": icons.get(slug0, "info"),
+                        "description": desc + blocks_help, "files": [fixed(x, lb) for _, x, lb in run]})
+            run.clear()
+        for kind, name, label in g["don_vi"]:
+            if kind == "trang":
+                run.append((kind, name, label))
+            else:
+                flush()
+                out.append(collection_of[name](label, g))
+        flush()
+
     legal = [dict(f, preview_path=f["file"].split("/")[-1].rsplit(".", 1)[0] + "/") if f["name"] != "trang_404" else f
              for f in d["trang_van_ban"]["files"]]
     settings = {f["name"]: f for f in d["cai_dat"]["files"]}
     fixed_pattern = "^(?!(" + "|".join(FIXED_SLUGS) + ")$)"
-    return [
-        {"name": "trang_chu", "label": "Trang chủ", "icon": "home",
-         "description": "Trang đầu tiên của website. Ghép từ các khối xếp từ trên xuống: bấm một khối để sửa, kéo để đổi thứ tự. "
-                        + blocks_help,
-         "files": [fixed("trang-chu", "./")]},
-        {"name": "gioi_thieu", "label": "Giới thiệu", "icon": "info",
-         "description": "Ba trang trong menu **Giới thiệu ▾**, đúng thứ tự trên website. " + blocks_help,
-         "files": [fixed("gioi-thieu", "gioi-thieu/"), fixed("vi-sao-chon-chung-toi", "vi-sao-chon-chung-toi/"),
-                   fixed("quy-trinh-lam-viec", "quy-trinh-lam-viec/")]},
-        services,
-        articles,
-        {"name": "hoi_dap", "label": "Câu hỏi thường gặp", "icon": "quiz",
-         "description": "Menu **Thư viện pháp lý ▾ → Câu hỏi thường gặp** (/cau-hoi-thuong-gap/): phần chữ của trang, và kho câu hỏi "
-                        "dùng chung (trang này hiện tất cả; Trang chủ và các trang khác chọn câu từ kho).",
-         "files": [faq_page, faq_pool]},
-        {"name": "lien_he", "label": "Liên hệ", "icon": "call",
-         "description": "Trang Liên hệ – mục cuối của menu. Hotline, địa chỉ, giờ làm việc sửa ở Cài đặt chung → Thông tin công ty.",
-         "files": [fixed("lien-he", "lien-he/")]},
+    return out + [
         {"divider": True, "name": "divider-trang"},
         dict(d["trang"], label="Trang tự tạo", label_singular="trang", icon="note_add",
              description="Trang mới ghép từ khối (vd. Phí dịch vụ), mặc định là bản nháp. Muốn trang hiện trên menu: "
@@ -735,6 +924,39 @@ def collections():
                          f"[Đổi hotline]({GUIDE}#doi-hotline) · [Chuyển hướng]({GUIDE}#chuyen-huong)",
              files=[settings[n] for n in SETTINGS_ORDER]),
     ]
+
+
+def sidebar_decor(cols):
+    """Trang trí cột trái (admin/dieu-huong.js đọc admin/cot-trai.json): tiêu đề nhóm, mục thụt vào dưới tên menu xổ,
+    mục một trang mở thẳng trình soạn. Khóa theo nhãn mục (data-label của Sveltia)."""
+    plan = sidebar_plan()
+    by_name = {c["name"]: c for c in cols if not c.get("divider")}
+    unit_col = {}
+    for c in cols:
+        for f in c.get("files") or []:
+            if f.get("file", "").startswith("content/trang/"):
+                unit_col[("trang", f["name"])] = c["name"]
+    for n in COLLECTION_OF_PATH.values():
+        unit_col[("muc", n)] = n
+    heads, indent, single = [], [], {}
+    for gi, g in enumerate(plan):
+        names = list(dict.fromkeys(unit_col[(k, n)] for k, n, _ in g["don_vi"] if (k, n) in unit_col))
+        if not names:
+            continue
+        first = by_name[names[0]]["label"]
+        if gi == 0:
+            heads.append([first, "Trang theo menu website", ""])
+        if g["nhan"] is None:
+            heads.append([first, "Trang cố định không có trên menu", ""])
+        elif g["xo"] and len(names) > 1:
+            heads.append([first, g["nhan"], "con"])
+            indent += [by_name[n]["label"] for n in names]
+    heads.append(["Trang tự tạo", "Trang khác", ""])
+    heads.append(["Cài đặt chung", "Dùng chung mọi trang", ""])
+    for c in cols:
+        if not c.get("divider") and len(c.get("files") or []) == 1:
+            single[c["label"]] = f'{c["name"]}/entries/{c["files"][0]["name"]}'
+    return {"tieu_de": heads, "thut": indent, "mot_tep": single}
 
 
 def fields_for_path(rel):
@@ -793,6 +1015,11 @@ def settings_files():
             rich("gioi_thieu_chan_trang", "Giới thiệu ngắn ở chân trang", maxlength=400),
         ]},
         {"name": "menu", "label": "Menu và chân trang", "file": "content/cai-dat/menu.yml", "format": "yml", "fields": [
+            ghi_chu("ui_thu_tu", "Mọi danh sách ở đây đều kéo nút ═ trên thanh xám để đổi thứ tự – thứ tự trong form là thứ tự trên website. "
+                                 "Thứ tự lĩnh vực: trong menu xổ Dịch vụ → mục “Dịch vụ” › Nhóm lĩnh vực bên dưới; ở chân trang → "
+                                 "“Thứ tự lĩnh vực ở chân trang”; trên lưới thẻ (Trang chủ, trang Dịch vụ) → Trang tổng quan Dịch vụ "
+                                 "› Khối lưới lĩnh vực. Cột trái trang quản trị cũng tự xếp theo Menu chính (sau khi Lưu 2–3 phút)."),
+            nhom("ui_menu", "Menu chính (đầu trang)", phan="@dau-trang-site"),
             lst("menu", "Menu chính", types=[
                 {"name": "lien_ket", "label": "Mục đơn", "summary": "{{fields.nhan}}",
                  "fields": [string("nhan", "Chữ trên menu", maxlength=30), page_link("trang", "Trang")]},
@@ -806,26 +1033,26 @@ def settings_files():
                 {"name": "menu_linh_vuc", "label": "Mục lĩnh vực (menu xổ lớn)", "summary": "{{fields.nhan}} ▾ (lĩnh vực)",
                  "fields": [string("nhan", "Chữ trên menu", maxlength=30), page_link("trang", "Trang tổng quan"),
                             lst("nhom", "Nhóm lĩnh vực", fields=[string("ten_nhom", "Tên nhóm", maxlength=40),
-                                                                 relation_service("linh_vuc", "Lĩnh vực trong nhóm", "Thứ tự hiện = thứ tự tích; muốn đưa một mục xuống cuối: bỏ tích rồi tích lại.", multiple=True, min=1)],
+                                                                 pick_list("linh_vuc", "Lĩnh vực trong nhóm", "services", "Lĩnh vực",
+                                                                           min=1, relation="dich_vu")],
                                 summary="{{fields.ten_nhom}}", min=1, max=4, label_singular="nhóm",
-                                hint="Lĩnh vực mới chưa xếp vào nhóm nào sẽ tự nằm cuối nhóm cuối cùng."),
+                                hint="Mỗi lĩnh vực chỉ nằm trong 1 nhóm. Lĩnh vực mới chưa xếp vào nhóm nào sẽ tự nằm cuối nhóm cuối cùng."),
                             string("nhan_tat_ca", "Chữ liên kết “xem tất cả”", maxlength=50)]},
             ], min=1, max=7, label_singular="mục menu", hint="Kéo để đổi thứ tự. Tối đa 7 mục để menu không xuống dòng."),
+            nhom("ui_chan_trang", "Chân trang", phan="@chan-trang"),
             obj("tieu_de_cot", "Tiêu đề các cột chân trang", [
                 string("ve_chung_toi", "Cột liên kết", maxlength=40), string("linh_vuc", "Cột lĩnh vực (tự động)", maxlength=40),
-                string("van_phong", "Cột văn phòng", maxlength=40)], collapsed=True),
-            # Danh sách kéo-thả (thấy được thứ tự) thay ô tích nhiều lựa chọn (thứ tự = thứ tự tích, không nhìn thấy).
-            # Chỉ quyết định thứ tự – cột luôn có đủ lĩnh vực đã đăng – nên không báo lỗi khi chọn lĩnh vực nháp:
-            # lĩnh vực đó hiện đúng vị trí đã xếp khi được đăng.
-            lst("linh_vuc_chan_trang", "Thứ tự lĩnh vực ở chân trang",
-                field=_f("select", "linh_vuc", "Lĩnh vực", options=[], _options="services", dropdown_threshold=0),
-                hint="Kéo để đổi thứ tự. Cột luôn có đủ lĩnh vực: lĩnh vực chưa có trong danh sách tự nằm cuối; "
-                     "để trống = theo ô “Thứ tự” của từng lĩnh vực.",
-                max=20, label_singular="lĩnh vực", summary="{{fields.linh_vuc}}", collapsed=True),
+                string("van_phong", "Cột văn phòng", maxlength=40)], collapsed=True, summary="{{fields.ve_chung_toi}} · {{fields.linh_vuc}} · {{fields.van_phong}}"),
             lst("chan_trang", "Cột liên kết ở chân trang", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
                 min=1, max=10, label_singular="liên kết", _item_rules=[_rule_link]),
+            # Chỉ quyết định thứ tự – cột luôn có đủ lĩnh vực đã đăng – nên không bắt lĩnh vực phải đã đăng (không relation):
+            # lĩnh vực nháp hiện đúng vị trí đã xếp khi được đăng.
+            pick_list("linh_vuc_chan_trang", "Thứ tự lĩnh vực ở chân trang", "services", "Lĩnh vực",
+                      "Cột luôn có đủ lĩnh vực: lĩnh vực chưa có trong danh sách tự nằm cuối; để trống = theo ô “Thứ tự mặc định” "
+                      "của từng lĩnh vực.", max=20),
             lst("lien_ket_phap_ly", "Liên kết cuối chân trang", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
                 max=5, label_singular="liên kết", _item_rules=[_rule_link]),
+            nhom("ui_tim_kiem", "Ô tìm kiếm", "Bấm kính lúp ở đầu trang để thấy các gợi ý này."),
             lst("goi_y_tim_kiem", "Gợi ý trong ô tìm kiếm", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
                 max=6, label_singular="gợi ý", _item_rules=[_rule_link]),
         ]},
@@ -1116,6 +1343,8 @@ def validate(value, field, src, path, ctx):
             value = {}
         out = {}
         for sub in field.get("fields", []):
+            if sub["widget"] == UI_WIDGET:  # tiêu đề nhóm / ghi chú: chỉ hiện trong form, không có dữ liệu
+                continue
             out[sub["name"]] = validate(value.get(sub["name"], MISSING), sub, src, path + [sub["label"]], ctx)
         for k, v in value.items():
             if k not in out:

@@ -376,7 +376,7 @@ def giay_to_linh_vuc(ctx, b, i, page):
     only = b.get("linh_vuc") or []
     items = [tpl.S.service_by_slug[x] for x in only if x in tpl.S.service_by_slug] if only else tpl.S.services
     cards = "".join(
-        f'<article class="reveal"><h3><span class="ichip ichip--sm">{ico(s["bieu_tuong"], "")}</span>{esc(s["ten"])}</h3>'
+        f'<article class="reveal"{tpl.cms(s["_src"], "giay_to", "Giấy tờ – " + s["ten"])}><h3><span class="ichip ichip--sm">{ico(s["bieu_tuong"], "")}</span>{esc(s["ten"])}</h3>'
         f'{tpl.check_list((s.get("giay_to") or {}).get("danh_sach") or [])}'
         f'<a class="link-arrow" href="{ctx.r}dich-vu/{s["slug"]}/#ho-so">Xem chi tiết {ARROW}</a></article>' for s in items)
     return f"""{sec_open(b, hid, default_bg="kem")}

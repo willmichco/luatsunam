@@ -7,6 +7,29 @@ luoi:
   nhan: Bảy lĩnh vực
   tieu_de: Chọn tình huống gần giống với anh chị
   mo_ta: 'Mỗi lĩnh vực có trang riêng: những trường hợp thường gặp, luật sư giúp được gì, giấy tờ cần chuẩn bị và các bước làm việc.'
+  the:
+    - linh_vuc: thua-ke
+      tieu_de: Chia đất, chia nhà sau khi cha mẹ mất
+      mo_ta: Anh em tranh chấp di sản, không có di chúc hoặc di chúc chưa rõ ràng, cần làm thủ tục khai nhận thừa kế.
+    - linh_vuc: dat-dai-bat-dong-san
+      tieu_de: Mua bán, đặt cọc nhà đất
+      mo_ta: Lo bị lừa khi đặt cọc, tranh chấp ranh giới, chậm sang tên hoặc chưa được cấp sổ.
+    - linh_vuc: hon-nhan-gia-dinh
+      tieu_de: Ly hôn, giành quyền nuôi con
+      mo_ta: Muốn ly hôn thuận tình hay đơn phương, chia tài sản chung, cấp dưỡng và quyền nuôi con.
+    - linh_vuc: hinh-su
+      tieu_de: Người nhà bị công an mời, bị bắt
+      mo_ta: Cần luật sư bào chữa, gặp người bị tạm giữ, tạm giam, hoặc bảo vệ quyền lợi cho người bị hại.
+      bieu_tuong: i-shield
+    - linh_vuc: dan-su
+      tieu_de: Cho vay không trả, hợp đồng bị bội tín
+      mo_ta: Đòi nợ, đòi bồi thường thiệt hại, tranh chấp hợp đồng mua bán, thuê nhà, hợp tác làm ăn.
+    - linh_vuc: tranh-tung-giai-quyet-tranh-chap
+      tieu_de: Bị kiện hoặc cần khởi kiện ra Tòa
+      mo_ta: Soạn đơn, chuẩn bị chứng cứ, đại diện và tranh luận tại Tòa án, Trọng tài qua các cấp xét xử.
+    - linh_vuc: cong-chung
+      tieu_de: Công chứng hợp đồng, di chúc, ủy quyền
+      mo_ta: Kiểm tra giấy tờ, soạn nội dung đúng ý trước khi ký mua bán, tặng cho, lập di chúc, ủy quyền.
 hinh_thuc:
   nhan: Hình thức hỗ trợ
   tieu_de: Luật sư có thể giúp anh chị theo ba cách

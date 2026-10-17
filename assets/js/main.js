@@ -5,12 +5,83 @@
   'use strict';
 
   var doc = document.documentElement;
-  doc.classList.add('js');
+  // Không thêm lớp "js" vào <html>: đổi lớp ở gốc trang bắt trình duyệt tính lại giao diện cả trang (~150 ms trên điện thoại yếu)
   var ROOT = doc.getAttribute('data-root') || '';
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+
+  /* Trang 404 dùng thẻ <base>: giữ các liên kết #neo trong trang hiện tại */
+  if ($('base')) {
+    $$('a[href^="#"]').forEach(function (a) { a.setAttribute('href', location.pathname + location.search + a.getAttribute('href')); });
+  }
+
+  /* ---------- Thông báo nhỏ ---------- */
+  var toastEl = null, toastTimer = null;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      toastEl.setAttribute('role', 'status');
+      document.body.appendChild(toastEl);
+    }
+    toastEl.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span></span>';
+    toastEl.lastChild.textContent = msg;
+    requestAnimationFrame(function () { toastEl.classList.add('is-visible'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('is-visible'); }, 3200);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? resolve() : reject(); } catch (err) { reject(err); }
+      ta.remove();
+    });
+  }
+
+  /* ---------- Giờ làm việc theo giờ Việt Nam (UTC+7); ngày, giờ lấy từ CMS: <html data-gio="1,2,3,4,5|480|1050"> ---------- */
+  (function () {
+    var els = $$('[data-open-now]');
+    if (!els.length) return;
+    var cfg = (doc.getAttribute('data-gio') || '1,2,3,4,5|480|1050').split('|');
+    var days = cfg[0].split(',').map(Number), opens = +cfg[1], closes = +cfg[2];
+    var DAY = ['Chủ nhật', 'thứ Hai', 'thứ Ba', 'thứ Tư', 'thứ Năm', 'thứ Sáu', 'thứ Bảy'];
+    var hhmm = ('0' + Math.floor(opens / 60)).slice(-2) + ':' + ('0' + opens % 60).slice(-2);
+    function update() {
+      var vn = new Date(Date.now() + 7 * 36e5); // đọc bằng getUTC* = giờ Việt Nam, không phụ thuộc múi giờ máy
+      var day = vn.getUTCDay(), mins = vn.getUTCHours() * 60 + vn.getUTCMinutes();
+      var workday = days.indexOf(day) >= 0;
+      var open = workday && mins >= opens && mins < closes;
+      var next = 'hôm nay';
+      if (!(workday && mins < opens)) {
+        for (var d = 1; d <= 7 && days.indexOf((day + d) % 7) < 0; d++) {}
+        var nd = (day + d) % 7;
+        next = nd === 1 ? 'thứ Hai' : (d === 1 ? 'sáng mai' : DAY[nd]);
+      }
+      var text = open ? 'Đang trong giờ làm việc' : 'Ngoài giờ · làm việc lại ' + hhmm + ' ' + next;
+      els.forEach(function (el) {
+        el.textContent = text;
+        el.classList.toggle('is-closed', !open);
+        el.classList.add('is-ready');
+      });
+    }
+    update();
+    setInterval(update, 60000);
+  })();
+
+  /* ---------- Máy tính: bấm số điện thoại thì chép số, vì nhiều máy không gọi được ---------- */
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (!a) return;
+      var num = a.getAttribute('href').slice(4).replace(/^(\d{4})(\d{3})(\d{3})$/, '$1 $2 $3');
+      copyText(num).then(function () { toast('Đã chép số ' + num + ' – gọi bằng điện thoại hoặc nhắn Zalo'); }, function () {});
+    });
+  }
 
   /* ---------- Header, nút nổi ---------- */
   var header = $('#site-header');
@@ -23,7 +94,7 @@
     if (floating) floating.classList.toggle('is-visible', y > 300);
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  requestAnimationFrame(onScroll); // đọc vị trí cuộn ở khung hình kế tiếp: không ép trình duyệt tính bố cục ngay lúc tải
   if (toTop) toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); });
 
   /* ---------- Navigation: disclosure buttons, mouse and keyboard ---------- */
@@ -107,60 +178,27 @@
     else if (!e.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement))) { e.preventDefault(); first.focus(); }
   });
 
-  /* ---------- Hero slider (trang chủ) ---------- */
-  var slides = $$('.hero__slide');
-  var dots = $$('.hero__dots button');
-  if (slides.length > 1) {
-    var current = 0, timer = null;
-    var go = function (i) {
-      current = (i + slides.length) % slides.length;
-      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === current); s.setAttribute('aria-hidden', String(k !== current)); });
-      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === current); d.setAttribute('aria-selected', String(k === current)); });
-    };
-    var stop = function () { clearInterval(timer); };
-    var play = function () { if (!reduceMotion) { stop(); timer = setInterval(function () { go(current + 1); }, 6500); } };
-    dots.forEach(function (d, k) { d.addEventListener('click', function () { go(k); play(); }); });
-    var hero = $('.hero');
-    hero.addEventListener('mouseenter', stop);
-    hero.addEventListener('mouseleave', play);
-    go(0);
-    play();
-  }
-
-  /* ---------- Hiện dần khi cuộn + đếm số ---------- */
-  function countUp(el) {
-    var target = parseInt(el.getAttribute('data-count'), 10);
-    var pad = parseInt(el.getAttribute('data-pad') || '0', 10);
-    var fmt = function (n) { var s = String(n); while (s.length < pad) s = '0' + s; return s; };
-    if (reduceMotion) { el.textContent = fmt(target); return; }
-    var start = null, dur = 1400;
-    function step(t) {
-      if (!start) start = t;
-      var p = Math.min((t - start) / dur, 1);
-      el.textContent = fmt(Math.round(target * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  var reveals = $$('.reveal');
-  var counters = $$('[data-count]');
-  if ('IntersectionObserver' in window) {
+  /* ---------- Hiện dần khi cuộn ----------
+     Chỉ phần NẰM DƯỚI màn hình lúc tải mới được giấu (lớp reveal-cho) rồi hiện dần khi cuộn tới. Phần đang thấy trên màn hình
+     không bao giờ bị giấu: không nháy, không làm chậm lúc trang hiện ra, không tính lại bố cục cả trang. */
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var seen = typeof WeakSet === 'function' ? new WeakSet() : null;
     var io = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
         var el = e.target;
-        if (el.classList.contains('reveal')) {
-          var siblings = $$(':scope > .reveal', el.parentElement);
-          el.style.transitionDelay = Math.min(Math.max(siblings.indexOf(el), 0), 5) * 70 + 'ms';
-          el.classList.add('is-in');
+        if (seen && !seen.has(el)) { // lần báo đầu tiên = vị trí lúc tải trang
+          seen.add(el);
+          if (e.isIntersecting) obs.unobserve(el); else el.classList.add('reveal-cho');
+          return;
         }
-        if (el.hasAttribute('data-count')) countUp(el);
+        if (!e.isIntersecting) return;
+        var siblings = $$(':scope > .reveal', el.parentElement);
+        el.style.transitionDelay = Math.min(Math.max(siblings.indexOf(el), 0), 4) * 60 + 'ms';
+        el.classList.add('is-in');
         obs.unobserve(el);
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    reveals.concat(counters).forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add('is-in'); });
+    }, { threshold: 0.01 });
+    if (seen) $$('.reveal').forEach(function (el) { io.observe(el); });
   }
 
   /* ---------- Cửa sổ tìm kiếm ---------- */
@@ -178,7 +216,22 @@
     if (lastFocus) lastFocus.focus();
   }
   var search = $('#search');
-  $$('[data-open-search]').forEach(function (b) { b.addEventListener('click', function () { closeSubs(); if (nav && nav.classList.contains('is-open')) setNav(false); openOverlay(search); loadIndex(); }); });
+  function openSearch() {
+    if (!search || !search.hidden) return;
+    closeSubs();
+    if (nav && nav.classList.contains('is-open')) setNav(false);
+    openOverlay(search);
+    loadIndex();
+  }
+  $$('[data-open-search]').forEach(function (b) { b.addEventListener('click', openSearch); });
+  /* Phím tắt: "/" hoặc Ctrl/⌘ + K */
+  document.addEventListener('keydown', function (e) {
+    var t = e.target, typing = t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+    if ((e.key === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) || ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K'))) {
+      e.preventDefault();
+      openSearch();
+    }
+  });
   $$('.overlay').forEach(function (ov) {
     ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('[data-close]')) closeOverlay(ov); });
   });
@@ -231,6 +284,17 @@
       var first = $('a', results);
       if (first) window.location.href = first.getAttribute('href');
     });
+    /* Mũi tên lên/xuống: di chuyển giữa ô tìm kiếm và các kết quả */
+    search.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      var links = $$('a', results);
+      if (!links.length) return;
+      var i = links.indexOf(document.activeElement);
+      e.preventDefault();
+      if (e.key === 'ArrowDown') (links[i + 1] || links[0]).focus();
+      else if (i <= 0) qInput.focus();
+      else links[i - 1].focus();
+    });
   }
 
   /* ---------- Bản đồ: chỉ tải khi người dùng bấm ---------- */
@@ -248,20 +312,63 @@
     });
   });
 
-  /* ---------- Mục lục bài viết: đánh dấu mục đang đọc ---------- */
-  var tocLinks = $$('.toc a[href^="#"]');
-  if (tocLinks.length && 'IntersectionObserver' in window) {
-    var map = {};
-    tocLinks.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  /* ---------- Mục lục bài viết, thanh mục trang dịch vụ: đánh dấu mục đang đọc ---------- */
+  function spyOn(links) {
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var map = {}; // một mục có thể có nhiều liên kết (mục lục cột bên và mục lục đầu bài trên điện thoại)
+    links.forEach(function (a) { var id = a.getAttribute('href').slice(1); (map[id] = map[id] || []).push(a); });
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        tocLinks.forEach(function (a) { a.classList.remove('is-active'); });
-        if (map[e.target.id]) map[e.target.id].classList.add('is-active');
+        if (!e.isIntersecting || !map[e.target.id]) return;
+        links.forEach(function (a) { a.classList.remove('is-active'); });
+        map[e.target.id].forEach(function (a) {
+          a.classList.add('is-active');
+          var bar = a.parentElement;
+          if (bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: a.offsetLeft - 16, behavior: reduceMotion ? 'auto' : 'smooth' });
+        });
       });
-    }, { rootMargin: '-20% 0px -70% 0px' });
+    }, { rootMargin: '-25% 0px -65% 0px' });
     Object.keys(map).forEach(function (id) { var el = document.getElementById(id); if (el) spy.observe(el); });
   }
+  spyOn($$('.toc a[href^="#"]'));
+  spyOn($$('.subnav a[href^="#"]'));
+
+  /* Thanh mục trang dịch vụ: báo còn mục khuất bên phải */
+  $$('.subnav .container').forEach(function (bar) {
+    function edge() { bar.classList.toggle('has-more', bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 4); }
+    bar.addEventListener('scroll', edge, { passive: true });
+    window.addEventListener('resize', edge);
+    requestAnimationFrame(edge);
+  });
+
+  /* ---------- Bài viết: mục lục đầu bài, tiến độ đọc, chia sẻ ---------- */
+  $$('.toc-mobile a').forEach(function (a) {
+    a.addEventListener('click', function () { a.closest('details').open = false; });
+  });
+  var articleBody = $('#noi-dung-bai-viet');
+  if (articleBody && header) {
+    var bar = document.createElement('div');
+    bar.className = 'read-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<span></span>';
+    header.appendChild(bar);
+    var fill = bar.firstChild, ticking = false;
+    var progress = function () {
+      ticking = false;
+      var r = articleBody.getBoundingClientRect(), total = r.height - window.innerHeight * 0.6;
+      fill.style.transform = 'scaleX(' + Math.min(1, Math.max(0, -r.top / Math.max(total, 1))) + ')';
+    };
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(progress); } }, { passive: true });
+    requestAnimationFrame(progress);
+  }
+  $$('[data-share]').forEach(function (btn) {
+    btn.classList.add('is-ready');
+    btn.addEventListener('click', function () {
+      var data = { title: document.title, url: location.href.split('#')[0] };
+      if (navigator.share) { navigator.share(data).catch(function () {}); return; }
+      copyText(data.url).then(function () { toast('Đã chép liên kết bài viết – dán vào Zalo, Messenger để gửi'); }, function () {});
+    });
+  });
 
   /* ---------- Mở câu hỏi khi truy cập bằng liên kết #id ---------- */
   function openFromHash() {

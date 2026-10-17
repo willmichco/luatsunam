@@ -1,0 +1,34 @@
+# URL của site Wix cũ (www.luatsunam.com, sitemap ngày 02/10/2026) → trang tương ứng trên site mới.
+# Build ghi thành chuyển hướng 301 trong _redirects (Cloudflare), cả dạng có dấu lẫn dạng mã hóa %XX,
+# có và không có / cuối. Build kiểm: đích phải là trang có thật, mã neo có trên trang.
+# Giữ bảng này ít nhất 12 tháng sau khi chuyển (Google khuyến nghị); không tốn gì nên có thể giữ luôn.
+chuyen_huong:
+  - tu: /đôi-nét-về-luật-sư-nam
+    den: /gioi-thieu/
+  - tu: /liên-hệ-luật-sư-nam
+    den: /gioi-thieu/
+    ghi_chu: Trang Wix có tên "liên hệ" nhưng nội dung là giới thiệu, phí tư vấn – theo yêu cầu quản trị (17/10/2026)
+  - tu: /luật-sư-về-hình-sự
+    den: /dich-vu/hinh-su/
+  - tu: /luật-sư-bào-chữa-hình-sự
+    den: /dich-vu/hinh-su/
+  - tu: /một-số-vụ-án-hình-sự
+    den: /dich-vu/hinh-su/#tinh-huong
+  - tu: /luật-sư-về-thừa-kế
+    den: /dich-vu/thua-ke/
+  - tu: /một-số-vụ-án-thừa-kế
+    den: /dich-vu/thua-ke/#tinh-huong
+  - tu: /luật-sư-về-nhà-đất
+    den: /dich-vu/dat-dai-bat-dong-san/
+  - tu: /một-số-vụ-án-về-nhà-đất
+    den: /dich-vu/dat-dai-bat-dong-san/#tinh-huong
+  - tu: /luật-sư-về-hôn-nhân-và-gia-đình
+    den: /dich-vu/hon-nhan-gia-dinh/
+  - tu: /một-số-vụ-án-ly-hôn
+    den: /dich-vu/hon-nhan-gia-dinh/#tinh-huong
+  - tu: /dịch-vụ-về-công-chứng
+    den: /dich-vu/cong-chung/
+  - tu: /luật-sư-giải-quyết-tranh-chấp
+    den: /dich-vu/tranh-tung-giai-quyet-tranh-chap/
+  - tu: /vụ-án-tranh-chấp-dân-sự
+    den: /dich-vu/dan-su/#tinh-huong

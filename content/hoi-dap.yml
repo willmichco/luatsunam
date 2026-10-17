@@ -1,0 +1,43 @@
+cau_hoi:
+  - hoi: Chi phí thuê luật sư được tính như thế nào?
+    ma: chi-phi-thue-luat-su
+    dap: |-
+      Thù lao luật sư được hai bên thỏa thuận trước và ghi trong hợp đồng dịch vụ pháp lý. Theo **Điều 55 Luật Luật sư**, căn cứ tính thù lao gồm nội dung và tính chất của dịch vụ, thời gian và công sức của luật sư, cùng kinh nghiệm và uy tín của luật sư.
+
+      Cũng theo điều luật này, thù lao có thể tính theo **giờ làm việc**, theo **vụ việc với mức trọn gói**, theo **tỷ lệ phần trăm** giá ngạch vụ kiện hoặc giá trị hợp đồng, hoặc theo **hợp đồng dài hạn** với mức cố định. Luật sư đề xuất cách tính phù hợp với từng vụ việc và báo trước mọi khoản phát sinh. Xem thêm [cam kết minh bạch về chi phí](/vi-sao-chon-chung-toi/).
+  - hoi: Luật sư có cam kết chắc chắn thắng kiện không?
+    ma: cam-ket-thang-kien
+    dap: |-
+      Không. Luật sư phân tích thẳng thắn điểm mạnh, điểm yếu trong hồ sơ và khả năng thành công dựa trên chứng cứ cùng quy định pháp luật, nhưng không cam kết bảo đảm kết quả.
+
+      Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam nghiêm cấm luật sư hứa hẹn, cam kết bảo đảm kết quả vụ việc về những nội dung nằm ngoài khả năng và điều kiện thực hiện của luật sư (**Quy tắc 9.1.6**). Nếu một đơn vị cam kết chắc chắn thắng kiện, đó là dấu hiệu anh chị nên cân nhắc rất kỹ.
+  - hoi: Thông tin tôi cung cấp có được giữ bí mật không?
+    ma: bao-mat-thong-tin
+    dap: |-
+      Có. Luật sư không được tiết lộ thông tin về vụ việc, về khách hàng mà mình biết được trong khi hành nghề, trừ trường hợp được khách hàng đồng ý bằng văn bản hoặc pháp luật có quy định khác, theo **Điều 25 Luật Luật sư** và **Quy tắc 7** Bộ Quy tắc Đạo đức và Ứng xử nghề nghiệp luật sư Việt Nam.
+
+      Nghĩa vụ bảo mật áp dụng ngay từ buổi trao đổi đầu tiên, kể cả khi sau đó hai bên không ký hợp đồng dịch vụ, và vẫn tiếp tục có hiệu lực sau khi vụ việc kết thúc.
+  - hoi: Buổi trao đổi đầu tiên tôi cần chuẩn bị những gì?
+    ma: chuan-bi-buoi-dau
+    dap: |-
+      Anh chị nên mang theo bản sao các giấy tờ đang có: hợp đồng, giấy tờ về tài sản, thông báo hoặc quyết định đã nhận từ cơ quan nhà nước, tin nhắn và email trao đổi giữa các bên.
+
+      Quan trọng không kém là một bản tóm tắt diễn biến theo thứ tự thời gian và câu trả lời cho câu hỏi: anh chị mong muốn đạt được điều gì. Danh mục chi tiết có tại trang [Quy trình làm việc](/quy-trinh-lam-viec/) và trang của từng [lĩnh vực dịch vụ](/dich-vu/).
+  - hoi: Vì sao thời hạn lại quan trọng đến vậy?
+    ma: thoi-han-quan-trong
+    dap: |-
+      Pháp luật quy định thời hiệu khởi kiện và thời hạn thực hiện quyền cho từng loại vụ việc. Khi thời hiệu đã hết và có đương sự yêu cầu áp dụng, quyền khởi kiện có thể không còn được bảo vệ, dù yêu cầu của anh chị là có căn cứ. Ví dụ điển hình là [thời hiệu chia di sản thừa kế](/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/).
+
+      Tương tự, thời hạn kháng cáo bản án, thời hạn khiếu nại quyết định hành chính đều rất ngắn. Vì vậy anh chị nên liên hệ luật sư **càng sớm càng tốt**, ngay khi nhận được văn bản đầu tiên.
+  - hoi: Công ty có nhận vụ việc ngoài Thành phố Hồ Chí Minh không?
+    ma: vu-viec-ngoai-tphcm
+    dap: |-
+      Có. Luật sư Việt Nam được hành nghề trên phạm vi toàn quốc, nên chúng tôi nhận tư vấn và tham gia tố tụng tại các tỉnh, thành phố khác.
+
+      Với vụ việc ở xa, phần lớn công đoạn tư vấn và chuẩn bị hồ sơ có thể thực hiện trực tuyến; chi phí đi lại (nếu có) được thông báo và thống nhất trước khi phát sinh.
+  - hoi: Liên hệ luật sư bằng cách nào và bao lâu được phản hồi?
+    ma: thoi-gian-phan-hoi
+    dap: |-
+      Website chỉ cung cấp thông tin pháp lý tham khảo, không nhận yêu cầu tư vấn trực tuyến. Anh chị liên hệ trực tiếp qua hotline hoặc Zalo [{{hotline}}]({{zalo}}); tin nhắn Zalo và email được phản hồi trong giờ làm việc, thường trong vòng 24 giờ làm việc. Với việc gấp, đặc biệt là [vụ án hình sự](/dich-vu/hinh-su/) hoặc sắp hết thời hạn kháng cáo, anh chị nên gọi trực tiếp hotline [{{hotline}}]({{tel}}).
+
+      Lưu ý: việc trao đổi ban đầu qua điện thoại, Zalo hoặc email chưa làm phát sinh quan hệ luật sư – khách hàng. Quan hệ này chỉ hình thành khi hai bên ký kết hợp đồng dịch vụ pháp lý.

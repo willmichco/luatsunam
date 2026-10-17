@@ -1,0 +1,80 @@
+lien_he_cuoi_trang:
+  nhan: Tư vấn trực tiếp với luật sư
+  tieu_de: Cần hỏi luật sư? Liên hệ ngay
+  doan_moi: Vụ việc càng sớm được xem xét, anh chị càng có nhiều lựa chọn. Với việc gấp như người nhà bị tạm giữ hoặc sắp hết thời hạn kháng cáo, hãy gọi điện trực tiếp.
+  ghi_chu_zalo: Kể ngắn gọn sự việc, luật sư phản hồi trong giờ làm việc
+  ghi_chu_van_phong: gọi trước khi đến
+viec_gap:
+  nhan: Việc gấp?
+  noi_dung: 'Người thân vừa bị bắt, tạm giữ hoặc sắp phải làm việc với cơ quan điều tra: hãy gọi ngay [{{hotline}}]({{tel}}). {{ngoai_gio}}.'
+mien_tru_chan_trang: '**Miễn trừ trách nhiệm:** Nội dung trên website chỉ mang tính thông tin pháp lý chung, không phải ý kiến tư vấn cho một vụ việc cụ thể và không làm phát sinh quan hệ luật sư – khách hàng. Quy định pháp luật có thể thay đổi theo thời điểm. Xem đầy đủ tại [Tuyên bố miễn trừ trách nhiệm](/mien-tru-trach-nhiem/).'
+mien_tru_cuoi_bai: Bài viết mang tính thông tin pháp lý chung tại thời điểm cập nhật, không thay thế ý kiến tư vấn cho vụ việc cụ thể. Văn bản pháp luật có thể được sửa đổi, bổ sung sau ngày đăng; vui lòng kiểm tra hiệu lực hoặc [hỏi luật sư](/lien-he/) trước khi quyết định.
+bai_viet:
+  tac_gia: Ban biên tập {{ten_ngan}}
+  doc_tiep_nhan: Đọc tiếp
+  doc_tiep_tieu_de: Bài viết khác
+trang_linh_vuc:
+  muc_luc:
+    - Tình huống thường gặp
+    - Luật sư giúp gì
+    - Việc nên làm ngay
+    - Các bước
+    - Giấy tờ
+    - Hỏi đáp
+  tinh_huong:
+    nhan: Tình huống thường gặp
+    tieu_de: Anh chị có đang gặp chuyện này?
+    mo_ta: Đây là những trường hợp về {{ten_linh_vuc}} mà người dân thường tìm đến luật sư.
+    cuoi: Trường hợp của anh chị khác? Cứ [gọi {{hotline}}]({{tel}}) hoặc [nhắn Zalo]({{zalo}}) kể ngắn gọn – luật sư sẽ cho biết có giúp được hay không.
+  pham_vi:
+    nhan: Phạm vi hỗ trợ
+    tieu_de: Luật sư giúp được anh chị những gì
+  viec_nen_lam:
+    nhan: Trong lúc chờ gặp luật sư
+    tieu_de: Việc nên làm ngay
+    mo_ta: Những việc nhỏ dưới đây giúp anh chị giữ được quyền lợi.
+    nhan_nguyen_tac: Cách luật sư làm việc
+  quy_trinh:
+    nhan: Quy trình thực hiện
+    tieu_de: Làm việc với luật sư diễn ra thế nào?
+    mo_ta: Năm bước rõ ràng. Ở mỗi bước, anh chị đều biết việc gì đang được làm.
+    lien_ket: Quy trình làm việc chung
+  ho_so:
+    nhan: Hồ sơ & kết quả
+    tieu_de: Cần chuẩn bị gì và anh chị nhận được gì
+    mo_ta: 'Chưa đủ giấy tờ cũng không sao: cứ mang những gì đang có, luật sư sẽ hướng dẫn bổ sung.'
+    tieu_de_nhan_duoc: Anh chị sẽ nhận được
+    lien_ket_ho_so: Hướng dẫn chuẩn bị hồ sơ
+    lien_ket_chi_phi: Chi phí được tính thế nào
+  hoi_dap:
+    nhan: Hỏi đáp
+    tieu_de: Câu hỏi hay gặp về {{ten_linh_vuc}}
+    mo_ta: Giải đáp ngắn gọn, có dẫn điều luật. Mỗi vụ việc có tình tiết riêng, anh chị nên hỏi luật sư trước khi quyết định.
+    tieu_de_can_cu: Căn cứ pháp luật chủ yếu
+    ghi_chu_can_cu: Danh mục tham khảo; văn bản áp dụng cụ thể được luật sư xác định theo từng vụ việc.
+  tham_khao:
+    nhan: Đọc thêm
+    tieu_de: Thông tin hữu ích trước khi gặp luật sư
+    lien_ket: Thư viện kiến thức
+  lien_quan:
+    nhan: Lĩnh vực liên quan
+    tieu_de: Hỗ trợ các vấn đề có liên quan
+    lien_ket: Tất cả dịch vụ
+  nhan_lien_he: Tư vấn {{ten_linh_vuc}}
+  the_bo_sung:
+    - nhan: Hỏi đáp
+      tieu_de: Câu hỏi thường gặp khi thuê luật sư
+      mo_ta: Chi phí, bảo mật và cách bắt đầu làm việc với luật sư.
+      lien_ket:
+        trang: /cau-hoi-thuong-gap/
+    - nhan: Chuẩn bị
+      tieu_de: Trước buổi gặp luật sư đầu tiên
+      mo_ta: Giấy tờ nên mang theo và cách ghi lại diễn biến sự việc.
+      lien_ket:
+        trang: /quy-trinh-lam-viec/
+        ma_neo: ho-so-can-chuan-bi
+    - nhan: Cách làm việc
+      tieu_de: Những điều luật sư cam kết và không làm
+      mo_ta: Nói rõ được – mất, chi phí thỏa thuận trước, không hứa hẹn kết quả.
+      lien_ket:
+        trang: /vi-sao-chon-chung-toi/

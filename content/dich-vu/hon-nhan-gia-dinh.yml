@@ -1,0 +1,86 @@
+thu_tu: 3
+ten: Hôn nhân & Gia đình
+nhap: false
+bieu_tuong: i-heart
+mo_ta_ngan: Tư vấn ly hôn, quyền nuôi con, cấp dưỡng, phân chia tài sản chung và các thỏa thuận gia đình một cách kín đáo.
+nhan_dau_trang: Luật sư hôn nhân & gia đình
+tieu_de_trang: Ly hôn, nuôi con, chia tài sản – *kín đáo và tôn trọng*
+mo_dau: Chuyện gia đình khó nói với người ngoài. Luật sư nghe anh chị trình bày riêng, giải thích quyền của anh chị và các con, rồi cùng tìm cách giải quyết ít tổn thương nhất. Mọi thông tin được giữ kín theo Luật Luật sư.
+viec_gap: false
+tinh_huong:
+  - Muốn ly hôn nhưng vợ hoặc chồng không chịu ký đơn, hoặc đã bỏ đi không liên lạc được.
+  - Hai bên đồng ý ly hôn nhưng chưa thống nhất ai nuôi con, chia nhà, chia tiền ra sao.
+  - Lo mất quyền nuôi con vì thu nhập thấp hơn hoặc đang phải ở nhờ nhà người thân.
+  - Người kia không cấp dưỡng nuôi con như đã thỏa thuận hoặc như bản án.
+  - Tài sản đứng tên một người, không biết có phải tài sản chung để chia hay không.
+  - Một bên đang ở nước ngoài, cần làm thủ tục ly hôn hoặc giấy tờ ủy quyền.
+pham_vi:
+  gioi_thieu: Luật sư giúp anh chị nhìn rõ quyền, nghĩa vụ và hệ quả của từng lựa chọn trước khi quyết định. Hồ sơ được xử lý kín đáo, tôn trọng hoàn cảnh riêng và ưu tiên phương án có thể thực hiện lâu dài, nhất là với các con.
+  cac_viec:
+    - tieu_de: Ly hôn thuận tình
+      mo_ta: Tư vấn điều kiện, chuẩn bị hồ sơ và hoàn thiện thỏa thuận về con, tài sản, nợ chung để nộp Tòa án.
+    - tieu_de: Ly hôn đơn phương
+      mo_ta: Đánh giá căn cứ ly hôn, Tòa án có thẩm quyền, chứng cứ; soạn đơn và bảo vệ quyền lợi của anh chị khi bên kia không đồng ý hoặc vắng mặt.
+    - tieu_de: Quyền nuôi con, cấp dưỡng
+      mo_ta: Phân tích điều kiện chăm sóc con, nguyện vọng của con, mức cấp dưỡng và giấy tờ cần có để bảo vệ lợi ích của các cháu.
+    - tieu_de: Chia tài sản, nợ chung
+      mo_ta: Xác định tài sản chung, tài sản riêng, công sức đóng góp, khoản nợ và cách chia nhà đất, tiền, cổ phần.
+    - tieu_de: Có yếu tố nước ngoài
+      mo_ta: Hướng dẫn hồ sơ, giấy tờ nước ngoài và thủ tục khi một bên đang ở hoặc có tài sản ở nước ngoài.
+    - tieu_de: Thỏa thuận trong gia đình
+      mo_ta: Soạn, rà soát thỏa thuận về tài sản vợ chồng, chia tài sản trong thời kỳ hôn nhân, nuôi con và các cam kết khác.
+viec_nen_lam:
+  - Cất giữ bản chính giấy chứng nhận kết hôn, giấy khai sinh của con và giấy tờ tài sản ở nơi an toàn.
+  - Ghi lại thu nhập, chi phí nuôi con và ai đang trực tiếp chăm sóc con hằng ngày.
+  - 'Nếu bị bạo lực gia đình, hãy ưu tiên an toàn: báo công an hoặc chính quyền nơi cư trú, giữ lại giấy khám thương, hình ảnh.'
+  - Không tự ý bán, chuyển nhượng tài sản chung khi đang có mâu thuẫn; việc này có thể bất lợi cho chính anh chị.
+luu_y:
+  tieu_de: Lưu ý
+  noi_dung: Thời gian giải quyết phụ thuộc mức độ thống nhất của hai bên, nơi cư trú, tình trạng tài sản và lịch làm việc của Tòa án.
+nguyen_tac:
+  tieu_de: Kín đáo và nhân văn
+  noi_dung: Thông tin gia đình được tiếp nhận thận trọng. Luật sư khuyến khích thỏa thuận khi phù hợp, nhưng luôn chuẩn bị phương án pháp lý đầy đủ để bảo vệ anh chị và các con.
+cac_buoc:
+  - tieu_de: Trao đổi riêng
+    mo_ta: Mong muốn của anh chị, tình trạng hôn nhân, con và tài sản.
+  - tieu_de: Xem hồ sơ
+    mo_ta: Tách rõ việc đã thống nhất và việc còn tranh chấp.
+  - tieu_de: Bàn phương án
+    mo_ta: Thỏa thuận hay yêu cầu Tòa án giải quyết, kèm chi phí dự kiến.
+  - tieu_de: Làm thủ tục
+    mo_ta: Soạn hồ sơ, nộp đơn và theo dõi quá trình giải quyết.
+  - tieu_de: Sau bản án
+    mo_ta: Hướng dẫn thi hành và xử lý việc phát sinh về con, tài sản.
+giay_to:
+  tieu_de: Giấy tờ nên mang theo
+  danh_sach:
+    - Giấy chứng nhận kết hôn và giấy tờ nhân thân
+    - Giấy khai sinh của con và tài liệu về việc chăm sóc con
+    - Giấy tờ nhà đất, tài khoản, cổ phần và tài sản khác
+    - Chứng từ về thu nhập, khoản nợ và nghĩa vụ chung
+nhan_duoc:
+  - Giải thích quyền lợi và những điểm cần ưu tiên
+  - Phương án về con, tài sản và nghĩa vụ tài chính
+  - Đơn từ, hồ sơ và thỏa thuận được soạn sẵn
+  - Luật sư đồng hành, bảo vệ quyền lợi tại Tòa án theo phạm vi đã thống nhất
+hoi_dap:
+  - hoi: Vợ hoặc chồng không chịu ký đơn thì có ly hôn được không?
+    dap: 'Có thể, nếu có căn cứ. Khi một bên yêu cầu ly hôn mà hòa giải tại Tòa án không thành, Tòa án giải quyết cho ly hôn nếu có căn cứ về bạo lực gia đình hoặc vi phạm nghiêm trọng quyền, nghĩa vụ vợ chồng làm hôn nhân lâm vào tình trạng trầm trọng, đời sống chung không thể kéo dài (**Điều 56 Luật Hôn nhân và Gia đình 2014**). Đọc thêm: [ly hôn đơn phương](/kien-thuc-phap-ly/ly-hon-don-phuong/).'
+  - hoi: Con còn nhỏ thì ai được nuôi?
+    dap: Hai bên được thỏa thuận; nếu không thỏa thuận được, Tòa án quyết định dựa trên quyền lợi về mọi mặt của con. Con dưới 36 tháng tuổi được giao cho mẹ trực tiếp nuôi, trừ trường hợp người mẹ không đủ điều kiện hoặc cha mẹ có thỏa thuận khác phù hợp với lợi ích của con; con từ đủ 07 tuổi trở lên thì phải xem xét nguyện vọng của con (**Điều 81 Luật Hôn nhân và Gia đình 2014**).
+  - hoi: Tôi có thể nhờ luật sư ra Tòa thay mình không?
+    dap: Đối với việc ly hôn, anh chị phải tự mình tham gia tố tụng, không được ủy quyền cho người khác thay mặt (**khoản 4 Điều 85 Bộ luật Tố tụng dân sự 2015**). Luật sư chuẩn bị hồ sơ, hướng dẫn anh chị trình bày và tham gia với tư cách người bảo vệ quyền và lợi ích hợp pháp, nhất là trong các vấn đề về con và tài sản.
+can_cu_phap_ly:
+  - Luật Hôn nhân và Gia đình 2014
+  - Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)
+  - Bộ luật Dân sự 2015
+lien_he:
+  tieu_de: Một phương án rõ ràng giúp gia đình bớt áp lực
+  doan_moi: Anh chị có thể gọi điện hoặc nhắn Zalo để hẹn trao đổi riêng với luật sư. Nội dung trao đổi được giữ kín ngay từ cuộc gọi đầu tiên.
+linh_vuc_lien_quan:
+  - thua-ke
+  - dan-su
+  - cong-chung
+seo:
+  tieu_de: Luật sư Hôn nhân & Gia đình, tư vấn ly hôn
+  mo_ta: Tư vấn ly hôn thuận tình và đơn phương, quyền nuôi con, cấp dưỡng, phân chia tài sản chung vợ chồng. Thông tin khách hàng được bảo mật theo Luật Luật sư.

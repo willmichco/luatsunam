@@ -1,0 +1,72 @@
+tieu_de: Vì sao chọn chúng tôi
+nhap: false
+trang_cha: /gioi-thieu/
+loai_trang: WebPage
+dau_trang:
+  nhan: Vì sao chọn chúng tôi
+  tieu_de: Gặp chuyện đã đủ mệt. *Làm việc với luật sư phải nhẹ nhõm.*
+  mo_dau: 'Người tìm đến luật sư thường đang lo lắng, chưa biết bắt đầu từ đâu. Vì vậy Luật Sư Nam làm việc theo những nguyên tắc đơn giản: một luật sư phụ trách, nói thật, nói rõ, chi phí thỏa thuận trước và giữ kín mọi chuyện của anh chị.'
+  the_luat_su: true
+cac_khoi:
+  - loai: luoi_the
+    hien_thi: true
+    nhan: Nguyên tắc làm việc
+    tieu_de: Bốn điều anh chị có thể yên tâm
+    nen: kem
+    mo_ta: Áp dụng như nhau cho một buổi tư vấn ngắn hay một vụ kiện kéo dài nhiều năm.
+    can_giua: false
+    so_cot: '2'
+    the:
+      - bieu_tuong: i-user
+        tieu_de: Luật sư trực tiếp nghe và làm
+        mo_ta: Anh chị trao đổi thẳng với luật sư phụ trách, không qua trung gian. Một đầu mối theo hồ sơ từ đầu đến cuối, nên anh chị không phải kể lại câu chuyện nhiều lần.
+      - bieu_tuong: i-scale
+        tieu_de: Nói thật được – mất
+        mo_ta: Mỗi lựa chọn đều được giải thích kèm căn cứ, rủi ro, thời gian và chi phí. Khi khởi kiện không có lợi cho anh chị, luật sư sẽ nói rõ và đề xuất hướng khác.
+      - bieu_tuong: i-coin
+        tieu_de: Chi phí rõ ràng từ đầu
+        mo_ta: Phạm vi công việc và thù lao được thống nhất, ghi trong hợp đồng dịch vụ pháp lý trước khi làm; khoản phát sinh (nếu có) được báo trước. [Cách tính thù lao luật sư](/cau-hoi-thuong-gap/#chi-phi-thue-luat-su).
+      - bieu_tuong: i-lock
+        tieu_de: Giữ kín và độc lập
+        mo_ta: Thông tin chỉ dùng trong phạm vi cần thiết để giải quyết việc của anh chị. Xung đột lợi ích được kiểm tra trước khi nhận việc.
+  - loai: anh_chu
+    hien_thi: true
+    nhan: Quyền của anh chị
+    tieu_de: Trong suốt quá trình, anh chị có quyền yêu cầu
+    vi_tri_anh: phai
+    anh_co_san: phien-toa
+    mo_ta_anh: '{{luat_su}} tại ghế người bào chữa trong phòng xử án'
+    chu_thich: '{{luat_su}}'
+    chu_thich_phu: Tại ghế người bào chữa
+    nen: trang
+    noi_dung: Đây là những điều anh chị nên đòi hỏi ở bất kỳ luật sư nào, kể cả chúng tôi.
+    dau_tich:
+      - Được giải thích bằng lời dễ hiểu, không phải “nghe luật sư nói mà không hiểu gì”.
+      - Được biết hồ sơ đang ở bước nào, việc gì sắp tới và anh chị cần chuẩn bị gì – không phải tự đi hỏi.
+      - Được hỏi lại bất cứ điều gì chưa rõ về hồ sơ và quyền lợi của mình.
+      - Được báo trước mọi thay đổi về phạm vi công việc và chi phí.
+  - loai: luoi_the
+    hien_thi: true
+    nhan: Giới hạn nghề nghiệp
+    tieu_de: Những điều chúng tôi không làm
+    nen: toi
+    mo_ta: Chuẩn mực đạo đức nghề nghiệp luật sư là giới hạn chúng tôi không vượt qua, dù khách hàng yêu cầu. Điều đó cũng là để bảo vệ chính anh chị.
+    can_giua: false
+    so_cot: '3'
+    the:
+      - tieu_de: Không hứa chắc thắng
+        mo_ta: Kết quả do cơ quan có thẩm quyền quyết định. Luật sư không cam kết thắng kiện, chỉ cam kết làm hết trách nhiệm trên cơ sở pháp luật và chứng cứ. [Vì sao?](/cau-hoi-thuong-gap/#cam-ket-thang-kien)
+      - tieu_de: Không hướng dẫn sai sự thật
+        mo_ta: Không hướng dẫn khai báo gian dối, làm giả tài liệu hoặc cản trở hoạt động tố tụng dưới bất kỳ hình thức nào.
+      - tieu_de: Không nhận việc khi xung đột lợi ích
+        mo_ta: Nếu đã hoặc đang đại diện cho bên có quyền lợi đối lập với anh chị trong cùng vụ việc, chúng tôi sẽ nói rõ và từ chối.
+    lien_ket_cuoi:
+      - nhan: Xem quy trình làm việc 4 bước
+        trang: /quy-trinh-lam-viec/
+      - nhan: Về Luật sư Nguyễn Trọng Nam
+        trang: /gioi-thieu/
+lien_he_cuoi_trang:
+  hien: true
+seo:
+  tieu_de: Vì sao chọn Luật Sư Nam – Cam kết đồng hành
+  mo_ta: 'Bốn nguyên tắc làm việc của Luật Sư Nam: luật sư trực tiếp phụ trách, nói rõ được – mất, chi phí thỏa thuận trước, bảo mật và độc lập nghề nghiệp.'

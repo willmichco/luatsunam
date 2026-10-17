@@ -1,0 +1,85 @@
+thu_tu: 5
+ten: Dân sự
+nhap: false
+bieu_tuong: i-scale
+mo_ta_ngan: Tư vấn hợp đồng, nghĩa vụ, bồi thường, tài sản và đại diện giải quyết tranh chấp dân sự theo đúng trình tự.
+nhan_dau_trang: Luật sư dân sự
+tieu_de_trang: Đòi nợ, đòi bồi thường, tranh chấp hợp đồng – *đúng cách, có căn cứ*
+mo_dau: Cho người quen vay tiền mà không trả, thuê nhà bị đòi lại trước hạn, bị gây thiệt hại mà không được bồi thường. Luật sư giúp anh chị xem giấy tờ, tin nhắn đang có đã đủ chứng minh chưa và chọn cách đòi lại quyền lợi hiệu quả nhất.
+viec_gap: false
+tinh_huong:
+  - Cho vay tiền, cho mượn tài sản nhưng người vay khất lần, né tránh.
+  - Cho vay không làm giấy, chỉ có chuyển khoản hoặc tin nhắn.
+  - Hợp đồng mua bán, thuê nhà, dịch vụ bị bên kia vi phạm.
+  - Bị gây thiệt hại về tài sản, sức khỏe, danh dự và muốn đòi bồi thường.
+  - Tài sản chung với người khác, không thống nhất được cách sử dụng hoặc chia.
+pham_vi:
+  gioi_thieu: Tranh chấp dân sự thường bắt đầu từ thỏa thuận miệng, giấy tờ sơ sài hoặc chứng cứ rời rạc. Luật sư sắp xếp lại diễn biến, xác định quyền và nghĩa vụ của mỗi bên, rồi đề xuất cách xử lý khả thi nhất.
+  cac_viec:
+    - tieu_de: Hợp đồng dân sự
+      mo_ta: Soạn, rà soát và xử lý tranh chấp hợp đồng vay, thuê, mua bán, đặt cọc, dịch vụ, hợp tác.
+    - tieu_de: Vay nợ, đòi tiền
+      mo_ta: Đánh giá chứng cứ vay, lãi, thời hạn; soạn yêu cầu thanh toán và đại diện đòi khoản nợ hợp pháp.
+    - tieu_de: Bồi thường thiệt hại
+      mo_ta: Xác định hành vi, thiệt hại, mối liên hệ nhân quả và mức yêu cầu bồi thường về tài sản, sức khỏe, danh dự.
+    - tieu_de: Quyền sở hữu, tài sản
+      mo_ta: Tư vấn quản lý, sử dụng, định đoạt tài sản; tranh chấp sở hữu chung, đòi lại tài sản.
+    - tieu_de: Thương lượng thay anh chị
+      mo_ta: Soạn thư yêu cầu, tham gia thương lượng, hòa giải, làm việc với cá nhân, tổ chức theo phạm vi ủy quyền.
+    - tieu_de: Khởi kiện và thi hành án
+      mo_ta: Chuẩn bị hồ sơ khởi kiện, bảo vệ quyền lợi tại Tòa án và theo dõi việc thi hành bản án.
+viec_nen_lam:
+  - Lưu giữ giấy vay, biên nhận, sao kê chuyển khoản; xuất tin nhắn, ghi âm ra bản lưu và giữ nguyên thiết bị gốc.
+  - Gửi yêu cầu trả nợ bằng văn bản hoặc tin nhắn có nội dung rõ ràng để làm căn cứ.
+  - Không tự ý đến nhà siết tài sản hay đăng thông tin lên mạng xã hội để đòi nợ – có thể vi phạm pháp luật.
+  - Thời hiệu khởi kiện tranh chấp hợp đồng là 03 năm – đừng để quá lâu.
+luu_y:
+  tieu_de: Lưu ý
+  noi_dung: Hãy giữ bản gốc giấy tờ, dữ liệu điện tử và chứng từ. Thời hiệu có thể làm mất quyền yêu cầu nên hồ sơ cần được xem sớm.
+nguyen_tac:
+  tieu_de: Đòi được mới là quan trọng
+  noi_dung: Phương án được xây dựng từ mục tiêu thực tế, số tiền tranh chấp, khả năng chứng minh và khả năng thi hành; tránh kéo dài thủ tục khi có thể đạt thỏa thuận an toàn hơn.
+cac_buoc:
+  - tieu_de: Nghe anh chị kể
+    mo_ta: Các bên, giao dịch và các mốc thời gian.
+  - tieu_de: Xem chứng cứ
+    mo_ta: Hiệu lực giao dịch, thời hiệu và tài liệu còn thiếu.
+  - tieu_de: Bàn cách làm
+    mo_ta: So sánh thương lượng, hòa giải và khởi kiện.
+  - tieu_de: Thực hiện
+    mo_ta: Soạn văn bản và đại diện theo phạm vi ủy quyền.
+  - tieu_de: Theo dõi thi hành
+    mo_ta: Hỗ trợ thực hiện thỏa thuận, bản án hoặc quyết định.
+giay_to:
+  tieu_de: Giấy tờ nên mang theo
+  danh_sach:
+    - Hợp đồng, giấy vay, biên nhận và chứng từ thanh toán
+    - Email, tin nhắn, ghi nhận giao nhận hoặc cam kết
+    - Giấy tờ tài sản và tài liệu chứng minh thiệt hại
+    - Đơn từ, biên bản, quyết định đã có
+nhan_duoc:
+  - Đánh giá quyền, nghĩa vụ, thời hiệu và chứng cứ
+  - Phương án thương lượng hoặc khởi kiện có lộ trình
+  - Thư yêu cầu, đơn từ và văn bản được soạn sẵn
+  - Đại diện làm việc và cập nhật tiến độ theo thỏa thuận
+hoi_dap:
+  - hoi: Cho vay không làm giấy tờ thì có đòi được không?
+    dap: Có thể. Hợp đồng vay không bắt buộc phải lập thành văn bản; sao kê chuyển khoản, tin nhắn, ghi âm, người làm chứng đều có thể là chứng cứ nếu thể hiện được việc vay và nghĩa vụ trả. Điều quan trọng là thu thập và lưu giữ đúng cách để Tòa án có thể xem xét.
+  - hoi: Thời hạn khởi kiện tranh chấp hợp đồng là bao lâu?
+    dap: Thời hiệu khởi kiện yêu cầu Tòa án giải quyết tranh chấp hợp đồng là 03 năm kể từ ngày người có quyền yêu cầu biết hoặc phải biết quyền và lợi ích hợp pháp của mình bị xâm phạm (**Điều 429 Bộ luật Dân sự 2015**).
+  - hoi: Lãi suất cho vay bao nhiêu thì đúng luật?
+    dap: Lãi suất do các bên thỏa thuận nhưng không được vượt quá 20%/năm của khoản tiền vay, trừ trường hợp luật khác có liên quan quy định khác; phần lãi vượt quá không có hiệu lực (**Điều 468 Bộ luật Dân sự 2015**).
+can_cu_phap_ly:
+  - Bộ luật Dân sự 2015
+  - Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)
+  - Luật Thi hành án dân sự
+lien_he:
+  tieu_de: Chứng cứ đầy đủ giúp đòi lại quyền lợi dễ hơn
+  doan_moi: Chuẩn bị sẵn hợp đồng, giấy vay, tin nhắn đang có rồi gọi điện hoặc nhắn Zalo cho luật sư. Luật sư sẽ cho biết chứng cứ đã đủ chưa và nên làm gì trước.
+linh_vuc_lien_quan:
+  - tranh-tung-giai-quyet-tranh-chap
+  - dat-dai-bat-dong-san
+  - cong-chung
+seo:
+  tieu_de: Luật sư tư vấn Dân sự
+  mo_ta: Tư vấn hợp đồng, nghĩa vụ dân sự, bồi thường thiệt hại, quyền tài sản và đại diện giải quyết tranh chấp dân sự đúng trình tự tố tụng.

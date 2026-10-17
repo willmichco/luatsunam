@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lịch sử chỉnh sửa – Luật Sư Nam</title>
+<!-- Trang Lịch sử chỉnh sửa: mỗi lần Lưu trong trang quản trị là một dòng; xem ô nào đổi, khôi phục về trước lần lưu.
+     Đọc lịch sử từ GitHub bằng đúng phiên đăng nhập của trang quản trị (cùng trình duyệt). Logic: admin/lich-su.js -->
+<link rel="preconnect" href="https://api.github.com" crossorigin>
+<link rel="stylesheet" href="giao-dien.css">
+<script>
+  /* Sáng / Tối theo lựa chọn ở trang quản trị (nút Sáng/Tối lưu vào "sveltia-cms.prefs") */
+  (function () {
+    var t = '';
+    try { t = (JSON.parse(localStorage.getItem('sveltia-cms.prefs') || '{}') || {}).theme || ''; } catch (e) { /* bỏ qua */ }
+    if (t !== 'dark' && t !== 'light') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<style>
+  /* Màu, phông, bo góc dùng chung với trang quản trị: giao-dien.css (--lsn-*) */
+  :root {
+    --nen: var(--lsn-nen); --the: var(--lsn-the); --chu: var(--lsn-chu); --chu-phu: var(--lsn-chu-phu); --vien: var(--lsn-vien);
+    --do: var(--lsn-do-chu); --do-nhat: var(--lsn-do-nhat);
+    --xoa-nen: #fde7e7; --xoa-chu: #8f1d1d; --them-nen: #e3f5e6; --them-chu: #17602a; --vang-nen: var(--lsn-vang-nen); --vang-chu: var(--lsn-vang-chu);
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --xoa-nen: #4a2124; --xoa-chu: #ffc9cc; --them-nen: #1f3b26; --them-chu: #bff0c8;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; } /* .nut, .them-nua đặt display: thuộc tính hidden phải thắng */
+  body { margin: 0; background: var(--nen); color: var(--chu); font: 15px/1.55 var(--lsn-phong); }
+  a { color: var(--do); }
+  .khung { max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; }
+  header.dau { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 6px; }
+  header.dau h1 { margin: 0; color: var(--lsn-chu-dam); font-size: 24px; line-height: 1.25; }
+  .ve { margin-inline-start: auto; font-size: 14px; text-decoration: none; font-weight: 600; }
+  .gioi-thieu { margin: 0 0 16px; color: var(--chu-phu); font-size: 14px; }
+  .loc { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; padding: 10px 14px; border: 1px solid var(--vien);
+    border-radius: 10px; background: var(--the); }
+  .loc label { font-weight: 600; font-size: 14px; }
+  .loc select { flex: 1 1 260px; min-width: 0; padding: 7px 10px; border: 1px solid var(--lsn-vien-dam); border-radius: var(--lsn-bo-nut); background: var(--the);
+    color: inherit; font: inherit; }
+  .bao { margin: 0 0 14px; padding: 10px 14px; border-radius: 10px; background: var(--vang-nen); color: var(--vang-chu); font-size: 14px; }
+  .bao.loi { background: var(--xoa-nen); color: var(--xoa-chu); }
+  .bao.tot { background: var(--them-nen); color: var(--them-chu); }
+  .lan { margin: 0 0 12px; border: 1px solid var(--vien); border-radius: 12px; background: var(--the); overflow: hidden; }
+  .lan__dau { display: flex; gap: 12px; align-items: flex-start; width: 100%; padding: 12px 14px; border: 0; background: none; color: inherit;
+    font: inherit; text-align: start; cursor: pointer; }
+  .lan__dau:hover, .lan__dau:focus-visible { background: var(--do-nhat); }
+  .anh-dai-dien { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--vien); object-fit: cover; }
+  .lan__noi { flex: 1; min-width: 0; }
+  .lan__dong1 { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+  .lan__ai { font-weight: 700; }
+  .lan__luc { color: var(--chu-phu); font-size: 13.5px; }
+  .lan__tin { margin: 2px 0 0; color: var(--chu-phu); font-size: 13.5px; overflow-wrap: anywhere; }
+  .chip { display: inline-block; margin: 6px 6px 0 0; padding: 2px 10px; border-radius: 999px; background: var(--do-nhat); font-size: 13px; font-weight: 600; }
+  .chip.tao { background: var(--them-nen); color: var(--them-chu); }
+  .chip.xoa { background: var(--xoa-nen); color: var(--xoa-chu); }
+  .mui { flex: none; font-size: 18px; line-height: 34px; color: var(--chu-phu); transition: transform .15s; }
+  .lan.mo .mui { transform: rotate(90deg); }
+  .lan__than { display: none; padding: 4px 14px 14px; border-top: 1px solid var(--vien); }
+  .lan.mo .lan__than { display: block; }
+  .tep { margin: 12px 0 0; }
+  .tep__dau { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .tep__dau h3 { margin: 0; font-size: 16px; }
+  .tep__nhom { color: var(--chu-phu); font-size: 13px; }
+  .nut { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid var(--do); border-radius: var(--lsn-bo-nut); background: transparent;
+    color: var(--do); font: 600 13.5px/1.3 inherit; font-family: inherit; cursor: pointer; }
+  .nut:hover, .nut:focus-visible { background: var(--do-nhat); }
+  .nut.chinh { background: var(--lsn-do); border-color: var(--lsn-do); color: var(--lsn-tren-do); }
+  .nut[disabled] { opacity: .5; cursor: progress; }
+  .tep__nut { margin-inline-start: auto; }
+  ul.doi { margin: 8px 0 0; padding: 0; list-style: none; }
+  ul.doi > li { padding: 8px 0; border-top: 1px dashed var(--vien); }
+  ul.doi > li:first-child { border-top: 0; }
+  .o { font-size: 13px; font-weight: 600; color: var(--chu-phu); }
+  .gt { margin-top: 3px; overflow-wrap: anywhere; white-space: pre-wrap; }
+  .gt.dai { max-height: 260px; overflow: auto; padding: 8px 10px; border: 1px solid var(--vien); border-radius: 8px; background: var(--nen); font-size: 14px; }
+  del { background: var(--xoa-nen); color: var(--xoa-chu); text-decoration: line-through; border-radius: 3px; padding: 0 2px; }
+  ins { background: var(--them-nen); color: var(--them-chu); text-decoration: none; border-radius: 3px; padding: 0 2px; }
+  .mui-ten { color: var(--chu-phu); margin: 0 6px; }
+  .nhan-doi { display: inline-block; margin-inline-end: 6px; padding: 0 7px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+  .nhan-doi.them { background: var(--them-nen); color: var(--them-chu); }
+  .nhan-doi.bo { background: var(--xoa-nen); color: var(--xoa-chu); }
+  .nhan-doi.thu-tu { background: var(--vang-nen); color: var(--vang-chu); }
+  .lan__cuoi { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--vien);
+    font-size: 13.5px; }
+  .phu { color: var(--chu-phu); font-size: 13.5px; }
+  .them-nua { display: block; margin: 16px auto 0; }
+  .dang-tai { color: var(--chu-phu); padding: 8px 0; }
+  @media (max-width: 560px) { .tep__nut { margin-inline-start: 0; } header.dau h1 { font-size: 21px; } }
+</style>
+</head>
+<body>
+<div class="khung">
+  <header class="dau">
+    <h1>Lịch sử chỉnh sửa</h1>
+    <a class="ve" href="./">← Về trang quản trị</a>
+  </header>
+  <p class="gioi-thieu">Mỗi lần bấm <b>Lưu</b> là một dòng, mới nhất ở trên. Bấm một dòng để xem ô nào đã đổi
+    (<del>chữ cũ</del> → <ins>chữ mới</ins>) và khôi phục trang về như trước lần lưu đó.</p>
+  <div class="loc">
+    <label for="loc-trang">Xem lịch sử của</label>
+    <select id="loc-trang"><option value="content">Tất cả các trang</option></select>
+  </div>
+  <div id="thong-bao" role="status" aria-live="polite"></div>
+  <div id="danh-sach"></div>
+  <button type="button" class="nut them-nua" id="them-nua" hidden>Xem các lần lưu cũ hơn</button>
+</div>
+<!-- Đọc config.yml + nội dung YAML (khóa phiên bản) -->
+<script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script src="lich-su.js"></script>
+</body>
+</html>

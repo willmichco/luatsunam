@@ -1,0 +1,87 @@
+thu_tu: 1
+ten: Thừa kế
+nhap: false
+bieu_tuong: i-inherit
+mo_ta_ngan: Tư vấn lập di chúc, phân chia di sản, khai nhận thừa kế và giải quyết tranh chấp giữa các bên liên quan.
+nhan_dau_trang: Luật sư thừa kế
+tieu_de_trang: Chia di sản thừa kế đúng luật, *giữ được tình thân*
+mo_dau: Cha mẹ mất để lại nhà đất, tiền bạc mà anh chị em chưa thống nhất, di chúc chưa rõ ràng hay giấy tờ còn thiếu? Luật sư giúp anh chị biết ai được hưởng, hưởng bao nhiêu, cần làm thủ tục gì, và ưu tiên cách thỏa thuận êm thấm trước khi phải tính đến Tòa án.
+viec_gap: false
+tinh_huong:
+  - Cha mẹ mất không để lại di chúc, anh chị em chưa biết chia thế nào cho đúng.
+  - Có di chúc nhưng một người trong nhà cho rằng di chúc không hợp lệ.
+  - Nhà đất đứng tên cha mẹ, một người đang ở và không chịu chia.
+  - Muốn khai nhận, sang tên nhưng có người ở xa, ở nước ngoài hoặc không chịu ký.
+  - Cha mẹ còn khỏe, muốn lập di chúc rõ ràng để con cháu sau này không tranh chấp.
+  - Người mất còn nợ, không biết người thừa kế có phải trả thay hay không.
+pham_vi:
+  gioi_thieu: 'Một hồ sơ thừa kế thường dính tới nhiều chuyện cùng lúc: quan hệ gia đình, nhà đất, tài sản chung của cha mẹ, khoản nợ và ý nguyện của người đã mất. Luật sư xem tổng thể trước rồi mới tư vấn, để anh chị hiểu rõ phần của mình và chọn cách làm phù hợp.'
+  cac_viec:
+    - tieu_de: Lập và kiểm tra di chúc
+      mo_ta: 'Hướng dẫn cách lập di chúc có hiệu lực: hình thức, nội dung, người làm chứng; chỉ ra những chỗ dễ bị cho là vô hiệu.'
+    - tieu_de: Xác định di sản và người thừa kế
+      mo_ta: Tách phần tài sản riêng của người mất khỏi tài sản chung; xác định ai thuộc hàng thừa kế, ai được hưởng dù không có tên trong di chúc.
+    - tieu_de: Khai nhận, phân chia di sản
+      mo_ta: Hướng dẫn thủ tục khai nhận, thỏa thuận phân chia, từ chối nhận di sản và đăng ký sang tên tài sản.
+    - tieu_de: Thừa kế nhà đất, tiền gửi, cổ phần
+      mo_ta: Kiểm tra giấy tờ sở hữu, nghĩa vụ thuế phí và thủ tục chuyển quyền với từng loại tài sản.
+    - tieu_de: Người thừa kế ở nước ngoài
+      mo_ta: Hướng dẫn giấy tờ do nước ngoài cấp, ủy quyền, hợp pháp hóa lãnh sự để người ở xa vẫn làm được thủ tục.
+    - tieu_de: Tranh chấp thừa kế
+      mo_ta: Đánh giá chứng cứ, thời hiệu; thử hòa giải trong gia đình hoặc bảo vệ quyền lợi của anh chị tại Tòa án.
+viec_nen_lam:
+  - Giữ bản chính giấy chứng tử, di chúc (nếu có) và giấy tờ nhà đất ở nơi an toàn; chỉ đưa bản sao cho người khác.
+  - 'Ghi lại danh sách người thân của người mất: vợ hoặc chồng, cha mẹ, các con (kể cả con riêng, con nuôi).'
+  - Chưa ký văn bản từ chối nhận di sản hay thỏa thuận phân chia khi chưa hiểu rõ phần mình được hưởng.
+  - 'Để ý thời hiệu: yêu cầu chia di sản là nhà đất 30 năm, tài sản khác 10 năm, tính từ ngày người để lại di sản mất.'
+luu_y:
+  tieu_de: Lưu ý
+  noi_dung: Thời gian và thủ tục cụ thể phụ thuộc loại tài sản, tình trạng giấy tờ và mức độ thống nhất giữa những người thừa kế.
+nguyen_tac:
+  tieu_de: Ưu tiên giữ hòa khí gia đình
+  noi_dung: Khi còn khả năng thỏa thuận, luật sư hướng tới phương án êm thấm giữa những người trong nhà; đồng thời chuẩn bị sẵn căn cứ, chứng cứ để bảo vệ quyền lợi của anh chị nếu tranh chấp xảy ra.
+cac_buoc:
+  - tieu_de: Nghe anh chị kể
+    mo_ta: Người mất là ai, để lại tài sản gì, gia đình có những ai.
+  - tieu_de: Xem giấy tờ
+    mo_ta: Kiểm tra di chúc, giấy tờ sở hữu, hàng thừa kế và thời hiệu.
+  - tieu_de: Bàn cách làm
+    mo_ta: So sánh thỏa thuận, công chứng hay khởi kiện, kèm chi phí dự kiến.
+  - tieu_de: Chuẩn bị hồ sơ
+    mo_ta: Soạn văn bản, hướng dẫn thủ tục theo cách đã chọn.
+  - tieu_de: Đi cùng đến cùng
+    mo_ta: Làm việc với cơ quan, tổ chức hoặc Tòa án khi được ủy quyền.
+giay_to:
+  tieu_de: Giấy tờ nên mang theo
+  danh_sach:
+    - Giấy chứng tử và giấy tờ nhân thân của các bên
+    - Di chúc, văn bản tặng cho hoặc thỏa thuận đã có
+    - Giấy chứng nhận nhà đất, giấy tờ tài sản, sao kê
+    - Tài liệu về khoản nợ và nghĩa vụ của người để lại di sản
+nhan_duoc:
+  - Giải thích rõ quyền thừa kế và rủi ro của hồ sơ
+  - Danh mục giấy tờ, thủ tục và lộ trình thực hiện
+  - Dự thảo di chúc, thỏa thuận hoặc văn bản cần thiết
+  - Luật sư đại diện làm việc theo phạm vi ủy quyền đã thống nhất
+hoi_dap:
+  - hoi: Cha mẹ mất không để lại di chúc thì chia thế nào?
+    dap: Di sản được chia theo pháp luật. Hàng thừa kế thứ nhất gồm vợ, chồng, cha đẻ, mẹ đẻ, cha nuôi, mẹ nuôi, con đẻ, con nuôi của người mất; những người cùng hàng được hưởng phần bằng nhau (**Điều 650, 651 Bộ luật Dân sự 2015**). Trước khi chia, cần tách phần tài sản của người vợ hoặc chồng còn sống ra khỏi khối tài sản chung.
+  - hoi: Một người trong nhà không chịu ký thì có làm thủ tục được không?
+    dap: Thỏa thuận phân chia di sản tại tổ chức hành nghề công chứng cần sự đồng ý của tất cả những người thừa kế. Nếu có người không đồng ý hoặc không hợp tác, anh chị có thể yêu cầu Tòa án chia di sản. Luật sư sẽ cùng anh chị cân nhắc nên thương lượng thêm hay khởi kiện, tùy giấy tờ và quan hệ trong gia đình.
+  - hoi: Đã nhiều năm rồi, còn yêu cầu chia di sản được không?
+    dap: 'Thời hiệu yêu cầu chia di sản là 30 năm với bất động sản và 10 năm với động sản, tính từ thời điểm mở thừa kế (**Điều 623 Bộ luật Dân sự 2015**). Hồ sơ mở thừa kế trước năm 2017, hoặc tài sản đã được anh chị em thỏa thuận để chung, cần luật sư xem riêng. Đọc thêm: [thời hiệu chia di sản thừa kế](/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/).'
+can_cu_phap_ly:
+  - Bộ luật Dân sự 2015 (Phần thứ tư – Thừa kế)
+  - Luật Công chứng 2024
+  - Luật Đất đai 2024
+  - Luật Hôn nhân và Gia đình 2014
+lien_he:
+  tieu_de: Chuẩn bị đúng từ đầu giúp gia đình tránh tranh chấp về sau
+  doan_moi: Anh chị gọi điện hoặc nhắn Zalo kể sơ qua về tài sản và những người thừa kế. Luật sư sẽ cho biết cần chuẩn bị giấy tờ gì và nên bắt đầu từ đâu.
+linh_vuc_lien_quan:
+  - tranh-tung-giai-quyet-tranh-chap
+  - dat-dai-bat-dong-san
+  - cong-chung
+seo:
+  tieu_de: Luật sư tư vấn Thừa kế tại TP.HCM
+  mo_ta: Luật sư tư vấn lập di chúc, khai nhận và phân chia di sản thừa kế, giải quyết tranh chấp thừa kế theo Bộ luật Dân sự. Liên hệ {{hotline}}.

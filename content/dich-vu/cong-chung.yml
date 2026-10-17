@@ -1,0 +1,86 @@
+thu_tu: 7
+ten: Công chứng
+nhap: false
+bieu_tuong: i-doc
+mo_ta_ngan: Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng, di chúc, ủy quyền, mua bán, tặng cho.
+nhan_dau_trang: Luật sư hỗ trợ công chứng
+tieu_de_trang: Giấy tờ công chứng *đủ và đúng ngay từ lần đầu*
+mo_dau: Sắp ký mua bán, tặng cho nhà đất, lập di chúc hay làm giấy ủy quyền? Luật sư kiểm tra giấy tờ, giải thích từng điều khoản trước khi anh chị ký, và phối hợp với tổ chức hành nghề công chứng để buổi công chứng diễn ra suôn sẻ.
+viec_gap: false
+tinh_huong:
+  - Sắp ký hợp đồng mua bán, tặng cho nhà đất và muốn có người đọc kỹ trước khi ký.
+  - Muốn lập di chúc nhưng không biết viết thế nào cho có hiệu lực, tránh tranh chấp về sau.
+  - Cần ủy quyền cho người thân làm thủ tục khi mình ở xa hoặc ở nước ngoài.
+  - Hồ sơ bị trả lại vì thiếu giấy tờ, không biết cần bổ sung gì.
+  - Vợ chồng muốn lập văn bản thỏa thuận tài sản chung, tài sản riêng.
+pham_vi:
+  gioi_thieu: Luật sư kiểm tra hồ sơ, giải thích quyền và nghĩa vụ, đề xuất điều khoản và phối hợp với tổ chức hành nghề công chứng. Việc công chứng do công chứng viên thực hiện tại tổ chức hành nghề công chứng có thẩm quyền.
+  cac_viec:
+    - tieu_de: Nhà đất và tài sản phải đăng ký
+      mo_ta: Rà soát hồ sơ mua bán, tặng cho, thế chấp, góp vốn, thuê và các giao dịch cần công chứng về tài sản.
+    - tieu_de: Văn bản ủy quyền
+      mo_ta: Làm rõ phạm vi, thời hạn, quyền và nghĩa vụ; soạn giấy ủy quyền hoặc hợp đồng ủy quyền đúng mục đích sử dụng.
+    - tieu_de: Di chúc và thừa kế
+      mo_ta: Chuẩn bị di chúc, văn bản khai nhận, thỏa thuận phân chia hoặc từ chối nhận di sản cùng giấy tờ cần thiết.
+    - tieu_de: Thỏa thuận tài sản vợ chồng
+      mo_ta: Hỗ trợ thỏa thuận tài sản vợ chồng, chia tài sản chung, xác nhận tài sản riêng và văn bản liên quan.
+    - tieu_de: Giấy tờ nước ngoài
+      mo_ta: Kiểm tra giấy tờ nước ngoài, bản dịch, hợp pháp hóa lãnh sự, ủy quyền và yêu cầu xác định danh tính.
+    - tieu_de: Đọc kỹ trước khi ký
+      mo_ta: Giải thích điều khoản, thuế phí, điều kiện bàn giao, thanh toán và rủi ro trước khi anh chị ký.
+viec_nen_lam:
+  - Mang bản chính giấy tờ tùy thân, giấy tờ tài sản và giấy tờ về tình trạng hôn nhân khi đi công chứng.
+  - Đọc kỹ toàn bộ văn bản trước khi ký; hỏi lại ngay những điều khoản chưa hiểu.
+  - Ghi giá trong hợp đồng đúng thực tế; ghi giá thấp hơn để giảm thuế có thể bất lợi khi tranh chấp và vi phạm pháp luật về thuế.
+  - Giữ một bản hợp đồng đã công chứng cùng các biên nhận thanh toán.
+luu_y:
+  tieu_de: Lưu ý
+  noi_dung: Danh mục giấy tờ và việc tiếp nhận phụ thuộc từng giao dịch, tình trạng tài sản và yêu cầu của tổ chức hành nghề công chứng.
+nguyen_tac:
+  tieu_de: Phân định rõ vai trò
+  noi_dung: Công Ty Luật TNHH Luật Sư Nam tư vấn pháp lý và hỗ trợ chuẩn bị hồ sơ. Việc công chứng, lời chứng và quyết định tiếp nhận hồ sơ thuộc thẩm quyền của công chứng viên, tổ chức hành nghề công chứng.
+cac_buoc:
+  - tieu_de: Nghe anh chị kể
+    mo_ta: Ai ký, tài sản gì, mục đích và thời gian dự kiến.
+  - tieu_de: Kiểm tra điều kiện
+    mo_ta: Giấy tờ, quyền định đoạt và hạn chế pháp lý.
+  - tieu_de: Hoàn thiện văn bản
+    mo_ta: Đề xuất điều khoản và chuẩn bị hồ sơ cần nộp.
+  - tieu_de: Phối hợp công chứng
+    mo_ta: Bổ sung hồ sơ theo yêu cầu hợp lệ, sắp xếp lịch ký.
+  - tieu_de: Sau khi ký
+    mo_ta: Thanh toán, đăng ký sang tên và nghĩa vụ tiếp theo.
+giay_to:
+  tieu_de: Hồ sơ thường cần
+  danh_sach:
+    - Căn cước, hộ chiếu và giấy tờ về tình trạng hôn nhân
+    - Giấy tờ chứng minh quyền sở hữu, sử dụng tài sản
+    - Dự thảo, thỏa thuận và giấy tờ giao dịch trước đó
+    - Giấy tờ đại diện, ủy quyền hoặc tài liệu nước ngoài
+nhan_duoc:
+  - Danh mục giấy tờ đúng với loại giao dịch
+  - Văn bản được luật sư rà soát trước khi ký
+  - Giải thích nghĩa vụ, rủi ro và việc cần làm sau công chứng
+  - Hỗ trợ sắp xếp lịch với tổ chức hành nghề công chứng
+hoi_dap:
+  - hoi: Hợp đồng nào bắt buộc phải công chứng?
+    dap: 'Ví dụ: hợp đồng chuyển nhượng, tặng cho, thế chấp, góp vốn bằng quyền sử dụng đất phải được công chứng hoặc chứng thực theo **Luật Đất đai 2024** (trừ một số trường hợp kinh doanh bất động sản); hợp đồng mua bán, tặng cho nhà ở cũng phải công chứng hoặc chứng thực theo **Luật Nhà ở 2023**, trừ một số trường hợp luật định. Luật sư sẽ xác định yêu cầu cụ thể với giao dịch của anh chị.'
+  - hoi: Di chúc có bắt buộc phải công chứng không?
+    dap: Không bắt buộc. Di chúc bằng văn bản có thể có hoặc không có người làm chứng, có công chứng hoặc chứng thực; mỗi loại có điều kiện riêng để hợp pháp (**Điều 628, 630 Bộ luật Dân sự 2015**). Công chứng di chúc giúp hạn chế tranh cãi về sau, nhất là với người cao tuổi hoặc tài sản giá trị lớn.
+  - hoi: Luật sư có công chứng hợp đồng được không?
+    dap: Không. Việc công chứng do công chứng viên thực hiện tại tổ chức hành nghề công chứng. Luật sư giúp anh chị kiểm tra điều kiện giao dịch, soạn hoặc rà soát văn bản, giải thích quyền và nghĩa vụ, chuẩn bị hồ sơ và sắp xếp lịch ký.
+can_cu_phap_ly:
+  - Luật Công chứng 2024
+  - Bộ luật Dân sự 2015
+  - Luật Đất đai 2024
+  - Luật Nhà ở 2023
+lien_he:
+  tieu_de: Hồ sơ đủ, buổi công chứng sẽ nhẹ nhàng hơn
+  doan_moi: Nhắn Zalo cho luật sư loại giấy tờ cần làm và những giấy tờ anh chị đang có. Luật sư sẽ cho biết cần chuẩn bị thêm gì.
+linh_vuc_lien_quan:
+  - thua-ke
+  - hon-nhan-gia-dinh
+  - dat-dai-bat-dong-san
+seo:
+  tieu_de: Hỗ trợ thủ tục Công chứng hợp đồng, di chúc
+  mo_ta: Hỗ trợ chuẩn bị hồ sơ, rà soát giao dịch và kết nối công chứng hợp đồng mua bán, tặng cho, di chúc, văn bản ủy quyền đúng quy định pháp luật.

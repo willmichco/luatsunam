@@ -1,0 +1,87 @@
+thu_tu: 6
+ten: Tranh tụng & Giải quyết tranh chấp
+nhap: false
+bieu_tuong: i-gavel
+mo_ta_ngan: Đại diện, thương lượng và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp thương mại, hợp đồng.
+nhan_dau_trang: Luật sư tranh tụng & giải quyết tranh chấp
+tieu_de_trang: Bị kiện hay cần khởi kiện, *có luật sư cùng chuẩn bị*
+mo_dau: Nhận giấy của Tòa án, đối tác chây ỳ không trả tiền hay chuyện làm ăn đổ vỡ – luật sư giúp anh chị xem hồ sơ, tính trước được mất, thử thương lượng, và khi cần thì đại diện, tranh luận tại Tòa án, Trọng tài.
+viec_gap: false
+tinh_huong:
+  - Nhận được thông báo thụ lý hoặc giấy triệu tập của Tòa án vì bị kiện.
+  - Đối tác nhận hàng, nhận tiền rồi không thanh toán, không giao hàng như đã thỏa thuận.
+  - Muốn khởi kiện nhưng không biết nộp đơn ở Tòa nào, cần chứng cứ gì.
+  - Đã có bản án sơ thẩm, chưa đồng ý và muốn kháng cáo.
+  - Thắng kiện rồi nhưng bên kia không chịu thi hành bản án.
+pham_vi:
+  gioi_thieu: Giải quyết tranh chấp không chỉ là nộp đơn kiện. Luật sư cùng anh chị cân nhắc mục tiêu thực sự, chi phí, thời gian, khả năng đòi được tiền và quan hệ giữa các bên, rồi mới chọn cách làm.
+  cac_viec:
+    - tieu_de: Xem hồ sơ, đánh giá chứng cứ
+      mo_ta: Rà soát hợp đồng, chứng từ, tin nhắn, thời hiệu, Tòa án có thẩm quyền; chỉ ra tài liệu còn thiếu.
+    - tieu_de: Tính toán trước khi kiện
+      mo_ta: Phân tích yêu cầu, khả năng bị phản bác, biện pháp khẩn cấp tạm thời, chi phí và khả năng thi hành.
+    - tieu_de: Thương lượng, hòa giải
+      mo_ta: Soạn thư yêu cầu, chuẩn bị nội dung đàm phán, tham gia hòa giải và rà soát thỏa thuận để bảo đảm thực hiện được.
+    - tieu_de: Đại diện tại Tòa án
+      mo_ta: Chuẩn bị đơn từ, bản trình bày, chứng cứ; tham gia phiên họp, hòa giải và xét xử theo phạm vi ủy quyền.
+    - tieu_de: Trọng tài thương mại
+      mo_ta: Tư vấn điều khoản trọng tài, thời hạn; chuẩn bị hồ sơ và đại diện trong quá trình tố tụng trọng tài.
+    - tieu_de: Thi hành bản án
+      mo_ta: Hỗ trợ yêu cầu thi hành án, xác minh điều kiện thi hành, thỏa thuận thi hành và theo dõi việc xử lý tài sản.
+viec_nen_lam:
+  - 'Không bỏ qua giấy tờ của Tòa án: đọc kỹ, ghi lại ngày nhận và thời hạn phải trả lời.'
+  - Gom đủ hợp đồng, hóa đơn, chứng từ chuyển khoản, tin nhắn, email; giữ nguyên dữ liệu gốc, không chỉnh sửa.
+  - Thời hạn kháng cáo bản án dân sự sơ thẩm chỉ 15 ngày – nên gặp luật sư ngay sau phiên tòa.
+  - Hạn chế tự nhắn tin cam kết hay thừa nhận điều gì với bên kia khi chưa hỏi ý kiến luật sư.
+luu_y:
+  tieu_de: Lưu ý
+  noi_dung: Không ai có thể bảo đảm trước kết quả xét xử. Đánh giá chỉ chính xác khi luật sư được xem đầy đủ hồ sơ và chứng cứ.
+nguyen_tac:
+  tieu_de: Chọn cách làm có lợi thật sự
+  noi_dung: Mục tiêu là kết quả thực tế và đòi được quyền lợi, không phải kiện cho bằng được. Tòa án là lựa chọn khi thương lượng không còn hiệu quả, sau khi anh chị đã biết rõ chi phí và rủi ro.
+cac_buoc:
+  - tieu_de: Nghe anh chị kể
+    mo_ta: Ai tranh chấp với ai, về việc gì, các mốc thời gian quan trọng.
+  - tieu_de: Đánh giá chứng cứ
+    mo_ta: Căn cứ, thời hiệu, Tòa án có thẩm quyền và khả năng thi hành.
+  - tieu_de: Chọn cách giải quyết
+    mo_ta: Thương lượng, hòa giải, Tòa án hay Trọng tài.
+  - tieu_de: Triển khai
+    mo_ta: Soạn hồ sơ và tham gia làm việc theo phạm vi ủy quyền.
+  - tieu_de: Theo sát kết quả
+    mo_ta: Cập nhật tiến độ, điều chỉnh cách làm và hỗ trợ thi hành án.
+giay_to:
+  tieu_de: Giấy tờ nên mang theo
+  danh_sach:
+    - Hợp đồng, phụ lục, biên bản và chứng từ thanh toán
+    - Email, tin nhắn, thư yêu cầu và phản hồi giữa các bên
+    - Tài liệu giao nhận, nghiệm thu, đối chiếu công nợ
+    - Đơn từ, quyết định hoặc hồ sơ Tòa án đã nhận
+nhan_duoc:
+  - Đánh giá thẳng thắn về căn cứ, rủi ro và các lựa chọn
+  - Kế hoạch giải quyết theo từng mốc công việc
+  - Đơn từ, văn bản và chứng cứ được sắp xếp bài bản
+  - Cập nhật tiến độ và lời khuyên ở mỗi giai đoạn
+hoi_dap:
+  - hoi: Nhận thông báo bị kiện, tôi phải làm gì?
+    dap: Trong thời hạn 15 ngày kể từ ngày nhận thông báo thụ lý, anh chị cần nộp cho Tòa án văn bản ghi ý kiến của mình về yêu cầu của người khởi kiện, kèm tài liệu, chứng cứ (nếu có) (**Điều 199 Bộ luật Tố tụng dân sự 2015**). Đây là lúc nên nhờ luật sư xem hồ sơ để chuẩn bị ý kiến và chứng cứ phản bác.
+  - hoi: Không đồng ý bản án sơ thẩm thì kháng cáo trong bao lâu?
+    dap: Thời hạn kháng cáo bản án dân sự sơ thẩm là 15 ngày kể từ ngày tuyên án; nếu anh chị vắng mặt tại phiên tòa vì lý do chính đáng thì thời hạn tính từ ngày nhận được bản án hoặc bản án được niêm yết (**Điều 273 Bộ luật Tố tụng dân sự 2015**). Kháng cáo quá hạn rất khó được chấp nhận.
+  - hoi: Có nhất thiết phải ra Tòa không?
+    dap: Không phải lúc nào cũng vậy. Nhiều tranh chấp có thể giải quyết bằng thương lượng, hòa giải với chi phí và thời gian ít hơn. Luật sư phân tích chứng cứ, chi phí, thời gian và khả năng thi hành để anh chị chọn cách phù hợp.
+can_cu_phap_ly:
+  - Bộ luật Tố tụng dân sự 2015 (sửa đổi, bổ sung)
+  - Bộ luật Dân sự 2015
+  - Luật Thương mại 2005
+  - Luật Trọng tài thương mại 2010
+  - Luật Thi hành án dân sự
+lien_he:
+  tieu_de: Chuẩn bị sớm giúp giữ được chứng cứ và thời hạn
+  doan_moi: Gọi điện hoặc nhắn Zalo cho luật sư ngay khi nhận giấy tờ của Tòa án hoặc khi thấy tranh chấp có dấu hiệu kéo dài.
+linh_vuc_lien_quan:
+  - dat-dai-bat-dong-san
+  - dan-su
+  - cong-chung
+seo:
+  tieu_de: Luật sư Tranh tụng & Giải quyết tranh chấp
+  mo_ta: Đại diện, thương lượng, hòa giải và bảo vệ quyền lợi tại Tòa án, Trọng tài trong tranh chấp hợp đồng, thương mại, dân sự.

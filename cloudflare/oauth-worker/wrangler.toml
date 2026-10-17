@@ -1,0 +1,9 @@
+# Worker đăng nhập GitHub cho /admin – triển khai: xem docs/TRIEN-KHAI-CLOUDFLARE.md
+name = "luatsunam-cms-auth"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Tên miền được dùng /admin (thêm tên miền riêng khi có, ở GĐ5)
+ALLOWED_DOMAINS = "willmichco.github.io, luatsunam.pages.dev, *.luatsunam.pages.dev"
+# GITHUB_CLIENT_ID và GITHUB_CLIENT_SECRET: đặt trong Cloudflare → Settings → Variables (Secret), KHÔNG ghi vào tệp này

@@ -1,0 +1,73 @@
+tieu_de: Liên hệ
+nhap: false
+loai_trang: ContactPage
+dau_trang:
+  nhan: Liên hệ
+  tieu_de: Anh chị cứ kể, *luật sư lắng nghe*
+  mo_dau: Gọi điện, nhắn Zalo hoặc ghé văn phòng – cách nào thuận tiện nhất với anh chị. Nhiều vụ việc phụ thuộc vào thời hạn, liên hệ sớm giúp luật sư kịp thời xác định việc cần ưu tiên.
+  the_luat_su: true
+cac_khoi:
+  - loai: kenh_lien_he
+    hien_thi: true
+    ma_neo: lien-he-truc-tiep
+    nen: trang
+    kenh:
+      - goi
+      - zalo
+      - email
+    ghi_chu_goi: '{{gio_lam_viec}}. Việc gấp, hãy gọi trực tiếp.'
+    ghi_chu_zalo: Kể ngắn gọn sự việc; thường phản hồi trong 24 giờ làm việc.
+    ghi_chu_email: Thường phản hồi trong 24 giờ làm việc.
+    viec_gap: true
+    noi_dung_viec_gap: Người thân vừa bị bắt, tạm giữ; sắp hết thời hạn kháng cáo; sắp ký hợp đồng, đặt cọc lớn – xin gọi ngay [{{hotline}}]({{tel}}) thay vì nhắn tin. {{ngoai_gio}}.
+  - loai: cac_buoc
+    hien_thi: true
+    nhan: Trước khi gọi
+    tieu_de: Khi gọi, anh chị chỉ cần nói ba điều
+    nen: kem
+    mo_ta: Không cần chuẩn bị cầu kỳ, cũng không cần biết luật. Ba điều dưới đây giúp luật sư hiểu nhanh việc của anh chị.
+    can_giua: true
+    kieu: the
+    buoc:
+      - tieu_de: Chuyện gì đang xảy ra
+        mo_ta: Kể ngắn gọn, theo thứ tự trước sau. Không cần dùng từ ngữ pháp lý.
+        bieu_tuong: i-chat
+      - tieu_de: Đang có giấy tờ gì
+        mo_ta: Hợp đồng, giấy mời, quyết định, biên nhận, tin nhắn… có gì kể nấy.
+        bieu_tuong: i-doc
+      - tieu_de: Có hạn chót nào không
+        mo_ta: Ngày phải lên làm việc, ngày hết hạn kháng cáo, ngày ký hợp đồng hay đặt cọc.
+        bieu_tuong: i-clock
+    ghi_chu:
+      - bieu_tuong: i-lock
+        dam: Thông tin được giữ kín
+        noi_dung: ngay từ cuộc trao đổi đầu tiên (Điều 25 Luật Luật sư).
+      - bieu_tuong: i-alert
+        dam: 'Lưu ý:'
+        noi_dung: trao đổi ban đầu chưa làm phát sinh quan hệ luật sư – khách hàng. Chưa gửi tài liệu mật khi luật sư chưa hướng dẫn cách gửi.
+  - loai: ban_do
+    hien_thi: true
+    ma_neo: ban-do
+    nhan: Đường đến văn phòng
+    tieu_de: Văn phòng Luật Sư Nam
+    nen: trang
+    mo_ta: Anh chị vui lòng gọi điện hoặc nhắn Zalo trước khi đến để luật sư sắp xếp thời gian tiếp chu đáo.
+    ghi_chu_hotline: Ưu tiên gọi trực tiếp với việc gấp
+  - loai: hoi_dap
+    hien_thi: true
+    tieu_de: Trước khi liên hệ, anh chị thường hỏi
+    nen: kem
+    mo_ta: Thời gian phản hồi, giữ bí mật và việc cần chuẩn bị.
+    lien_ket:
+      nhan: Tất cả câu hỏi thường gặp
+      trang: /cau-hoi-thuong-gap/
+    cau_hoi:
+      - bao-mat-thong-tin
+      - chuan-bi-buoi-dau
+      - vu-viec-ngoai-tphcm
+      - thoi-gian-phan-hoi
+lien_he_cuoi_trang:
+  hien: false
+seo:
+  tieu_de: Liên hệ luật sư – Công Ty Luật TNHH Luật Sư Nam
+  mo_ta: 'Liên hệ Luật Sư Nam: 22c Vũ Ngọc Phan, Phường Bình Lợi Trung, TP.HCM. Hotline {{hotline}}, Zalo, email, bản đồ và giờ làm việc. Liên hệ trực tiếp với luật sư.'

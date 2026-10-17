@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Quản trị website Luật Sư Nam</title>
+<!-- Mở sẵn kết nối: Sveltia tải bản dịch + thư viện từ unpkg; khung mô phỏng tải Pyodide, phông biểu tượng từ jsDelivr -->
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<!-- Trang quản trị nội dung. Cấu hình (config.yml) TỰ SINH từ tools/schema.py mỗi lần build: không sửa tay. -->
+<script>
+  /* ---------- Giao diện luôn tiếng Việt ----------
+     Chưa chọn ngôn ngữ (mặc định "tự động"), Sveltia theo ngôn ngữ trình duyệt: máy để tiếng Anh thì chữ của Sveltia ("Collections",
+     "Search for contents…", "Save"…) lẫn với chữ tiếng Việt của trang, kèm dải "Sveltia CMS is now available in English". Báo cho
+     Sveltia trình duyệt dùng tiếng Việt (chỉ trong trang quản trị). Ai đã tự chọn ngôn ngữ khác trong Cài đặt tài khoản vẫn giữ lựa chọn đó. */
+  (function () {
+    try {
+      Object.defineProperty(navigator, 'language', { configurable: true, get: function () { return 'vi'; } });
+      Object.defineProperty(navigator, 'languages', { configurable: true, get: function () { return ['vi']; } });
+    } catch (e) { /* trình duyệt không cho đổi: giữ như cũ */ }
+  })();
+
+  /* ---------- Chống mất bài đang soạn ----------
+     Sveltia (bản đang khóa) thoát khung soạn thảo và BỎ mọi thay đổi chưa lưu khi bấm Esc hoặc nút ←,
+     không hỏi lại, và không giữ bản đang soạn khi tải lại trang. Lớp này chỉ can thiệp khi nút Lưu đang sáng
+     (= còn thay đổi chưa lưu): Esc bị chặn kèm lời nhắc; nút ← hỏi xác nhận; đóng tab/tải lại thì trình duyệt hỏi.
+     Phải đặt TRƯỚC script Sveltia: bộ nghe cấp window chạy theo thứ tự đăng ký, Sveltia cũng nghe ở cấp window. */
+  (function () {
+    function con_thay_doi() {
+      var b = document.querySelector('button[aria-keyshortcuts$="+S"]');
+      return !!b && b.getAttribute('aria-disabled') === 'false' && /#\/collections\/.+\/(entries|new)/.test(location.hash);
+    }
+    function dang_mo_hop_chon() {
+      return [].some.call(document.querySelectorAll('dialog[open], [role=menu], [role=listbox], [role=dialog]'), function (e) {
+        return e.tagName === 'DIALOG' || e.getClientRects().length > 0;
+      });
+    }
+    function nhac(chu) {
+      var d = document.getElementById('nhac-luu') || document.createElement('div');
+      d.id = 'nhac-luu'; d.setAttribute('role', 'status'); d.textContent = chu; // kiểu: admin/giao-dien.css
+      document.body.appendChild(d);
+      clearTimeout(nhac.t); nhac.t = setTimeout(function () { d.remove(); }, 5000);
+    }
+    window.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || !con_thay_doi() || dang_mo_hop_chon()) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      nhac('Còn thay đổi chưa lưu. Bấm “Lưu” để giữ lại; muốn bỏ thì bấm nút ← ở góc trái trên.');
+    }, true);
+    window.addEventListener('click', function (e) {
+      // Nút ← của trình soạn: nhận theo lớp "back" (không phụ thuộc ngôn ngữ – bản dịch tiếng Việt tải từ mạng, lỗi thì Sveltia hiện tiếng Anh)
+      var b = e.target.closest && e.target.closest('button[aria-label="Hủy chỉnh sửa"], button[aria-label="Cancel Editing"], [role=toolbar] button.back');
+      if (!b || !con_thay_doi()) return;
+      if (!window.confirm('Thoát mà không lưu? Các thay đổi chưa lưu sẽ mất.')) {
+        e.preventDefault(); e.stopImmediatePropagation();
+      }
+    }, true);
+    window.addEventListener('beforeunload', function (e) {
+      if (con_thay_doi()) { e.preventDefault(); e.returnValue = ''; }
+    });
+  })();
+</script>
+<!-- Giao diện (màu, phông, cột trái, thẻ, nút): admin/giao-dien.css – dùng chung với trang Lịch sử chỉnh sửa -->
+<link rel="stylesheet" href="giao-dien.css">
+</head>
+<body>
+<!-- Sveltia CMS khóa phiên bản cố định; nâng cấp: đổi số phiên bản, thử ở bản thử trước khi đưa lên chính thức -->
+<script src="https://unpkg.com/@sveltia/cms@0.221.8/dist/sveltia-cms.js"></script>
+<script>
+  (function () {
+    /* ---------- Thành phần "Bảng" cho khung soạn thảo ----------
+       Trình soạn thảo trực quan chưa có công cụ bảng: nếu để nguyên, lưu bài có bảng có thể làm vỡ bảng.
+       Thành phần này nhận diện bảng Markdown và cho sửa bằng một ô chữ đơn giản:
+       mỗi dòng một hàng, các ô cách nhau bằng dấu |, dòng đầu là tiêu đề cột. */
+    var TABLE = /^\|[^\n]*\|[ \t]*\n\|[ \t:|-]+\|[ \t]*(?:\n\|[^\n]*\|[ \t]*)*/m;
+
+    function splitRow(line) {
+      var cells = [], cur = '', s = line.trim().replace(/^\|/, '').replace(/\|$/, '');
+      for (var i = 0; i < s.length; i++) {
+        if (s[i] === '\\' && s[i + 1] === '|') { cur += '|'; i++; continue; }
+        if (s[i] === '|') { cells.push(cur.trim()); cur = ''; continue; }
+        cur += s[i];
+      }
+      cells.push(cur.trim());
+      return cells;
+    }
+
+    function tableToText(md) {
+      return md.split('\n').filter(function (l, i) { return i !== 1 && l.trim(); })
+        .map(function (l) { return splitRow(l).join(' | '); }).join('\n');
+    }
+
+    function textToTable(text) {
+      var rows = (text || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean)
+        .map(function (l) { return l.split('|').map(function (c) { return c.trim().replace(/\|/g, '\\|'); }); });
+      if (!rows.length) return '';
+      var n = Math.max.apply(null, rows.map(function (r) { return r.length; }));
+      rows = rows.map(function (r) { while (r.length < n) r.push(''); return r; });
+      var line = function (r) { return '| ' + r.join(' | ') + ' |'; };
+      var sep = '|' + rows[0].map(function () { return '---'; }).join('|') + '|';
+      return [line(rows[0]), sep].concat(rows.slice(1).map(line)).join('\n');
+    }
+
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    /* ---------- Thành phần "Ảnh" (thay ảnh mặc định của CMS) ----------
+       Ô "Mô tả ảnh" bắt buộc: CMS chặn lưu khi bỏ trống (Google và người khiếm thị đọc dòng này).
+       Lưu dạng Markdown chuẩn ![mô tả](đường-dẫn "chú thích") – build dựng thành ảnh + chú thích dưới ảnh. */
+    CMS.registerEditorComponent({
+      id: 'anh',
+      label: 'Ảnh',
+      icon: 'image',
+      fields: [
+        { name: 'src', label: 'Ảnh', widget: 'image', choose_url: false,
+          hint: 'Kéo thả ảnh vào khung hoặc bấm Duyệt tệp → Tải lên. Ảnh ≤ 5 MB, tự đổi sang WebP.' },
+        { name: 'alt', label: 'Mô tả ảnh (bắt buộc)', widget: 'string',
+          hint: 'Tả ngắn nội dung ảnh, ví dụ: Luật sư xem hồ sơ đặt cọc cùng khách hàng.' },
+        { name: 'title', label: 'Chú thích dưới ảnh (tùy chọn)', widget: 'string', required: false,
+          hint: 'Hiện chữ nhỏ dưới ảnh. Để trống nếu không cần.' }
+      ],
+      pattern: /^!\[([^\]\n]*)\]\(([^)\s]+)(?:\s+"([^"\n]*)")?\)$/m,
+      fromBlock: function (m) { return { alt: m[1], src: m[2], title: m[3] || '' }; },
+      toBlock: function (d) {
+        var alt = (d.alt || '').replace(/[\[\]]/g, '');
+        var title = (d.title || '').replace(/"/g, '”');
+        return '![' + alt + '](' + (d.src || '') + (title ? ' "' + title + '"' : '') + ')';
+      },
+      toPreview: function (d) {
+        return '<figure style="margin:0"><img src="' + esc(d.src || '') + '" alt="' + esc(d.alt || '') + '" style="max-width:100%">' +
+          (d.title ? '<figcaption>' + esc(d.title) + '</figcaption>' : '') + '</figure>';
+      }
+    });
+
+    CMS.registerEditorComponent({
+      id: 'bang',
+      label: 'Bảng',
+      icon: 'table',
+      fields: [{
+        name: 'noi_dung', label: 'Nội dung bảng', widget: 'text',
+        hint: 'Mỗi dòng là một hàng; các ô cách nhau bằng dấu |. Dòng đầu tiên là tiêu đề cột. ' +
+              'Ví dụ: “Yêu cầu | Thời hiệu | Căn cứ” rồi xuống dòng “Chia nhà đất | 30 năm | Khoản 1 Điều 623”. ' +
+              'In đậm: **chữ**. Trên điện thoại, bảng tự cuộn ngang.'
+      }],
+      pattern: TABLE,
+      fromBlock: function (m) { return { noi_dung: tableToText(m[0]) }; },
+      toBlock: function (d) { return textToTable(d.noi_dung); },
+      toPreview: function (d) {
+        var rows = (d.noi_dung || '').split('\n').filter(Boolean).map(function (l) { return l.split('|'); });
+        return '<table style="border-collapse:collapse">' + rows.map(function (r, i) {
+          var t = i ? 'td' : 'th';
+          return '<tr>' + r.map(function (c) { return '<' + t + ' style="border:1px solid #ccc;padding:4px 8px">' + esc(c.trim()) + '</' + t + '>'; }).join('') + '</tr>';
+        }).join('') + '</table>';
+      }
+    });
+
+    /* ---------- Ô "lsn_nhom": tiêu đề phần và ghi chú trong form (chỉ để nhìn, không lưu gì vào tệp) ----------
+       Khai báo trong tools/schema.py (nhom(), ghi_chu()). Tiêu đề chia form dài thành từng phần theo đúng thứ tự trên trang;
+       data-phan khớp phần trên trang mô phỏng (admin/xem-truoc.js đánh cùng số). Ghi chú nói chữ lấy từ đâu, nút mở thẳng chỗ sửa. */
+    var h = window.createElement;
+    CMS.registerFieldType('lsn_nhom', window.createClass({
+      render: function () {
+        var f = this.props.field, mo = f.get('mo');
+        if (f.get('kieu') === 'ghi_chu') {
+          return h('div', { className: 'lsn-ghi-chu', role: 'note' },
+            h('span', { className: 'lsn-ghi-chu__icon', 'aria-hidden': 'true' }, 'info'),
+            h('div', null, h('p', null, f.get('mo_ta')),
+              mo ? h('button', { type: 'button', className: 'lsn-ghi-chu__mo',
+                onClick: function () { if (window.LSN_MO) window.LSN_MO(mo); else location.hash = '#/collections/' + mo.split('#')[0]; } },
+              f.get('chu_mo') || 'Mở chỗ sửa ›') : null));
+        }
+        return h('div', { className: 'lsn-phan', 'data-phan': f.get('phan') || '' },
+          h('div', { className: 'lsn-phan__tieu-de' }, f.get('label')),
+          f.get('mo_ta') ? h('p', { className: 'lsn-phan__mo-ta' }, f.get('mo_ta')) : null);
+      }
+    }));
+  })();
+</script>
+<!-- Khung mô phỏng (cột phải khi soạn): dựng trang bằng đúng code build trong trình duyệt, tô sáng chỗ đang sửa -->
+<script src="xem-truoc.js"></script>
+<!-- Cột trái theo menu website, mở thẳng trang một tệp; nút Hướng dẫn, Lịch sử chỉnh sửa, Sáng / Tối trên thanh trên cùng -->
+<script src="dieu-huong.js"></script>
+<!-- Chế độ soạn: mọi mục khóa ở Sửa chữ (chữ, ảnh, liên kết); Sửa bố cục chỉ còn ở mục ghi trong GIU_BO_CUC. Chỉ đổi cách hiện form, không đổi dữ liệu -->
+<script src="che-do.js"></script>
+<!-- Nút "↶ Hoàn tác" trên ô vừa sửa, "Hoàn tác tất cả" và "Lịch sử" trên thanh trình soạn -->
+<script src="hoan-tac.js"></script>
+<!-- Ô chọn "Biểu tượng": hình biểu tượng cạnh tên -->
+<script src="bieu-tuong.js"></script>
+<script>
+  /* ---------- Ô con thu gọn (khối, thẻ, mục danh sách, nhóm): bấm bất kỳ đâu trên ô để mở ----------
+     Sveltia chỉ mở / thu khi bấm đúng mũi tên + tên ở đầu ô. Lớp này cho cả hàng tiêu đề (chỗ trống, số đỏ) và dòng tóm tắt
+     bên dưới cũng bấm được: bấm hộ nút mũi tên của chính ô đó. Nút trong hàng (kéo ═, ⋮, ×) vẫn làm việc của nó.
+     Dựa vào giao diện Sveltia 0.221.8: [role=group] > .header > .start > button[aria-controls] + khung có id đó chứa .summary. */
+  (function () {
+    var BO_QUA = 'button, a, input, textarea, select, label, [role=button], [role=menu], [role=menuitem], [contenteditable]:not([contenteditable=false])';
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || !t.closest || t.closest(BO_QUA)) return;
+      var head = t.closest('[role=group] > .header');
+      var sum = !head && t.closest('[role=group] > :is(.item-body, .item-list) > .summary');
+      var o = head ? head.parentElement : sum ? sum.parentElement.parentElement : null;
+      var nut = o && o.querySelector(':scope > .header > .start > button[aria-expanded][aria-controls]');
+      if (!nut || nut.disabled) return;
+      // Dòng tóm tắt chỉ có khi ô đang thu gọn; phải đúng khung nút này điều khiển (không đụng ô cha / ô con)
+      if (sum && (nut.getAttribute('aria-expanded') !== 'false' || sum.parentElement.id !== nut.getAttribute('aria-controls'))) return;
+      nut.click();
+    });
+  })();
+</script>
+</body>
+</html>

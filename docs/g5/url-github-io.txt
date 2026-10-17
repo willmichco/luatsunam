@@ -1,0 +1,25 @@
+# Mốc G5: mọi URL công khai trên github.io trước khi chuyển tên miền (sinh bằng tools/kiem_g5.py --ghi-moc dist).
+# Sau khi chuyển, từng URL này phải chuyển hướng tới đúng trang trên tên miền mới.
+https://willmichco.github.io/luatsunam/
+https://willmichco.github.io/luatsunam/cau-hoi-thuong-gap/
+https://willmichco.github.io/luatsunam/chinh-sach-bao-mat/
+https://willmichco.github.io/luatsunam/dich-vu/
+https://willmichco.github.io/luatsunam/dich-vu/cong-chung/
+https://willmichco.github.io/luatsunam/dich-vu/dan-su/
+https://willmichco.github.io/luatsunam/dich-vu/dat-dai-bat-dong-san/
+https://willmichco.github.io/luatsunam/dich-vu/hinh-su/
+https://willmichco.github.io/luatsunam/dich-vu/hon-nhan-gia-dinh/
+https://willmichco.github.io/luatsunam/dich-vu/lao-dong-viec-lam/
+https://willmichco.github.io/luatsunam/dich-vu/thua-ke/
+https://willmichco.github.io/luatsunam/dich-vu/tranh-tung-giai-quyet-tranh-chap/
+https://willmichco.github.io/luatsunam/dieu-khoan-su-dung/
+https://willmichco.github.io/luatsunam/doi-ngu-luat-su/
+https://willmichco.github.io/luatsunam/gioi-thieu/
+https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/
+https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/dat-coc-mua-ban-nha-dat/
+https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/ly-hon-don-phuong/
+https://willmichco.github.io/luatsunam/kien-thuc-phap-ly/thoi-hieu-chia-di-san-thua-ke/
+https://willmichco.github.io/luatsunam/lien-he/
+https://willmichco.github.io/luatsunam/mien-tru-trach-nhiem/
+https://willmichco.github.io/luatsunam/quy-trinh-lam-viec/
+https://willmichco.github.io/luatsunam/vi-sao-chon-chung-toi/

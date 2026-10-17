@@ -1,0 +1,87 @@
+menu:
+  - loai: lien_ket
+    nhan: Trang chủ
+    trang: /
+  - loai: menu_xo
+    nhan: Giới thiệu
+    trang: /gioi-thieu/
+    muc_con:
+      - nhan: Về Luật Sư Nam
+        mo_ta: Triết lý hành nghề và cam kết nghề nghiệp
+        trang: /gioi-thieu/
+      - nhan: Vì sao chọn chúng tôi
+        mo_ta: Bốn nguyên tắc trong mọi hồ sơ
+        trang: /vi-sao-chon-chung-toi/
+      - nhan: Quy trình làm việc
+        mo_ta: Bốn bước và hồ sơ cần chuẩn bị
+        trang: /quy-trinh-lam-viec/
+  - loai: menu_linh_vuc
+    nhan: Dịch vụ
+    trang: /dich-vu/
+    nhom:
+      - ten_nhom: Cá nhân & gia đình
+        linh_vuc:
+          - dan-su
+          - dat-dai-bat-dong-san
+          - hon-nhan-gia-dinh
+          - thua-ke
+      - ten_nhom: Tranh chấp & thủ tục
+        linh_vuc:
+          - tranh-tung-giai-quyet-tranh-chap
+          - hinh-su
+          - cong-chung
+    nhan_tat_ca: Tổng quan dịch vụ pháp lý
+  - loai: menu_xo
+    nhan: Thư viện pháp lý
+    trang: /kien-thuc-phap-ly/
+    muc_con:
+      - nhan: Bài viết pháp lý
+        mo_ta: Phân tích, hướng dẫn theo từng lĩnh vực
+        trang: /kien-thuc-phap-ly/
+      - nhan: Câu hỏi thường gặp
+        mo_ta: Chi phí, bảo mật, thời hạn
+        trang: /cau-hoi-thuong-gap/
+  - loai: lien_ket
+    nhan: Liên hệ
+    trang: /lien-he/
+tieu_de_cot:
+  ve_chung_toi: Về chúng tôi
+  linh_vuc: Lĩnh vực hoạt động
+  van_phong: Văn phòng
+linh_vuc_chan_trang:
+  - thua-ke
+  - tranh-tung-giai-quyet-tranh-chap
+  - hon-nhan-gia-dinh
+  - dat-dai-bat-dong-san
+  - hinh-su
+  - dan-su
+  - cong-chung
+chan_trang:
+  - nhan: Giới thiệu Luật Sư Nam
+    trang: /gioi-thieu/
+  - nhan: Vì sao chọn chúng tôi
+    trang: /vi-sao-chon-chung-toi/
+  - nhan: Quy trình làm việc
+    trang: /quy-trinh-lam-viec/
+  - nhan: Kiến thức pháp lý
+    trang: /kien-thuc-phap-ly/
+  - nhan: Câu hỏi thường gặp
+    trang: /cau-hoi-thuong-gap/
+  - nhan: Liên hệ
+    trang: /lien-he/
+lien_ket_phap_ly:
+  - nhan: Chính sách bảo mật
+    trang: /chinh-sach-bao-mat/
+  - nhan: Điều khoản sử dụng
+    trang: /dieu-khoan-su-dung/
+  - nhan: Miễn trừ trách nhiệm
+    trang: /mien-tru-trach-nhiem/
+goi_y_tim_kiem:
+  - nhan: Thừa kế
+    trang: /dich-vu/thua-ke/
+  - nhan: Ly hôn
+    trang: /dich-vu/hon-nhan-gia-dinh/
+  - nhan: Tranh chấp đất đai
+    trang: /dich-vu/dat-dai-bat-dong-san/
+  - nhan: Luật sư hình sự
+    trang: /dich-vu/hinh-su/

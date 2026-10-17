@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bài tập làm quen trang quản trị</title>
+<!-- Bài tập có bấm giờ: nghiệm thu CMS (tiêu chí 1–3 của kế hoạch) và cho biên tập viên mới làm quen.
+     Kết quả lưu trên trình duyệt của người làm; bấm "Chép kết quả" để gửi quản trị. Build chép trang này vào /admin/bai-tap/. -->
+<style>
+  :root { --brand: #b5000b; --brand-700: #93000a; --ink: #2b1d21; --text: #4a4245; --muted: #6b6064; --line: #ebe1d3;
+    --cream: #f8f2e8; --bg: #fffdf9; --ok: #1e7a3c; --ok-bg: #e8f5ec; --warn: #9a5b00; --warn-bg: #fff4dc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  a { color: var(--brand); overflow-wrap: anywhere; }
+  .top { position: sticky; top: 0; z-index: 5; display: flex; gap: 12px; align-items: center; padding: 10px 20px; background: var(--brand-700); color: #fff; font-size: 14px; }
+  .top b { margin-right: auto; font-size: 15px; }
+  .top a { color: #fff; text-decoration: none; padding: 4px 10px; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; white-space: nowrap; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { margin: 0 0 8px; color: var(--ink); font-size: clamp(24px, 3vw, 32px); line-height: 1.25; }
+  .lead { margin: 0 0 18px; }
+  .who { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 24px; padding: 12px 14px; background: var(--cream); border-radius: 10px; }
+  .who label { font-weight: 600; color: var(--ink); }
+  input[type=text], textarea { width: 100%; padding: 8px 10px; border: 1px solid #d6cbbd; border-radius: 8px; font: inherit; color: var(--ink); background: #fff; }
+  .who input { flex: 1 1 220px; width: auto; }
+  .card { margin: 0 0 22px; padding: 18px 18px 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 4px 14px rgba(43,29,33,.05); }
+  .card h2 { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; margin: 0 0 6px; color: var(--ink); font-size: 20px; line-height: 1.35; }
+  .target { font-size: 13.5px; font-weight: 600; color: var(--muted); }
+  .card ol { margin: 8px 0; padding-left: 1.3em; }
+  .card li + li { margin-top: .3em; }
+  .safe { margin: 8px 0 12px; padding: 8px 12px; background: var(--ok-bg); border-radius: 8px; color: var(--ok); font-size: 14.5px; }
+  .safe.warn { background: var(--warn-bg); color: var(--warn); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0 8px; }
+  button { padding: 8px 16px; border: 1px solid var(--brand); border-radius: 999px; background: #fff; color: var(--brand); font: 600 15px/1.2 inherit; cursor: pointer; }
+  button.primary { background: var(--brand); color: #fff; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .clock { min-width: 86px; font: 600 22px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); }
+  .badge { padding: 3px 10px; border-radius: 999px; font-size: 13.5px; font-weight: 700; }
+  .badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .badge.no { background: var(--warn-bg); color: var(--warn); }
+  .ask { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 6px 0; font-size: 15px; }
+  .ask > span { font-weight: 600; color: var(--ink); }
+  .card textarea { min-height: 60px; resize: vertical; margin-top: 4px; }
+  .summary { padding: 16px 18px; background: var(--cream); border-radius: 12px; }
+  .summary pre { white-space: pre-wrap; margin: 10px 0; padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; }
+  .note { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="top"><b>Bài tập làm quen trang quản trị</b><a href="../huong-dan/" target="_blank" rel="noopener">Hướng dẫn</a><a href="../" target="_blank" rel="noopener">Mở trang quản trị</a></header>
+<main>
+  <h1>Bài tập làm quen trang quản trị (có bấm giờ)</h1>
+  <p class="lead">Dùng để nghiệm thu và cho người mới làm quen. Mở <a href="../" target="_blank" rel="noopener">trang quản trị</a> ở tab khác và đăng nhập sẵn.
+    Ở mỗi bài, bấm <b>Bắt đầu</b> trước khi làm và bấm <b>Xong</b> sau khi đã bấm Lưu. Cứ làm theo cách mình hiểu; chỉ mở <a href="../huong-dan/" target="_blank" rel="noopener">hướng dẫn</a> khi bí.</p>
+  <div class="who"><label for="ten">Người làm</label><input id="ten" type="text" placeholder="Họ tên, vd. Luật sư A" autocomplete="name"></div>
+
+  <section class="card" data-bai="1" data-muc-tieu="15">
+    <h2>1. Đăng một bài viết nháp có ảnh <span class="target">Mục tiêu ≤ 15 phút</span></h2>
+    <ol>
+      <li><b>Bài viết pháp lý</b> → <b>Tạo mới</b>, chủ đề tùy chọn: tiêu đề, đường dẫn, lĩnh vực chính, tóm tắt trên thẻ, 3 ý tóm tắt nhanh, đoạn dẫn.</li>
+      <li>Thân bài có 1 tiêu đề mục (Tiêu đề 2), 2 đoạn văn và 1 ảnh tải từ máy (có mô tả ảnh).</li>
+      <li>Điền SEO, giữ dấu <b>Bản nháp</b>, bấm <b>Lưu</b>.</li>
+    </ol>
+    <p class="safe">An toàn: bài là bản nháp nên không lên website. Làm xong có thể giữ lại hoặc xóa (⋮ góc phải trên → Xóa).</p>
+  </section>
+
+  <section class="card" data-bai="2" data-muc-tieu="5">
+    <h2>2. Sửa bố cục trang chủ <span class="target">Mục tiêu ≤ 5 phút</span></h2>
+    <ol>
+      <li>Trang chủ → <b>Thêm khối</b> → <i>Danh sách dấu tích</i>: điền tiêu đề và 2 dòng, rồi <b>tắt “Hiển thị khối này”</b>.</li>
+      <li>Kéo khối vừa thêm lên vị trí thứ 2 → <b>Lưu</b>.</li>
+      <li>Xóa khối vừa thêm (nút ×) → <b>Lưu</b>.</li>
+    </ol>
+    <p class="safe">An toàn: khối đang tắt hiển thị nên website không đổi, và cuối bài khối đã được xóa.</p>
+  </section>
+
+  <section class="card" data-bai="3" data-muc-tieu="20">
+    <h2>3. Tạo trang mới và đưa lên menu <span class="target">Mục tiêu ≤ 20 phút</span></h2>
+    <ol>
+      <li><b>Trang tự tạo</b> → <b>Tạo mới</b>: trang “Trang tập – tên bạn”: tiêu đề lớn, 1 khối <i>Đoạn văn tự do</i>, SEO; giữ <b>Bản nháp</b> → <b>Lưu</b>.</li>
+      <li>Chờ khoảng 3 phút, tải lại trang quản trị (F5).</li>
+      <li>Cài đặt chung → Menu và chân trang → mục <i>Giới thiệu</i> → <b>Thêm mục con</b> trỏ tới trang vừa tạo → <b>Lưu</b>.</li>
+    </ol>
+    <p class="safe">An toàn: trang nháp không hiện trên menu của website chính thức. Làm xong: xóa mục menu vừa thêm, rồi xóa trang tập.</p>
+  </section>
+
+  <section class="card" data-bai="4" data-muc-tieu="3">
+    <h2>4. Đổi hotline <span class="target">Mục tiêu ≤ 3 phút</span></h2>
+    <ol>
+      <li>Cài đặt chung → Thông tin công ty → đổi <b>Hotline</b> sang số di động của chính người làm bài → <b>Lưu</b>.</li>
+      <li>Sau 1–3 phút mở website: số mới ở đầu trang, chân trang, nút Gọi. Bấm <b>Xong</b> tại đây.</li>
+      <li>Đổi lại số cũ → <b>Lưu</b>.</li>
+    </ol>
+    <p class="safe warn">Làm <b>ngoài giờ làm việc</b>: website hiện số tạm khoảng 3–5 phút. Số tạm là số người trong công ty nên không lỡ cuộc gọi của khách.</p>
+  </section>
+
+  <section class="summary">
+    <b>Kết quả</b>
+    <pre id="ketqua">Chưa làm bài nào.</pre>
+    <div class="row"><button class="primary" id="chep">Chép kết quả</button><button id="lamlai">Làm lại từ đầu</button></div>
+    <p class="note">Kết quả chỉ lưu trên trình duyệt của máy này. Bấm “Chép kết quả” rồi dán gửi quản trị (Zalo, email) – quản trị dựa vào chỗ vướng để sửa nhãn và gợi ý trong trang quản trị.</p>
+  </section>
+</main>
+<script>
+(function () {
+  var KEY = 'lsn-bai-tap-v1';
+  var st = {ten: '', bai: {}};
+  try { st = JSON.parse(localStorage.getItem(KEY)) || st; } catch (e) {}
+  st.bai = st.bai || {};
+  function luu() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  function mmss(ms) { var s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ' phút ' + ('0' + s % 60).slice(-2) + ' giây'; }
+  function dongho(ms) { var s = Math.max(0, Math.floor(ms / 1000)); return ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + s % 60).slice(-2); }
+
+  var ten = document.getElementById('ten');
+  ten.value = st.ten || '';
+  ten.addEventListener('input', function () { st.ten = ten.value; luu(); tomtat(); });
+
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  cards.forEach(function (card) {
+    var id = card.dataset.bai, muc = +card.dataset.mucTieu;
+    var b = st.bai[id] = st.bai[id] || {};
+    var row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = '<button class="primary bd">Bắt đầu</button><button class="xong">Xong</button><span class="clock">00:00</span><span class="badge"></span>';
+    var ask = document.createElement('div'); ask.className = 'ask';
+    ask.innerHTML = '<span>Có phải hỏi người khác không?</span>' +
+      '<label><input type="radio" name="hoi' + id + '" value="khong"> Không</label>' +
+      '<label><input type="radio" name="hoi' + id + '" value="co"> Có</label>';
+    var ta = document.createElement('textarea'); ta.placeholder = 'Chỗ nào khó, mất thời gian, hoặc chữ nào khó hiểu? (để trống nếu không có)';
+    card.appendChild(row); card.appendChild(ask); card.appendChild(ta);
+    var bd = row.querySelector('.bd'), xong = row.querySelector('.xong'), clock = row.querySelector('.clock'), badge = row.querySelector('.badge');
+    ta.value = b.ghi_chu || '';
+    if (b.hoi) { var r = ask.querySelector('input[value="' + b.hoi + '"]'); if (r) r.checked = true; }
+    function ve() {
+      var chay = b.start && !b.end;
+      bd.textContent = b.start ? 'Bắt đầu lại' : 'Bắt đầu';
+      xong.disabled = !chay;
+      var ms = b.start ? ((b.end || Date.now()) - b.start) : 0;
+      clock.textContent = dongho(ms);
+      if (b.end) {
+        var dat = ms <= muc * 60000 && b.hoi !== 'co';
+        badge.className = 'badge ' + (dat ? 'ok' : 'no');
+        badge.textContent = dat ? 'Đạt' : (ms > muc * 60000 ? 'Quá ' + muc + ' phút' : 'Phải hỏi');
+      } else { badge.className = 'badge'; badge.textContent = chay ? 'Đang làm…' : ''; }
+    }
+    bd.addEventListener('click', function () {
+      if (b.end && !confirm('Làm lại bài này? Thời gian cũ sẽ bị xóa.')) return;
+      b.start = Date.now(); b.end = null; luu(); ve(); tomtat();
+    });
+    xong.addEventListener('click', function () { b.end = Date.now(); luu(); ve(); tomtat(); });
+    ask.addEventListener('change', function (e) { b.hoi = e.target.value; luu(); ve(); tomtat(); });
+    ta.addEventListener('input', function () { b.ghi_chu = ta.value; luu(); tomtat(); });
+    card._ve = ve; ve();
+  });
+  setInterval(function () { cards.forEach(function (c) { c._ve(); }); }, 1000);
+
+  var out = document.getElementById('ketqua');
+  function tomtat() {
+    var lines = [], d = new Date();
+    lines.push('Bài tập trang quản trị – ' + (st.ten || '(chưa ghi tên)') + ' – ' + d.toLocaleDateString('vi-VN'));
+    cards.forEach(function (card) {
+      var id = card.dataset.bai, muc = +card.dataset.mucTieu, b = st.bai[id] || {};
+      var ten_bai = card.querySelector('h2').firstChild.textContent.trim();
+      if (!b.end) { lines.push(ten_bai + ': chưa làm'); return; }
+      var ms = b.end - b.start, dat = ms <= muc * 60000 && b.hoi !== 'co';
+      lines.push(ten_bai + ': ' + mmss(ms) + ' (mục tiêu ' + muc + ' phút) – ' + (b.hoi === 'co' ? 'có hỏi người khác' : b.hoi === 'khong' ? 'không hỏi ai' : 'chưa trả lời câu hỏi') +
+        ' – ' + (dat ? 'ĐẠT' : 'CHƯA ĐẠT') + (b.ghi_chu ? '\n   Vướng: ' + b.ghi_chu.replace(/\s+/g, ' ').trim() : ''));
+    });
+    out.textContent = lines.join('\n');
+  }
+  tomtat();
+  document.getElementById('chep').addEventListener('click', function () {
+    var t = out.textContent, btn = this;
+    function xong() { btn.textContent = 'Đã chép ✓'; setTimeout(function () { btn.textContent = 'Chép kết quả'; }, 2000); }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(xong, function () { chon(); }); } else { chon(); }
+    function chon() { var r = document.createRange(); r.selectNodeContents(out); var s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Đã chọn sẵn – bấm Ctrl+C'; }
+  });
+  document.getElementById('lamlai').addEventListener('click', function () {
+    if (!confirm('Xóa toàn bộ kết quả trên máy này để làm lại từ đầu?')) return;
+    st = {ten: st.ten, bai: {}}; luu(); location.reload();
+  });
+})();
+</script>
+</body>
+</html>

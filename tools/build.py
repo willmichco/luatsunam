@@ -353,7 +353,8 @@ def org_node():
     f = F()
     days = f["open_days"]
     return {
-        "@type": "LegalService", "@id": ORG_ID, "name": f["legal_name"],
+        "@type": "LegalService", "@id": ORG_ID, "name": f["legal_name"], "legalName": f["legal_name"],
+        **({"taxID": f["tax_id"]} if f.get("tax_id") else {}),
         "alternateName": [f["short_name"], f["brand"]], "slogan": f["slogan"], "url": ENV["site_url"] + "/",
         "logo": {"@type": "ImageObject", "url": abs_url("assets/img/icon-512.png"), "width": 512, "height": 512},
         "image": abs_url(asset_ref("assets/img/og-image.jpg")),

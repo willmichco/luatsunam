@@ -201,7 +201,7 @@ def firm_from(c):
         "city_short": addr.get("thanh_pho_viet_tat") or addr.get("thanh_pho") or "",
         "hours": hours, "hours_note": gio.get("ngoai_gio") or "",
         "open_days": days, "opens": gio.get("mo_cua") or "08:00", "closes": gio.get("dong_cua") or "17:30",
-        "footer_about": c.get("gioi_thieu_chan_trang") or "",
+        "footer_about": c.get("gioi_thieu_chan_trang") or "", "tax_id": str(c.get("ma_so_thue") or ""),
     }
     firm["address"] = f'{firm["street"]}, {firm["ward"]}, {firm["city"]}'
     firm["maps_query"] = urllib.parse.quote(firm["address"], safe="")

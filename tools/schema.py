@@ -1066,6 +1066,9 @@ def settings_files():
     return [
         {"name": "cong_ty", "label": "Thông tin công ty", "file": "content/cai-dat/cong-ty.yml", "format": "yml", "fields": [
             string("ten_phap_nhan", "Tên pháp nhân", maxlength=80),
+            string("ma_so_thue", "Mã số thuế", "10 chữ số, đúng như trên cổng thuế. Dữ liệu Google (taxID) tự cập nhật; "
+                   "chèn vào câu chữ bằng {{ma_so_thue}}.", required=False,
+                   pattern=["^([0-9]{10}(-[0-9]{3})?)?$", "Mã số thuế gồm 10 chữ số (chi nhánh: 10 số-3 số)"]),
             string("ten_ngan", "Tên ngắn", "Dùng làm đuôi tiêu đề trang và trong câu chữ.", maxlength=40),
             string("thuong_hieu", "Tên thương hiệu", maxlength=40),
             string("khau_hieu", "Khẩu hiệu", maxlength=60),

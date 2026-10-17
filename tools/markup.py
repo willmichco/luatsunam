@@ -49,6 +49,7 @@ TOKEN_HELP = [
     ("ngoai_gio", "ghi chú ngoài giờ"),
     ("ten_cong_ty", "tên pháp nhân"),
     ("ten_ngan", "tên ngắn"),
+    ("ma_so_thue", "mã số thuế"),
     ("tel", "liên kết gọi điện (dùng làm địa chỉ liên kết)"),
     ("zalo", "liên kết Zalo (dùng làm địa chỉ liên kết)"),
     ("mailto", "liên kết gửi email (dùng làm địa chỉ liên kết)"),
@@ -60,7 +61,7 @@ def company_tokens(firm):
     return {
         "luat_su": firm["lawyer"], "hotline": firm["phone"], "email": firm["email"],
         "dia_chi": firm["address"], "gio_lam_viec": firm["hours"], "ngoai_gio": firm["hours_note"],
-        "ten_cong_ty": firm["legal_name"], "ten_ngan": firm["short_name"],
+        "ten_cong_ty": firm["legal_name"], "ten_ngan": firm["short_name"], "ma_so_thue": firm.get("tax_id", ""),
         "tel": "tel:" + firm["phone_tel"], "zalo": firm["zalo"], "mailto": "mailto:" + firm["email"],
     }
 

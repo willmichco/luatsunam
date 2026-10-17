@@ -119,29 +119,42 @@ nav.primary-sidebar [role=treeitem][aria-selected="true"] > .row > .icon { color
   padding: 0 12px; font-size: 13.5px; line-height: 1.5; color: var(--lsn-chu-phu); }
 [role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) .description .truncated-text { -webkit-line-clamp: 2 !important; }
 [role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) .description a { white-space: nowrap; } /* liên kết không gãy giữa chữ */
-/* Mục gồm các trang cố định (Trang chủ, Giới thiệu, Liên hệ, Câu hỏi thường gặp, Chính sách, Cài đặt chung): mỗi trang là một thẻ
-   "Mở để sửa" (Sveltia đánh dấu danh sách này là "Danh sách tệp"). Mục nhiều bài (Dịch vụ, Bài viết, Trang tự tạo) giữ dạng bảng có ô chọn. */
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=grid] { display: flex; flex-direction: column; gap: 10px; max-width: 760px; margin: 12px 0; }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row] { display: flex; align-items: center; gap: 14px; height: auto; min-height: 68px; padding: 12px 18px;
+/* Danh sách của MỌI mục: mỗi trang / bài / lĩnh vực là một thẻ "Mở để sửa" cùng một kiểu (Sveltia gọi danh sách là
+   "Danh sách tệp" – mục gồm trang cố định – hoặc "Danh sách bài viết" – mục nhiều bài, có ô chọn để xóa nhiều). */
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view :is([role=grid], [role=rowgroup]) { display: flex; flex-direction: column; gap: 10px; max-width: 760px; margin: 12px 0; }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] { display: flex; align-items: center; gap: 14px; height: auto; min-height: 68px; padding: 12px 18px;
   border: 1px solid var(--lsn-vien); border-radius: var(--lsn-bo-the); background: var(--lsn-the); box-shadow: var(--lsn-bong); }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row]:hover { border-color: var(--lsn-do-vien); background: var(--lsn-the); }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row]::before { content: "edit_document"; flex: none; display: grid; place-items: center;
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]:hover { border-color: var(--lsn-do-vien); background: var(--lsn-the); }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]::before { content: "edit_document"; flex: none; display: grid; place-items: center;
   width: 44px; height: 44px; border-radius: var(--lsn-bo-the); background: var(--lsn-do-nhat); color: var(--lsn-do-chu);
   font: normal 24px/1 "Material Symbols Outlined"; font-feature-settings: "liga"; }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row]::after { content: "Mở để sửa  →"; flex: none; padding: 8px 14px; border-radius: var(--lsn-bo-nut);
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]::after { content: "Mở để sửa  →"; flex: none; padding: 8px 14px; border-radius: var(--lsn-bo-nut);
   background: var(--lsn-do); color: var(--lsn-tren-do); font: 600 14px/1 var(--lsn-phong); white-space: pre; }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row] > .grid-cell { display: block; height: auto; padding: 0; overflow: visible; white-space: normal;
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] > .grid-cell { display: block; height: auto; padding: 0; overflow: visible; white-space: normal;
   border: 0; background: none; }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row] > .grid-cell.title { flex: 1; min-width: 0; }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row] > .grid-cell.status:empty { display: none; }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row] .title .label { display: block; height: auto; overflow: visible; white-space: normal;
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] > .grid-cell.title { flex: 1; min-width: 0; }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] > .grid-cell.status:empty { display: none; }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] .title .label { display: block; height: auto; overflow: visible; white-space: normal;
   font-size: 17px; font-weight: 600; color: var(--lsn-chu-dam); }
-.list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row]:only-child .title .label::after { content: "Sửa chữ, ảnh, liên kết – xem trước ngay bên phải, theo từng chữ gõ.";
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]:only-child .title .label::after { content: "Sửa chữ, ảnh, liên kết – xem trước ngay bên phải, theo từng chữ gõ.";
   display: block; margin-top: 3px; font-size: 13.5px; font-weight: 400; color: var(--lsn-chu-phu); }
+/* Mục nhiều bài: ô chọn đứng đầu thẻ, rồi biểu tượng, tên, nút; thẻ đang được chọn viền đỏ */
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=grid] [role=rowgroup] { max-width: none; margin: 0; }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] > .grid-cell.checkbox { order: -1; display: flex; align-items: center; width: auto; }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row][aria-selected="true"] { border-color: var(--lsn-do); background: var(--lsn-do-nhat); }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] > .grid-cell.image { flex: none; }
+.list-container[aria-label="Danh sách bài viết"] .list-view [role=row] .title .label { font-size: 16px; } /* tên bài dài: cỡ vừa, tối đa 2 dòng */
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] .title .label .truncated-text { -webkit-line-clamp: 2; }
+/* Thanh ô "chọn tất cả" + Sắp xếp / Lọc: cùng bề rộng với cột thẻ, không kéo dài hết màn hình */
+[role=toolbar].secondary[aria-label="Danh sách bài viết"] { max-width: calc(760px + 34px); }
+.list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] > .grid-cell.image img { width: 44px; height: 44px; border-radius: var(--lsn-bo-the); object-fit: cover; }
 @media (max-width: 600px) {
-  .list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=grid] { margin: 12px; }
-  .list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row] { gap: 12px; padding: 12px 14px; }
-  .list-container:is([aria-label="Danh sách tệp"], [aria-label="File list"], [aria-label="Files"]) .list-view [role=row]:only-child .title .label::after { display: none; }
+  .list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view > [role=grid] { width: auto; margin: 12px; }
+  .list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] { box-sizing: border-box; }
+  .list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]::before { display: none; } /* điện thoại: bỏ biểu tượng, nút chỉ còn mũi tên để tên trang đủ chỗ */
+  .list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]::after { content: "→"; padding: 8px 12px; }
+  .list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row] { gap: 12px; padding: 12px 14px; }
+  .list-container:is([aria-label="Danh sách tệp"], [aria-label="Danh sách bài viết"]) .list-view [role=row]:only-child .title .label::after { display: none; }
 }
 
 /* ---------- Trình soạn ---------- */

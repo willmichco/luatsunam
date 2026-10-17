@@ -163,12 +163,16 @@ nav.primary-sidebar [role=treeitem][aria-selected="true"] > .row > .icon { color
 [role=toolbar] h2[data-lsn-trung] > .truncated-text > bdi:first-child { font-size: var(--sui-font-size-x-large, 19px); }
 [role=toolbar] h2[data-lsn-trung] > .truncated-text > bdi:not(:first-child) { display: none; }
 
-/* Ô cấp 1 có nhóm (object/danh sách): thẻ có viền, thẳng mép chữ với các ô thường (cùng lề 16px) */
-section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) {
-  margin: 16px 6px; padding: 14px 9px 16px !important; border: 1px solid var(--lsn-vien) !important;
+/* Mọi ô cấp 1 (ô chữ, công tắc, ô chọn, nhóm, danh sách): mỗi ô một thẻ có viền, cách nhau rõ – nhìn là biết ô nào ra ô nấy.
+   Bỏ đường kẻ mảnh giữa các ô của Sveltia (đã có viền thẻ). Ô bên trong một nhóm giữ kiểu cũ (đường kẻ mảnh). */
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]) {
+  margin: 10px 6px; padding: 14px 16px 16px !important; border: 1px solid var(--lsn-vien) !important;
   border-radius: 12px; background: var(--lsn-nen-phu); box-shadow: var(--lsn-bong); }
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"])::before,
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"])::after { border: 0 !important; }
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]):focus-within { border-color: var(--lsn-do-vien) !important; }
+section.field:not([data-key-path*="."]) > header h4 { font-size: 15.5px; color: var(--lsn-chu-dam); }
 section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header h4 { font-size: 16px; }
-section.field:not([data-key-path*="."]) > header h4 { font-size: 15px; }
 
 /* Mục trong danh sách (khối, thẻ, bước, mục menu…): thẻ bo góc, thanh tiêu đề xám nhạt, dòng tóm tắt bên dưới.
    Cả hàng tiêu đề và dòng tóm tắt khi thu gọn đều bấm để mở (script cuối admin/index.html) */
@@ -193,7 +197,8 @@ section.field .item-list > .item-wrapper > .item > .item-body > .summary { paddi
 section.field[data-field-type="lsn_nhom"] > header { display: none !important; }
 section.field[data-field-type="lsn_nhom"] { padding-top: 0 !important; padding-bottom: 0 !important; border: 0 !important; }
 section.field[data-field-type="lsn_nhom"] .field-wrapper { margin: 0 !important; }
-.lsn-phan { margin: 26px 0 6px; padding: 12px 16px; border-radius: var(--lsn-bo-the); border-inline-start: 4px solid var(--lsn-do);
+section.field[data-field-type="lsn_nhom"]:not([data-key-path*="."]) { padding-inline: 6px !important; } /* thẳng mép với thẻ ô cấp 1 */
+.lsn-phan { margin: 28px 0 4px; padding: 12px 16px; border-radius: var(--lsn-bo-the); border-inline-start: 4px solid var(--lsn-do);
   background: var(--lsn-do-nhat); color: var(--lsn-chu-dam); }
 .lsn-phan__tieu-de { display: flex; align-items: center; gap: 4px; font-size: 17px; font-weight: 700; line-height: 1.3; }
 .lsn-phan__mo-ta { margin: 4px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--lsn-chu-phu); }

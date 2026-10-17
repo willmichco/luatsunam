@@ -833,6 +833,12 @@ def sidebar_plan(menu=None):
     return groups
 
 
+# Mục "Trang tự tạo" trong /admin. TẮT từ 17/10/2026: bố cục đã khóa (chỉ sửa chữ, ảnh – admin/che-do.js), trang mới lại cần
+# ghép khối nên không tạo được → ẩn hẳn khỏi cột trái. Build vẫn dựng, vẫn kiểm trang tự tạo có sẵn trong content/trang/.
+# Mở lại bố cục thì đặt True (và thêm "trang" vào GIU_BO_CUC trong admin/che-do.js).
+HIEN_TRANG_TU_TAO = False
+
+
 def collections(menu=None):
     """Các mục trong cột trái trang quản trị. Cùng tệp, cùng trường với data_collections() (build kiểm theo đó),
     chỉ khác cách nhóm: theo đúng thứ tự Menu chính của website (sidebar_plan). Đổi menu → cột trái đổi theo ở lần build sau.
@@ -915,12 +921,13 @@ def collections(menu=None):
              for f in d["trang_van_ban"]["files"]]
     settings = {f["name"]: f for f in d["cai_dat"]["files"]}
     fixed_pattern = "^(?!(" + "|".join(FIXED_SLUGS) + ")$)"
+    tu_tao = [dict(d["trang"], label="Trang tự tạo", label_singular="trang", icon="note_add",
+                   description="Trang mới ghép từ khối (vd. Phí dịch vụ), mặc định là bản nháp. Muốn trang hiện trên menu: "
+                               f"Cài đặt chung → Menu và chân trang. [Tạo trang mới]({GUIDE}#tao-trang)",
+                   filter={"field": "slug", "pattern": fixed_pattern})] if HIEN_TRANG_TU_TAO else []
     return out + [
         {"divider": True, "name": "divider-trang"},
-        dict(d["trang"], label="Trang tự tạo", label_singular="trang", icon="note_add",
-             description="Trang mới ghép từ khối (vd. Phí dịch vụ), mặc định là bản nháp. Muốn trang hiện trên menu: "
-                         f"Cài đặt chung → Menu và chân trang. [Tạo trang mới]({GUIDE}#tao-trang)",
-             filter={"field": "slug", "pattern": fixed_pattern}),
+        *tu_tao,
         dict(d["trang_van_ban"], label="Chính sách & 404", icon="policy",
              description="Các trang ở cuối chân trang (Chính sách bảo mật, Điều khoản sử dụng, Miễn trừ trách nhiệm) và trang "
                          "báo lỗi 404. Bố cục cố định, mục lục tự động.",
@@ -984,7 +991,7 @@ def sidebar_decor(cols):
         elif g["xo"] and len(names) > 1:
             heads.append([first, g["nhan"], "con"])
             indent += [by_name[n]["label"] for n in names]
-    heads.append(["Trang tự tạo", "Trang khác", ""])
+    heads.append(["Trang tự tạo" if HIEN_TRANG_TU_TAO else "Chính sách & 404", "Trang khác", ""])
     heads.append(["Cài đặt chung", "Dùng chung mọi trang", ""])
     for c in cols:
         if not c.get("divider") and len(c.get("files") or []) == 1:

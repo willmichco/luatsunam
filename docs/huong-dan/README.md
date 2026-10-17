@@ -21,7 +21,7 @@ Cột trái **tự xếp theo Menu chính**: đổi thứ tự menu ở *Cài đ
 | Thư viện pháp lý ▾ → Câu hỏi thường gặp | **Câu hỏi thường gặp** → phần chữ của trang, hoặc kho câu hỏi |
 | Liên hệ | **Liên hệ** → **Mở để sửa** |
 | Chính sách bảo mật, Điều khoản, Miễn trừ (cuối chân trang), trang lỗi 404 | **Chính sách & 404** |
-| Trang mới tự tạo | **Trang tự tạo** (nhóm *Trang khác*) |
+| Trang mới tự tạo | Tạm ẩn khỏi trang quản trị (bố cục đang khóa – xem [mục 5](#tao-trang)); cần trang mới: báo quản trị |
 | Hotline, địa chỉ, giờ làm việc, menu, chân trang, logo – hiện trên mọi trang | **Cài đặt chung** |
 
 Nút **Tối / Sáng** (1 – hình mặt trăng / mặt trời) ở góc phải trên đổi giao diện tối hoặc sáng (trình duyệt nhớ lựa chọn). Cạnh đó (2): **Hướng dẫn** (trang này) và **Lịch sử chỉnh sửa**, mở ở tab mới nên không mất phần đang soạn. Khi đang sửa một trang, hai nút này nằm cạnh nút **Lưu**: **?** là Hướng dẫn, **Lịch sử** mở sẵn lịch sử của đúng trang đó.
@@ -119,7 +119,7 @@ không đổi ẩn/hiện, màu nền, số cột, cách trình bày – để k
 
 ## 5. Tạo trang
 
-> **Tạm khóa:** trang mới cần thêm khối, mà bố cục đang khóa ([mục 4](#them-khoi)) → hiện **không tạo trang mới được trong trang quản trị**. Cần trang mới: báo quản trị. Các bước dưới đây dùng khi bố cục được mở lại.
+> **Tạm khóa:** trang mới cần thêm khối, mà bố cục đang khóa ([mục 4](#them-khoi)) → mục **Trang tự tạo** đã **ẩn khỏi cột trái**, không tạo trang mới được trong trang quản trị. Cần trang mới: báo quản trị. Các bước dưới đây dùng khi bố cục được mở lại.
 
 Khoảng 20 phút.
 

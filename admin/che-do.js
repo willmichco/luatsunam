@@ -87,14 +87,14 @@
     return true;
   };
 
-  /* ---------- Nút chuyển chế độ trên thanh của trình soạn (cạnh nút Sáng / Tối, trước nút Lưu) ---------- */
+  /* ---------- Nút chuyển chế độ trên thanh của trình soạn (trước nút Hướng dẫn, Sáng / Tối và nút Lưu) ---------- */
   function placeSwitch() {
     var sw = document.getElementById('lsn-che-do');
     var save = document.querySelector('button[aria-keyshortcuts$="+S"]');
     if (!editing() || !save || !hasLayout() || locked()) { if (sw) sw.remove(); return; }
     var saveEl = save.parentElement && /wrapper/.test(save.parentElement.className) ? save.parentElement : save;
-    var theme = document.getElementById('lsn-sang-toi');
-    var anchor = theme && theme.parentNode === saveEl.parentNode ? theme : saveEl; // thứ tự: [chế độ][Sáng/Tối][Lưu]
+    var chung = document.getElementById('lsn-nut-chung'); // Hướng dẫn + Sáng/Tối (admin/dieu-huong.js)
+    var anchor = chung && chung.parentNode === saveEl.parentNode ? chung : saveEl; // thứ tự: [chế độ][Hướng dẫn, Sáng/Tối][Lưu]
     if (!sw) {
       sw = document.createElement('div');
       sw.id = 'lsn-che-do';

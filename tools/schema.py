@@ -337,7 +337,7 @@ def section_head(eyebrow_ex="Hành trình", title_ex="Chặng đường hơn 25 
 # 16 khối dựng trang (mục 5 kế hoạch). Khối 16 "Liên hệ cuối trang" là nhóm cố định cuối mỗi trang.
 # ---------------------------------------------------------------------------
 BLOCK_TYPES = [
-    {"name": "dau_trang", "label": "Đầu trang lớn (Hero)", "summary": "Đầu trang: {{fields.tieu_de}}",
+    {"name": "dau_trang", "label": "Đầu trang lớn (Hero)", "summary": "{{fields.tieu_de}}",
      "fields": common(bg=None) + [
          string("nhan", "Nhãn nhỏ", "Ví dụ: Luật sư tư vấn & tranh tụng tại TP.HCM", required=False, maxlength=70),
          red_title("tieu_de", "Tiêu đề lớn (H1)", example="Gặp chuyện pháp lý, *có luật sư bên cạnh*"),
@@ -351,13 +351,13 @@ BLOCK_TYPES = [
              string("mo_ta", "Ý nghĩa", "Ví dụ: Thành lập công ty luật", maxlength=70)],
              summary="{{fields.so}} – {{fields.mo_ta}}", max=4, label_singular="số liệu"),
      ], "_rules": [_rule_photo]},
-    {"name": "dai_cam_ket", "label": "Dải cam kết", "summary": "Dải cam kết",
+    {"name": "dai_cam_ket", "label": "Dải cam kết", "summary": "Các cam kết ngắn ngay dưới đầu trang",
      "fields": common(bg=None) + [
          lst("muc", "Các cam kết", fields=[icon(), string("tieu_de", "Dòng đậm", maxlength=50),
                                           string("mo_ta", "Dòng giải thích", maxlength=120)],
              summary="{{fields.tieu_de}}", min=3, max=5, label_singular="cam kết"),
      ]},
-    {"name": "luoi_the", "label": "Lưới thẻ", "summary": "Lưới thẻ: {{fields.tieu_de}}",
+    {"name": "luoi_the", "label": "Lưới thẻ", "summary": "{{fields.tieu_de}}",
      "fields": common(bg=BG_DARK) + section_head("Nguyên tắc làm việc", "Bốn điều anh chị có thể yên tâm") + [
          bo_cuc(boolean("can_giua", "Căn giữa tiêu đề", default=False)),
          bo_cuc(select("so_cot", "Số cột", [("2", "2 cột (biểu tượng bên trái)"), ("3", "3 cột"), ("4", "4 cột")], default="3", required=False)),
@@ -370,7 +370,7 @@ BLOCK_TYPES = [
          lst("lien_ket_cuoi", "Liên kết dưới lưới (tùy chọn)", fields=link("lien_ket")["fields"], summary="{{fields.nhan}}",
              max=3, label_singular="liên kết", _item_rules=[_rule_link]),
      ]},
-    {"name": "anh_chu", "label": "Ảnh + chữ", "summary": "Ảnh + chữ: {{fields.tieu_de}}",
+    {"name": "anh_chu", "label": "Ảnh + chữ", "summary": "{{fields.tieu_de}}",
      "fields": common() + section_head("Về chúng tôi", "Văn phòng luật do {{luat_su}} trực tiếp điều hành", with_text=False) + [
          bo_cuc(select("vi_tri_anh", "Vị trí ảnh", [("trai", "Bên trái"), ("phai", "Bên phải")], default="trai", required=False)),
          text("noi_dung", "Đoạn văn", "Mỗi đoạn cách nhau một dòng trống. " + TOKEN_HINT, required=False, maxlength=1600),
@@ -382,7 +382,7 @@ BLOCK_TYPES = [
              label_singular="liên kết", _item_rules=[_rule_link]),
          *photo_fields(),
      ], "_rules": [_rule_photo]},
-    {"name": "cac_buoc", "label": "Các bước", "summary": "Các bước: {{fields.tieu_de}}",
+    {"name": "cac_buoc", "label": "Các bước", "summary": "{{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Bốn bước", "Từ cuộc gọi đầu tiên đến khi xong việc") + [
          link("lien_ket", "Liên kết cạnh tiêu đề (tùy chọn)", required=False),
          bo_cuc(boolean("can_giua", "Căn giữa tiêu đề", default=False)),
@@ -396,14 +396,14 @@ BLOCK_TYPES = [
              icon(), string("dam", "Phần in đậm", maxlength=60), string("noi_dung", "Nội dung", maxlength=220)],
              summary="{{fields.dam}}", max=3, label_singular="ghi chú"),
      ]},
-    {"name": "dong_thoi_gian", "label": "Dòng thời gian", "summary": "Dòng thời gian: {{fields.tieu_de}}",
+    {"name": "dong_thoi_gian", "label": "Dòng thời gian", "summary": "{{fields.tieu_de}}",
      "fields": common() + section_head() + [
          lst("moc", "Các mốc (mốc cuối được tô nổi bật)", fields=[
              string("thoi_gian", "Thời gian", "Ví dụ: 09/1999", maxlength=20), string("tieu_de", "Tiêu đề", maxlength=90),
              text("mo_ta", "Mô tả", maxlength=500)], summary="{{fields.thoi_gian}} – {{fields.tieu_de}}", min=2, max=12,
              label_singular="mốc"),
      ]},
-    {"name": "doi_ngu", "label": "Đội ngũ", "summary": "Đội ngũ: {{fields.tieu_de}}",
+    {"name": "doi_ngu", "label": "Đội ngũ", "summary": "{{fields.tieu_de}}",
      "fields": common(default_bg="kem") + section_head("Đội ngũ", "Đội ngũ Luật Sư Nam") + [
          bo_cuc(select("kieu", "Cách trình bày", [("noi_bat", "Người đầu tiên nổi bật có ảnh, người khác là thẻ nhỏ"),
                                                   ("luoi", "Lưới thẻ đều nhau")], default="noi_bat", required=False)),
@@ -416,7 +416,7 @@ BLOCK_TYPES = [
                  summary="{{fields.nhan}}: {{fields.gia_tri}}", max=6, label_singular="ô thông tin"),
              *photo_fields(None)], summary="{{fields.ten}}", min=1, max=12, label_singular="thành viên", _item_rules=[_rule_photo]),
      ]},
-    {"name": "dau_tich", "label": "Danh sách dấu tích", "summary": "Danh sách: {{fields.tieu_de}}",
+    {"name": "dau_tich", "label": "Danh sách dấu tích", "summary": "{{fields.tieu_de}}",
      "fields": common() + section_head("Chuẩn bị trước", "Giấy tờ nên mang theo buổi gặp đầu tiên") + [
          bo_cuc(select("so_cot", "Số cột", [("1", "1 cột"), ("2", "2 cột")], default="1", required=False)),
          strings("muc", "Các dòng", min=1, max=16, maxlength=220),
@@ -427,12 +427,12 @@ BLOCK_TYPES = [
              lst("y", "Các ý (tự đánh số)", fields=[string("dam", "Phần in đậm", maxlength=70), string("noi_dung", "Nội dung", maxlength=200)],
                  summary="{{fields.dam}}", max=8, label_singular="ý")], collapsed="auto", required=False),
      ]},
-    {"name": "doan_van", "label": "Đoạn văn tự do", "summary": "Đoạn văn",
+    {"name": "doan_van", "label": "Đoạn văn tự do", "summary": "{{fields.noi_dung | truncate(90)}}",
      "fields": common() + [
          bo_cuc(select("do_rong", "Độ rộng", [("hep", "Hẹp – dễ đọc"), ("rong", "Rộng")], default="hep", required=False)),
          editor("noi_dung", "Nội dung", "Đề mục, đậm, liên kết, danh sách, bảng, ảnh. " + TOKEN_HINT),
      ]},
-    {"name": "hoi_dap", "label": "Hỏi đáp", "summary": "Hỏi đáp: {{fields.tieu_de}}",
+    {"name": "hoi_dap", "label": "Hỏi đáp", "summary": "{{fields.tieu_de}}",
      "fields": [ghi_chu("ui_nguon", "Nội dung từng câu hỏi – câu trả lời sửa ở Câu hỏi thường gặp › Kho câu hỏi dùng chung "
                                     "(một câu sửa ở đó là mọi trang dùng câu đó cùng đổi). Ở đây chỉ chọn câu nào hiện, theo thứ tự nào.",
                         mo=FAQ_POOL, chu_mo="Mở Kho câu hỏi ›")]
@@ -440,7 +440,7 @@ BLOCK_TYPES = [
          link("lien_ket", "Liên kết dưới mô tả (tùy chọn)", required=False),
          pick_list("cau_hoi", "Câu hỏi hiện trong khối", "faq", "Câu hỏi", min=1, max=10),
      ]},
-    {"name": "luoi_linh_vuc", "label": "Lưới lĩnh vực (tự động)", "summary": "Lưới lĩnh vực: {{fields.tieu_de}}",
+    {"name": "luoi_linh_vuc", "label": "Lưới lĩnh vực (tự động)", "summary": "{{fields.tieu_de}}",
      "fields": [ghi_chu("ui_nguon", "Chữ trong các thẻ lĩnh vực (tình huống, mô tả, biểu tượng) và thứ tự thẻ sửa ở "
                                     "Dịch vụ › Trang tổng quan Dịch vụ › Khối lưới lĩnh vực – dùng chung cho Trang chủ, "
                                     "trang Dịch vụ và trang Kiến thức pháp lý. Ở đây chỉ sửa nhãn, tiêu đề, mô tả của khối.",
@@ -451,7 +451,7 @@ BLOCK_TYPES = [
                                             ("dich_vu", "Tên lĩnh vực + mô tả ngắn (chữ lấy từ ô Mô tả ngắn của từng lĩnh vực)")],
                        default="tinh_huong", required=False)),
      ]},
-    {"name": "bai_viet_moi", "label": "Bài viết mới nhất (tự động)", "summary": "Bài viết mới: {{fields.tieu_de}}",
+    {"name": "bai_viet_moi", "label": "Bài viết mới nhất (tự động)", "summary": "{{fields.tieu_de}}",
      "fields": [ghi_chu("ui_nguon", "Thẻ bài tự lấy từ các bài đã đăng mới nhất (tiêu đề ngắn + tóm tắt của từng bài). "
                                     "Sửa chữ trên thẻ: mở bài đó ở mục Bài viết pháp lý (hoặc bấm vào thẻ trên trang mô phỏng).",
                         mo="bai_viet", chu_mo="Mở danh sách bài viết ›")]
@@ -461,13 +461,13 @@ BLOCK_TYPES = [
          bo_cuc(select("so_cot", "Số cột", [("2", "2 cột"), ("3", "3 cột")], default="3", required=False)),
          bo_cuc(relation_service("linh_vuc", "Chỉ lấy bài thuộc lĩnh vực (tùy chọn)", required=False)),
      ]},
-    {"name": "giay_to_linh_vuc", "label": "Giấy tờ theo lĩnh vực (tự động)", "summary": "Giấy tờ theo lĩnh vực",
+    {"name": "giay_to_linh_vuc", "label": "Giấy tờ theo lĩnh vực (tự động)", "summary": "{{fields.tieu_de}}",
      "fields": [ghi_chu("ui_nguon", "Danh sách giấy tờ của mỗi thẻ lấy từ mục “Giấy tờ” của từng lĩnh vực "
                                     "(Dịch vụ › <tên lĩnh vực> › phần “Giấy tờ và kết quả nhận được”).", mo="dich_vu", chu_mo="Mở danh sách lĩnh vực ›")]
      + common(default_bg="kem") + section_head("Theo lĩnh vực", "Giấy tờ theo từng loại vụ việc") + [
          bo_cuc(pick_list("linh_vuc", "Chỉ hiện các lĩnh vực (để trống = tất cả)", "services", "Lĩnh vực", relation="dich_vu")),
      ]},
-    {"name": "kenh_lien_he", "label": "Kênh liên hệ", "summary": "Kênh liên hệ",
+    {"name": "kenh_lien_he", "label": "Kênh liên hệ", "summary": "Gọi, Zalo, email, văn phòng – số và địa chỉ lấy từ Thông tin công ty",
      "fields": [ghi_chu("ui_nguon", "Số điện thoại, Zalo, email, địa chỉ tự lấy từ Cài đặt chung › Thông tin công ty.",
                         mo="cai_dat/entries/cong_ty", chu_mo="Mở Thông tin công ty ›")] + common() + [
          bo_cuc(select("kenh", "Kênh hiện", [("goi", "Gọi điện"), ("zalo", "Nhắn Zalo"), ("email", "Gửi email"), ("van_phong", "Đến văn phòng")],
@@ -478,7 +478,7 @@ BLOCK_TYPES = [
          bo_cuc(boolean("viec_gap", "Hiện ô “Việc gấp?”", default=True)),
          rich("noi_dung_viec_gap", "Nội dung ô Việc gấp", required=False, maxlength=420),
      ]},
-    {"name": "ban_do", "label": "Bản đồ văn phòng", "summary": "Bản đồ: {{fields.tieu_de}}",
+    {"name": "ban_do", "label": "Bản đồ văn phòng", "summary": "{{fields.tieu_de}}",
      "fields": [ghi_chu("ui_nguon", "Địa chỉ, hotline, giờ làm việc tự lấy từ Cài đặt chung › Thông tin công ty.",
                         mo="cai_dat/entries/cong_ty", chu_mo="Mở Thông tin công ty ›")] + common() + section_head("Đường đến văn phòng", "Văn phòng Luật Sư Nam") + [
          string("ghi_chu_hotline", "Ghi chú dưới hotline", required=False, maxlength=100, default="Ưu tiên gọi trực tiếp với việc gấp"),
@@ -489,7 +489,7 @@ BLOCK_BY_NAME = {b["name"]: b for b in BLOCK_TYPES}
 
 def blocks_field():
     return lst("cac_khoi", "Các khối trên trang", types=BLOCK_TYPES, min=1, max=15, label_singular="khối",
-               hint="Thêm, xóa, kéo để đổi thứ tự. Muốn tạm ẩn, tắt “Hiển thị khối này” thay vì xóa.")
+               hint="Các phần của trang, xếp từ trên xuống đúng như trên website. Bấm một khối để mở.")
 
 
 # ---------------------------------------------------------------------------
@@ -671,7 +671,7 @@ def data_collections():
         {"divider": True, "name": "divider-trang"},
         {"name": "trang", "label": "Trang dựng từ khối", "label_singular": "trang", "icon": "dashboard_customize",
          "description": "Trang chủ, Giới thiệu, Liên hệ… và mọi trang mới: ghép từ các khối có sẵn. Trang mới mặc định là bản nháp. "
-                        f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi) · [Tạo trang mới]({GUIDE}#tao-trang)",
+                        f"[Sửa chữ trong khối]({GUIDE}#them-khoi) · [Tạo trang mới]({GUIDE}#tao-trang)",
          "folder": "content/trang", "extension": "yml", "format": "yml",
          "identifier_field": "tieu_de", "slug": slug_opts("tieu_de"),
          "summary": "{{tieu_de}}{{fields.nhap | ternary(' · BẢN NHÁP', '')}}",
@@ -841,7 +841,7 @@ def collections(menu=None):
     page_fields = d["trang"]["fields"]
     hubs = {f["name"]: f for f in d["trang_tong_hop"]["files"]}
     labels = dict(FIXED_PAGES)
-    blocks_help = f"[Thêm, đổi thứ tự khối]({GUIDE}#them-khoi)"
+    blocks_help = f"[Sửa chữ trong khối]({GUIDE}#them-khoi)"
 
     def fixed(slug, label):
         return {"name": slug, "label": label or labels[slug], "file": f"content/trang/{slug}.yml", "format": "yml",
@@ -877,7 +877,7 @@ def collections(menu=None):
                       dict(d["hoi_dap"]["files"][0], name="kho-cau-hoi", label="Kho câu hỏi dùng chung", preview_path="cau-hoi-thuong-gap/")]},
     }
     page_desc = {
-        "trang-chu": "Trang đầu tiên của website. Ghép từ các khối xếp từ trên xuống: bấm một khối để sửa, kéo để đổi thứ tự. ",
+        "trang-chu": "Trang đầu tiên của website, ghép từ các khối xếp từ trên xuống: bấm một khối để sửa chữ, ảnh, liên kết. ",
         "lien-he": "Trang Liên hệ. Hotline, địa chỉ, giờ làm việc sửa ở Cài đặt chung → Thông tin công ty. ",
     }
     icons = {"trang-chu": "home", "lien-he": "call"}

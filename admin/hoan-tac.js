@@ -141,16 +141,16 @@
     var g = document.getElementById('lsn-lich-su-nhom'), save = saveButton();
     if (!editing() || !save) { if (g) g.remove(); return; }
     var saveEl = save.parentElement && /wrapper/.test(save.parentElement.className) ? save.parentElement : save;
-    // Thứ tự: [Hoàn tác tất cả][Lịch sử][chế độ][Sáng/Tối][Lưu] (admin/che-do.js, admin/dieu-huong.js đặt hai nút giữa)
-    var anchor = [document.getElementById('lsn-che-do'), document.getElementById('lsn-sang-toi'), saveEl].filter(function (x) {
+    // Thứ tự: [Hoàn tác tất cả][Lịch sử][chế độ][Hướng dẫn, Sáng/Tối][Lưu] (admin/che-do.js, admin/dieu-huong.js đặt các nút giữa)
+    var anchor = [document.getElementById('lsn-che-do'), document.getElementById('lsn-nut-chung'), saveEl].filter(function (x) {
       return x && x.parentNode === saveEl.parentNode;
     })[0];
     if (!g) {
       g = document.createElement('div');
-      g.id = 'lsn-lich-su-nhom';
-      g.innerHTML = '<button type="button" class="lsn-nut-thanh" data-viec="het" title="Bỏ mọi thay đổi chưa lưu, trả trang về bản đã lưu">' +
+      g.id = 'lsn-lich-su-nhom'; g.className = 'lsn-nhom-nut'; // kiểu nút: admin/giao-dien.css
+      g.innerHTML = '<button type="button" class="lsn-nut lsn-nut--do" data-viec="het" title="Bỏ mọi thay đổi chưa lưu, trả trang về bản đã lưu">' +
         '<span class="icon" aria-hidden="true">undo</span><span class="chu">Hoàn tác tất cả</span></button>' +
-        '<button type="button" class="lsn-nut-thanh" data-viec="lich-su" title="Xem các lần lưu trước của trang này, khôi phục bản cũ (mở tab mới)">' +
+        '<button type="button" class="lsn-nut" data-viec="lich-su" title="Xem các lần lưu trước của trang này, khôi phục bản cũ (mở tab mới)">' +
         '<span class="icon" aria-hidden="true">history</span><span class="chu">Lịch sử</span></button>';
       g.querySelector('[data-viec=het]').addEventListener('click', revertAll);
       g.querySelector('[data-viec=lich-su]').addEventListener('click', function () {

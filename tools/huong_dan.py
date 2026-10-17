@@ -2,7 +2,7 @@
 """Trang hướng dẫn sử dụng /admin/huong-dan/ – dựng từ docs/huong-dan/README.md; kèm bài tập /admin/bai-tap/.
 
 Một nguồn duy nhất: đọc được ngay trên GitHub (ảnh cùng thư mục), build dựng thành trang có mục lục,
-ảnh bấm để phóng to, in được; nút "? Hướng dẫn" trong /admin mở trang này. Không lập chỉ mục Google.
+ảnh bấm để phóng to, in được; nút "Hướng dẫn" trên thanh trên cùng của /admin mở trang này. Không lập chỉ mục Google.
 """
 import os
 import re

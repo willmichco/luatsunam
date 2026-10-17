@@ -11,7 +11,7 @@
   var HEADINGS = {
     'Trang chủ': ['Trang theo menu website', ''],
     'Bài viết pháp lý': ['Thư viện pháp lý', 'con'],
-    'Trang tự tạo': ['Trang khác', ''],
+    'Chính sách & 404': ['Trang khác', ''],
     'Cài đặt chung': ['Dùng chung mọi trang', ''],
   };
   var INDENT = ['Bài viết pháp lý', 'Câu hỏi thường gặp'];

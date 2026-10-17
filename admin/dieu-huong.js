@@ -1,8 +1,6 @@
 /* Điều hướng trang quản trị (bổ sung cho Sveltia, không đổi dữ liệu):
    - Cột trái xếp theo đúng Menu chính của website (build sinh thứ tự mục trong config.yml và admin/cot-trai.json từ
      Cài đặt chung → Menu và chân trang): tiêu đề nhóm, mục thuộc một menu xổ thụt vào dưới tên menu xổ.
-   - Mục chỉ có một trang (Trang chủ, Liên hệ…): bấm ở cột trái giống mọi mục khác – mở trang tổng quan của mục, dòng duy nhất
-     hiện thành thẻ "Mở để sửa" (<html data-lsn-mot-tep>, CSS ở giao-dien.css); bấm thẻ mới vào trình soạn.
    - Thanh trên cùng: Hướng dẫn, Lịch sử chỉnh sửa (mở tab mới, không mất phần đang soạn), Sáng / Tối (Sveltia giấu lựa chọn này
      trong Cài đặt của tài khoản). Khi đang soạn: Hướng dẫn + Sáng / Tối cạnh nút Lưu (Lịch sử của trang: admin/hoan-tac.js).
    - Tên trang trùng tên mục ("Trang chủ › Trang chủ"): đánh dấu để CSS chỉ hiện một lần.
@@ -34,7 +32,6 @@
 
   function decorate() {
     addButtons();
-    markSingleList();
     markSameTitle();
     var nav = document.querySelector('nav.primary-sidebar');
     if (!nav) return;
@@ -57,13 +54,6 @@
     });
   }
 
-  // Danh sách của mục một trang (#/collections/trang_chu): đánh dấu <html> để CSS vẽ dòng duy nhất thành thẻ "Mở để sửa"
-  function markSingleList() {
-    var m = location.hash.match(/^#\/collections\/([^/?#]+)\/?(?:[?#]|$)/), name = m && decodeURIComponent(m[1]);
-    var on = !!name && Object.keys(SINGLE).some(function (k) { return SINGLE[k].split('/')[0] === name; });
-    var root = document.documentElement;
-    if (on !== root.hasAttribute('data-lsn-mot-tep')) { if (on) root.setAttribute('data-lsn-mot-tep', ''); else root.removeAttribute('data-lsn-mot-tep'); }
-  }
   // Tiêu đề trình soạn "Trang chủ › Trang chủ" (tên mục = tên trang): CSS chỉ hiện một lần
   function markSameTitle() {
     [].forEach.call(document.querySelectorAll('[role=toolbar] h2'), function (h2) {

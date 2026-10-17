@@ -294,6 +294,7 @@ def render(collection, slug, file_name, data_json, is_new=False, path=None):
     env.update(drafts=True, noindex=False, nhap_rieng=False)  # bản nháp hiện như đã đăng
     build.ENV = env
     build.ORG_ID, build.SITE_ID = env["site_url"] + "/#organization", env["site_url"] + "/#website"
+    build.LAWYER_ID = env["site_url"] + "/gioi-thieu/#luat-su"
     filled = json.loads(json.dumps(data))
     first_errors = None
     if fill_placeholders(_fields_for(rel), filled):  # soạn dở: lấy lỗi từ bản gốc, dựng trang từ bản có chữ giữ chỗ

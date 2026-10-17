@@ -236,8 +236,11 @@
     bai_viet: {
       tieu_de: HERO, tieu_de_ngan: HERO, linh_vuc: HERO, ngay_dang: HERO, ngay_cap_nhat: HERO,
       tom_tat: 'Tóm tắt hiện ở thẻ bài viết trong danh sách “Kiến thức pháp lý” và các khối bài viết mới.',
-      tom_tat_nhanh: ['.keypoints', 'Tóm tắt nhanh'], doan_dan: ['.prose__lead', 'Đoạn dẫn'],
-      body: ['#noi-dung-bai-viet', 'Nội dung bài viết'], linh_vuc_lien_quan: ['.article-aside', 'Khung bên phải bài'],
+      tom_tat_nhanh: ['.keypoints', 'Tóm tắt nhanh'], doan_dan: ['.prose__lead', 'Sapo – đoạn dẫn'],
+      anh_dai_dien: ['.article-cover', 'Ảnh đại diện'], mo_ta_anh_dai_dien: ['.article-cover', 'Ảnh đại diện'],
+      chu_thich_anh_dai_dien: ['.article-cover', 'Ảnh đại diện'],
+      body: ['.article-body', 'Nội dung bài viết'], can_cu: ['.article-laws', 'Căn cứ pháp lý'],
+      hoi_dap: ['.article-faq', 'Hỏi đáp nhanh'], linh_vuc_lien_quan: ['.article-aside', 'Khung bên phải bài'],
       duong_dan: 'Đường dẫn là địa chỉ trang, không hiện trong nội dung.',
     },
     dich_vu: {

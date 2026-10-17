@@ -12,6 +12,10 @@ tom_tat_nhanh:
   - Thửa đất phải đủ điều kiện chuyển nhượng theo Luật Đất đai 2024.
   - Ưu tiên chuyển khoản, ghi rõ nội dung; không đặt cọc lớn khi hồ sơ chưa rõ ràng.
 doan_dan: Trong giao dịch nhà đất, tiền đặt cọc thường được chuyển trước khi các bên ký hợp đồng chuyển nhượng có công chứng, đôi khi trước cả khi bên mua được xem bản chính giấy tờ. Đây là giai đoạn phát sinh nhiều tranh chấp nhất. Bài viết giải thích cơ chế đặt cọc theo Bộ luật Dân sự 2015 và 6 điểm nên kiểm tra trước khi xuống tiền.
+can_cu:
+  - 'Bộ luật Dân sự 2015: Điều 328'
+  - 'Luật Đất đai 2024: Điều 45'
+  - 'Luật Hôn nhân và Gia đình 2014: Điều 35'
 linh_vuc_lien_quan:
   - dat-dai-bat-dong-san
   - cong-chung

@@ -13,6 +13,11 @@ tom_tat_nhanh:
   - Con dưới 36 tháng tuổi được giao cho mẹ trực tiếp nuôi, trừ ngoại lệ; con từ đủ 07 tuổi được xem xét nguyện vọng.
   - Tài sản chung về nguyên tắc chia đôi nhưng có tính đến công sức đóng góp và lỗi của mỗi bên.
 doan_dan: Ly hôn đơn phương (ly hôn theo yêu cầu của một bên) là trường hợp một người muốn chấm dứt hôn nhân nhưng người kia không đồng ý, hoặc không hợp tác để cùng thỏa thuận. Khác với thuận tình ly hôn, Tòa án chỉ chấp nhận khi có căn cứ luật định. Bài viết tóm tắt căn cứ, hồ sơ và cách Tòa án giải quyết các vấn đề về con, tài sản.
+can_cu:
+  - 'Luật Hôn nhân và Gia đình 2014: Điều 56, Điều 81'
+  - 'Bộ luật Tố tụng dân sự 2015: Điều 39, Điều 85'
+  - 'Nghị quyết 326/2016/UBTVQH14 về án phí, lệ phí Tòa án'
+  - 'Luật Luật sư: Điều 25'
 linh_vuc_lien_quan:
   - hon-nhan-gia-dinh
   - tranh-tung-giai-quyet-tranh-chap

@@ -279,4 +279,5 @@ def strip_tags(s):
 
 def to_text(text, ctx):
     """Markdown → chữ trơn (dữ liệu có cấu trúc cho Google, chỉ mục tìm kiếm)."""
-    return html.unescape(strip_tags(block(text, ctx.at())))
+    s = re.sub(r"</?(a|strong|em|b|i|span|code|mark|small|abbr|sub|sup)\b[^>]*>", "", block(text, ctx.at()))
+    return html.unescape(re.sub(r"\s+([,.;:!?)])", r"\1", strip_tags(s)))  # thẻ trong dòng không chèn dấu cách trước dấu câu

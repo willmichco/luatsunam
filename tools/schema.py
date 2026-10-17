@@ -285,7 +285,7 @@ def _rule_photo(v, add):
 def seo(title_example, desc_example):
     return obj("seo", "SEO – hiển thị trên Google và khi chia sẻ", [
         string("tieu_de", "Tiêu đề trên Google",
-               f"Dòng chữ xanh trên Google. 15–60 ký tự; đuôi “ | Luật Sư Nam” tự thêm. Ví dụ: {title_example}",
+               f"Dòng chữ xanh trên Google. 15–60 ký tự; đuôi “ | Luật Sư Nam” tự thêm khi tổng còn ≤ 60 ký tự (dài hơn thì bỏ đuôi để Google không cắt mất chữ). Ví dụ: {title_example}",
                minlength=15, maxlength=60),
         text("mo_ta", "Mô tả trên Google",
              f"Đoạn chữ xám dưới tiêu đề. 70–160 ký tự, nêu rõ việc anh chị được giúp. Số điện thoại viết {{{{hotline}}}}. "

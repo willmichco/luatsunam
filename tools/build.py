@@ -43,6 +43,7 @@ from tpl import ARROW, asset_ref, ico  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TODAY = datetime.date.today().isoformat()
+TITLE_MAX = 60  # Google cắt tiêu đề dài hơn ~600px (≈ 60 ký tự): bỏ đuôi tên site trước khi bị cắt mất từ khóa
 LEGACY_URLS = ["https://willmichco.github.io/luatsunam", "https://luat-su-nam-phap-ly.willmich-co.chatgpt.site",
                "http://willmichco.github.io/luatsunam"]
 
@@ -74,7 +75,7 @@ def read_env():
 ENV = None
 S = None
 IMG = None
-ORG_ID = SITE_ID = ""
+ORG_ID = SITE_ID = LAWYER_ID = ""
 
 
 def abs_url(path):
@@ -90,6 +91,49 @@ PREFIX = ""  # thư mục chứa trang đang dựng: "nhap/" khi dựng bản nh
 
 def root_of(path):
     return "../" * (PREFIX + path).count("/")
+
+
+_GIT = {}
+
+
+def git_dates():
+    """{tệp trong content/: ngày commit gần nhất} – một lần gọi git cho cả build. Ngày sửa thật của từng trang cho
+    sitemap <lastmod>, dateModified (Google bỏ qua lastmod khi mọi URL luôn mang ngày build). Tệp đang sửa chưa commit
+    → hôm nay. Không có git (khung mô phỏng chạy trong trình duyệt, bản tải zip) → {} và trang dùng ngày build."""
+    if "d" not in _GIT:
+        d = {}
+        try:
+            import subprocess
+            git = ["git", "-C", ROOT, "-c", "core.quotePath=false"]
+            run = lambda *a: subprocess.run(git + list(a), capture_output=True, text=True, timeout=60, check=True).stdout  # noqa: E731
+            if os.environ.get("CF_PAGES") and run("rev-parse", "--is-shallow-repository").strip() == "true":
+                try:  # Cloudflare Pages clone nông (1 commit): lấy thêm lịch sử, không được thì mọi trang mang ngày commit cuối
+                    run("fetch", "--unshallow", "--quiet")
+                except Exception:
+                    pass
+            date = None
+            for line in run("log", "--format=@%cs", "--name-only", "--", "content").splitlines():
+                if line.startswith("@"):
+                    date = line[1:]
+                elif line and date:
+                    d.setdefault(line, date)
+            for line in run("status", "--porcelain", "--", "content").splitlines():
+                d[line[3:].split(" -> ")[-1].strip('"')] = TODAY
+        except Exception:
+            d = {}
+        _GIT["d"] = d
+    return _GIT["d"]
+
+
+def src_modified(*dates_or_srcs):
+    """Ngày sửa mới nhất trong các tệp nguồn ("content/…") / ngày có sẵn ("2026-10-07"); không biết → ngày build."""
+    found = []
+    for x in dates_or_srcs:
+        if x and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(x)):
+            found.append(str(x))
+        elif x and git_dates().get(x):
+            found.append(git_dates()[x])
+    return min(max(found), TODAY) if found else TODAY
 
 
 # ---------------------------------------------------------------------------
@@ -365,6 +409,10 @@ def org_node():
         "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": days,
                                        "opens": f["opens"], "closes": f["closes"]}],
         "areaServed": [{"@type": "City", "name": "Thành phố Hồ Chí Minh"}, {"@type": "Country", "name": "Việt Nam"}],
+        "hasMap": f"https://www.google.com/maps/search/?api=1&query={f['maps_query']}",
+        "contactPoint": [{"@type": "ContactPoint", "telephone": f["phone_intl"], "email": f["email"], "contactType": "customer service",
+                          "areaServed": "VN", "availableLanguage": "vi"}],
+        "employee": {"@id": LAWYER_ID},
         "knowsLanguage": ["vi"], "sameAs": [f["zalo"]],
         "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Lĩnh vực hoạt động",
                             "itemListElement": [{"@type": "Offer", "itemOffered": {"@id": abs_url(f"dich-vu/{s['slug']}/") + "#service"}}
@@ -372,13 +420,39 @@ def org_node():
     }
 
 
+def lawyer_node():
+    """Luật sư (Person, một @id dùng chung toàn site): người tham vấn bài viết (reviewedBy), nhân sự của công ty – tín hiệu
+    E-E-A-T cho nội dung pháp lý. Tên trong Cài đặt có chức danh "Luật sư …" → tách thành honorificPrefix."""
+    f = F()
+    name, prefix = f["lawyer"], ""
+    m = re.match(r"^(Luật sư|LS\.?|Ls\.?)\s+(.+)$", name)
+    if m:
+        prefix, name = "Luật sư", m.group(2)
+    return {"@type": "Person", "@id": LAWYER_ID, "name": name, **({"honorificPrefix": prefix} if prefix else {}),
+            **({"jobTitle": f["lawyer_role"]} if f.get("lawyer_role") else {}), "worksFor": {"@id": ORG_ID},
+            "url": abs_url("gioi-thieu/"), "image": abs_url(asset_ref("assets/img/luat-su-avatar.webp")),
+            "knowsAbout": [s["ten"] for s in S.services], "knowsLanguage": "vi"}
+
+
+def faq_node(url, items, ctx):
+    """Hỏi đáp trên trang lĩnh vực / bài viết → FAQPage (một nút mỗi trang, gắn vào trang qua isPartOf)."""
+    n = len(S.link_refs)  # liên kết trong câu trả lời đã được kiểm khi dựng phần hỏi đáp trên trang: không ghi lại lần hai
+    qa = [{"@type": "Question", "name": M.to_text(x.get("hoi"), ctx),
+           "acceptedAnswer": {"@type": "Answer", "text": M.to_text(x.get("dap"), ctx)}} for x in items or [] if x.get("hoi") and x.get("dap")]
+    del S.link_refs[n:]
+    return [{"@type": "FAQPage", "@id": url + "#hoi-dap", "isPartOf": {"@id": url + "#webpage"}, "inLanguage": "vi",
+             "mainEntity": qa}] if qa else []
+
+
 def jsonld(page):
     url = abs_url(page["path"])
     org = org_node()
     if page["path"] not in ("", "lien-he/", "gioi-thieu/"):
         org = {k: org[k] for k in ("@type", "@id", "name", "alternateName", "url", "logo", "image", "telephone", "email", "address")}
-    graph = [org, {"@type": "WebSite", "@id": SITE_ID, "url": ENV["site_url"] + "/", "name": f'{F()["short_name"]} – {F()["brand"]}',
-                   "inLanguage": "vi", "publisher": {"@id": ORG_ID}}]
+    # Tên site trên Google (site name): name = tên ngắn ưu tiên, alternateName = tên khác Google được chọn
+    graph = [org, {"@type": "WebSite", "@id": SITE_ID, "url": ENV["site_url"] + "/", "name": F()["short_name"],
+                   "alternateName": [F()["brand"], F()["legal_name"]], "inLanguage": "vi", "publisher": {"@id": ORG_ID}},
+             lawyer_node()]
     webpage = {
         "@type": page.get("schema_type", "WebPage"), "@id": url + "#webpage", "url": url,
         "name": page["title"], "description": page["description"], "inLanguage": "vi",
@@ -492,7 +566,7 @@ def layout(page):
 <link rel="icon" href="{r}assets/img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="{r}assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="{r}assets/img/apple-touch-icon.png">
-<link rel="manifest" href="{r}site.webmanifest">
+<link rel="manifest" href="{r}site.webmanifest">{feed_link(r)}
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>
 <style>{site_css().replace('url("../fonts/', 'url("' + r + 'assets/fonts/')}</style>
@@ -520,6 +594,16 @@ def layout(page):
 </body>
 </html>
 """
+
+
+FEED = "kien-thuc-phap-ly/feed.xml"
+
+
+def feed_link(r):
+    """RSS bài viết: Google, Bing, trình đọc tin tìm bài mới nhanh hơn chờ quét lại sitemap."""
+    if not S.articles:
+        return ""
+    return f'\n<link rel="alternate" type="application/rss+xml" title="Kiến thức pháp lý – {esc(F()["short_name"])}" href="{r}{FEED}">'
 
 
 def speculation_rules():
@@ -559,10 +643,16 @@ HOME = ("Trang chủ", "")
 
 
 def full_title(seo_title, path):
+    """Tiêu đề <title>: thêm tên site khi còn chỗ. Quá TITLE_MAX ký tự thì Google cắt mất phần cuối (thường là từ khóa)
+    → trang chủ dùng tên ngắn, trang khác bỏ đuôi tên site (Google vẫn hiện tên site riêng phía trên kết quả)."""
     short = F()["short_name"]
     if path == "":
-        return f'{F()["legal_name"]} | {seo_title}'
-    return seo_title if seo_title.endswith(short) else f"{seo_title} | {short}"
+        full = f'{F()["legal_name"]} | {seo_title}'
+        return full if len(full) <= TITLE_MAX else f"{short} | {seo_title}"
+    if seo_title.endswith(short):
+        return seo_title
+    full = f"{seo_title} | {short}"
+    return full if len(full) <= TITLE_MAX else seo_title
 
 
 def check_title(src, title):
@@ -619,6 +709,9 @@ def block_page(p):
     page["title"] = full_title(seo.get("tieu_de", ""), path)
     check_title(p["_src"], page["title"])
     page["description"] = seo.get("mo_ta", "")
+    # Trang chủ hiện bài viết mới nhất, lưới lĩnh vực: đổi khi các phần đó đổi
+    page["modified"] = (src_modified(p["_src"], schema.HUB_FILES["dich_vu"], *(a["ngay_cap_nhat"] for a in S.articles[:3]))
+                        if path == "" else src_modified(p["_src"]))
     band = p.get("lien_he_cuoi_trang") or {}
     page["contact_band"] = band.get("hien", True)
     page["cband_override"] = dict(band, _src=p["_src"])
@@ -648,7 +741,9 @@ def service_page(s):
 
     def P(text, c=tc):
         return M.plain(text, c)
-    arts = [a for a in S.articles if s["slug"] in a["linh_vuc_lien_quan"]]
+    # Bài thuộc đúng lĩnh vực này lên trước bài chỉ liên quan (liên kết nội bộ sát chủ đề nhất)
+    arts = sorted((a for a in S.articles if s["slug"] in a["linh_vuc_lien_quan"] or a["linh_vuc"] == s["slug"]),
+                  key=lambda a: a["linh_vuc"] != s["slug"])
     situations = "".join(f'<li>{ico("i-check-circle")}<span>{P(x, ctx)}</span></li>' for x in s.get("tinh_huong") or [])
     pv = s.get("pham_vi") or {}
     scope = "".join(f'<article class="ncard ncard--num reveal"><div class="ncard__top"><span class="ncard__num">{i:02d}</span></div>'
@@ -773,7 +868,7 @@ def service_page(s):
     title = full_title(seo.get("tieu_de", ""), path)
     check_title(s["_src"], title)
     return {
-        "path": path, "src": s["_src"], "is_draft": s.get("nhap"),
+        "path": path, "src": s["_src"], "is_draft": s.get("nhap"), "modified": src_modified(s["_src"]),
         "title": title, "description": seo.get("mo_ta", ""),
         "eyebrow": P(s.get("nhan_dau_trang"), ctx), "h1": M.title(s.get("tieu_de_trang"), ctx), "lead": P(s.get("mo_dau"), ctx),
         "hero": {"extra": urgent},
@@ -785,7 +880,8 @@ def service_page(s):
             "description": seo.get("mo_ta", ""), "url": url, "provider": {"@id": ORG_ID},
             "areaServed": [{"@type": "City", "name": "Thành phố Hồ Chí Minh"}, {"@type": "Country", "name": "Việt Nam"}],
             "image": og_abs,
-        }],
+            **({"subjectOf": [{"@id": abs_url(f"kien-thuc-phap-ly/{a['slug']}/") + "#article"} for a in arts]} if arts else {}),
+        }] + faq_node(url, s.get("hoi_dap"), ctx),
         "webpage_extra": {"mainEntity": {"@id": url + "#service"}},
     }
 
@@ -832,6 +928,7 @@ def services_hub():
 </section>
 """
     page = {"path": path, "src": d["_src"], "schema_type": "CollectionPage", "crumbs": [HOME, ("Lĩnh vực hoạt động", path)], "body": body,
+            "modified": src_modified(d["_src"], *(s["_src"] for s in S.services)),
             "webpage_extra": {"mainEntity": {
                 "@type": "ItemList", "numberOfItems": len(S.services),
                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"dich-vu/{s['slug']}/"), "name": s["ten"]}
@@ -878,6 +975,7 @@ def knowledge_hub():
 </section>
 """
     page = {"path": path, "src": d["_src"], "schema_type": "CollectionPage", "crumbs": [HOME, ("Kiến thức pháp lý", path)], "body": body,
+            "modified": src_modified(d["_src"], *(a["ngay_cap_nhat"] for a in S.articles)),
             "webpage_extra": {"mainEntity": {
                 "@type": "ItemList", "numberOfItems": len(S.articles),
                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": abs_url(f"kien-thuc-phap-ly/{a['slug']}/"), "name": a["tieu_de"]}
@@ -913,7 +1011,7 @@ def faq_page():
     for f in S.faq:
         qa.append({"@type": "Question", "name": f["hoi"],
                    "acceptedAnswer": {"@type": "Answer", "text": M.to_text(f["dap"], ctx.at(src="content/hoi-dap.yml"))}})
-    page = {"path": path, "src": d["_src"], "schema_type": "FAQPage",
+    page = {"path": path, "src": d["_src"], "schema_type": "FAQPage", "modified": src_modified(d["_src"], "content/hoi-dap.yml"),
             "crumbs": [HOME, ("Kiến thức pháp lý", "kien-thuc-phap-ly/"), ("Câu hỏi thường gặp", path)], "body": body,
             "webpage_extra": {"mainEntity": qa}}
     return hub_head(page, d, ctx)
@@ -948,6 +1046,16 @@ def check_article_outline(a, html, toc):
     words = len(M.strip_tags(html).split())
     if words < 500:
         LOI.canh(a["_src"], where, f"Nội dung chính mới {words} từ – bài pháp lý nên từ 600 từ trở lên để trả lời đủ câu hỏi.")
+
+
+def related_articles(a, n=4):
+    """Đọc tiếp: bài cùng lĩnh vực trước, rồi bài có lĩnh vực liên quan chung; cùng mức thì bài mới hơn trước
+    (S.articles đã xếp mới → cũ, sorted giữ thứ tự)."""
+    rel = set(a["linh_vuc_lien_quan"]) | {a["linh_vuc"]}
+
+    def score(x):
+        return (4 if x["linh_vuc"] == a["linh_vuc"] else 2 if x["linh_vuc"] in rel else 0) + len(rel & set(x["linh_vuc_lien_quan"]))
+    return sorted((x for x in S.articles if x["slug"] != a["slug"]), key=score, reverse=True)[:n]
 
 
 def article_page(a):
@@ -991,7 +1099,7 @@ def article_page(a):
     toc = "".join(f'<li><a href="#{i}">{esc(t)}</a></li>' for i, t in toc_items)
     words = len(M.strip_tags(content_html).split())
     minutes = max(1, round(words / 220))
-    others = [x for x in S.articles if x["slug"] != a["slug"]][:4]
+    others = related_articles(a)
     related_svcs = "".join(
         f'<li><a href="{r}dich-vu/{x}/">{ico(S.service_by_slug[x]["bieu_tuong"], "rel-list__icon")}<span>{esc(S.service_by_slug[x]["ten"])}</span>{ARROW}</a></li>'
         for x in a["linh_vuc_lien_quan"] if x in S.service_by_slug)
@@ -1081,8 +1189,7 @@ def article_page(a):
         "crumbs": [HOME, ("Kiến thức pháp lý", "kien-thuc-phap-ly/"), (card_title, path)],
         "og_abs": og_abs, "og_size": og_size, "og_rel": og_rel, "hero": {"extra": extra}, "body": body,
         # Luật sư rà soát nội dung (E-E-A-T – nội dung pháp lý): khớp dòng "Tham vấn" và khung cuối bài
-        "webpage_extra": {"reviewedBy": {"@type": "Person", "name": lawyer, **({"jobTitle": role} if role else {}),
-                                         "worksFor": {"@id": ORG_ID}, "url": abs_url("gioi-thieu/")}, "lastReviewed": mod},
+        "webpage_extra": {"reviewedBy": {"@id": LAWYER_ID}, "lastReviewed": mod},
         "cband": {"nhan": f"Tư vấn {svc['ten'].lower()}", "tieu_de": lh.get("tieu_de"), "doan_moi": lh.get("doan_moi")},
         "schema": [{
             "@type": "Article", "@id": url + "#article", "headline": a["tieu_de"], "description": seo.get("mo_ta", ""),
@@ -1090,9 +1197,9 @@ def article_page(a):
             "datePublished": pub, "dateModified": mod, "inLanguage": "vi", "articleSection": svc["ten"],
             "wordCount": words, "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
             **({"citation": list(a["can_cu"])} if a.get("can_cu") else {}),
-            "mainEntityOfPage": {"@id": url + "#webpage"},
+            "mainEntityOfPage": {"@id": url + "#webpage"}, "isAccessibleForFree": True,
             "about": {"@id": abs_url(f'dich-vu/{a["linh_vuc"]}/') + "#service"},
-        }],
+        }] + faq_node(url, a.get("hoi_dap"), ctx),
     }
 
 
@@ -1135,7 +1242,7 @@ def legal_page(name):
   </div>
 </section>
 """
-    mod = d.get("ngay_cap_nhat") or TODAY
+    mod = d.get("ngay_cap_nhat") or src_modified(d["_src"])
     y, m, dd = mod.split("-")
     lead = M.plain(d.get("mo_dau"), ctx.at(where="Đoạn mở đầu"))
     lead = (lead + " " if lead else "") + f"Cập nhật lần cuối: {dd}/{m}/{y}."
@@ -1330,6 +1437,7 @@ def wix_redirects(rendered):
         items = (yaml.safe_load(fh) or {}).get("chuyen_huong") or []
     ids = {path: set(ID_RE.findall(h)) for path, h in rendered.items()}
     src_file, bp, lines, seen = os.path.relpath(WIX_FILE, ROOT), ENV["base_path"], [], set()
+    S.wix_stubs = []
     for i, x in enumerate(items, 1):
         where = f"Chuyển hướng {i}"
         tu, den = unicodedata.normalize("NFC", str(x.get("tu") or "")).strip(), str(x.get("den") or "").strip()
@@ -1349,10 +1457,65 @@ def wix_redirects(rendered):
             continue
         target = bp + den.lstrip("/")
         base = tu.rstrip("/")
+        S.wix_stubs.append((base.lstrip("/") + "/", den))
         for form in dict.fromkeys([base, quote(base, safe="/-_.~")]):
             lines.append(f"{bp.rstrip('/')}{form} {target} 301")
             lines.append(f"{bp.rstrip('/')}{form}/ {target} 301")
     return lines
+
+
+def page_images(p):
+    """Ảnh chính của trang cho sitemap ảnh (Google Hình ảnh): ảnh đại diện bài viết + ảnh chia sẻ."""
+    imgs = []
+    for x in p.get("schema", []):
+        if x.get("@type") == "Article":
+            imgs += x.get("image") or []
+    return list(dict.fromkeys(imgs + [p["og_abs"]]))
+
+
+def sitemap_xml(pages):
+    rows = []
+    for p in pages:
+        imgs = "".join(f"\n    <image:image><image:loc>{esc(i)}</image:loc></image:image>" for i in page_images(p))
+        rows.append(f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p.get('modified', TODAY)}</lastmod>{imgs}\n  </url>\n")
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            f'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n{"".join(rows)}</urlset>\n')
+
+
+def rfc822(day):
+    d = datetime.datetime.strptime(day, "%Y-%m-%d").replace(hour=8, tzinfo=datetime.timezone(datetime.timedelta(hours=7)))
+    return d.strftime("%a, %d %b %Y %H:%M:%S +0700")
+
+
+def feed_xml():
+    """RSS 2.0 các bài viết đã đăng (mới → cũ)."""
+    url, f = abs_url(FEED), F()
+    items = []
+    for a in S.articles[:50]:
+        link = abs_url(f"kien-thuc-phap-ly/{a['slug']}/")
+        svc = S.service_by_slug.get(a["linh_vuc"]) or {}
+        desc = (a.get("seo") or {}).get("mo_ta") or a.get("tom_tat") or ""
+        items.append(f"""  <item>
+    <title>{esc(a["tieu_de"])}</title>
+    <link>{link}</link>
+    <guid isPermaLink="true">{link}</guid>
+    <pubDate>{rfc822(a["ngay_dang"])}</pubDate>
+    <description>{esc(desc)}</description>{f"{chr(10)}    <category>{esc(svc['ten'])}</category>" if svc.get("ten") else ""}
+  </item>
+""")
+    last = max([a["ngay_cap_nhat"] for a in S.articles] or [TODAY])
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Kiến thức pháp lý – {esc(f["short_name"])}</title>
+  <link>{abs_url("kien-thuc-phap-ly/")}</link>
+  <atom:link href="{url}" rel="self" type="application/rss+xml"/>
+  <description>{esc((S.hubs["kien_thuc"].get("seo") or {}).get("mo_ta") or f["legal_name"])}</description>
+  <language>vi</language>
+  <lastBuildDate>{rfc822(last)}</lastBuildDate>
+{"".join(items)}</channel>
+</rss>
+"""
 
 
 def write_extras(out, pages, rendered):
@@ -1376,6 +1539,14 @@ def write_extras(out, pages, rendered):
         if slug + "/" != path and slug + "/" not in nhap:
             lines.append(f"{bp}nhap/{slug}/ {bp}nhap/{path} 302")
     lines += getattr(S, "wix_lines", [])
+    # URL Wix cũ cũng có trang chuyển tiếp tức thì (canonical + refresh 0 – Google coi như 301) khi site chạy trên tên miền
+    # riêng bằng GitHub Pages (không đọc _redirects): URL cũ chuyển đúng trang mới thay vì 404, giữ thứ hạng đã có trên Google.
+    # Cloudflare đã có 301 thật trong _redirects; github.io/luatsunam/ chưa từng có các URL này.
+    wix_stubs = getattr(S, "wix_stubs", []) if bp == "/" and not os.environ.get("CF_PAGES") else []
+    for src_p, den in wix_stubs:
+        if not os.path.exists(os.path.join(out, src_p)):
+            label = S.registry.get(p2path(den).split("#")[0], {}).get("label", "trang mới")
+            write(out, src_p + "index.html", redirect_stub(src_p, den, f"{label} – {F()['short_name']}"))
     write(out, "_redirects", "\n".join(lines) + "\n")
     headers = [f"{bp}assets/fonts/*", "  Cache-Control: public, max-age=31536000, immutable",
                f"{bp}assets/*", "  Cache-Control: public, max-age=604800",
@@ -1390,9 +1561,9 @@ def write_extras(out, pages, rendered):
     if ENV["noindex"]:
         write(out, "robots.txt", f"# {F()['legal_name']} – bản thử, không lập chỉ mục\nUser-agent: *\nDisallow: /\n")
     else:
-        urls = "".join(f"  <url>\n    <loc>{abs_url(p['path'])}</loc>\n    <lastmod>{p.get('modified', TODAY)}</lastmod>\n  </url>\n"
-                       for p in indexable)
-        write(out, "sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+        write(out, "sitemap.xml", sitemap_xml(indexable))
+    if S.articles:
+        write(out, FEED, feed_xml())  # mọi trang trỏ tới RSS (bản thử có X-Robots-Tag noindex toàn site)
         write(out, "robots.txt", f"# {F()['legal_name']}\nUser-agent: *\nAllow: /\nDisallow: {bp}admin/\nDisallow: {bp}nhap/\n\n"
                                  f"Sitemap: {ENV['site_url']}/sitemap.xml\n")
     write(out, "site.webmanifest", json.dumps({
@@ -1540,9 +1711,9 @@ def fail():
 
 
 def main():
-    global ENV, S, IMG, ORG_ID, SITE_ID
+    global ENV, S, IMG, ORG_ID, SITE_ID, LAWYER_ID
     ENV = read_env()
-    ORG_ID, SITE_ID = ENV["site_url"] + "/#organization", ENV["site_url"] + "/#website"
+    ORG_ID, SITE_ID, LAWYER_ID = ENV["site_url"] + "/#organization", ENV["site_url"] + "/#website", ENV["site_url"] + "/gioi-thieu/#luat-su"
     S = content.load(ENV)
     invalid = bool(LOI)  # có lỗi dữ liệu: vẫn dựng thử để gom thêm lỗi (liên kết, mã chèn…) rồi mới dừng
     S.registry = build_registry()

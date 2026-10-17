@@ -52,12 +52,24 @@ nên CMS không thể lệch cấu trúc site. Thêm 1 trường vào schema →
 | `tools/blocks.py`, `tools/tpl.py` | Template các khối và thành phần dùng chung |
 | `tools/content.py`, `tools/markup.py`, `tools/loi.py` | Nạp + kiểm nội dung, Markdown/mã chèn/liên kết, báo lỗi tiếng Việt |
 | `tools/images.py` | Ảnh thương hiệu, ảnh chia sẻ tự sinh, ảnh tải lên (lưu đệm `.cache/`) |
-| `tools/kiem_tra.py` | Kiểm sau build: canonical, og:url, sitemap, robots, liên kết, mã neo, cột trái trang quản trị đúng thứ tự Menu chính |
+| `tools/kiem_tra.py` | Kiểm sau build: canonical, og:url, sitemap, robots, liên kết, mã neo; SEO từng trang (có tiêu đề, mô tả, đúng 1 H1, không trùng trang khác, JSON-LD đọc được, ảnh có alt + width/height); sitemap, RSS đúng XML, `lastmod` hợp lệ; cột trái trang quản trị đúng thứ tự Menu chính |
 | `tools/chuyen_huong.py` | GĐ5: dựng bản chuyển hướng github.io → tên miền (mỗi URL cũ 1 trang, 404 bắt đường dẫn lạ) |
 | `tools/kiem_g5.py`, `docs/g5/` | GĐ5: kiểm tiêu chí 7, 8 trên site thật; mốc URL github.io trước khi chuyển |
 | `cloudflare/oauth-worker/` | Worker đăng nhập GitHub cho /admin |
 
 Các tệp HTML, `sitemap.xml`, ảnh trong `assets/img/` do build sinh vào `dist/`, **không sửa tay**.
+
+### SEO kỹ thuật (build tự làm)
+
+| Hạng mục | Cách làm |
+|---|---|
+| Ngày sửa thật | `sitemap.xml` `<lastmod>`, `dateModified` lấy từ ngày commit gần nhất của tệp nguồn (`git log`, cần đủ lịch sử: workflow dùng `fetch-depth: 0`); trang tổng hợp lấy ngày mới nhất của các mục bên dưới; bài viết dùng ô *Ngày cập nhật*. Không có git (khung mô phỏng) → ngày build |
+| Tiêu đề | `Tiêu đề SEO \| Luật Sư Nam` khi tổng ≤ 60 ký tự, dài hơn thì bỏ đuôi; trang chủ: tên pháp nhân, quá dài thì dùng tên ngắn |
+| Dữ liệu có cấu trúc | `LegalService` (bản đồ, `contactPoint`, nhân sự), `WebSite` (tên site + tên khác), `Person` luật sư (một `@id` dùng chung, là `reviewedBy` của bài viết), `Service` (+ `subjectOf` bài viết của lĩnh vực), `Article`, `FAQPage` cho hỏi đáp ở trang lĩnh vực, bài viết, Câu hỏi thường gặp, `BreadcrumbList` |
+| Sitemap | Kèm ảnh chính của trang (sitemap ảnh của Google) |
+| RSS | `/kien-thuc-phap-ly/feed.xml`, mọi trang có `<link rel="alternate">` |
+| Liên kết nội bộ | Bài viết: mục *Đọc tiếp* xếp bài cùng lĩnh vực → lĩnh vực liên quan → mới hơn; trang lĩnh vực: bài thuộc đúng lĩnh vực lên trước |
+| URL Wix cũ | 301 trong `_redirects` (Cloudflare); site chạy trên tên miền riêng bằng GitHub Pages: thêm trang chuyển tiếp tức thì tại đúng URL cũ |
 Workflow đăng `dist/` lên nhánh `gh-pages`, nơi GitHub Pages đọc (Settings → Pages → *Deploy from a branch* → `gh-pages`, từ 16/10/2026);
 `main` chỉ chứa mã nguồn. Nếu Pages bị đổi về đọc gốc `main`, workflow chép thêm bản build vào gốc `main` (danh sách tệp: `.ban-build.txt`)
 và tự gỡ khi Pages đọc lại `gh-pages`. Chọn nhầm *Source: GitHub Actions* thì workflow báo lỗi qua issue/email.

@@ -14,12 +14,12 @@ Cột trái **tự xếp theo Menu chính**: đổi thứ tự menu ở *Cài đ
 
 | Trên website | Sửa ở cột trái |
 |---|---|
-| Trang chủ | **Trang chủ** – bấm là mở ngay |
+| Trang chủ | **Trang chủ** → **Mở để sửa** |
 | Giới thiệu ▾ (Về Luật Sư Nam, Vì sao chọn chúng tôi, Quy trình làm việc) | **Giới thiệu** → chọn 1 trong 3 trang |
 | Dịch vụ ▾ | **Dịch vụ** → dòng đầu (biểu tượng ngôi nhà) là trang tổng quan /dich-vu/ – nơi sửa **chữ và thứ tự 7 thẻ lĩnh vực** ([mục 12](#the-linh-vuc-va-thu-tu-hien-thi)); bên dưới là từng lĩnh vực |
 | Thư viện pháp lý ▾ → Bài viết pháp lý | **Bài viết pháp lý** → dòng đầu là trang danh sách bài, bên dưới là từng bài |
 | Thư viện pháp lý ▾ → Câu hỏi thường gặp | **Câu hỏi thường gặp** → phần chữ của trang, hoặc kho câu hỏi |
-| Liên hệ | **Liên hệ** – bấm là mở ngay |
+| Liên hệ | **Liên hệ** → **Mở để sửa** |
 | Chính sách bảo mật, Điều khoản, Miễn trừ (cuối chân trang), trang lỗi 404 | **Chính sách & 404** |
 | Trang mới tự tạo | **Trang tự tạo** (nhóm *Trang khác*) |
 | Hotline, địa chỉ, giờ làm việc, menu, chân trang, logo – hiện trên mọi trang | **Cài đặt chung** |

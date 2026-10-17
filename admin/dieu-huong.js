@@ -1,8 +1,8 @@
 /* Điều hướng trang quản trị (bổ sung cho Sveltia, không đổi dữ liệu):
    - Cột trái xếp theo đúng Menu chính của website (build sinh thứ tự mục trong config.yml và admin/cot-trai.json từ
      Cài đặt chung → Menu và chân trang): tiêu đề nhóm, mục thuộc một menu xổ thụt vào dưới tên menu xổ.
-   - Mục chỉ có một trang (Trang chủ, Liên hệ…): bấm là mở thẳng trình soạn, không qua danh sách một dòng. Nút ← của trình soạn
-     (và lần mở đầu tiên) vẫn về danh sách đó: dòng duy nhất hiện thành thẻ "Mở để sửa" (<html data-lsn-mot-tep>, CSS ở giao-dien.css).
+   - Mục chỉ có một trang (Trang chủ, Liên hệ…): bấm ở cột trái giống mọi mục khác – mở trang tổng quan của mục, dòng duy nhất
+     hiện thành thẻ "Mở để sửa" (<html data-lsn-mot-tep>, CSS ở giao-dien.css); bấm thẻ mới vào trình soạn.
    - Thanh trên cùng: Hướng dẫn, Lịch sử chỉnh sửa (mở tab mới, không mất phần đang soạn), Sáng / Tối (Sveltia giấu lựa chọn này
      trong Cài đặt của tài khoản). Khi đang soạn: Hướng dẫn + Sáng / Tối cạnh nút Lưu (Lịch sử của trang: admin/hoan-tac.js).
    - Tên trang trùng tên mục ("Trang chủ › Trang chủ"): đánh dấu để CSS chỉ hiện một lần.
@@ -17,7 +17,7 @@
     'Cài đặt chung': ['Dùng chung mọi trang', ''],
   };
   var INDENT = ['Bài viết pháp lý', 'Câu hỏi thường gặp'];
-  // Mục một tệp → mở thẳng tệp đó
+  // Mục một tệp (danh sách hiện thành thẻ "Mở để sửa")
   var SINGLE = { 'Trang chủ': 'trang_chu/entries/trang-chu', 'Liên hệ': 'lien_he/entries/lien-he' };
   fetch(new URL('cot-trai.json', location.href).href, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
@@ -56,14 +56,6 @@
       if (item) item.classList.add('lsn-mot-tep');
     });
   }
-
-  document.addEventListener('click', function (e) {
-    var item = e.target.closest && e.target.closest('nav.primary-sidebar [role=treeitem]');
-    var to = item && SINGLE[item.getAttribute('data-label')];
-    if (!to || e.ctrlKey || e.metaKey || e.shiftKey) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    location.hash = '#/collections/' + to;
-  }, true);
 
   // Danh sách của mục một trang (#/collections/trang_chu): đánh dấu <html> để CSS vẽ dòng duy nhất thành thẻ "Mở để sửa"
   function markSingleList() {

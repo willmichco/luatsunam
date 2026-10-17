@@ -920,6 +920,19 @@ def faq_page():
 # ---------------------------------------------------------------------------
 # Bài viết
 # ---------------------------------------------------------------------------
+def check_article_outline(a, html, toc):
+    """Khung bài chuẩn SEO (chỉ cảnh báo, hiện cả trong khung mô phỏng trước khi Lưu – không chặn đăng)."""
+    where = "Nội dung bài viết"
+    if len(toc) < 2:
+        LOI.canh(a["_src"], where, "Bài nên có ít nhất 2 mục “Tiêu đề 2” để có mục lục và để Google hiểu cấu trúc bài.")
+    first_h2, first_h3 = html.find("<h2"), html.find("<h3")
+    if first_h3 >= 0 and (first_h2 < 0 or first_h3 < first_h2):
+        LOI.canh(a["_src"], where, "Có “Tiêu đề 3” đứng trước mục “Tiêu đề 2” đầu tiên – mục nhỏ nên nằm dưới một mục chính.")
+    words = len(M.strip_tags(html).split())
+    if words < 500:
+        LOI.canh(a["_src"], where, f"Nội dung chính mới {words} từ – bài pháp lý nên từ 600 từ trở lên để trả lời đủ câu hỏi.")
+
+
 def article_page(a):
     path = f"kien-thuc-phap-ly/{a['slug']}/"
     r = root_of(path)
@@ -928,9 +941,36 @@ def article_page(a):
                                                     "lien_he": {}}
     tb = S.text.get("bai_viet") or {}
     tc = ctx.at(src="content/cai-dat/cau-chu.yml", where="Trang bài viết")
+    # Bố cục bài CỐ ĐỊNH, theo khuôn bài báo / trang pháp lý lớn và hướng dẫn của Google (tiêu đề → sapo → ảnh → tóm tắt →
+    # mục lục → nội dung H2/H3 → căn cứ pháp lý → hỏi đáp → luật sư tham vấn → lưu ý). Người soạn chỉ điền chữ, không xếp khối.
     toc_items = []
-    lead = f'<p class="prose__lead">{M.plain(a.get("doan_dan"), ctx.at(where="Đoạn dẫn đầu bài"))}</p>'
-    content_html = lead + "\n\n" + M.block(a.get("body"), ctx, toc=toc_items)
+    lead = f'<p class="prose__lead">{M.plain(a.get("doan_dan"), ctx.at(where="Sapo – đoạn dẫn đầu bài"))}</p>'
+    cover = ""
+    if a.get("anh_dai_dien"):
+        cap = M.plain(a.get("chu_thich_anh_dai_dien"), ctx.at(where="Chú thích dưới ảnh"))
+        img = tpl.upload_img(ctx, a["anh_dai_dien"], a.get("mo_ta_anh_dai_dien") or "",
+                             sizes="(max-width: 1000px) calc(100vw - 40px), 760px", lazy=False)
+        cover = f'<figure class="article-cover">{img}{f"<figcaption>{cap}</figcaption>" if cap else ""}</figure>'
+    main_html = M.block(a.get("body"), ctx, toc=toc_items)
+    content_html = lead + "\n\n" + main_html
+    check_article_outline(a, main_html, toc_items)
+    laws_html = ""
+    if a.get("can_cu"):
+        lc = ctx.at(where="Căn cứ pháp lý")
+        laws_html = (f'<section class="article-laws"><h2 id="can-cu-phap-ly">{ico("i-scale")}Căn cứ pháp lý</h2><ul>'
+                     + "".join(f"<li>{M.plain(x, lc)}</li>" for x in a["can_cu"])
+                     + '</ul></section>')
+        toc_items.append(("can-cu-phap-ly", "Căn cứ pháp lý"))
+    faq_html = ""
+    if a.get("hoi_dap"):
+        items = []
+        for i, q in enumerate(a["hoi_dap"], 1):
+            qc = ctx.at(where=f"Hỏi đáp nhanh › Câu {i}")
+            ans = re.sub(r">\n<", "><", M.block(q.get("dap"), qc).strip())
+            items.append(f'<details class="faq__item" id="hoi-dap-{i}"><summary><span>{M.plain(q.get("hoi"), qc)}</span>'
+                         f'{ico("i-chevron", "faq__chev")}</summary><div class="faq__answer">{ans}</div></details>')
+        faq_html = f'<section class="article-faq"><h2 id="hoi-dap-nhanh">Hỏi đáp nhanh</h2><div class="faq">{"".join(items)}</div></section>'
+        toc_items.append(("hoi-dap-nhanh", "Hỏi đáp nhanh"))
     toc = "".join(f'<li><a href="#{i}">{esc(t)}</a></li>' for i, t in toc_items)
     words = len(M.strip_tags(content_html).split())
     minutes = max(1, round(words / 220))
@@ -941,22 +981,39 @@ def article_page(a):
     points = "".join(f"<li>{M.plain(p, ctx)}</li>" for p in a.get("tom_tat_nhanh") or [])
     keypoints = f'<div class="keypoints"><p class="keypoints__title">{ico("i-list")}Tóm tắt nhanh</p><ul>{points}</ul></div>' if points else ""
     pub, mod = a["ngay_dang"], a["ngay_cap_nhat"]
+    lawyer, role = F()["lawyer"], F().get("lawyer_role") or ""
+    about = f"{r}gioi-thieu/"
     extra = f"""<p class="article-meta">
         <span>{ico("i-user")}{M.plain(tb.get("tac_gia"), tc)}</span>
+        <span>{ico("i-shield-check")}Tham vấn: <a href="{about}">{esc(lawyer)}</a></span>
         <span>{ico("i-calendar")}Đăng <time datetime="{pub}">{tpl.vi_date(pub)}</time></span>
         <span>{ico("i-clock")}Cập nhật <time datetime="{mod}">{tpl.vi_date(mod)}</time> · {minutes} phút đọc</span>
         <button class="share-btn" type="button" data-share>{ico("i-share")}Chia sẻ bài viết</button>
       </p>"""
+    author_box = f"""<div class="author-box">
+        <img src="{r}{asset_ref("assets/img/luat-su-avatar.webp")}" alt="{esc(lawyer)}" width="64" height="64" loading="lazy" decoding="async">
+        <div>
+          <p class="author-box__label">Luật sư tham vấn nội dung</p>
+          <p class="author-box__name"><a href="{about}">{esc(lawyer)}</a></p>
+          {f'<p class="author-box__role">{esc(role)}</p>' if role else ""}
+          <p class="author-box__note">Bài viết được luật sư rà soát trước khi đăng; cập nhật lần cuối ngày <time datetime="{mod}">{tpl.vi_date(mod)}</time>.</p>
+        </div>
+      </div>"""
     body = f"""
 <section class="section">
   <div class="container article-layout">
     <article class="prose" id="noi-dung-bai-viet">
+      {lead}
+      {cover}
+      {keypoints}
       <details class="toc-mobile">
         <summary>{ico("i-list")}<span>Mục lục bài viết</span><small>{len(toc_items)} mục</small>{ico("i-chevron", "toc-mobile__chev")}</summary>
         <ol class="toc">{toc}</ol>
       </details>
-      {keypoints}
-      {content_html}
+      <div class="article-body">{main_html}</div>
+      {laws_html}
+      {faq_html}
+      {author_box}
       <div class="article-disclaimer">
         {ico("i-alert", "note__icon")}
         <p>{M.inline(S.text.get("mien_tru_cuoi_bai"), tc.at(where="Lưu ý cuối mỗi bài viết"))}</p>
@@ -1006,11 +1063,16 @@ def article_page(a):
         "eyebrow": esc(svc["ten"]), "h1": esc(a["tieu_de"]),
         "crumbs": [HOME, ("Kiến thức pháp lý", "kien-thuc-phap-ly/"), (card_title, path)],
         "og_abs": og_abs, "og_size": og_size, "og_rel": og_rel, "hero": {"extra": extra}, "body": body,
+        # Luật sư rà soát nội dung (E-E-A-T – nội dung pháp lý): khớp dòng "Tham vấn" và khung cuối bài
+        "webpage_extra": {"reviewedBy": {"@type": "Person", "name": lawyer, **({"jobTitle": role} if role else {}),
+                                         "worksFor": {"@id": ORG_ID}, "url": abs_url("gioi-thieu/")}, "lastReviewed": mod},
         "cband": {"nhan": f"Tư vấn {svc['ten'].lower()}", "tieu_de": lh.get("tieu_de"), "doan_moi": lh.get("doan_moi")},
         "schema": [{
             "@type": "Article", "@id": url + "#article", "headline": a["tieu_de"], "description": seo.get("mo_ta", ""),
-            "image": og_abs, "datePublished": pub, "dateModified": mod, "inLanguage": "vi", "articleSection": svc["ten"],
+            "image": ([abs_url(a["anh_dai_dien"].lstrip("/"))] if a.get("anh_dai_dien") else []) + [og_abs],
+            "datePublished": pub, "dateModified": mod, "inLanguage": "vi", "articleSection": svc["ten"],
             "wordCount": words, "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
+            **({"citation": list(a["can_cu"])} if a.get("can_cu") else {}),
             "mainEntityOfPage": {"@id": url + "#webpage"},
             "about": {"@id": abs_url(f'dich-vu/{a["linh_vuc"]}/') + "#service"},
         }],

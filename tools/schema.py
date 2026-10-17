@@ -564,39 +564,69 @@ def data_collections():
                           {"name": "da-dang", "label": "Đã đăng", "field": "nhap", "ne": True}],
          "preview_path": "kien-thuc-phap-ly/{{slug}}/",
          "fields": [
-             nhom("ui_thong_tin", "Thông tin bài", "Tiêu đề, địa chỉ, chuyên mục, ngày đăng – hiện ở đầu bài.", phan="dau_trang"),
-             string("tieu_de", "Tiêu đề bài viết",
-                    "Hiện ở đầu bài. Ví dụ: Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con",
+             # Bố cục bài CỐ ĐỊNH (khuôn kiểu báo chí, chuẩn Google – build.article_page): các phần dưới đây đúng thứ tự trên bài.
+             nhom("ui_thong_tin", "Đầu bài", "Chuyên mục, tiêu đề (H1), ngày đăng / cập nhật – phần trên cùng của bài.", phan="dau_trang"),
+             string("tieu_de", "Tiêu đề bài viết (H1)",
+                    "Câu hỏi hoặc vấn đề người đọc tìm trên Google, có từ khóa chính ở đầu; 50–90 ký tự là đẹp. "
+                    "Ví dụ: Ly hôn đơn phương: căn cứ, hồ sơ và cách Tòa án xem xét quyền nuôi con",
                     minlength=20, maxlength=110),
              string("duong_dan", "Đường dẫn bài viết (đặt 1 lần)",
                     "2–8 từ khóa chính, không dấu, nối bằng gạch ngang. Ví dụ: hop-dong-dat-coc-mua-nha → địa chỉ bài là "
                     "/kien-thuc-phap-ly/hop-dong-dat-coc-mua-nha/. Sau khi lưu KHÔNG đổi được (đổi làm mất thứ hạng Google).",
                     maxlength=60, pattern=ARTICLE_SLUG_PATTERN),
+             relation_service("linh_vuc", "Lĩnh vực chính (chuyên mục)", "Hiện trên tiêu đề, làm khung “Cần luật sư về…” cạnh bài."),
+             date("ngay_dang", "Ngày đăng", default="{{now}}"),
+             date("ngay_cap_nhat", "Ngày cập nhật", "Ngày luật sư rà soát nội dung gần nhất (Google ưu tiên bài được cập nhật); "
+                  "không được trước ngày đăng. Để trống = ngày đăng.", required=False),
              boolean("nhap", "Bản nháp – chưa đăng lên site",
                      "Bài mới luôn là nháp. Chỉ bỏ dấu khi luật sư phụ trách đã duyệt bản xem trước tại /nhap/<đường-dẫn>/.",
                      default=True),
-             relation_service("linh_vuc", "Lĩnh vực chính", "Làm chuyên mục của bài và khung “Cần luật sư về…” cạnh bài."),
-             date("ngay_dang", "Ngày đăng", default="{{now}}"),
-             date("ngay_cap_nhat", "Ngày cập nhật", "Ngày rà soát nội dung gần nhất; không được trước ngày đăng. Để trống = ngày đăng.",
-                  required=False),
+             nhom("ui_sapo", "Sapo và ảnh đại diện", "Đoạn dẫn in đậm ngay dưới tiêu đề, rồi ảnh lớn của bài (nếu có).",
+                  phan="doan_dan"),
+             text("doan_dan", "Sapo – đoạn dẫn đầu bài",
+                  "2–4 câu: vấn đề là gì, bài trả lời điều gì. Google thường lấy đoạn này làm mô tả khi không có mô tả SEO.",
+                  minlength=80, maxlength=700),
+             image("anh_dai_dien", "Ảnh đại diện (tùy chọn)",
+                   "Ảnh ngang, rộng ≥ 1200 px (Google Discover, Facebook ưu tiên ảnh lớn). Để trống = bài không có ảnh đầu, "
+                   "ảnh chia sẻ tự tạo từ tiêu đề.", required=False),
+             string("mo_ta_anh_dai_dien", "Mô tả ảnh (alt)", "Bắt buộc khi có ảnh. Tả đúng nội dung ảnh, vd. Luật sư xem hợp đồng đặt cọc cùng khách hàng.",
+                    required=False, maxlength=160),
+             string("chu_thich_anh_dai_dien", "Chú thích dưới ảnh (tùy chọn)", "Chữ nhỏ dưới ảnh, vd. Ảnh minh họa.",
+                    required=False, maxlength=140),
+             nhom("ui_tom_tat_nhanh", "Tóm tắt nhanh", "Khung 3–4 ý chính ngay sau sapo – người đọc nắm câu trả lời trong 10 giây.",
+                  phan="tom_tat_nhanh"),
+             strings("tom_tat_nhanh", "Tóm tắt nhanh (3–4 ý)", "Mỗi ý một câu trả lời ngắn, ≤ 160 ký tự, có số liệu / điều luật nếu có.",
+                     min=3, max=4, maxlength=160, item_label="Ý"),
+             nhom("ui_noi_dung", "Nội dung chính", "Mục lục tự tạo từ các Tiêu đề 2.", phan="body"),
+             ghi_chu("ui_khung_bai", "Khung bài chuẩn: 4–8 mục, mỗi mục mở bằng “Tiêu đề 2” dạng câu hỏi hoặc ý chính (tự vào mục lục); "
+                                     "mục nhỏ dùng “Tiêu đề 3”. Mỗi khẳng định pháp lý kèm điều luật, in đậm tên điều luật. "
+                                     "Mục cuối nên là “Việc nên làm” / “Khi nào cần luật sư”. Không dùng Tiêu đề 1 (đã có tiêu đề bài)."),
+             editor("body", "Nội dung bài viết",
+                    "Nút ¶ → **Tiêu đề 2** cho mục chính, **Tiêu đề 3** cho mục nhỏ, **Trích dẫn** = hộp lưu ý. "
+                    "**Chèn → Ảnh** (bắt buộc mô tả ảnh), **Chèn → Bảng**. Liên kết trong site: /dich-vu/thua-ke/. "
+                    "Không hứa hẹn kết quả (Quy tắc 9.1.6)."),
+             nhom("ui_can_cu", "Căn cứ pháp lý", "Hộp liệt kê văn bản pháp luật bài viết dẫn – giúp người đọc và Google thấy bài có nguồn.",
+                  phan="can_cu"),
+             strings("can_cu", "Văn bản pháp luật được dẫn (tùy chọn)",
+                     "Mỗi dòng một văn bản, kèm điều khoản dùng trong bài. Ví dụ: Bộ luật Dân sự 2015: Điều 611, Điều 623",
+                     max=10, maxlength=160, item_label="Văn bản"),
+             nhom("ui_hoi_dap", "Hỏi đáp nhanh", "Các câu người đọc hay hỏi thêm, đặt cuối bài (dạng bấm mở).", phan="hoi_dap_bai"),
+             lst("hoi_dap", "Câu hỏi – trả lời (tùy chọn)", fields=[
+                 string("hoi", "Câu hỏi", "Viết như người dùng gõ trên Google, vd. Hết thời hiệu chia thừa kế thì có kiện được không?",
+                        maxlength=150),
+                 text("dap", "Trả lời", "2–4 câu, trả lời thẳng vào câu hỏi, kèm điều luật nếu có.", maxlength=700)],
+                 summary="{{fields.hoi}}", max=6, label_singular="câu hỏi"),
+             nhom("ui_cot_phai", "Cột phải của bài", "Mục lục, khung luật sư và lĩnh vực liên quan.", phan="linh_vuc_lien_quan"),
+             pick_list("linh_vuc_lien_quan", "Lĩnh vực liên quan (tối đa 3)", "services", "Lĩnh vực",
+                       "Để trống = chỉ lĩnh vực chính.", max=3, relation="dich_vu"),
              nhom("ui_the_bai", "Thẻ bài trong danh sách",
                   "Hiện ở trang Kiến thức pháp lý, khối “Bài viết mới nhất” (Trang chủ) và mục “Đọc thêm” của trang lĩnh vực."),
              string("tieu_de_ngan", "Tiêu đề ngắn trên thẻ bài viết", "Để trống = dùng tiêu đề bài viết.", required=False, maxlength=80),
              text("tom_tat", "Tóm tắt trên thẻ bài viết", "1–2 câu, hiện ở danh sách bài viết.", minlength=60, maxlength=220),
-             nhom("ui_noi_dung", "Nội dung bài", phan="tom_tat_nhanh"),
-             strings("tom_tat_nhanh", "Tóm tắt nhanh (3–4 ý)", "Khung “Tóm tắt nhanh” ở đầu bài. Mỗi ý ≤ 160 ký tự.",
-                     min=3, max=4, maxlength=160, item_label="Ý"),
-             text("doan_dan", "Đoạn dẫn đầu bài", "Đoạn mở đầu in to hơn, giới thiệu vấn đề.", minlength=80, maxlength=700),
-             editor("body", "Nội dung bài viết",
-                    "Nút ¶ → **Tiêu đề 2** cho mục chính (tự vào mục lục), **Tiêu đề 3** cho mục nhỏ, **Trích dẫn** = hộp lưu ý. "
-                    "**Chèn → Ảnh** (bắt buộc mô tả ảnh), **Chèn → Bảng**. Liên kết trong site: /dich-vu/thua-ke/. "
-                    "Khẳng định pháp lý luôn kèm điều luật; không hứa hẹn kết quả (Quy tắc 9.1.6)."),
-             nhom("ui_cot_phai", "Cột phải của bài", phan="linh_vuc_lien_quan"),
-             pick_list("linh_vuc_lien_quan", "Lĩnh vực liên quan (tối đa 3)", "services", "Lĩnh vực",
-                       "Để trống = chỉ lĩnh vực chính.", max=3, relation="dich_vu"),
+             nhom("ui_seo", "Hiển thị trên Google"),
              seo("Ly hôn đơn phương: căn cứ, hồ sơ, quyền nuôi con",
                  "Khi nào Tòa án giải quyết ly hôn theo yêu cầu của một bên, hồ sơ cần chuẩn bị và nguyên tắc giao con."),
-         ], "_rules": [_rule_dates]},
+         ], "_rules": [_rule_dates, _rule_cover]},
         {"name": "dich_vu", "label": "Lĩnh vực dịch vụ", "label_singular": "lĩnh vực", "icon": "balance",
          "description": "Mỗi lĩnh vực có trang /dich-vu/<đường-dẫn>/, thẻ ở trang chủ, menu và chân trang. Bấm “Sắp xếp lại” để kéo đổi thứ tự.",
          "folder": "content/dich-vu", "extension": "yml", "format": "yml",
@@ -1009,6 +1039,11 @@ def fields_for_path(rel):
         if c.get("folder") and rel.startswith(c["folder"] + "/") and not rel.rsplit("/", 1)[-1].startswith("_"):
             return c["fields"]
     return []
+
+def _rule_cover(v, add):
+    if v.get("anh_dai_dien") and not (v.get("mo_ta_anh_dai_dien") or "").strip():
+        add("Ảnh đại diện phải có “Mô tả ảnh (alt)”.")
+
 
 def _rule_dates(v, add):
     a, b = v.get("ngay_dang"), v.get("ngay_cap_nhat")

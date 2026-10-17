@@ -72,6 +72,20 @@ Nếu nội dung đang có lỗi, khung đỏ phía trên liệt kê từng lỗ
 
 Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
+**Bố cục bài cố định** (theo khuôn các trang báo, trang pháp lý lớn và hướng dẫn của Google) – form xếp đúng thứ tự trên bài, chỉ cần điền:
+
+| # | Phần trên bài | Ô trong form |
+|---|---|---|
+| 1 | Chuyên mục, tiêu đề (H1), tác giả, **luật sư tham vấn**, ngày đăng / cập nhật, thời gian đọc | Đầu bài |
+| 2 | Sapo in đậm, ảnh đại diện + chú thích (nếu có) | Sapo và ảnh đại diện |
+| 3 | Khung **Tóm tắt nhanh** 3–4 ý | Tóm tắt nhanh |
+| 4 | Mục lục (tự tạo) + nội dung, mỗi mục một *Tiêu đề 2* | Nội dung chính |
+| 5 | Hộp **Căn cứ pháp lý** (tự vào mục lục) | Căn cứ pháp lý – tùy chọn |
+| 6 | **Hỏi đáp nhanh** dạng bấm mở (tự vào mục lục) | Hỏi đáp nhanh – tùy chọn |
+| 7 | Khung luật sư tham vấn, lưu ý pháp lý, bài đọc thêm | Tự động |
+
+Khung mô phỏng nhắc (không chặn Lưu) khi bài có dưới 2 mục *Tiêu đề 2*, có *Tiêu đề 3* đứng trước mục chính đầu tiên, hoặc nội dung chính dưới 500 từ.
+
 1. **Bài viết pháp lý** → **Tạo mới** (1).
 
    ![Danh sách bài viết, nút Tạo mới](dang-bai-1.webp)
@@ -80,7 +94,7 @@ Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
    ![Phần đầu form bài viết](dang-bai-2.webp)
 
-3. Điền **Tóm tắt trên thẻ**, 3–4 ý **Tóm tắt nhanh** (bấm *+ Thêm ý*), **Đoạn dẫn đầu bài**.
+3. Điền **Sapo** (đoạn dẫn), ảnh đại diện nếu có (kèm **Mô tả ảnh**, bắt buộc), 3–4 ý **Tóm tắt nhanh** (bấm *+ Thêm ý*). Cuối form: **Căn cứ pháp lý** (mỗi dòng một văn bản kèm điều khoản, vd. *Bộ luật Dân sự 2015: Điều 611, Điều 623*), **Hỏi đáp nhanh**, **Tóm tắt trên thẻ**.
 4. **Nội dung bài viết**: dán thân bài. Nút **¶** (1) → *Tiêu đề 2* cho mục chính (tự vào mục lục), *Tiêu đề 3* cho mục nhỏ, *Trích dẫn* = hộp lưu ý. Nút **Chèn** (2) → **Ảnh** hoặc **Bảng**.
 
    ![Thanh công cụ khung soạn thảo](dang-bai-3.webp)
@@ -113,7 +127,7 @@ không đổi ẩn/hiện, màu nền, số cột, cách trình bày – để k
 
 - Sửa chữ trong một khối: ở cột trái chọn trang → mục **Các khối trên trang** → bấm khối để mở → sửa → **Lưu**. Mẹo: bấm **☰ Các phần** ở khung mô phỏng rồi bấm thẳng vào khối.
 - Cần thêm / bớt / đổi chỗ khối, đổi màu nền: báo quản trị.
-- Mục **Bài viết pháp lý** giữ nguyên như cũ.
+- Mục **Bài viết pháp lý** cũng có bố cục cố định ([mục 3](#dang-bai)): chỉ điền chữ, ảnh.
 
 > **Lỡ sửa nhầm (chưa lưu):** nút **↶ Hoàn tác** trên ô đó, hoặc **↶ Hoàn tác tất cả** ở thanh trên cùng. Đã lưu rồi: [Lịch sử chỉnh sửa](#hoan-tac-va-lich-su-chinh-sua).
 

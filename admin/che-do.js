@@ -13,7 +13,7 @@
 (function () {
   'use strict';
   var KEY = 'lsn-che-do';
-  var GIU_BO_CUC = ['bai_viet']; // mục (collection) còn nút Sửa chữ / Sửa bố cục; mục khác luôn Sửa chữ
+  var GIU_BO_CUC = []; // mục (collection) còn nút Sửa chữ / Sửa bố cục; trống = mọi mục luôn Sửa chữ (Bài viết: bố cục cố định từ 17/10/2026)
   var root = document.documentElement;
   var LAYOUT = [];
   var style = document.createElement('style');

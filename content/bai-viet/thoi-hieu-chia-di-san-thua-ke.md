@@ -13,6 +13,8 @@ tom_tat_nhanh:
   - Hết thời hiệu, di sản thuộc về người thừa kế đang quản lý di sản đó.
   - Tòa án chỉ áp dụng thời hiệu khi có bên yêu cầu trước khi cấp sơ thẩm ra bản án, quyết định.
 doan_dan: Nhiều gia đình để di sản “chung chung” hàng chục năm rồi mới tính chuyện phân chia. Đến lúc đó, câu hỏi đầu tiên luật sư phải trả lời thường không phải “ai được hưởng bao nhiêu” mà là “còn thời hiệu để yêu cầu chia hay không”. Bài viết tóm tắt các mốc thời hiệu thừa kế theo Bộ luật Dân sự 2015 và những việc nên làm sớm.
+can_cu:
+  - 'Bộ luật Dân sự 2015: Điều 149, Điều 611, Điều 623'
 linh_vuc_lien_quan:
   - thua-ke
   - cong-chung

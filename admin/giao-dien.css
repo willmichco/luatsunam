@@ -240,3 +240,14 @@ section.field[data-field-type="lsn_nhom"]:not([data-key-path*="."]) { padding-in
   font: 600 12.5px/1 var(--lsn-phong); cursor: pointer; opacity: 1 !important; /* Sveltia làm mờ nút ở đầu ô khi chuột không rê vào ô: nút này luôn hiện */ }
 .lsn-hoan-tac .icon { font-size: 16px; }
 .lsn-hoan-tac:hover, .lsn-hoan-tac:focus-visible { border-color: var(--lsn-do); background: var(--lsn-do); color: var(--lsn-tren-do); }
+
+/* ---------- Ô chọn "Biểu tượng" (admin/bieu-tuong.js): hình biểu tượng cạnh tên ----------
+   Hình (mặt nạ SVG theo từng mã) do build sinh; ở đây chỉ đặt cỡ, khung, màu. */
+[role=option][data-value^="i-"]::before, [role=combobox][data-lsn-bt]::before {
+  content: ""; flex: none; width: 22px; height: 22px; margin-inline-end: 12px; background-color: currentColor;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain; }
+[role=option][data-value^="i-"] { display: flex; align-items: center; }
+[role=option][data-value^="i-"]::before { color: var(--lsn-do-chu); }
+[role=combobox][data-lsn-bt] { display: flex; align-items: center; }
+[role=combobox][data-lsn-bt]::before { margin-inline-start: 10px; margin-inline-end: 2px; color: var(--lsn-do-chu); }

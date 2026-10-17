@@ -920,6 +920,21 @@ def faq_page():
 # ---------------------------------------------------------------------------
 # Bài viết
 # ---------------------------------------------------------------------------
+def icon_picker():
+    """Hình biểu tượng cho ô chọn "Biểu tượng" trong /admin: CSS (mặt nạ SVG, theo màu chữ) + bảng tên → mã."""
+    from urllib.parse import quote
+    symbols = {m[0]: (m[1], m[2]) for m in re.findall(r'<symbol id="([^"]+)" (viewBox="[^"]+")>(.*?)</symbol>', SPRITE, re.S)}
+    css = []
+    for key, _ in schema.ICONS:
+        if key not in symbols:
+            continue
+        vb, inner = symbols[key]
+        svg = f'<svg xmlns="http://www.w3.org/2000/svg" {vb} color="black">{inner}</svg>'
+        url = "url(\"data:image/svg+xml," + quote(svg, safe=" =:/,") + "\")"
+        css.append(f'[role=option][data-value="{key}"]::before, [data-lsn-bt="{key}"]::before {{ -webkit-mask-image: {url}; mask-image: {url}; }}')
+    return {"css": "\n".join(css), "nhan": {label: key for key, label in schema.ICONS}}
+
+
 def check_article_outline(a, html, toc):
     """Khung bài chuẩn SEO (chỉ cảnh báo, hiện cả trong khung mô phỏng trước khi Lưu – không chặn đăng)."""
     where = "Nội dung bài viết"
@@ -1402,6 +1417,8 @@ def write_extras(out, pages, rendered):
         write(out, "admin/cot-trai.json", json.dumps(schema.sidebar_decor(schema.collections()), ensure_ascii=False))
         # Chế độ Sửa chữ / Sửa bố cục: trường bố cục giấu khi Sửa chữ (admin/che-do.js đọc tệp này)
         write(out, "admin/bo-cuc.json", json.dumps({"o": schema.bo_cuc_paths(schema.collections())}, ensure_ascii=False))
+        # Ô chọn biểu tượng: hình của từng biểu tượng cạnh tên (admin/bieu-tuong.js đọc tệp này), vẽ từ đúng bộ biểu tượng của site
+        write(out, "admin/bieu-tuong.json", json.dumps(icon_picker(), ensure_ascii=False))
         huong_dan.build(out, ENV["site_url"])  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
         # /admin/xem-truoc/goi.zip: code build + nội dung cho khung mô phỏng (chạy trong trình duyệt)
         import goi_xem_truoc

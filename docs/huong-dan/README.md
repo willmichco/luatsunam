@@ -108,31 +108,18 @@ Khoảng 15 phút, chưa tính thời gian luật sư duyệt.
 
 ## 4. Thêm khối
 
-Thêm, xóa, đổi thứ tự, tạm ẩn các phần (section) của một trang – khoảng 5 phút.
+**Bố cục trang đã khóa:** trang quản trị chỉ cho sửa **chữ, ảnh, liên kết** bên trong từng khối. Không thêm, xóa, kéo đổi thứ tự khối;
+không đổi ẩn/hiện, màu nền, số cột, cách trình bày – để không ai bấm nhầm làm lệch trang. (Thẻ, bước, câu hỏi… *bên trong* một khối vẫn thêm, xóa được: đó là nội dung.)
 
-> **Hai chế độ soạn** (nút trên thanh trên cùng, cạnh nút Sáng/Tối – trang quản trị nhớ lựa chọn):
-> - **Sửa chữ** (mặc định): chỉ sửa chữ, ảnh, liên kết. Không có nút thêm, xóa, kéo khối – khó bấm nhầm làm lệch trang.
-> - **Sửa bố cục**: chỉ thêm, xóa, kéo đổi thứ tự khối; bấm một khối để ẩn/hiện, đổi màu nền, số cột, cách trình bày.
->
-> Bấm vào một chỗ trên khung mô phỏng mà ô đó thuộc chế độ kia: trang quản trị tự chuyển chế độ. Ô đang báo lỗi luôn hiện ở cả
-> hai chế độ. Thêm khối mới ở Sửa bố cục rồi chuyển sang Sửa chữ để điền chữ. Hai chế độ chỉ khác cách hiện form, nội dung lưu ra y hệt.
+- Sửa chữ trong một khối: ở cột trái chọn trang → mục **Các khối trên trang** → bấm khối để mở → sửa → **Lưu**. Mẹo: bấm **☰ Các phần** ở khung mô phỏng rồi bấm thẳng vào khối.
+- Cần thêm / bớt / đổi chỗ khối, đổi màu nền: báo quản trị.
+- Mục **Bài viết pháp lý** giữ nguyên như cũ.
 
-1. Bấm **Sửa bố cục** ở thanh trên cùng. Ở cột trái chọn trang (ví dụ **Trang chủ**, hoặc **Giới thiệu** → *Vì sao chọn chúng tôi*) → mục **Các khối trên trang**. Mẹo: bấm **☰ Các phần** ở khung mô phỏng rồi bấm thẳng vào khối muốn sửa.
-2. Giữ chuột vào **═** (1) rồi kéo để đổi thứ tự. **×** (2) để xóa khối. **Thêm khối** (3) → chọn loại khối → điền nội dung.
-
-   ![Danh sách khối trên Trang chủ](them-khoi-1.webp)
-
-   ![Các loại khối có thể thêm](them-khoi-2.webp "15 loại khối có sẵn")
-
-3. Muốn tạm ẩn, **đừng xóa**: bấm vào khối để mở → tắt **Hiển thị khối này** (1).
-
-   ![Công tắc Hiển thị khối này](them-khoi-3.webp)
-
-4. **Lưu** → kiểm tra trên site sau 1–3 phút, cả trên điện thoại.
-
-> **Lỡ xóa hoặc sửa nhầm (chưa lưu):** nút **⋮** góc phải trên → **Hoàn tác tất cả thay đổi**. Đã lưu rồi: báo quản trị (mọi lần lưu đều có lịch sử, lấy lại được).
+> **Lỡ sửa nhầm (chưa lưu):** nút **↶ Hoàn tác** trên ô đó, hoặc **↶ Hoàn tác tất cả** ở thanh trên cùng. Đã lưu rồi: [Lịch sử chỉnh sửa](#hoan-tac-va-lich-su-chinh-sua).
 
 ## 5. Tạo trang
+
+> **Tạm khóa:** trang mới cần thêm khối, mà bố cục đang khóa ([mục 4](#them-khoi)) → hiện **không tạo trang mới được trong trang quản trị**. Cần trang mới: báo quản trị. Các bước dưới đây dùng khi bố cục được mở lại.
 
 Khoảng 20 phút.
 

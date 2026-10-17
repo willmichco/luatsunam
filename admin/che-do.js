@@ -6,10 +6,14 @@
    nút chuyển, hiện đủ. Bấm trên trang mô phỏng vào chỗ thuộc chế độ kia: tự chuyển chế độ (xem-truoc.js gọi LSN_HIEN_O).
    Trường nào là bố cục: đánh dấu bo_cuc() trong tools/schema.py → build ghi admin/bo-cuc.json (đường dẫn dạng
    data-typed-key-path của Sveltia). Chưa tải được tệp đó thì không giấu gì.
+   KHÓA (17/10/2026, theo yêu cầu chủ site): mọi mục chỉ có "Sửa chữ" – không có nút chuyển, không vào được "Sửa bố cục"
+   (không thêm / xóa / kéo khối, không đổi ẩn-hiện, màu nền, số cột…). Mục nào còn được chuyển chế độ: GIU_BO_CUC bên dưới
+   (Bài viết pháp lý – hiện chưa có trường bố cục nên không có nút; giữ nguyên như cũ). Mở lại cho mục khác: thêm tên mục vào GIU_BO_CUC.
    Dựa vào giao diện Sveltia 0.221.8 (section.field[data-typed-key-path], .item-wrapper, .drag-handle): nâng cấp Sveltia phải thử lại. */
 (function () {
   'use strict';
   var KEY = 'lsn-che-do';
+  var GIU_BO_CUC = ['bai_viet']; // mục (collection) còn nút Sửa chữ / Sửa bố cục; mục khác luôn Sửa chữ
   var root = document.documentElement;
   var LAYOUT = [];
   var style = document.createElement('style');
@@ -21,12 +25,15 @@
   }
   var mode = saved();
   function editing() { return /^#\/collections\/[^/]+\/(entries\/|new)/.test(location.hash); }
+  function collection() { var m = location.hash.match(/^#\/collections\/([^/?#]+)/); return m ? decodeURIComponent(m[1]) : ''; }
+  function locked() { return GIU_BO_CUC.indexOf(collection()) < 0; }
+  function current() { return locked() ? 'chu' : mode; } // chế độ đang dùng cho form này
   function hasLayout() {
     return !!LAYOUT.length && !!document.querySelector('section.field[data-key-path="cac_khoi"], ' + LAYOUT.map(sel).join(','));
   }
   // Thuộc tính trên <html>: "chu" | "bo-cuc" khi form này có trường bố cục; bỏ đi (hiện đủ) với form khác
   function paintRoot() {
-    var v = editing() && hasLayout() ? mode : null;
+    var v = editing() && hasLayout() ? current() : null;
     if (root.getAttribute('data-lsn-che-do') !== v) {
       if (v) root.setAttribute('data-lsn-che-do', v); else root.removeAttribute('data-lsn-che-do');
     }
@@ -73,9 +80,9 @@
   // Khung mô phỏng nhảy tới một ô đang bị giấu vì thuộc chế độ kia: chuyển chế độ (trả về true nếu đã chuyển)
   window.LSN_HIEN_O = function (el) {
     var f = el && el.closest && el.closest('section.field[data-typed-key-path]');
-    if (!f || !root.hasAttribute('data-lsn-che-do')) return false;
+    if (!f || !root.hasAttribute('data-lsn-che-do') || locked()) return false; // đã khóa Sửa chữ: không tự chuyển
     var want = isLayout(f.getAttribute('data-typed-key-path')) ? 'bo-cuc' : 'chu';
-    if (want === mode) return false;
+    if (want === current()) return false;
     setMode(want);
     return true;
   };
@@ -84,7 +91,7 @@
   function placeSwitch() {
     var sw = document.getElementById('lsn-che-do');
     var save = document.querySelector('button[aria-keyshortcuts$="+S"]');
-    if (!editing() || !save || !hasLayout()) { if (sw) sw.remove(); return; }
+    if (!editing() || !save || !hasLayout() || locked()) { if (sw) sw.remove(); return; }
     var saveEl = save.parentElement && /wrapper/.test(save.parentElement.className) ? save.parentElement : save;
     var theme = document.getElementById('lsn-sang-toi');
     var anchor = theme && theme.parentNode === saveEl.parentNode ? theme : saveEl; // thứ tự: [chế độ][Sáng/Tối][Lưu]
@@ -106,7 +113,7 @@
     }
     if (sw.nextElementSibling !== anchor) anchor.parentNode.insertBefore(sw, anchor);
     [].forEach.call(sw.children, function (b) {
-      var on = String(b.getAttribute('data-che-do') === mode);
+      var on = String(b.getAttribute('data-che-do') === current());
       if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on); // không đổi thì không chạm DOM (tránh vòng lặp observer)
     });
   }

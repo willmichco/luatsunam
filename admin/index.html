@@ -159,7 +159,7 @@
     border-radius: 8px; background: hsl(45 90% 95%); color: hsl(35 60% 22%); font-size: 13px; line-height: 1.45; }
   :root[data-theme="dark"][data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
   :root[data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before {
-    content: "Sửa chữ: bấm một khối để sửa chữ, ảnh, liên kết. Thêm, xóa, đổi thứ tự, ẩn khối, màu nền… → bấm “Sửa bố cục” ở thanh trên cùng."; }
+    content: "Bấm một khối để sửa chữ, ảnh, liên kết bên trong. Bố cục trang (thêm, xóa, đổi thứ tự, ẩn khối, màu nền…) đã khóa để tránh lệch trang."; }
   :root[data-lsn-che-do="bo-cuc"] section.field[data-key-path="cac_khoi"]::before {
     content: "Sửa bố cục: kéo ═ để đổi thứ tự, × để xóa, “Thêm khối” ở cuối; bấm một khối để ẩn/hiện, đổi màu nền, số cột… Sửa chữ → bấm “Sửa chữ”."; }
   #lsn-sang-toi { display: inline-flex; align-items: center; gap: 5px; height: 32px; margin-inline-end: 6px; padding: 0 12px 0 9px;
@@ -286,7 +286,7 @@
 <script src="xem-truoc.js"></script>
 <!-- Cột trái theo menu website, mở thẳng trang một tệp, nút Sáng / Tối -->
 <script src="dieu-huong.js"></script>
-<!-- Chế độ Sửa chữ (mặc định, form gọn) / Sửa bố cục (hiện đủ): chỉ đổi cách hiện form, không đổi dữ liệu -->
+<!-- Chế độ soạn: mọi mục khóa ở Sửa chữ (chữ, ảnh, liên kết); Sửa bố cục chỉ còn ở mục ghi trong GIU_BO_CUC. Chỉ đổi cách hiện form, không đổi dữ liệu -->
 <script src="che-do.js"></script>
 <!-- Nút "↶ Hoàn tác" trên ô vừa sửa, "Hoàn tác tất cả" và "Lịch sử" trên thanh trình soạn -->
 <script src="hoan-tac.js"></script>

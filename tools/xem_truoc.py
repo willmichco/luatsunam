@@ -129,6 +129,7 @@ def patch():
     _wrap(tpl, "contact_band", "lien_he_cuoi_trang", "Khối liên hệ cuối trang")
     tpl.cms = cms_mark
     build.file_hash = lambda rel: SNAP["hash"].get(rel, "xem-truoc")
+    build.TRIM = False  # khung mô phỏng giữ <head> giữa các lần gõ: nhúng đủ CSS, biểu tượng
 
 
 class NoImages:

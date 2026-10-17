@@ -72,7 +72,7 @@ def save_webp(im, path, width=None, quality=82):
     im.save(path, "WEBP", quality=quality, method=6)
 
 
-def save_avif(im, path, width=None, quality=56):
+def save_avif(im, path, width=None, quality=48):  # 48: nhẹ hơn 56 khoảng 25%, nhìn không khác (ảnh LCP trang chủ 68 → 51 KB)
     if width and im.width > width:
         im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
     im.save(path, "AVIF", quality=quality, speed=4)
@@ -237,17 +237,20 @@ class Images:
         return self._loaded
 
     def brand(self):
-        key = "brand-" + _hash(self.src["logo"], self.src["van-phong"], self.src["phien-toa"], list(self.face))
+        key = "brand-v2-" + _hash(self.src["logo"], self.src["van-phong"], self.src["phien-toa"], list(self.face))
 
         def build(d):
             im = self._load()
             logo = im["logo"]
             fit(logo, 160).save(os.path.join(d, "logo-lsn.webp"), "WEBP", quality=90, method=6)
             fit(logo, 108).save(os.path.join(d, "logo-lsn-108.webp"), "WEBP", quality=90, method=6)
-            fit(logo, 32).save(os.path.join(d, "favicon-32.png"), optimize=True)
+            # Biểu tượng trình duyệt tải ở mọi trang: bảng 256 màu (favicon 2,9 → 1,8 KB; apple-touch-icon 30 → 14 KB,
+            # nhìn không khác). icon-192/512 (logo cho Google, cài lên màn hình) giữ đủ màu: giảm màu làm loang dải chuyển màu
+            fit(logo, 32).quantize(256, method=Image.Quantize.FASTOCTREE).save(os.path.join(d, "favicon-32.png"), optimize=True)
             fit(logo, 192, .04).save(os.path.join(d, "icon-192.png"), optimize=True)
             fit(logo, 512, .04).save(os.path.join(d, "icon-512.png"), optimize=True)
-            fit(logo, 180, .08, (255, 255, 255, 255)).convert("RGB").save(os.path.join(d, "apple-touch-icon.png"), optimize=True)
+            fit(logo, 180, .08, (255, 255, 255, 255)).convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE) \
+                .save(os.path.join(d, "apple-touch-icon.png"), optimize=True)
             for name in ("van-phong", "phien-toa"):
                 for w in PHOTO_WIDTHS:
                     suffix = f"-{w}" if w else ""

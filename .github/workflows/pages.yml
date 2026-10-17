@@ -4,6 +4,8 @@ name: Build và đăng website (GitHub Pages)
 # Build lỗi: KHÔNG đăng (site giữ bản cũ) và mở issue "Build lỗi" kèm lỗi tiếng Việt → GitHub gửi email cho quản trị.
 # Sau khi chuyển sang tên miền riêng (GĐ5): đặt biến repo CHUYEN_HUONG_TOI = https://<tên miền> → github.io chỉ còn trang
 # chuyển hướng từng URL cũ sang tên miền (site thật do Cloudflare build); workflow vẫn build để kiểm lỗi và báo email.
+# Cầu nối khi tên miền còn ở nhà đăng ký không đổi được nameserver (Wix): đặt biến repo SITE_URL = https://<tên miền>
+# → GitHub Pages phục vụ site trên tên miền đó (tệp CNAME), github.io/luatsunam/… tự chuyển 301 sang tên miền.
 on:
   push:
     branches: [main]
@@ -43,12 +45,15 @@ jobs:
       - name: Build website
         env:
           BUILD_ERRORS_FILE: build-errors.md
+          SITE_URL: ${{ vars.SITE_URL }}
           CMS_OAUTH_URL: ${{ vars.CMS_OAUTH_URL }}
           CMS_ADMIN: ${{ vars.CMS_ADMIN }}
         run: python3 tools/build.py
 
       - name: Kiểm canonical, sitemap, liên kết nội bộ
         shell: bash  # bật pipefail: bước kiểm lỗi thì dừng, không đăng
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
         run: python3 tools/kiem_tra.py | tee -a "$GITHUB_STEP_SUMMARY"
 
       # Biến repo CHUYEN_HUONG_TOI (Settings → Secrets and variables → Actions → Variables): GĐ5, đã chuyển sang tên miền riêng
@@ -56,7 +61,19 @@ jobs:
         id: dang
         env:
           CHUYEN_HUONG_TOI: ${{ vars.CHUYEN_HUONG_TOI }}
+          SITE_URL: ${{ vars.SITE_URL }}
         run: |
+          if [ -n "$SITE_URL" ]; then
+            # Tên miền riêng trên GitHub Pages: tệp CNAME = tên máy chủ của SITE_URL (vd. www.luatsunam.com)
+            if [ -n "$CHUYEN_HUONG_TOI" ]; then
+              echo "Biến repo SITE_URL và CHUYEN_HUONG_TOI không đặt cùng lúc: GitHub Pages hoặc chạy site trên tên miền, hoặc chỉ chuyển hướng." | tee build-errors.md; exit 1
+            fi
+            host=$(printf '%s' "$SITE_URL" | sed -E 's#^https://([a-z0-9.-]+)/?$#\1#')
+            if [ "$host" = "$SITE_URL" ]; then
+              echo "Biến repo SITE_URL “$SITE_URL” chưa đúng dạng https://www.tenmien.com (https, không có thư mục con)." | tee build-errors.md; exit 1
+            fi
+            echo "cname=$host" >> "$GITHUB_OUTPUT"
+          fi
           if [ -z "$CHUYEN_HUONG_TOI" ]; then
             echo "dir=dist" >> "$GITHUB_OUTPUT"; echo "nhan=website" >> "$GITHUB_OUTPUT"; exit 0
           fi
@@ -85,6 +102,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./${{ steps.dang.outputs.dir }}
           force_orphan: true
+          cname: ${{ steps.dang.outputs.cname }}
           commit_message: "Đăng ${{ steps.dang.outputs.nhan }} từ ${{ github.sha }}"
 
       # Pages đã đọc gh-pages: gỡ bản build cũ còn ở gốc main (1 lần, khi còn .ban-build.txt) để main chỉ còn mã nguồn.

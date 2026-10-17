@@ -110,8 +110,15 @@ nav.primary-sidebar [role=treeitem].lsn-con { margin-inline-start: 18px; padding
 nav.primary-sidebar [role=treeitem][aria-selected="true"] > .row > .icon { color: var(--lsn-do-chu); }
 
 /* ---------- Danh sách của mục ---------- */
-/* Mô tả của mục (dòng chữ cạnh tên mục ở trên danh sách): hiện đủ 2 dòng thay vì cắt ngang */
-[role=toolbar][aria-label="Chuyên mục"] .description .truncated-text { -webkit-line-clamp: 2 !important; }
+/* Đầu danh sách: hàng 1 = tên mục (trái) + nút Xóa / Tạo mới (phải); hàng 2 = mô tả của mục, rộng hết khung, tối đa 2 dòng.
+   (Sveltia nhét mô tả dài giữa tên và nút → chữ bị ép, xuống dòng lệch so với tên mục.) */
+[role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) { flex-wrap: wrap; align-items: center; row-gap: 2px;
+  height: auto !important; min-height: 56px; padding-block: 10px 12px !important; }
+[role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) > .inner > h2 { margin-inline-end: auto; }
+[role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) > .inner > .description { order: 10; flex: 0 0 100%; height: auto;
+  padding: 0 12px; font-size: 13.5px; line-height: 1.5; color: var(--lsn-chu-phu); }
+[role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) .description .truncated-text { -webkit-line-clamp: 2 !important; }
+[role=toolbar]:is([aria-label="Chuyên mục"], [aria-label="Collection"]) .description a { white-space: nowrap; } /* liên kết không gãy giữa chữ */
 /* Mục chỉ có một trang (Trang chủ, Liên hệ): nút ← của trình soạn và lần mở đầu tiên đưa về đây – thay dòng trơ trọi bằng thẻ mở trang */
 :root[data-lsn-mot-tep] .list-view [role=grid] { display: block; max-width: 760px; margin: 12px 0; }
 :root[data-lsn-mot-tep] .list-view [role=row] { display: flex; align-items: center; gap: 14px; height: auto; min-height: 76px; padding: 14px 18px;

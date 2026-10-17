@@ -1313,9 +1313,21 @@ def write_extras(out, pages, rendered):
     if ENV["admin"]:
         import yaml
         os.makedirs(os.path.join(out, "admin"), exist_ok=True)
-        for name in sorted(os.listdir(os.path.join(ROOT, "admin"))):  # index.html + khung mô phỏng (xem-truoc*.js)
-            if name.endswith((".html", ".js", ".css")):
-                shutil.copy2(os.path.join(ROOT, "admin", name), os.path.join(out, "admin", name))
+        names = [n for n in sorted(os.listdir(os.path.join(ROOT, "admin"))) if n.endswith((".html", ".js", ".css"))]
+        for name in names:  # index.html + khung mô phỏng (xem-truoc*.js)
+            shutil.copy2(os.path.join(ROOT, "admin", name), os.path.join(out, "admin", name))
+        # Trang .html gọi .js/.css kèm ?v=<mã nội dung>: sửa giao diện xong, trình duyệt lấy ngay bản mới
+        # (không lẫn tệp JS cũ còn trong bộ nhớ đệm với CSS mới → nút, bố cục lệch)
+        for name in names:
+            if name.endswith(".html"):
+                path = os.path.join(out, "admin", name)
+                with open(path, encoding="utf-8") as f:
+                    html = f.read()
+                for ref in names:
+                    if ref.endswith((".js", ".css")):
+                        html = html.replace(f'"{ref}"', f'"{ref}?v={file_hash("admin/" + ref)}"')
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(html)
         cfg = schema.cms_config(cms_options(), ENV)
         header = ("# TỆP TỰ SINH từ tools/schema.py mỗi lần build – không sửa tay.\n"
                   "# Thêm/sửa trường: sửa tools/schema.py rồi build lại.\n")

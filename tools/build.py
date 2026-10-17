@@ -1419,6 +1419,9 @@ def write_extras(out, pages, rendered):
         write(out, "admin/bo-cuc.json", json.dumps({"o": schema.bo_cuc_paths(schema.collections())}, ensure_ascii=False))
         # Ô chọn biểu tượng: hình của từng biểu tượng cạnh tên (admin/bieu-tuong.js đọc tệp này), vẽ từ đúng bộ biểu tượng của site
         write(out, "admin/bieu-tuong.json", json.dumps(icon_picker(), ensure_ascii=False))
+        # Dòng tóm tắt khối trong form: mã chèn {{luat_su}}… hiện bằng chữ thật (admin/bieu-mau.js đọc tệp này); bỏ mã dạng liên kết
+        write(out, "admin/ma-chen.json", json.dumps({k: v for k, v in S.tokens.items() if k not in ("tel", "zalo", "mailto")},
+                                                     ensure_ascii=False))
         huong_dan.build(out, ENV["site_url"])  # /admin/huong-dan/: hướng dẫn có ảnh chụp, dựng từ docs/huong-dan/README.md
         # /admin/xem-truoc/goi.zip: code build + nội dung cho khung mô phỏng (chạy trong trình duyệt)
         import goi_xem_truoc

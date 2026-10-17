@@ -24,7 +24,13 @@
       hover: '#2d2525', active: '#3b1c1e', ok: '#7bc47f', wait: '#e0a92e', link: '#ff3342' },
   };
   var themeSubs = [];
-  function pal() { return PALETTE[document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light']; }
+  function pal() {
+    var p = PALETTE[document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'];
+    // Thanh trên cùng của khung: đúng màu thanh "Chỉnh sửa" bên cột form (admin/giao-dien.css) để hai thanh liền một hàng
+    var cs = getComputedStyle(document.documentElement);
+    var bar = cs.getPropertyValue('--lsn-nen-phu').trim(), line = cs.getPropertyValue('--lsn-vien').trim();
+    return bar && line ? Object.assign({}, p, { bar: bar, line: line }) : p;
+  }
   new MutationObserver(function () { themeSubs.forEach(function (f) { f(); }); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -200,11 +206,11 @@
     return a && !formHas(key) ? a + key.slice(root.length) : key;
   }
   /* Đánh số form khớp số đỏ trên trang mô phỏng: phần số 3 trên trang = nhóm / ô / khối số 3 trong form.
-     Số gắn bằng thuộc tính data-lsn-so (CSS trong admin/index.html vẽ vòng tròn số), không đổi nội dung Sveltia quản lý. */
+     Số gắn bằng thuộc tính data-lsn-so (CSS trong admin/giao-dien.css vẽ vòng tròn số), không đổi nội dung Sveltia quản lý.
+     Sveltia dựng khối ngoài màn hình sau (khung trống lúc đầu): form đổi thì đánh số lại (formSync bên dưới). */
   var formNums = [];
   function numberForm(items, name) {
-    formNums.forEach(function (el) { el.removeAttribute('data-lsn-so'); });
-    formNums = [];
+    var next = [];
     items.forEach(function (it, i) {
       if (it.chung || it.mo) return;
       var key = formKey(it.key, name), target = null, hd = headingOf(key);
@@ -212,14 +218,56 @@
       else {
         var el = findField(key);
         if (el && el.classList.contains('item-wrapper')) {
-          var item = el.querySelector(':scope > .item') || el;
-          target = item.querySelector(':scope > .summary') || item.querySelector(':scope > .header');
+          var item = el.querySelector(':scope > .item');
+          target = item && (item.querySelector(':scope > .summary') || item.querySelector(':scope > .header'));
         }
         else if (el) target = el.querySelector(':scope > header h4');
       }
-      if (target) { target.setAttribute('data-lsn-so', String(i + 1)); formNums.push(target); }
+      if (!target) return;
+      next.push(target);
+      if (target.getAttribute('data-lsn-so') !== String(i + 1)) target.setAttribute('data-lsn-so', String(i + 1));
+    });
+    formNums.forEach(function (el) { if (next.indexOf(el) < 0) el.removeAttribute('data-lsn-so'); });
+    formNums = next;
+  }
+
+  /* ---------------- Form ↔ mô phỏng: đánh dấu thẻ trong form ----------------
+     data-lsn-dang-sua: khối / phần đang có khung đỏ trên mô phỏng; data-lsn-tro: chỗ chuột đang rê trên mô phỏng (hoặc trên danh sách
+     Các phần). data-lsn-ngoai="an" trên phần cấp 1 (nhóm, danh sách) không có trên trang đang xem. Kiểu: admin/giao-dien.css. */
+  var formMarks = {};
+  function formTarget(key, name) {
+    if (!key || SHARED[key]) return null;
+    var k = formKey(key, name), hd = headingOf(k);
+    if (hd) return hd;
+    for (var parts = k.split('.'), n = parts.length; n > 0; n--) {
+      var el = findField(parts.slice(0, n).join('.'));
+      if (el) return el.classList.contains('item-wrapper') ? el.querySelector(':scope > .item') : el;
+    }
+    return null;
+  }
+  function markForm(attr, key, name) {
+    var el = formTarget(key, name), old = formMarks[attr];
+    if (old && old !== el) old.removeAttribute(attr);
+    formMarks[attr] = el;
+    if (el && !el.hasAttribute(attr)) el.setAttribute(attr, '');
+  }
+  function onPage(doc, key, name) {
+    if (doc.querySelector('[data-cms="' + CSS.escape(key) + '"], [data-cms^="' + CSS.escape(key + '.') + '"]')) return true;
+    var r = resolve(doc, key, name);
+    return !!(r && (r.el || r.seo));
+  }
+  function markSections(doc, name, parts) {
+    [].forEach.call(document.querySelectorAll('section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."])'), function (f) {
+      var v = parts && doc && !onPage(doc, f.getAttribute('data-key-path'), name) ? 'an' : null;
+      if (f.getAttribute('data-lsn-ngoai') !== v) { if (v) f.setAttribute('data-lsn-ngoai', v); else f.removeAttribute('data-lsn-ngoai'); }
     });
   }
+  // Khung mô phỏng đang mở đăng ký hàm làm mới; form đổi (Sveltia dựng thêm khối, mở / thu một phần) thì gọi lại
+  var formSync = null;
+  new MutationObserver(function () {
+    clearTimeout(formSync && formSync.t);
+    if (formSync) formSync.t = setTimeout(function () { if (formSync) formSync(); }, 150);
+  }).observe(document.documentElement, { childList: true, subtree: true });
   function formLabel(key) {
     var f = document.querySelector('[data-key-path="' + CSS.escape(key) + '"]');
     var l = f && f.querySelector('[id$="-label"]');
@@ -472,7 +520,7 @@
       } catch (e) { /* trình duyệt chặn lưu trữ */ }
       focus.key = ''; // mở bài/trang khác: bỏ ô đang sửa của lần trước (vd. ô SEO → thẻ Google)
       return { result: null, status: engine.ready ? 'dang-dung' : 'tai', key: '', device: dev, size: [0, 0], hover: '', note: '', label: '',
-        map: map === '1', parts: null, hoverPart: -1 };
+        map: map === '1', overlayOpen: false, parts: null, hoverPart: -1 };
     },
     componentDidMount: function () {
       var self = this;
@@ -482,6 +530,8 @@
       this.onHover = function (k) { self.hoverForm(k); };
       this.onTheme = function () { self.forceUpdate(); };
       engine.subs.push(this.onEngine); focus.subs.push(this.onKey); hover.subs.push(this.onHover); themeSubs.push(this.onTheme);
+      this.onForm = function () { self.syncForm(); };
+      formSync = this.onForm;
       var W = this.props.window || window;
       if (W.ResizeObserver && this.stage) {
         this.ro = new W.ResizeObserver(function () { self.measure(); });
@@ -495,6 +545,8 @@
       focus.subs = focus.subs.filter(function (f) { return f !== this.onKey; }, this);
       hover.subs = hover.subs.filter(function (f) { return f !== this.onHover; }, this);
       themeSubs = themeSubs.filter(function (f) { return f !== this.onTheme; }, this);
+      if (formSync === this.onForm) formSync = null;
+      markForm('data-lsn-dang-sua', '', ''); markForm('data-lsn-tro', '', '');
       if (this.ro) this.ro.disconnect();
       clearTimeout(this.t);
       this.dead = true;
@@ -571,8 +623,14 @@
         var m = t && moOf(t);
         box(doc, 'cms-tro', t && k !== self.activeKey ? t : null, !t ? '' : m ? 'Bấm để mở ' + m.tep + ' · ' + (t.getAttribute('data-cms-ten') || '')
           : 'Bấm để sửa · ' + (t.getAttribute('data-cms-ten') || ''));
+        // Cùng lúc viền đứt thẻ tương ứng bên form (chữ lấy từ tệp khác: không có thẻ ở form này)
+        markForm('data-lsn-tro', k && !m && k !== self.activeKey ? k : '', mapName(self.props.entry));
       });
-      doc.addEventListener('mouseleave', function () { self.hoverKey = ''; box(doc, 'cms-tro', null); });
+      doc.addEventListener('mouseleave', function () {
+        self.hoverKey = '';
+        box(doc, 'cms-tro', null);
+        markForm('data-lsn-tro', '', '');
+      });
       doc.defaultView.addEventListener('resize', function () { self.highlight(false); });
     },
     highlight: function (scroll) {
@@ -592,13 +650,22 @@
       // Danh sách các phần của trang + số thứ tự trên trang mô phỏng
       var parts = this.parts = SETTINGS_FILES.indexOf(name) < 0 ? outline(doc, name) : null;
       badges(doc, this.state.map && parts ? parts.items : null);
-      numberForm(parts ? parts.items : [], name);
+      this.syncForm();
       var sig = parts ? parts.items.map(function (x) { return x.key + (x.an ? '~' : '') + x.label; }).join('|') : '';
       var note = r && r.note ? r.note : '';
       if (sig !== this.partsSig || note !== this.state.note || label !== this.state.label || !!(r && r.seo) !== !!this.state.seo) {
         this.partsSig = sig;
         this.setState({ note: note, label: label, seo: !!(r && r.seo), parts: parts });
       }
+    },
+    // Form khớp mô phỏng: số phần, khối đang sửa (viền đỏ), chỗ đang rê chuột trên mô phỏng, phần không có trên trang
+    syncForm: function () {
+      var doc = this.frame && this.frame.contentDocument, name = mapName(this.props.entry), parts = this.parts;
+      if (!doc || !doc.body) return;
+      numberForm(parts ? parts.items : [], name);
+      markSections(doc, name, parts);
+      markForm('data-lsn-dang-sua', this.activeKey, name);
+      markForm('data-lsn-tro', this.hoverKey && this.hoverKey !== this.activeKey ? this.hoverKey : '', name);
     },
     hoverForm: function (k) {
       var doc = this.frame && this.frame.contentDocument;
@@ -613,6 +680,8 @@
       if (!doc || !doc.body) return;
       var it = parts && i >= 0 ? parts.items[i] : null;
       box(doc, 'cms-tro', it && it.el !== this.activeEl ? it.el : null, it ? (i + 1) + ' · ' + it.label : '');
+      this.hoverKey = it && !it.mo ? it.key : '';
+      markForm('data-lsn-tro', this.hoverKey !== this.activeKey ? this.hoverKey : '', mapName(this.props.entry));
       if (i !== this.state.hoverPart) this.setState({ hoverPart: i });
     },
     goPart: function (it) {
@@ -632,6 +701,12 @@
       var on = !this.state.map;
       try { localStorage.setItem('lsn-xem-truoc-ban-do', on ? '1' : '0'); } catch (e) { /* bỏ qua */ }
       this.setState({ map: on }, this.highlight.bind(this, false));
+    },
+    // Khung hẹp: danh sách nổi đè lên trang nên chỉ mở khi bấm "Các phần" (số đỏ trên trang vẫn theo lựa chọn bật / tắt số)
+    toggleOverlay: function () {
+      var open = !(this.state.map && this.state.overlayOpen);
+      if (open && !this.state.map) try { localStorage.setItem('lsn-xem-truoc-ban-do', '1'); } catch (e) { /* bỏ qua */ }
+      this.setState(open ? { map: true, overlayOpen: true } : { overlayOpen: false }, this.highlight.bind(this, false));
     },
     setDevice: function (d) {
       try { localStorage.setItem('lsn-xem-truoc-thiet-bi', d); } catch (e) { /* bỏ qua */ }
@@ -684,7 +759,7 @@
           key: i, type: 'button', style: S.row(active, self.state.hoverPart === i, it.an), title: it.chung ? '' : 'Bấm để mở đúng ô sửa phần này',
           onMouseEnter: function () { self.hoverPart(i); }, onMouseLeave: function () { self.hoverPart(-1); },
           onFocus: function () { self.hoverPart(i); }, onBlur: function () { self.hoverPart(-1); },
-          onClick: function () { self.goPart(it); if (overlay) self.setState({ map: false }, self.highlight.bind(self, false)); },
+          onClick: function () { self.goPart(it); if (overlay) self.setState({ overlayOpen: false }); },
         }, h('span', { style: S.num(it.chung) }, String(i + 1)), h('span', null, it.label, sub));
       });
       var extra = [];
@@ -692,7 +767,7 @@
       parts.notes.forEach(function (n) { if (formHas(n.key)) extra.push({ key: n.key, label: formLabel(n.key) || n.key, note: n.note }); });
       return h('div', { style: S.side(overlay), role: 'navigation', 'aria-label': 'Các phần của trang' },
         h('div', { style: S.sideHead }, 'Trang này gồm ' + parts.items.length + ' phần',
-          h('button', { type: 'button', onClick: this.toggleMap, title: 'Ẩn danh sách', 'aria-label': 'Ẩn danh sách các phần',
+          h('button', { type: 'button', onClick: overlay ? this.toggleOverlay : this.toggleMap, title: 'Ẩn danh sách', 'aria-label': 'Ẩn danh sách các phần',
             style: { marginLeft: 'auto', border: 0, background: 'none', color: P.muted, font: 'inherit', fontSize: '18px', cursor: 'pointer', lineHeight: 1 } }, '×')),
         h('div', { style: S.sideHint }, 'Theo thứ tự từ trên xuống, số khớp với số đỏ trên trang. Bấm một phần để mở đúng ô sửa.'),
         rows,
@@ -742,8 +817,9 @@
       var path = res && res.path != null ? res.path : '';
       var draft = e.getIn && e.getIn(['data', 'nhap']);
       var hasParts = !!(st.parts && st.parts.items.length);
-      var showSide = st.map && hasParts && res && res.html;
-      var overlay = (this.paneW || 0) < 900; // khung hẹp: danh sách nổi trên trang, tự thu lại sau khi chọn một phần
+      var overlay = (this.paneW || 0) < 900; // khung hẹp: danh sách nổi trên trang, chỉ mở khi bấm, tự thu lại sau khi chọn một phần
+      var sideOn = st.map && (!overlay || st.overlayOpen);
+      var showSide = sideOn && hasParts && res && res.html;
       return h('div', { style: S.wrap, ref: function (el) { if (el) self.paneW = el.clientWidth; } },
         h('div', { style: S.bar },
           h('span', { style: S.dot(color), title: status }),
@@ -751,7 +827,7 @@
           h('span', { style: { fontWeight: 600, whiteSpace: 'nowrap', flex: '0 1 auto', minWidth: '2em', overflow: 'hidden', textOverflow: 'ellipsis' }, title: status },
             st.label ? status.split(' · ')[0] : status),
           st.label ? h('span', { style: S.chip, title: st.label }, '✎ ' + st.label) : null,
-          hasParts ? h('button', { type: 'button', style: S.btn(st.map), 'aria-pressed': !!st.map, onClick: this.toggleMap,
+          hasParts ? h('button', { type: 'button', style: S.btn(sideOn), 'aria-pressed': !!sideOn, onClick: overlay ? this.toggleOverlay : this.toggleMap,
             title: 'Danh sách mọi phần sửa được của trang này, theo thứ tự từ trên xuống' }, '☰ Các phần (' + st.parts.items.length + ')') : null,
           h('div', { style: Object.assign({}, S.seg, hasParts ? {} : { marginLeft: 'auto' }), role: 'group', 'aria-label': 'Xem trên' },
             h('button', { type: 'button', style: S.segBtn(!mobile), 'aria-pressed': !mobile, onClick: function () { self.setDevice('may-tinh'); } }, 'Máy tính'),

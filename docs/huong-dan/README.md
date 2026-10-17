@@ -46,14 +46,15 @@ Nút **Tối / Sáng** (1 – hình mặt trăng / mặt trời) ở góc phải
 
 ## 2. Khung mô phỏng – thấy ngay đang sửa chỗ nào
 
-Khi mở một bài/trang, nửa phải màn hình là **Xem trước**: trang web dựng bằng đúng bộ build của site, cập nhật sau khoảng 0,3 giây mỗi lần gõ – chưa cần bấm Lưu.
+Khi mở một bài/trang, nửa trái là form **Chỉnh sửa**, nửa phải là **khung mô phỏng**: trang web dựng bằng đúng bộ build của site, cập nhật sau khoảng 0,3 giây mỗi lần gõ – chưa cần bấm Lưu. Thanh trên cùng của hai nửa nằm thẳng một hàng.
 
 ![Khung mô phỏng: danh sách các phần của trang và khối đang sửa được đóng khung đỏ](mo-phong-1.webp "Bấm “Khối 5 · Các bước” trong danh sách → form mở đúng khối, trang cuộn tới và đóng khung đỏ")
 
-- **Trang này gồm những phần nào:** nút **☰ Các phần** (4) mở danh sách mọi phần sửa được của trang (1), theo thứ tự từ trên xuống; số đỏ trên trang mô phỏng khớp với số trong danh sách. Bấm một phần → form bên trái mở đúng ô đó (2). Phần số xám (đầu trang, chân trang) dùng chung mọi trang: bấm nút bên dưới nó để mở đúng mục trong **Cài đặt chung**. Cuối danh sách là các ô **không hiện trên trang này** (SEO, mô tả ngắn hiện ở trang khác…).
-- Bấm hoặc rê chuột vào một khối/ô bên trái → nhãn **✎ Đang sửa** ghi tên phần đó, và trang bên phải cuộn tới, **đóng khung đỏ** đúng chỗ (3). Rê chuột qua khối khác: khung nét đứt cho biết khối đó nằm đâu.
-- Ngược lại: **bấm vào một chỗ trên trang mô phỏng** → form bên trái mở đúng khối/ô đó. Bấm link trong mô phỏng không rời trang quản trị.
-- **Số đỏ trong form = số đỏ trên trang.** Mỗi khối, mỗi phần của form mang cùng số với phần đó trên trang mô phỏng (vd. khối số 4 trong form là phần số 4 trên trang). Form dài (lĩnh vực, bài viết) được chia bằng các **dải tiêu đề màu đỏ nhạt** theo đúng thứ tự từ trên xuống của trang.
+- **Trang này gồm những phần nào:** nút **☰ Các phần** (4) mở danh sách mọi phần sửa được của trang (1), theo thứ tự từ trên xuống; số đỏ trên trang mô phỏng khớp với số trong danh sách. Bấm một phần → form bên trái mở đúng ô đó (2). Phần số xám (đầu trang, chân trang) dùng chung mọi trang: bấm nút bên dưới nó để mở đúng mục trong **Cài đặt chung**. Cuối danh sách là các ô **không hiện trên trang này** (SEO, mô tả ngắn hiện ở trang khác…). Màn hình hẹp: danh sách nổi lên khi bấm nút, chọn xong một phần thì tự đóng.
+- Bấm hoặc rê chuột vào một khối/ô bên trái → nhãn **✎ Đang sửa** ghi tên phần đó, và trang bên phải cuộn tới, **đóng khung đỏ** đúng chỗ (3); khối đó trong form cũng **viền đỏ**. Rê chuột qua khối khác: khung nét đứt cho biết khối đó nằm đâu.
+- Ngược lại: **rê chuột trên trang mô phỏng** → thẻ tương ứng trong form viền nét đứt đỏ; **bấm vào một chỗ trên trang mô phỏng** → form bên trái mở đúng khối/ô đó. Bấm link trong mô phỏng không rời trang quản trị.
+- **Số đỏ trong form = số đỏ trên trang.** Mỗi khối, mỗi phần của form mang cùng số với phần đó trên trang mô phỏng (vd. khối số 4 trong form là phần số 4 trên trang). Form dài (lĩnh vực, bài viết) được chia bằng các **tiêu đề phần** (chữ lớn, gạch chân đỏ) theo đúng thứ tự từ trên xuống của trang.
+- **Đọc form như đọc trang:** mỗi ô là một thẻ trắng; mỗi phần (Đầu trang, Các khối, Khối liên hệ, SEO) có thanh tiêu đề – bấm thanh đó để mở / thu gọn. Khối đang thu gọn ghi loại khối bằng chữ nhỏ và **tiêu đề thật** của khối (chữ đỏ, `{{luat_su}}` đã thay bằng tên) – bấm đâu trên thẻ cũng mở. Phần ghi **Không hiện trên trang này** (viền nét đứt) là phần trang đang xem không dùng tới, vd. *Đầu trang tiêu chuẩn* khi khối đầu tiên là *Đầu trang lớn (Hero)*.
 - **Chữ lấy từ nơi khác:** ô ghi chú màu vàng (2) cho biết chữ của khối đó sửa ở đâu, nút đỏ trong ô mở thẳng chỗ sửa. Trong danh sách **☰ Các phần**, dòng *Chữ trong các thẻ sửa ở:* (3) cũng có nút mở. Trên trang mô phỏng, **bấm thẳng vào một thẻ** (thẻ lĩnh vực, thẻ bài viết, câu hỏi) → trang quản trị mở đúng tệp chứa chữ của thẻ đó và đặt con trỏ vào ô cần sửa.
 
   ![Khối Lưới lĩnh vực trên Trang chủ: số khối, ô ghi chú, dòng trong danh sách các phần](ghi-chu.webp "Khối số 4 (1) lấy chữ thẻ từ trang Dịch vụ: ô ghi chú (2) và danh sách các phần (3) đều có nút mở chỗ sửa")
@@ -215,7 +216,7 @@ Lưới thẻ **“Anh chị đang gặp chuyện gì?”** (7 thẻ lĩnh vực
 
 1. Cột trái **Dịch vụ** → dòng đầu **Trang tổng quan Dịch vụ (/dich-vu/)** → khối **Khối lưới lĩnh vực** → **Các thẻ lĩnh vực**. Mỗi dòng ghi *Lĩnh vực · Tình huống*, ví dụ *Hình sự · Người nhà bị công an mời, bị bắt*. Cách nhanh hơn: đang ở Trang chủ, bấm thẳng vào thẻ trên trang mô phỏng.
 2. Bấm vào thẻ để mở (1): sửa **Tình huống** (dòng chữ đậm), **Mô tả**, **Biểu tượng** (để trống = biểu tượng của lĩnh vực). Thẻ đang sửa được đóng khung đỏ trên mô phỏng (2).
-3. Đổi thứ tự thẻ: giữ chuột vào nút **═** (3) trên thanh xám rồi kéo lên/xuống. **Lưu** → cả 3 trang cùng đổi.
+3. Đổi thứ tự thẻ: giữ chuột vào nút **═** (3) ở hàng trên cùng của thẻ rồi kéo lên/xuống. **Lưu** → cả 3 trang cùng đổi.
 
 ![Sửa thẻ Hình sự trong Khối lưới lĩnh vực](the-linh-vuc.webp "Thẻ đang mở (1), thẻ đó trên trang được đóng khung đỏ (2), nút kéo để đổi thứ tự (3)")
 

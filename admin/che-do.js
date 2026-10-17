@@ -69,6 +69,7 @@
       chu + ':is(' + layout + ')' + ok + ' { display: none !important; }' +
       chu + blocks + ' .item-wrapper' + top + ' > .item > .header :is(.center, .end) { display: none !important; }' +
       chu + blocks + ' button.menu-button.tertiary' + top + ' { display: none !important; }' +
+      chu + blocks + ' > .field-wrapper > .group > .inner > .toolbar.bottom.add { display: none !important; }' + // thanh chỉ còn nút "Thêm khối" đã giấu
       // Sửa bố cục: giấu mọi ô không phải bố cục (trừ nhóm khung chứa trường bố cục)
       bc + 'section.field:not(:is(' + layout + (frame ? ',' + frame : '') + '))' + ok + ' { display: none !important; }';
   }

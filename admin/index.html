@@ -185,16 +185,30 @@
 <script src="hoan-tac.js"></script>
 <!-- Ô chọn "Biểu tượng": hình biểu tượng cạnh tên -->
 <script src="bieu-tuong.js"></script>
+<!-- Trình bày form: dòng tóm tắt khối hiện chữ đỏ, mã chèn thay bằng chữ thật; số mục cạnh tên danh sách -->
+<script src="bieu-mau.js"></script>
 <script>
   /* ---------- Ô con thu gọn (khối, thẻ, mục danh sách, nhóm): bấm bất kỳ đâu trên ô để mở ----------
      Sveltia chỉ mở / thu khi bấm đúng mũi tên + tên ở đầu ô. Lớp này cho cả hàng tiêu đề (chỗ trống, số đỏ) và dòng tóm tắt
      bên dưới cũng bấm được: bấm hộ nút mũi tên của chính ô đó. Nút trong hàng (kéo ═, ⋮, ×) vẫn làm việc của nó.
-     Dựa vào giao diện Sveltia 0.221.8: [role=group] > .header > .start > button[aria-controls] + khung có id đó chứa .summary. */
+     Phần cấp 1 (nhóm / danh sách: Đầu trang, Các khối, SEO…): thanh mũi tên của Sveltia đã giấu (admin/giao-dien.css), bấm thanh
+     tiêu đề của thẻ để mở / thu.
+     Dựa vào giao diện Sveltia 0.221.8: [role=group] > .header > .start > button[aria-controls] + khung có id đó chứa .summary;
+     nhóm: section.field > .field-wrapper > .wrapper > .header; danh sách: section.field > .field-wrapper > .group > .inner > .toolbar.top. */
   (function () {
     var BO_QUA = 'button, a, input, textarea, select, label, [role=button], [role=menu], [role=menuitem], [contenteditable]:not([contenteditable=false])';
+    var PHAN = 'section.field:is([data-field-type=object], [data-field-type=list]):not([data-key-path*="."]) > header';
+    var NUT_PHAN = ':scope > .field-wrapper > .wrapper > .header > .start > button[aria-expanded][aria-controls], ' +
+      ':scope > .field-wrapper > .group > .inner > .toolbar.top > .label > button[aria-expanded][aria-controls]';
     document.addEventListener('click', function (e) {
       var t = e.target;
       if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || !t.closest || t.closest(BO_QUA)) return;
+      var phan = t.closest(PHAN);
+      if (phan) {
+        var np = phan.parentElement.querySelector(NUT_PHAN);
+        if (np && !np.disabled) np.click();
+        return;
+      }
       var head = t.closest('[role=group] > .header');
       var sum = !head && t.closest('[role=group] > :is(.item-body, .item-list) > .summary');
       var o = head ? head.parentElement : sum ? sum.parentElement.parentElement : null;

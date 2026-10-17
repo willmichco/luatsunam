@@ -225,7 +225,7 @@ def pick_list(name, label, kind, item_label, hint=None, min=None, max=None, rela
     sub = _f("select", "muc", item_label, options=[], _options=kind, dropdown_threshold=0)
     if relation:
         sub["_relation"] = relation
-    h = "Kéo nút ═ trên thanh xám để đổi thứ tự – thứ tự trong danh sách là thứ tự hiện trên trang." + (" " + hint if hint else "")
+    h = "Kéo nút ═ ở hàng trên cùng của mỗi mục để đổi thứ tự – thứ tự trong danh sách là thứ tự hiện trên trang." + (" " + hint if hint else "")
     return lst(name, label, field=sub, hint=h, min=min, max=max, label_singular=item_label.lower(), collapsed=False,
                _rules=[_rule_no_dupes(item_label)], **kw)
 
@@ -514,7 +514,7 @@ def service_cards_field():
         text("mo_ta", "Mô tả dưới tình huống", "1–2 câu, ví dụ: Anh em tranh chấp di sản, không có di chúc…", maxlength=200),
         icon(required=False, hint="Để trống = dùng biểu tượng của lĩnh vực."),
     ], summary="{{fields.linh_vuc}} · {{fields.tieu_de}}", min=1, max=20, label_singular="thẻ",
-        hint="Mỗi lĩnh vực một thẻ. Kéo nút ═ trên thanh xám để đổi thứ tự thẻ trên lưới. Lĩnh vực mới chưa có thẻ ở đây sẽ tự hiện cuối lưới "
+        hint="Mỗi lĩnh vực một thẻ. Kéo nút ═ ở hàng trên cùng của mỗi thẻ để đổi thứ tự thẻ trên lưới. Lĩnh vực mới chưa có thẻ ở đây sẽ tự hiện cuối lưới "
              "với tên + mô tả ngắn của lĩnh vực.",
         _rules=[_rule_unique("linh_vuc", "Lĩnh vực")]),
         collapsed=False,
@@ -1090,7 +1090,7 @@ def settings_files():
             rich("gioi_thieu_chan_trang", "Giới thiệu ngắn ở chân trang", maxlength=400),
         ]},
         {"name": "menu", "label": "Menu và chân trang", "file": "content/cai-dat/menu.yml", "format": "yml", "fields": [
-            ghi_chu("ui_thu_tu", "Mọi danh sách ở đây đều kéo nút ═ trên thanh xám để đổi thứ tự – thứ tự trong form là thứ tự trên website. "
+            ghi_chu("ui_thu_tu", "Mọi danh sách ở đây đều kéo nút ═ ở hàng trên cùng của mỗi mục để đổi thứ tự – thứ tự trong form là thứ tự trên website. "
                                  "Thứ tự lĩnh vực: trong menu xổ Dịch vụ → mục “Dịch vụ” › Nhóm lĩnh vực bên dưới; ở chân trang → "
                                  "“Thứ tự lĩnh vực ở chân trang”; trên lưới thẻ (Trang chủ, trang Dịch vụ) → Trang tổng quan Dịch vụ "
                                  "› Khối lưới lĩnh vực. Cột trái trang quản trị cũng tự xếp theo Menu chính (sau khi Lưu 2–3 phút)."),

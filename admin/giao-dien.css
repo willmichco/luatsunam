@@ -30,6 +30,7 @@ html:root {
   --lsn-nen-phu: var(--sui-primary-background-color, hsl(356 5% 98%));   /* thanh, đầu thẻ */
   --lsn-vien: var(--sui-secondary-border-color, hsl(356 5% 80%));
   --lsn-vien-dam: var(--sui-primary-border-color, hsl(356 5% 72%));
+  --lsn-vien-nhat: hsl(356 6% 87%);                                     /* viền thẻ trắng trong form */
   --lsn-chu: var(--sui-primary-foreground-color, hsl(356 5% 25%));
   --lsn-chu-dam: var(--sui-highlight-foreground-color, hsl(356 5% 5%));
   --lsn-chu-phu: var(--sui-secondary-foreground-color, hsl(356 5% 35%));
@@ -43,6 +44,7 @@ html:root {
   --lsn-vang-nen: hsl(45 90% 95%); --lsn-vang-vien: hsl(40 70% 78%); --lsn-vang-chu: hsl(35 60% 22%);
   --lsn-bo-nut: 6px; --lsn-bo-the: 10px;
   --lsn-bong: 0 1px 2px hsl(356 10% 10% / .05);
+  --lsn-bong-the: 0 1px 2px hsl(356 10% 10% / .04), 0 2px 8px hsl(356 10% 10% / .04);
   --lsn-bong-noi: 0 6px 20px hsl(356 10% 10% / .28);
   --lsn-vong-tap-trung: var(--sui-focus-ring-width, 2px) solid var(--sui-focus-ring-color, hsl(356 80% 40%));
 }
@@ -52,6 +54,7 @@ html:root {
   --lsn-nen-phu: var(--sui-primary-background-color, hsl(356 10% 10%));
   --lsn-vien: var(--sui-secondary-border-color, hsl(356 10% 20%));
   --lsn-vien-dam: var(--sui-primary-border-color, hsl(356 10% 24%));
+  --lsn-vien-nhat: hsl(356 9% 19%);
   --lsn-chu: var(--sui-primary-foreground-color, hsl(356 10% 75%));
   --lsn-chu-dam: var(--sui-highlight-foreground-color, hsl(356 10% 95%));
   --lsn-chu-phu: var(--sui-secondary-foreground-color, hsl(356 10% 65%));
@@ -63,6 +66,7 @@ html:root {
   --lsn-do-vien: hsl(356 40% 32%);
   --lsn-vang-nen: hsl(40 35% 15%); --lsn-vang-vien: hsl(40 40% 32%); --lsn-vang-chu: hsl(45 70% 85%);
   --lsn-bong: none;
+  --lsn-bong-the: none;
   --lsn-bong-noi: 0 6px 20px hsl(356 10% 0% / .5);
 }
 
@@ -163,55 +167,204 @@ nav.primary-sidebar [role=treeitem][aria-selected="true"] > .row > .icon { color
 [role=toolbar] h2[data-lsn-trung] > .truncated-text > bdi:first-child { font-size: var(--sui-font-size-x-large, 19px); }
 [role=toolbar] h2[data-lsn-trung] > .truncated-text > bdi:not(:first-child) { display: none; }
 
-/* Mọi ô cấp 1 (ô chữ, công tắc, ô chọn, nhóm, danh sách): mỗi ô một thẻ có viền, cách nhau rõ – nhìn là biết ô nào ra ô nấy.
-   Bỏ đường kẻ mảnh giữa các ô của Sveltia (đã có viền thẻ). Ô bên trong một nhóm giữ kiểu cũ (đường kẻ mảnh). */
-section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]) {
-  margin: 10px 6px; padding: 14px 16px 16px !important; border: 1px solid var(--lsn-vien) !important;
-  border-radius: 12px; background: var(--lsn-nen-phu); box-shadow: var(--lsn-bong); }
-section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"])::before,
-section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"])::after { border: 0 !important; }
-section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]):focus-within { border-color: var(--lsn-do-vien) !important; }
-section.field:not([data-key-path*="."]) > header h4 { font-size: 15.5px; color: var(--lsn-chu-dam); }
-section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header h4 { font-size: 16px; }
+/* ---------- Trình soạn: hai cột thẳng hàng với khung mô phỏng ----------
+   Thanh "Chỉnh sửa" (Sveltia) và thanh của khung mô phỏng (admin/xem-truoc.js, trong iframe) cùng cao 48px, cùng nền, cùng viền:
+   nhìn như một thanh liền hai cột. Bỏ thanh "Xem trước" của Sveltia – khung mô phỏng đã có thanh riêng (trạng thái, ô đang sửa,
+   Các phần, Máy tính / Điện thoại). Cột form: nền xám, thẻ trắng xếp thành một cột đọc (tối đa 820px) giữa khung. */
+.pane[data-mode="preview"] > .inner > .header { display: none; }
+.pane[data-mode="edit"] > .inner > .header { border-bottom: 1px solid var(--lsn-vien); background: var(--lsn-nen-phu); }
+.pane[data-mode="edit"] > .inner > .header > [role=toolbar] { max-width: none; height: 47px; min-height: 47px; padding-inline: 14px 6px; background: none; }
+.pane[data-mode="edit"] > .inner > .header h3 { display: flex; align-items: center; gap: 8px; min-width: 0; margin: 0; overflow: hidden;
+  white-space: nowrap; font: 700 15px/1.2 var(--lsn-phong); color: var(--lsn-chu-dam); }
+.pane[data-mode="edit"] > .inner > .header h3::before { content: "edit_note"; flex: none; font: normal 22px/1 "Material Symbols Outlined";
+  font-feature-settings: "liga"; color: var(--lsn-do-chu); }
+:root[data-lsn-che-do="chu"] .pane[data-mode="edit"] > .inner > .header h3::after { content: "· sửa chữ, ảnh, liên kết – bố cục đã khóa";
+  overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 400; color: var(--lsn-chu-nhat); }
+.pane[data-mode="edit"] > .inner > .wrapper > .content { padding: 16px 16px 56px; background: var(--lsn-nen); }
 
-/* Mục trong danh sách (khối, thẻ, bước, mục menu…): thẻ bo góc, thanh tiêu đề xám nhạt, dòng tóm tắt bên dưới.
-   Cả hàng tiêu đề và dòng tóm tắt khi thu gọn đều bấm để mở (script cuối admin/index.html) */
+/* ---------- Thẻ cấp 1: mỗi ô / mỗi phần của trang là một thẻ trắng ----------
+   Ô đơn (chữ, công tắc, ô chọn…): thẻ gọn, tên ô + ô nhập. Phần (nhóm, danh sách: Đầu trang, Các khối, Khối liên hệ, SEO…): thanh
+   tiêu đề có ô số (khớp số đỏ trên mô phỏng) hoặc biểu tượng, gợi ý ngay dưới tên phần, đường kẻ rồi tới nội dung. Ô bên trong một
+   phần giữ đường kẻ mảnh giữa các ô. */
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]) {
+  max-width: 820px; margin: 0 auto 12px; padding: 16px 18px 18px !important; border: 1px solid var(--lsn-vien-nhat) !important;
+  border-radius: 12px; background: var(--lsn-the); box-shadow: var(--lsn-bong-the); transition: border-color .15s, box-shadow .15s; }
+section.field:not([data-key-path*="."]) > * { max-width: none; }
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"])::after { display: none; } /* đường kẻ giữa các ô của Sveltia: đã có viền thẻ */
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]):hover { border-color: var(--lsn-vien) !important; }
+section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]):focus-within {
+  border-color: var(--lsn-do-vien) !important; box-shadow: 0 0 0 3px var(--lsn-do-nhat), var(--lsn-bong-the); }
+section.field:not([data-key-path*="."]) > header { gap: 8px; height: auto; min-height: 28px; margin: 0 0 10px !important; }
+section.field:not([data-key-path*="."]) > header h4 { margin: 0; font: 600 15px/1.35 var(--lsn-phong); color: var(--lsn-chu-dam); }
+section.field:not([data-key-path*="."]) > header > .required { margin-inline-start: -6px; } /* dấu * sát tên ô */
+section.field[data-key-path*="."] > header h4 { font-size: 14px; font-weight: 600; color: var(--lsn-chu-dam); } /* ô trong một phần: tên ô đậm, dễ đọc */
+
+/* Phần (nhóm / danh sách cấp 1). Thứ tự trong thẻ: tiêu đề → gợi ý → lời nhắc (danh sách khối) → nội dung */
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) { display: flex; flex-direction: column; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > * { margin-inline: 0 !important; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header {
+  order: -3; gap: 10px; min-height: 32px; margin-bottom: 0 !important; cursor: pointer; } /* bấm thanh tiêu đề = mở / thu phần (admin/index.html) */
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header h4 { font-size: 16.5px; font-weight: 700; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header > .required { display: none; } /* phần luôn có, dấu * thừa */
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > .footer { order: -2; margin: 2px 0 0 42px; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > .field-wrapper {
+  margin-top: 14px; padding-top: 4px; border-top: 1px solid var(--lsn-vien-nhat); }
+/* Ô biểu tượng đầu phần (phần không có số trên mô phỏng); có số thì số thay chỗ biểu tượng */
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header::before {
+  content: "segment"; order: -1; flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px;
+  background: var(--lsn-nen); color: var(--lsn-chu-phu); font: normal 20px/1 "Material Symbols Outlined"; font-feature-settings: "liga"; }
+section.field[data-field-type="list"]:not([data-key-path*="."]) > header::before { content: "format_list_bulleted"; }
+section.field[data-key-path="dau_trang"]:not([data-key-path*="."]) > header::before { content: "title"; }
+section.field[data-key-path="cac_khoi"]:not([data-key-path*="."]) > header::before { content: "view_agenda"; }
+section.field:is([data-key-path="lien_he_cuoi_trang"], [data-key-path="lien_he"]):not([data-key-path*="."]) > header::before { content: "contact_phone"; }
+section.field[data-key-path="seo"]:not([data-key-path*="."]) > header::before { content: "travel_explore"; }
+section.field:not([data-key-path*="."]) > header:has(> h4[data-lsn-so])::before { display: none; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header > h4[data-lsn-so]::before {
+  min-width: 32px; height: 32px; margin-inline: 0 10px; font-size: 14px; vertical-align: -1px; }
+/* Nút trong thanh tiêu đề: [Hoàn tác] [Mở để sửa ▾ / ˄] [⋮] */
+section.field:not([data-key-path*="."]) > header > .lsn-hoan-tac { order: 1; }
+section.field:not([data-key-path*="."]) > header > .menu-button { order: 3; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header::after {
+  order: 2; flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; content: "expand_less";
+  color: var(--lsn-chu-nhat); font: normal 22px/1 "Material Symbols Outlined"; font-feature-settings: "liga"; transition: background .12s; }
+section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header:hover::after { background: var(--lsn-re-chuot); }
+/* Phần đang thu gọn: nút "Mở để sửa ▾" rõ ràng, bỏ khoảng trống phía dưới */
+section.field[data-field-type="object"]:not([data-key-path*="."]):has(> .field-wrapper > .wrapper > .header button[aria-expanded="false"]) > header::after,
+section.field[data-field-type="list"]:not([data-key-path*="."]):has(> .field-wrapper > .group > .inner > .toolbar.top button[aria-controls][aria-expanded="false"]) > header::after {
+  content: "Mở để sửa ▾"; width: auto; height: 30px; padding: 0 13px; border: 1px solid var(--lsn-do-vien); background: var(--lsn-do-nhat);
+  color: var(--lsn-do-chu); font: 600 13px/1 var(--lsn-phong); }
+section.field[data-field-type="object"]:not([data-key-path*="."]):has(> .field-wrapper > .wrapper > .header button[aria-expanded="false"]) > header:hover::after,
+section.field[data-field-type="list"]:not([data-key-path*="."]):has(> .field-wrapper > .group > .inner > .toolbar.top button[aria-controls][aria-expanded="false"]) > header:hover::after {
+  border-color: var(--lsn-do); background: var(--lsn-do); color: var(--lsn-tren-do); }
+section.field[data-field-type="object"]:not([data-key-path*="."]):has(> .field-wrapper > .wrapper > .header button[aria-expanded="false"]) > .field-wrapper,
+section.field[data-field-type="list"]:not([data-key-path*="."]):has(> .field-wrapper > .group > .inner > .toolbar.top button[aria-controls][aria-expanded="false"]) > .field-wrapper {
+  margin-top: 0; padding-top: 0; border-top: 0; }
+/* Số mục trong danh sách cấp 1 (admin/bieu-mau.js đếm) */
+section.field:not([data-key-path*="."]) > header > h4[data-lsn-dem]::after { content: attr(data-lsn-dem); display: inline-block; margin-inline-start: 8px;
+  padding: 1px 9px; border-radius: 999px; background: var(--lsn-nen); color: var(--lsn-chu-phu); font: 600 12.5px/1.6 var(--lsn-phong); vertical-align: 2px; }
+/* Phần không có trên trang đang xem (vd. Đầu trang tiêu chuẩn khi khối đầu là Đầu trang lớn): ghi rõ, viền đứt – admin/xem-truoc.js đánh dấu */
+section.field[data-lsn-ngoai="an"]:not([data-key-path*="."]) { border-style: dashed !important; box-shadow: none; }
+section.field[data-lsn-ngoai="an"]:not([data-key-path*="."]) > header > h4::after { content: "Không hiện trên trang này"; display: inline-block;
+  margin-inline-start: 8px; padding: 1px 9px; border: 1px dashed var(--lsn-vien-dam); border-radius: 999px; background: none;
+  color: var(--lsn-chu-nhat); font: 500 12.5px/1.6 var(--lsn-phong); vertical-align: 2px; }
+
+/* Nhóm cấp 1 (Đầu trang, Khối liên hệ, SEO…): bỏ khung lồng và thanh xám trống của Sveltia – thẻ đã là khung, thanh tiêu đề mở / thu */
+section.field[data-field-type="object"]:not([data-key-path*="."]) > .field-wrapper > .wrapper { border: 0 !important; }
+/* Thanh mũi tên của Sveltia: giấu khỏi mắt nhưng vẫn nhận phím Tab (bàn phím vẫn mở / thu được – thanh tiêu đề thẻ sáng viền khi chọn) */
+section.field[data-field-type="object"]:not([data-key-path*="."]) > .field-wrapper > .wrapper > .header,
+section.field[data-field-type="list"]:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .toolbar.top > .label {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+section.field[data-field-type="object"]:not([data-key-path*="."]):has(> .field-wrapper > .wrapper > .header button:focus-visible) > header,
+section.field[data-field-type="list"]:not([data-key-path*="."]):has(> .field-wrapper > .group > .inner > .toolbar.top > .label button:focus-visible) > header {
+  border-radius: 8px; outline: var(--lsn-vong-tap-trung); outline-offset: 4px; }
+section.field[data-field-type="object"]:not([data-key-path*="."]) > .field-wrapper > .wrapper > .item-list > section.field { padding-inline: 0; }
+section.field[data-field-type="object"]:not([data-key-path*="."]) > .field-wrapper > .wrapper > .item-list > section.field::after { inset-inline: 0; }
+section.field[data-field-type="object"]:not([data-key-path*="."]) > .field-wrapper > .wrapper > .item-list > .summary { padding: 12px 0 0; color: var(--lsn-chu-phu); }
+/* Danh sách cấp 1: bỏ dòng "4 Các khối trên trang" (trùng tên phần; số mục đã ở cạnh tên), giữ "Mở rộng tất cả / Thu gọn tất cả" */
+section.field[data-field-type="list"]:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .toolbar.top {
+  position: static; min-height: 0; margin: 8px 0 10px; background: none; }
+section.field[data-field-type="list"]:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .toolbar.top > .actions { margin-block: 0; }
+section.field .toolbar { background: var(--lsn-the); } /* thanh dính của danh sách lồng: cùng nền thẻ */
+
+/* ---------- Mục trong danh sách (khối, thẻ, bước, mục menu…) ----------
+   Mục cấp 1 (mỗi khối của trang): thẻ trắng, dòng trên = số (khớp mô phỏng) + LOẠI KHỐI chữ nhỏ + "Mở để sửa ›"; dòng dưới = tiêu đề
+   thật của khối (chữ đỏ, mã chèn đã thay bằng chữ thật – admin/bieu-mau.js). Bấm đâu trên thẻ cũng mở (script cuối admin/index.html).
+   Mục lồng bên trong (số liệu, thẻ, mốc…): thẻ nhỏ, thanh tiêu đề nhạt. */
 section.field .item-list { gap: 10px; }
 section.field .item-list > .item-wrapper > .item { border: 1px solid var(--lsn-vien) !important; border-radius: var(--lsn-bo-the);
-  overflow: hidden; background: var(--lsn-the); transition: border-color .12s; }
+  overflow: hidden; background: var(--lsn-the); transition: border-color .12s, box-shadow .12s; }
 section.field .item-list > .item-wrapper > .item:hover { border-color: var(--lsn-vien-dam) !important; }
-section.field .item-list > .item-wrapper > .item > .header { min-height: 34px; height: auto; padding-inline: 6px; background: var(--lsn-nen); }
+section.field .item-list > .item-wrapper > .item > .header { min-height: 36px; height: auto; padding-inline: 6px; background: var(--lsn-nen-phu); }
+section.field .item-list > .item-wrapper > .item:has(> .header button[aria-controls][aria-expanded="true"]) > .header { border-bottom: 1px solid var(--lsn-vien-nhat); }
 section.field .item-list > .item-wrapper > .item > .header .start button[aria-controls] { font-weight: 600; color: var(--lsn-chu-phu); }
 section.field .item-list > .item-wrapper > .item > .item-body > .summary { padding: 9px 14px 11px; color: var(--lsn-chu-dam); }
 [role=group] > .header:has(> .start > button[aria-controls]) { cursor: pointer; }
 [role=group] > :is(.item-body, .item-list) > .summary { cursor: pointer; }
 [role=group] > :is(.item-body, .item-list) > .summary:hover { background: var(--lsn-re-chuot); }
 
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item { border-color: var(--lsn-vien-nhat) !important; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item:hover {
+  border-color: var(--lsn-do-vien) !important; box-shadow: var(--lsn-bong-the); }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header {
+  gap: 10px; min-height: 0; padding: 12px 12px 2px 14px; background: none; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header > .start { flex: 1; width: auto; min-width: 0; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header > :is(.center, .end) { width: auto; } /* ═ ⋮ × sát bên phải */
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header > .start > button {
+  width: auto; height: auto; min-height: 24px; padding: 0; background: none !important; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header > .start > button > .icon { display: none; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header .type {
+  font: 700 11.5px/1.4 var(--lsn-phong); letter-spacing: .06em; text-transform: uppercase; color: var(--lsn-chu-nhat); }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header[data-lsn-so]::before { margin: 0; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header::after {
+  content: "Mở để sửa ›"; flex: none; padding: 5px 11px; border-radius: 999px; color: var(--lsn-do-chu); font: 600 13px/1 var(--lsn-phong); }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item:hover > .header::after { background: var(--lsn-do-nhat); }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .item-body > .summary {
+  padding: 2px 16px 14px 14px; font-size: 15.5px; font-weight: 600; line-height: 1.45; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item:has(> .header[data-lsn-so]) > .item-body > .summary {
+  padding-inline-start: 48px; } /* thẳng chữ với tên loại khối (sau ô số) */
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .item-body > .summary:hover { background: none; }
+/* Khối đang mở: thanh trên nền nhạt, kẻ dưới; nút thành "Thu gọn ˄" */
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item:has(> .header button[aria-controls][aria-expanded="true"]) {
+  border-color: var(--lsn-vien-dam) !important; }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item:has(> .header button[aria-controls][aria-expanded="true"]) > .header {
+  padding-bottom: 12px; background: var(--lsn-nen-phu); }
+section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item:has(> .header button[aria-controls][aria-expanded="true"]) > .header::after {
+  content: "Thu gọn ˄"; color: var(--lsn-chu-phu); }
+:root[data-lsn-che-do="bo-cuc"] section.field:not([data-key-path*="."]) > .field-wrapper > .group > .inner > .item-list > .item-wrapper > .item > .header::after { display: none; }
+
+/* Đồng bộ với khung mô phỏng (admin/xem-truoc.js): khối / phần đang sửa = khung đỏ trên mô phỏng → viền đỏ ở form;
+   rê chuột lên một chỗ trên mô phỏng (hoặc danh sách Các phần) → thẻ tương ứng trong form viền đứt đỏ */
+section.field .item[data-lsn-dang-sua],
+section.field:not([data-key-path*="."])[data-lsn-dang-sua] {
+  border-color: var(--lsn-do) !important; box-shadow: 0 0 0 1px var(--lsn-do), 0 6px 18px hsl(356 70% 35% / .12) !important; }
+section.field .item[data-lsn-dang-sua] > .header { background: var(--lsn-do-nhat) !important; }
+section.field .item[data-lsn-tro]:not([data-lsn-dang-sua]),
+section.field:not([data-key-path*="."])[data-lsn-tro]:not([data-lsn-dang-sua]),
+.lsn-phan[data-lsn-tro] { outline: 2px dashed var(--lsn-do-chu); outline-offset: 2px; }
+
+/* Dòng tóm tắt đã làm đẹp (admin/bieu-mau.js): *chữ đỏ* như trên trang, mã chèn {{…}} thay bằng chữ thật */
+.summary:has(> .lsn-tom-tat) > .truncated-text { display: none; }
+.lsn-tom-tat { display: -webkit-box; min-width: 0; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+.lsn-tom-tat em { font-style: normal; color: var(--lsn-do-chu); }
+.lsn-tom-tat .lsn-ma { padding: 0 5px; border-radius: 4px; background: var(--lsn-nen); font-weight: 500; }
+
 /* Số phần (khớp số đỏ trên trang mô phỏng – admin/xem-truoc.js gắn data-lsn-so) */
 [data-lsn-so]::before { content: attr(data-lsn-so); display: inline-flex; align-items: center; justify-content: center; flex: none;
-  min-width: 22px; height: 22px; margin-inline: 2px 6px; padding: 0 6px; box-sizing: border-box; border-radius: 999px;
-  background: var(--lsn-do); color: var(--lsn-tren-do); font: 700 12px/1 var(--lsn-phong); vertical-align: 1px; }
+  min-width: 24px; height: 24px; margin-inline: 2px 8px; padding: 0 6px; box-sizing: border-box; border-radius: 999px;
+  background: var(--lsn-do); color: var(--lsn-tren-do); font: 700 12.5px/1 var(--lsn-phong); vertical-align: 1px;
+  box-shadow: 0 0 0 2px var(--lsn-the); }
 .item > .header[data-lsn-so]::before { margin-inline: 4px 0; }
 
-/* ---------- Tiêu đề phần, ghi chú trong form (ô lsn_nhom – admin/index.html) ---------- */
+/* ---------- Tiêu đề phần, ghi chú trong form (ô lsn_nhom – admin/index.html) ----------
+   Tiêu đề phần = đề mục chương: số (khớp mô phỏng) + tên phần lớn, mô tả, gạch chân đỏ ngắn; các thẻ bên dưới thuộc phần đó. */
 section.field[data-field-type="lsn_nhom"] > header { display: none !important; }
 section.field[data-field-type="lsn_nhom"] { padding-top: 0 !important; padding-bottom: 0 !important; border: 0 !important; }
+section.field[data-field-type="lsn_nhom"]::after { display: none; }
 section.field[data-field-type="lsn_nhom"] .field-wrapper { margin: 0 !important; }
-section.field[data-field-type="lsn_nhom"]:not([data-key-path*="."]) { padding-inline: 6px !important; } /* thẳng mép với thẻ ô cấp 1 */
-.lsn-phan { margin: 28px 0 4px; padding: 12px 16px; border-radius: var(--lsn-bo-the); border-inline-start: 4px solid var(--lsn-do);
-  background: var(--lsn-do-nhat); color: var(--lsn-chu-dam); }
-.lsn-phan__tieu-de { display: flex; align-items: center; gap: 4px; font-size: 17px; font-weight: 700; line-height: 1.3; }
-.lsn-phan__mo-ta { margin: 4px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--lsn-chu-phu); }
-/* Ghi chú vàng: ô "chữ này sửa ở đâu" và lời nhắc trên danh sách khối dùng cùng một kiểu */
-.lsn-ghi-chu, :root[data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before {
-  margin: 6px 0 2px; padding: 10px 14px; border: 1px solid var(--lsn-vang-vien); border-radius: var(--lsn-bo-the);
-  background: var(--lsn-vang-nen); color: var(--lsn-vang-chu); font-size: 13.5px; line-height: 1.5; }
-.lsn-ghi-chu { display: flex; gap: 10px; align-items: flex-start; }
+section.field[data-field-type="lsn_nhom"]:not([data-key-path*="."]) { max-width: 820px; margin-inline: auto; padding-inline: 2px !important; }
+.lsn-phan { margin: 30px 0 12px; padding: 0 0 12px; color: var(--lsn-chu-dam);
+  background: linear-gradient(var(--lsn-do), var(--lsn-do)) no-repeat left bottom / 56px 2px, linear-gradient(var(--lsn-vien), var(--lsn-vien)) no-repeat left bottom / 100% 1px; }
+section.field[data-field-type="lsn_nhom"]:first-child .lsn-phan { margin-top: 6px; }
+.lsn-phan__tieu-de { display: flex; align-items: center; gap: 0; font-size: 18.5px; font-weight: 700; line-height: 1.3; }
+.lsn-phan__tieu-de[data-lsn-so]::before { min-width: 30px; height: 30px; margin-inline: 0 10px; font-size: 14px; }
+.lsn-phan__mo-ta { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--lsn-chu-phu); }
+.lsn-phan__tieu-de[data-lsn-so] + .lsn-phan__mo-ta { margin-inline-start: 40px; }
+/* Ghi chú vàng: ô "chữ này sửa ở đâu" */
+.lsn-ghi-chu { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 12px; padding: 11px 14px; border: 1px solid var(--lsn-vang-vien);
+  border-radius: var(--lsn-bo-the); background: var(--lsn-vang-nen); color: var(--lsn-vang-chu); font-size: 13.5px; line-height: 1.5; }
+section.field[data-key-path*="."] .lsn-ghi-chu { margin: 4px 0; }
 .lsn-ghi-chu p { margin: 0; }
 .lsn-ghi-chu__icon { flex: none; margin-top: 1px; font-size: 20px; }
 .lsn-ghi-chu__mo { margin-top: 6px; padding: 5px 12px; border: 1px solid currentColor; border-radius: var(--lsn-bo-nut); background: transparent;
   color: var(--lsn-do-chu); font: 600 13px/1.4 var(--lsn-phong); cursor: pointer; }
 .lsn-ghi-chu__mo:hover, .lsn-ghi-chu__mo:focus-visible { background: var(--lsn-do-nhat); }
+
+@media (max-width: 767px) {
+  .pane[data-mode="edit"] > .inner > .wrapper > .content { padding: 10px 8px 40px; }
+  section.field:not([data-key-path*="."]):not([data-field-type="lsn_nhom"]) { padding: 14px 14px 16px !important; }
+  section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > .footer { margin-inline-start: 0; }
+  :root[data-lsn-che-do="chu"] .pane[data-mode="edit"] > .inner > .header h3::after { display: none; }
+}
 
 /* ---------- Chế độ Sửa chữ / Sửa bố cục (admin/che-do.js) ---------- */
 #lsn-che-do { display: inline-flex; flex: none; height: 32px; margin-inline-end: 4px; border: 1px solid var(--lsn-vien-dam);
@@ -223,14 +376,13 @@ section.field[data-field-type="lsn_nhom"]:not([data-key-path*="."]) { padding-in
 #lsn-che-do button[aria-pressed="true"] { background: var(--lsn-do-nhat); color: var(--lsn-do-chu); font-weight: 600; }
 #lsn-che-do .icon { font-size: 19px; }
 @media (max-width: 1180px) { #lsn-che-do .chu { display: none; } #lsn-che-do button { padding: 0 9px; } }
-/* Lời nhắc ngay trên danh sách khối: chế độ đang dùng làm được gì */
-:root[data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { display: block; margin: 0 0 12px; padding-inline-start: 44px;
-  background: var(--lsn-vang-nen) no-repeat 14px 11px / 20px 20px
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2359400f' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6M12 7.6v.2'/%3E%3C/svg%3E"); }
-:root[data-theme="dark"][data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f2e2b0' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6M12 7.6v.2'/%3E%3C/svg%3E"); }
+/* Lời nhắc ngay dưới tên phần "Các khối trên trang": chế độ đang dùng làm được gì (ổ khóa = bố cục đã khóa) */
+:root[data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { order: -1; display: block; margin: 12px 0 0 !important;
+  padding: 9px 12px 9px 38px; border-radius: 8px; color: var(--lsn-chu-phu); font-size: 13px; line-height: 1.5;
+  background: var(--lsn-nen) no-repeat 12px 10px / 17px 17px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e6264' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E"); }
+:root[data-theme="dark"][data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3a5a7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E"); }
 :root[data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before {
-  content: "Bấm một khối để sửa chữ, ảnh, liên kết bên trong. Bố cục trang (thêm, xóa, đổi thứ tự, ẩn khối, màu nền…) đã khóa để tránh lệch trang."; }
+  content: "Bấm vào một khối để mở và sửa chữ, ảnh, liên kết bên trong. Bố cục trang (thêm, xóa, đổi thứ tự khối, ẩn khối, màu nền…) đã khóa để tránh lệch trang."; }
 :root[data-lsn-che-do="bo-cuc"] section.field[data-key-path="cac_khoi"]::before {
   content: "Sửa bố cục: kéo ═ để đổi thứ tự, × để xóa, “Thêm khối” ở cuối; bấm một khối để ẩn/hiện, đổi màu nền, số cột… Sửa chữ → bấm “Sửa chữ”."; }
 

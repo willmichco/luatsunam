@@ -25,7 +25,8 @@ import os
 import re
 import shutil
 import sys
-from urllib.parse import urlsplit
+import unicodedata
+from urllib.parse import quote, urlsplit
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import blocks  # noqa: E402
@@ -1293,6 +1294,7 @@ def check_links(rendered, out):
             LOI.them("content/cai-dat/chuyen-huong.yml", where, f"Đích “{x['den']}” không phải trang có thật.")
         elif anchor and anchor not in ids[dst_p]:
             LOI.them("content/cai-dat/chuyen-huong.yml", where, f"Mã neo “#{anchor}” không có trên trang “{x['den']}”.")
+    S.wix_lines = wix_redirects(rendered)  # URL site Wix cũ: kiểm cùng lúc để lỗi chặn đăng như mọi lỗi khác
 
 
 # ---------------------------------------------------------------------------
@@ -1312,6 +1314,44 @@ def redirect_stub(path, target, label):
     return (f'<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
             f'<meta http-equiv="refresh" content="0; url={esc(rel_target)}"><title>{esc(label)}</title>'
             f'<link rel="canonical" href="{canonical}"></head><body><p>Trang đã chuyển sang <a href="{esc(rel_target)}">{esc(label)}</a>.</p></body></html>')
+
+
+WIX_FILE = os.path.join(ROOT, "cloudflare", "duong-dan-wix.yml")
+
+
+def wix_redirects(rendered):
+    """URL site Wix cũ (cloudflare/duong-dan-wix.yml) → dòng 301 cho _redirects; kiểm đích như Chuyển hướng 301.
+    Đường dẫn Wix có dấu tiếng Việt: ghi cả dạng có dấu lẫn dạng %XX (trình duyệt, Google gửi dạng %XX), có và không có / cuối."""
+    if not os.path.isfile(WIX_FILE):
+        return []
+    import yaml
+    with open(WIX_FILE, encoding="utf-8") as fh:
+        items = (yaml.safe_load(fh) or {}).get("chuyen_huong") or []
+    ids = {path: set(ID_RE.findall(h)) for path, h in rendered.items()}
+    src_file, bp, lines, seen = os.path.relpath(WIX_FILE, ROOT), ENV["base_path"], [], set()
+    for i, x in enumerate(items, 1):
+        where = f"Chuyển hướng {i}"
+        tu, den = unicodedata.normalize("NFC", str(x.get("tu") or "")).strip(), str(x.get("den") or "").strip()
+        dst_p, _, anchor = p2path(den).partition("#")
+        if not tu.startswith("/") or tu == "/" or " " in tu:
+            LOI.them(src_file, where, f"Đường dẫn cũ “{tu}” phải bắt đầu bằng / và không chứa dấu cách.")
+            continue
+        if tu.rstrip("/") in seen:
+            LOI.them(src_file, where, f"Đường dẫn cũ “{tu}” bị lặp.")
+            continue
+        seen.add(tu.rstrip("/"))
+        if dst_p not in rendered:
+            LOI.them(src_file, where, f"Đích “{den}” không phải trang có thật.")
+            continue
+        if anchor and anchor not in ids[dst_p]:
+            LOI.them(src_file, where, f"Mã neo “#{anchor}” không có trên trang “{den}”.")
+            continue
+        target = bp + den.lstrip("/")
+        base = tu.rstrip("/")
+        for form in dict.fromkeys([base, quote(base, safe="/-_.~")]):
+            lines.append(f"{bp.rstrip('/')}{form} {target} 301")
+            lines.append(f"{bp.rstrip('/')}{form}/ {target} 301")
+    return lines
 
 
 def write_extras(out, pages, rendered):
@@ -1334,6 +1374,7 @@ def write_extras(out, pages, rendered):
         slug = path.rstrip("/").rsplit("/", 1)[-1]
         if slug + "/" != path and slug + "/" not in nhap:
             lines.append(f"{bp}nhap/{slug}/ {bp}nhap/{path} 302")
+    lines += getattr(S, "wix_lines", [])
     write(out, "_redirects", "\n".join(lines) + "\n")
     headers = [f"{bp}assets/fonts/*", "  Cache-Control: public, max-age=31536000, immutable",
                f"{bp}assets/*", "  Cache-Control: public, max-age=604800",

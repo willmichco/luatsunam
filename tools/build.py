@@ -245,7 +245,7 @@ def logo_html(r, tag=None):
     text = (f'<span class="logo__name">{esc(f["short_name"].upper())}</span> <span class="logo__tag">{esc(tag)}</span>' if tag else
             f'<span class="logo__pre">{esc(pre)}</span> <span class="logo__name logo__name--firm">{esc(f["short_name"])}</span>')
     return f"""<a class="logo" href="{r or './'}">
-      <img class="logo__img" src="{r}{asset_ref("assets/img/logo-lsn-108.webp")}" srcset="{r}{asset_ref("assets/img/logo-lsn.webp")} 3x" width="54" height="54" alt="">
+      <img class="logo__img" src="{r}{asset_ref("assets/img/logo-lsn-108.webp")}" srcset="{r}{asset_ref("assets/img/logo-lsn-108.webp")} 2x, {r}{asset_ref("assets/img/logo-lsn.webp")} 3x" width="54" height="54" alt="">
       <span class="logo__text">{text}<span class="sr-only"> – Trang chủ</span></span>
     </a>"""
 
@@ -538,7 +538,7 @@ def layout(page):
                    'b.href=location.pathname.indexOf(p)===0?p:"/";document.head.appendChild(b);})();</script>')
     og_title = page.get("og_title", page["title"])
     og_w, og_h = page.get("og_size", (1200, 630))
-    return f"""<!doctype html>
+    html = f"""<!doctype html>
 <html lang="vi" data-root="{r}" data-gio="{gio_attr()}">
 <head>
 <meta charset="utf-8">{base_js}
@@ -567,9 +567,8 @@ def layout(page):
 <link rel="icon" href="{r}assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="{r}assets/img/apple-touch-icon.png">
 <link rel="manifest" href="{r}site.webmanifest">{feed_link(r)}
-<link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2" as="font" type="font/woff2" crossorigin>
-<style>{site_css().replace('url("../fonts/', 'url("' + r + 'assets/fonts/')}</style>
+<link rel="preload" href="{r}assets/fonts/be-vietnam-pro-400-vi.woff2" as="font" type="font/woff2" crossorigin>
+<style>{CSS_SLOT}</style>
 <script type="speculationrules">{speculation_rules()}</script>{tracking_head(page)}
 <script type="application/ld+json">
 {jsonld(page)}
@@ -577,7 +576,7 @@ def layout(page):
 </head>
 <body{f' class="{page["body_class"]}"' if page.get("body_class") else ""}>
 <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
-{SPRITE}
+{SPRITE_SLOT}
 {header_html(page, ctx)}
 {draft}
 <main id="main">
@@ -594,6 +593,11 @@ def layout(page):
 </body>
 </html>
 """
+    css, sprite = site_css(), SPRITE
+    if TRIM:
+        have = page_tokens(html)
+        css, sprite = trim_css(css, have), trim_sprite(have)
+    return html.replace(CSS_SLOT, css.replace('url("../fonts/', 'url("' + r + 'assets/fonts/'), 1).replace(SPRITE_SLOT, sprite, 1)
 
 
 FEED = "kien-thuc-phap-ly/feed.xml"
@@ -606,16 +610,110 @@ def feed_link(r):
     return f'\n<link rel="alternate" type="application/rss+xml" title="Kiến thức pháp lý – {esc(F()["short_name"])}" href="{r}{FEED}">'
 
 
+def tracking_active():
+    t = S.tracking
+    return bool(t.get("da_cap_nhat_chinh_sach") and not ENV["noindex"] and (t.get("ga4") or t.get("meta_pixel") or t.get("zalo_oa")))
+
+
 def speculation_rules():
-    """Tải trước trang khi người xem rê chuột / chạm vào liên kết (Chrome, Edge): bấm là trang hiện gần như ngay.
-    Chỉ tải HTML (không chạy mã theo dõi); bỏ qua /admin, /nhap. Trình duyệt không hỗ trợ thì bỏ qua."""
+    """Tải trước trang khi người xem rê chuột / chạm vào liên kết (Chrome, Edge). Chưa bật mã theo dõi: dựng sẵn cả trang
+    (prerender) – bấm là trang hiện ngay, không chờ tải/vẽ. Đã bật mã theo dõi (GA4, Meta Pixel, Zalo): chỉ tải HTML (prefetch),
+    không chạy mã theo dõi cho trang người xem chưa mở. Bỏ qua /admin, /nhap, tệp tĩnh. Trình duyệt không hỗ trợ thì bỏ qua."""
     bp = ENV["base_path"]  # đường dẫn tuyệt đối theo thư mục gốc của site: /luatsunam/ trên github.io, / trên tên miền riêng
-    return json.dumps({"prefetch": [{"source": "document", "where": {"and": [
-        {"href_matches": bp + "*"}, {"not": {"href_matches": [bp + "admin/*", bp + "nhap/*"]}}]}, "eagerness": "moderate"}]},
-        separators=(",", ":"))
+    rule = {"source": "document", "where": {"and": [
+        {"href_matches": bp + "*"}, {"not": {"href_matches": [bp + "admin/*", bp + "nhap/*", bp + "assets/*", bp + "*.xml"]}}]},
+        "eagerness": "moderate"}
+    return json.dumps({"prefetch" if tracking_active() else "prerender": [rule]}, separators=(",", ":"))
 
 
 _CSS = []
+# Mỗi trang chỉ nhúng phần CSS và biểu tượng nó dùng (trang chủ: CSS 65 KB → ~1/3): HTML nhỏ hơn, chữ hiện sớm hơn trên 4G.
+# Khung mô phỏng tắt (tools/xem_truoc.py): trang đổi nội dung theo từng phím gõ nhưng giữ <head> cũ.
+TRIM = True
+CSS_SLOT, SPRITE_SLOT = "\x00css\x00", "\x00sprite\x00"
+_JS_WORDS = []
+SEL_NAME = re.compile(r"([.#])(-?[_a-zA-Z][\w-]*)")
+
+
+def js_words():
+    """Lớp, mã biểu tượng do assets/js/main.js gắn khi chạy (is-open, is-visible, toast, i-check…) – luôn giữ CSS của chúng.
+    Đọc từ classList.add/toggle/remove/replace('…'), className = '…', class="…" và #i-… trong chuỗi HTML của JS.
+    Thêm lớp bằng biến (classList.add(ten)) thì CSS của lớp đó bị cắt – luôn viết tên lớp trực tiếp trong main.js."""
+    if not _JS_WORDS:
+        with open(os.path.join(ROOT, "assets", "js", "main.js"), encoding="utf-8") as fh:
+            js = fh.read()
+        words = set(re.findall(r"#(i-[\w-]+)", js))
+        for pat in (r"classList\.(?:add|toggle|remove|replace)\(\s*'([^']+)'(?:\s*,\s*'([^']+)')?", r"className\s*=\s*'([^']*)'", r'class="([^"]*)"'):
+            for m in re.findall(pat, js):
+                for v in (m if isinstance(m, tuple) else (m,)):
+                    words.update(v.split())
+        _JS_WORDS.append(frozenset(words))
+    return _JS_WORDS[0]
+
+
+def page_tokens(html):
+    have = set(js_words())
+    for v in re.findall(r'\sclass="([^"]*)"', html):
+        have.update(v.split())
+    have.update(re.findall(r'\sid="([^"]+)"', html))
+    have.update(re.findall(r'href="#(i-[\w-]+)"', html))
+    return have
+
+
+def _css_blocks(css):
+    """CSS đã rút gọn → [(phần trước {, phần trong {})] ở cấp ngoài cùng."""
+    out, i, n = [], 0, len(css)
+    while i < n:
+        j = css.find("{", i)
+        if j < 0:
+            break
+        depth, k = 1, j + 1
+        while depth and k < n:
+            depth += {"{": 1, "}": -1}.get(css[k], 0)
+            k += 1
+        out.append((css[i:j].strip(), css[j + 1:k - 1]))
+        i = k
+    return out
+
+
+def _split_selectors(sel):
+    parts, depth, cur = [], 0, ""
+    for ch in sel:
+        depth += {"(": 1, ")": -1, "[": 1, "]": -1}.get(ch, 0)
+        if ch == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    return parts + [cur]
+
+
+def _selector_used(sel, have):
+    """Bộ chọn chỉ cần khi mọi .lớp / #mã của nó có trên trang (hoặc do JS gắn). :is/:where/:has – luôn giữ."""
+    if re.search(r":(is|where|has)\(", sel):
+        return True
+    bare = re.sub(r":not\([^()]*\)", "", re.sub(r"\[[^\]]*\]", "", sel))
+    return all(name in have for _, name in SEL_NAME.findall(bare))
+
+
+def trim_css(css, have):
+    out = []
+    for pre, body in _css_blocks(css):
+        if pre.startswith(("@media", "@supports")):
+            inner = trim_css(body, have)
+            if inner:
+                out.append(f"{pre}{{{inner}}}")
+        elif pre.startswith("@"):  # @font-face, @keyframes, @view-transition
+            out.append(f"{pre}{{{body}}}")
+        else:
+            sels = [x for x in _split_selectors(pre) if _selector_used(x, have)]
+            if sels:
+                out.append(f"{','.join(sels)}{{{body}}}")
+    return "".join(out)
+
+
+def trim_sprite(have):
+    return re.sub(r'\s*<symbol id="([^"]+)".*?</symbol>', lambda m: m.group(0) if m.group(1) in have else "", SPRITE, flags=re.S)
 
 
 def site_css():

@@ -2,7 +2,7 @@
 
 Mọi việc sửa nội dung làm tại **[willmichco.github.io/luatsunam/admin](https://willmichco.github.io/luatsunam/admin/)**, không cần biết code, không cần vào GitHub.
 Bấm **Lưu** → website tự cập nhật sau **1–3 phút**. Nhập sai → website **giữ nguyên bản cũ**, quản trị nhận email báo lỗi.
-Trong trang quản trị luôn có nút **? Hướng dẫn** ở góc dưới bên trái để mở lại trang này, cạnh đó là nút **Lịch sử chỉnh sửa** ([mục 13](#hoan-tac-va-lich-su-chinh-sua)).
+Trong trang quản trị luôn có nút **Hướng dẫn** ở thanh trên cùng để mở lại trang này, cạnh đó là nút **Lịch sử chỉnh sửa** ([mục 13](#hoan-tac-va-lich-su-chinh-sua)).
 Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, không ảnh hưởng website) trước khi sửa nội dung thật.
 
 > **Luôn bấm Lưu trước khi rời khung soạn thảo.** Trang quản trị không tự lưu bản đang soạn. Nếu bấm Esc, nút ← hoặc đóng tab khi còn thay đổi chưa lưu, trang sẽ hỏi lại. Bài dài nên soạn trong Word/Google Docs rồi dán vào, và bấm Lưu mỗi 10 phút (bài vẫn là nháp nên chưa lên site).
@@ -10,7 +10,7 @@ Người mới: làm [4 bài tập làm quen](../bai-tap/) (có bấm giờ, kh�
 **Tìm chỗ cần sửa:** cột trái xếp đúng như menu trên website, từ trái sang phải; phần dùng chung cho mọi trang nằm cuối.
 Cột trái **tự xếp theo Menu chính**: đổi thứ tự menu ở *Cài đặt chung → Menu và chân trang* thì 2–3 phút sau cột trái đổi theo (tải lại trang quản trị).
 
-![Cột trái của trang quản trị, xếp theo menu website](cot-trai.webp "Cột trái theo menu website; nút Tối / Sáng ở góc phải trên")
+![Cột trái của trang quản trị, xếp theo menu website](cot-trai.webp "Cột trái theo menu website; góc phải trên: nút Tối / Sáng (1), Hướng dẫn và Lịch sử chỉnh sửa (2)")
 
 | Trên website | Sửa ở cột trái |
 |---|---|
@@ -24,7 +24,7 @@ Cột trái **tự xếp theo Menu chính**: đổi thứ tự menu ở *Cài đ
 | Trang mới tự tạo | **Trang tự tạo** (nhóm *Trang khác*) |
 | Hotline, địa chỉ, giờ làm việc, menu, chân trang, logo – hiện trên mọi trang | **Cài đặt chung** |
 
-Nút **Tối / Sáng** (1) ở góc phải trên đổi giao diện tối hoặc sáng (trình duyệt nhớ lựa chọn).
+Nút **Tối / Sáng** (1 – hình mặt trăng / mặt trời) ở góc phải trên đổi giao diện tối hoặc sáng (trình duyệt nhớ lựa chọn). Cạnh đó (2): **Hướng dẫn** (trang này) và **Lịch sử chỉnh sửa**, mở ở tab mới nên không mất phần đang soạn. Khi đang sửa một trang, hai nút này nằm cạnh nút **Lưu**: **?** là Hướng dẫn, **Lịch sử** mở sẵn lịch sử của đúng trang đó.
 
 ## 1. Đăng nhập
 
@@ -227,7 +227,7 @@ Khi sửa **Menu và chân trang**, khung mô phỏng tự kiểm tra và nhắc
 - Muốn bỏ hết mọi thay đổi chưa lưu của trang: nút **↶ Hoàn tác tất cả** ở thanh trên cùng (cạnh nút Lưu). Trang hỏi lại trước khi bỏ.
 - Trong ô chữ, **Ctrl+Z** (Mac: **⌘+Z**) vẫn lùi từng bước gõ như bình thường.
 
-**Đã bấm Lưu – muốn lấy lại bản cũ:** mở **Lịch sử chỉnh sửa** (nút góc dưới bên trái, hoặc nút **Lịch sử** trên thanh trên cùng khi đang sửa một trang → mở sẵn lịch sử của đúng trang đó, ở tab mới nên không mất phần đang soạn).
+**Đã bấm Lưu – muốn lấy lại bản cũ:** mở **Lịch sử chỉnh sửa** (nút trên thanh trên cùng, hoặc nút **Lịch sử** cạnh nút Lưu khi đang sửa một trang → mở sẵn lịch sử của đúng trang đó, ở tab mới nên không mất phần đang soạn).
 
 1. Mỗi dòng là một lần bấm Lưu: ai, lúc nào, trang nào. Ô **Xem lịch sử của** chọn một trang để chỉ xem trang đó.
 2. Bấm một dòng → thấy từng ô đã đổi: <del>chữ cũ</del> → <ins>chữ mới</ins>; khối/thẻ **Thêm**, **Xóa**, **Dời chỗ**.

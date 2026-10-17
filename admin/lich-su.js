@@ -32,6 +32,7 @@
     if (st.token) h.Authorization = 'Bearer ' + st.token;
     if (o.body) h['Content-Type'] = 'application/json';
     return fetch(API + url, { method: o.method || 'GET', headers: h, body: o.body ? JSON.stringify(o.body) : undefined, cache: 'no-store' })
+      .catch(function () { throw new Error('Không kết nối được GitHub. Kiểm tra mạng rồi tải lại trang này.'); }) // thay "Failed to fetch" của trình duyệt
       .then(function (r) {
         if (r.status === 404 && o.cho404) return null;
         if (!r.ok) {

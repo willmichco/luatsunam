@@ -10,6 +10,17 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <!-- Trang quản trị nội dung. Cấu hình (config.yml) TỰ SINH từ tools/schema.py mỗi lần build: không sửa tay. -->
 <script>
+  /* ---------- Giao diện luôn tiếng Việt ----------
+     Chưa chọn ngôn ngữ (mặc định "tự động"), Sveltia theo ngôn ngữ trình duyệt: máy để tiếng Anh thì chữ của Sveltia ("Collections",
+     "Search for contents…", "Save"…) lẫn với chữ tiếng Việt của trang, kèm dải "Sveltia CMS is now available in English". Báo cho
+     Sveltia trình duyệt dùng tiếng Việt (chỉ trong trang quản trị). Ai đã tự chọn ngôn ngữ khác trong Cài đặt tài khoản vẫn giữ lựa chọn đó. */
+  (function () {
+    try {
+      Object.defineProperty(navigator, 'language', { configurable: true, get: function () { return 'vi'; } });
+      Object.defineProperty(navigator, 'languages', { configurable: true, get: function () { return ['vi']; } });
+    } catch (e) { /* trình duyệt không cho đổi: giữ như cũ */ }
+  })();
+
   /* ---------- Chống mất bài đang soạn ----------
      Sveltia (bản đang khóa) thoát khung soạn thảo và BỎ mọi thay đổi chưa lưu khi bấm Esc hoặc nút ←,
      không hỏi lại, và không giữ bản đang soạn khi tải lại trang. Lớp này chỉ can thiệp khi nút Lưu đang sáng
@@ -27,10 +38,7 @@
     }
     function nhac(chu) {
       var d = document.getElementById('nhac-luu') || document.createElement('div');
-      d.id = 'nhac-luu'; d.setAttribute('role', 'status'); d.textContent = chu;
-      d.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483001;max-width:min(560px,90vw);' +
-        'padding:10px 16px;border-radius:8px;background:#2e1e22;color:#fff;font:500 14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,.3);text-align:center';
+      d.id = 'nhac-luu'; d.setAttribute('role', 'status'); d.textContent = chu; // kiểu: admin/giao-dien.css
       document.body.appendChild(d);
       clearTimeout(nhac.t); nhac.t = setTimeout(function () { d.remove(); }, 5000);
     }
@@ -52,123 +60,8 @@
     });
   })();
 </script>
-<style>
-  /* ---------- Giao diện theo nhận diện của website ----------
-     Sveltia tính mọi màu từ --sui-base-hue (mặc định 210 = xanh): đổi sang 356 (đỏ thương hiệu #b5000b) thì nút, ô đang chọn,
-     ô tích, viền tập trung cùng tông với site; nền xám chuyển sang xám ấm. Phông Be Vietnam Pro dùng chung tệp của site. */
-  @font-face { font-family: "Be Vietnam Pro"; font-weight: 400; font-display: swap; src: url("../assets/fonts/be-vietnam-pro-400-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
-  @font-face { font-family: "Be Vietnam Pro"; font-weight: 400; font-display: swap; src: url("../assets/fonts/be-vietnam-pro-400-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: "Be Vietnam Pro"; font-weight: 600; font-display: swap; src: url("../assets/fonts/be-vietnam-pro-600-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
-  @font-face { font-family: "Be Vietnam Pro"; font-weight: 600; font-display: swap; src: url("../assets/fonts/be-vietnam-pro-600-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  @font-face { font-family: "Be Vietnam Pro"; font-weight: 700; font-display: swap; src: url("../assets/fonts/be-vietnam-pro-700-normal-vietnamese.woff2") format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
-  @font-face { font-family: "Be Vietnam Pro"; font-weight: 700; font-display: swap; src: url("../assets/fonts/be-vietnam-pro-700-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-  html:root {
-    --sui-base-hue: 356 !important;
-    --sui-font-family-default: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif !important;
-    --sui-font-size-default: 15px !important;
-  }
-  #nut-goc { position: fixed; left: 12px; bottom: 12px; z-index: 2147483000; display: flex; gap: 6px; }
-  #nut-goc a { display: inline-flex; align-items: center;
-    justify-content: center; gap: 5px; min-width: 30px; height: 30px; padding: 0 13px; border-radius: 999px; background: #93000a; color: #fff;
-    font: 600 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
-  #nut-goc a.gon { padding: 0; width: 30px; opacity: .85; }
-  #nut-goc a.gon .chu { display: none; }
-  #nut-goc a:hover, #nut-goc a:focus-visible { opacity: 1; }
-  #nut-goc .icon { font-family: "Material Symbols Outlined"; font-weight: normal; font-size: 17px; line-height: 1; font-feature-settings: "liga"; }
-  @media print { #nut-goc { display: none; } }
-  /* ---------- Cột trái theo menu website (admin/dieu-huong.js chèn tiêu đề nhóm) ---------- */
-  .resizable-pane:has(> nav.primary-sidebar) { min-width: 264px; } /* đủ chỗ cho tên mục thụt vào, không bị cắt */
-  nav.primary-sidebar .lsn-nhom { margin: 14px 10px 4px 14px; font: 600 11px/1.3 var(--sui-font-family-default); letter-spacing: .07em;
-    text-transform: uppercase; color: var(--sui-secondary-foreground-color); }
-  nav.primary-sidebar .lsn-nhom-con { margin: 6px 10px 2px 14px; font-size: 13px; letter-spacing: 0; text-transform: none; }
-  nav.primary-sidebar .lsn-nhom-con::after { content: " ▾"; }
-  nav.primary-sidebar [role=treeitem].lsn-con { margin-inline-start: 12px; border-inline-start: 2px solid var(--sui-control-border-color); }
-  nav.primary-sidebar [role=treeitem].lsn-mot-tep .count { visibility: hidden; }
-  /* Mô tả của mục (dòng chữ cạnh tên mục ở trên danh sách): hiện đủ 2 dòng thay vì cắt ngang */
-  [role=toolbar][aria-label="Chuyên mục"] .description .truncated-text { -webkit-line-clamp: 2 !important; }
-  /* ---------- Form dễ nhìn: mỗi phần tách bạch ----------
-     Ô cấp 1 (không nằm trong nhóm nào) có khoảng cách rộng; nhóm cấp 1 (object/danh sách) thành thẻ có viền, tên nhóm to;
-     tiêu đề phần (ô lsn_nhom) là dải màu thương hiệu; số tròn đỏ = số của phần đó trên trang mô phỏng. */
-  section.field[data-field-type="lsn_nhom"] > header { display: none !important; }
-  section.field[data-field-type="lsn_nhom"] { padding-top: 0 !important; padding-bottom: 0 !important; border: 0 !important; }
-  section.field[data-field-type="lsn_nhom"] .field-wrapper { margin: 0 !important; }
-  .lsn-phan { margin: 26px 0 6px; padding: 12px 16px; border-radius: 10px; border-inline-start: 5px solid #b5000b;
-    background: hsl(356 60% 96%); color: var(--sui-primary-foreground-color); }
-  :root[data-theme="dark"] .lsn-phan { background: hsl(356 30% 18%); }
-  .lsn-phan__tieu-de { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; line-height: 1.3; }
-  .lsn-phan__mo-ta { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: var(--sui-secondary-foreground-color); }
-  .lsn-ghi-chu { display: flex; gap: 10px; align-items: flex-start; margin: 6px 0 2px; padding: 10px 14px; border-radius: 10px;
-    border: 1px solid hsl(40 70% 78%); background: hsl(45 90% 95%); color: hsl(35 60% 22%); font-size: 13.5px; line-height: 1.5; }
-  :root[data-theme="dark"] .lsn-ghi-chu { border-color: hsl(40 40% 35%); background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
-  .lsn-ghi-chu p { margin: 0; }
-  .lsn-ghi-chu__icon { font-family: "Material Symbols Outlined"; font-size: 20px; line-height: 1; flex: none; margin-top: 1px;
-    font-feature-settings: "liga"; }
-  .lsn-ghi-chu__mo { margin-top: 6px; padding: 4px 12px; border: 1px solid currentColor; border-radius: 999px; background: transparent;
-    color: #b5000b; font: 600 13px/1.4 var(--sui-font-family-default); cursor: pointer; }
-  :root[data-theme="dark"] .lsn-ghi-chu__mo { color: #ff8a93; }
-  .lsn-ghi-chu__mo:hover, .lsn-ghi-chu__mo:focus-visible { background: hsl(356 80% 95%); }
-  :root[data-theme="dark"] .lsn-ghi-chu__mo:hover { background: hsl(356 30% 25%); }
-  /* Nhóm cấp 1: thẻ có viền, tên nhóm to */
-  section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) {
-    margin: 14px 0; padding: 14px 16px 16px !important; border: 1px solid var(--sui-secondary-border-color) !important;
-    border-radius: 12px; background: var(--sui-primary-background-color); box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
-  section.field:is([data-field-type="object"], [data-field-type="list"]):not([data-key-path*="."]) > header h4 { font-size: 16px; }
-  section.field:not([data-key-path*="."]) > header h4 { font-size: 15px; }
-  /* Ô con (khối, thẻ, mục danh sách, nhóm): cả hàng tiêu đề và dòng tóm tắt khi thu gọn đều bấm để mở (script cuối trang) */
-  [role=group] > .header:has(> .start > button[aria-controls]) { cursor: pointer; }
-  [role=group] > :is(.item-body, .item-list) > .summary { cursor: pointer; }
-  [role=group] > :is(.item-body, .item-list) > .summary:hover { background: var(--sui-hover-background-color); }
-  /* ---------- Hoàn tác (admin/hoan-tac.js) ---------- */
-  .lsn-hoan-tac { display: inline-flex; align-items: center; gap: 3px; flex: none; height: 24px; margin-inline-start: 6px; padding: 0 10px 0 7px;
-    border: 1px solid #b5000b; border-radius: 999px; background: hsl(356 80% 97%); color: #b5000b; font: 600 12.5px/1 var(--sui-font-family-default);
-    cursor: pointer; opacity: 1 !important; /* Sveltia làm mờ nút ở đầu ô khi chuột không rê vào ô: nút này luôn hiện */ }
-  .lsn-hoan-tac:hover, .lsn-hoan-tac:focus-visible { background: #b5000b; color: #fff; }
-  :root[data-theme="dark"] .lsn-hoan-tac { border-color: #ff8a93; background: hsl(356 30% 20%); color: #ff8a93; }
-  :root[data-theme="dark"] .lsn-hoan-tac:hover { background: #ff8a93; color: #2e1e22; }
-  .lsn-hoan-tac .icon, .lsn-nut-thanh .icon { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 16px;
-    line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
-  #lsn-lich-su-nhom { display: inline-flex; flex: none; gap: 6px; margin-inline-end: 6px; }
-  .lsn-nut-thanh { display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 12px 0 9px; border: 1px solid var(--sui-control-border-color);
-    border-radius: 999px; background: transparent; color: inherit; font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
-  .lsn-nut-thanh[hidden] { display: none; }
-  .lsn-nut-thanh:hover, .lsn-nut-thanh:focus-visible { background: var(--sui-hover-background-color); }
-  .lsn-nut-thanh[data-viec="het"] { border-color: #b5000b; color: #b5000b; }
-  :root[data-theme="dark"] .lsn-nut-thanh[data-viec="het"] { border-color: #ff8a93; color: #ff8a93; }
-  .lsn-nut-thanh .icon { font-size: 18px; }
-  @media (max-width: 1100px) { .lsn-nut-thanh .chu { display: none; } .lsn-nut-thanh { padding: 0 9px; } }
-  #lsn-hoan-tac-bao { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 2147483001; max-width: min(560px, 90vw);
-    padding: 10px 16px; border-radius: 8px; background: #2e1e22; color: #fff; font: 500 14px/1.45 var(--sui-font-family-default);
-    box-shadow: 0 4px 16px rgba(0,0,0,.3); text-align: center; }
-  /* Số phần (khớp số đỏ trên trang mô phỏng) */
-  [data-lsn-so]::before { content: attr(data-lsn-so); display: inline-flex; align-items: center; justify-content: center; flex: none;
-    min-width: 22px; height: 22px; margin-inline-end: 8px; padding: 0 6px; box-sizing: border-box; border-radius: 999px;
-    background: #b5000b; color: #fff; font: 700 12px/1 var(--sui-font-family-default); vertical-align: 1px; }
-  /* ---------- Chế độ Sửa chữ / Sửa bố cục (admin/che-do.js) ---------- */
-  #lsn-che-do { display: inline-flex; flex: none; height: 32px; margin-inline-end: 6px; border: 1px solid var(--sui-control-border-color);
-    border-radius: 999px; overflow: hidden; }
-  #lsn-che-do button { display: inline-flex; align-items: center; gap: 5px; padding: 0 12px 0 9px; border: 0; background: transparent;
-    color: inherit; font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
-  #lsn-che-do button + button { border-inline-start: 1px solid var(--sui-control-border-color); }
-  #lsn-che-do button:hover, #lsn-che-do button:focus-visible { background: var(--sui-hover-background-color); }
-  #lsn-che-do button[aria-pressed="true"] { background: #b5000b; color: #fff; font-weight: 600; }
-  #lsn-che-do .icon { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 18px; line-height: 1;
-    letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
-  @media (max-width: 1100px) { #lsn-che-do .chu { display: none; } #lsn-che-do button { padding: 0 9px; } }
-  /* Lời nhắc ngay trên danh sách khối: chế độ đang dùng làm được gì */
-  :root[data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { display: block; margin: 0 0 10px; padding: 9px 13px;
-    border-radius: 8px; background: hsl(45 90% 95%); color: hsl(35 60% 22%); font-size: 13px; line-height: 1.45; }
-  :root[data-theme="dark"][data-lsn-che-do] section.field[data-key-path="cac_khoi"]::before { background: hsl(40 35% 16%); color: hsl(45 70% 85%); }
-  :root[data-lsn-che-do="chu"] section.field[data-key-path="cac_khoi"]::before {
-    content: "Bấm một khối để sửa chữ, ảnh, liên kết bên trong. Bố cục trang (thêm, xóa, đổi thứ tự, ẩn khối, màu nền…) đã khóa để tránh lệch trang."; }
-  :root[data-lsn-che-do="bo-cuc"] section.field[data-key-path="cac_khoi"]::before {
-    content: "Sửa bố cục: kéo ═ để đổi thứ tự, × để xóa, “Thêm khối” ở cuối; bấm một khối để ẩn/hiện, đổi màu nền, số cột… Sửa chữ → bấm “Sửa chữ”."; }
-  #lsn-sang-toi { display: inline-flex; align-items: center; gap: 5px; height: 32px; margin-inline-end: 6px; padding: 0 12px 0 9px;
-    border: 1px solid var(--sui-control-border-color); border-radius: 999px; background: transparent; color: inherit;
-    font: 500 13px/1 var(--sui-font-family-default); cursor: pointer; }
-  #lsn-sang-toi:hover, #lsn-sang-toi:focus-visible { background: var(--sui-hover-background-color); }
-  #lsn-sang-toi .icon { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; font-size: 19px; line-height: 1;
-    letter-spacing: normal; text-transform: none; white-space: nowrap; font-feature-settings: "liga"; }
-</style>
+<!-- Giao diện (màu, phông, cột trái, thẻ, nút): admin/giao-dien.css – dùng chung với trang Lịch sử chỉnh sửa -->
+<link rel="stylesheet" href="giao-dien.css">
 </head>
 <body>
 <!-- Sveltia CMS khóa phiên bản cố định; nâng cấp: đổi số phiên bản, thử ở bản thử trước khi đưa lên chính thức -->
@@ -284,7 +177,7 @@
 </script>
 <!-- Khung mô phỏng (cột phải khi soạn): dựng trang bằng đúng code build trong trình duyệt, tô sáng chỗ đang sửa -->
 <script src="xem-truoc.js"></script>
-<!-- Cột trái theo menu website, mở thẳng trang một tệp, nút Sáng / Tối -->
+<!-- Cột trái theo menu website, mở thẳng trang một tệp; nút Hướng dẫn, Lịch sử chỉnh sửa, Sáng / Tối trên thanh trên cùng -->
 <script src="dieu-huong.js"></script>
 <!-- Chế độ soạn: mọi mục khóa ở Sửa chữ (chữ, ảnh, liên kết); Sửa bố cục chỉ còn ở mục ghi trong GIU_BO_CUC. Chỉ đổi cách hiện form, không đổi dữ liệu -->
 <script src="che-do.js"></script>
@@ -309,24 +202,6 @@
       if (sum && (nut.getAttribute('aria-expanded') !== 'false' || sum.parentElement.id !== nut.getAttribute('aria-controls'))) return;
       nut.click();
     });
-  })();
-</script>
-<!-- Nút góc trái dưới: Hướng dẫn (trang có ảnh chụp) và Lịch sử chỉnh sửa (admin/lich-su.html), mở tab mới (không mất phần đang soạn).
-     Ở màn danh sách hiện chữ; khi đang soạn thu thành nút tròn nhỏ để không che ô nhập. -->
-<div id="nut-goc">
-  <a id="nut-huong-dan" href="huong-dan/" target="_blank" rel="noopener" title="Hướng dẫn sử dụng trang quản trị" aria-label="Hướng dẫn sử dụng">
-    <span aria-hidden="true">?</span><span class="chu">Hướng dẫn</span></a>
-  <a id="nut-lich-su" href="lich-su.html" target="_blank" rel="noopener" title="Lịch sử chỉnh sửa: xem các lần lưu, khôi phục bản cũ" aria-label="Lịch sử chỉnh sửa">
-    <span class="icon" aria-hidden="true">history</span><span class="chu">Lịch sử chỉnh sửa</span></a>
-</div>
-<script>
-  (function () {
-    var a = document.querySelectorAll('#nut-goc a');
-    function cap() {
-      var gon = /\/(entries|new)(\/|$|\?)/.test(location.hash);
-      [].forEach.call(a, function (x) { x.classList.toggle('gon', gon); });
-    }
-    window.addEventListener('hashchange', cap); cap();
   })();
 </script>
 </body>

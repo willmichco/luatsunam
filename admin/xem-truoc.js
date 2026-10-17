@@ -11,16 +11,17 @@
   var h = window.createElement;
   var SITE = new URL('../', location.href).href; // gốc website, vd. https://willmichco.github.io/luatsunam/
   var RED = '#b5000b';
-  // Màu khung (thanh công cụ, bảng lỗi, danh sách các phần) theo giao diện Sáng / Tối của trang quản trị; trang mô phỏng giữ nguyên màu site
+  // Màu khung (thanh công cụ, bảng lỗi, danh sách các phần) theo giao diện Sáng / Tối của trang quản trị: đúng bảng màu Sveltia
+  // (--sui-*, tông 356) và admin/giao-dien.css – khung mô phỏng nằm trong iframe riêng nên ghi mã màu. Trang mô phỏng giữ nguyên màu site.
   var PALETTE = {
-    light: { bg: '#efe9e0', bar: '#fffdf9', line: '#e6ddd2', ink: '#2b1d21', muted: '#5f5557', chipBg: '#fbeaea', chipInk: '#7a0007',
-      segLine: '#d9cfc3', segOn: '#2b1d21', segOnInk: '#fff', segOff: '#fff', card: '#fff', soft: '#f4f0ea', softLine: '#e1d8cc',
+    light: { bg: '#f3f2f2', bar: '#fafafa', line: '#cfc9ca', ink: '#433d3d', muted: '#5e5555', chipBg: '#fceeef', chipInk: '#a1121b',
+      segLine: '#bbb4b5', segOn: '#fceeef', segOnInk: '#a1121b', segOnLine: '#eab8bb', segOff: '#ffffff', card: '#ffffff', soft: '#f3f2f2', softLine: '#cfc9ca',
       errBg: '#fdecec', errInk: '#7a0007', errLine: '#f3b9b9', warnBg: '#fff6e0', warnInk: '#6b4a00', warnLine: '#f0d48a',
-      hover: '#f7efe6', active: '#fbeaea', ok: '#2e7d32', wait: '#c58a00', link: RED },
-    dark: { bg: '#1d1718', bar: '#262021', line: '#3a3133', ink: '#f1e9ea', muted: '#b9adaf', chipBg: '#4a1d22', chipInk: '#ffd9dc',
-      segLine: '#4a4042', segOn: '#f1e9ea', segOnInk: '#1d1718', segOff: '#262021', card: '#2b2425', soft: '#2b2425', softLine: '#3f3537',
+      hover: '#efecec', active: '#fceeef', ok: '#2e7d32', wait: '#c58a00', link: '#b8141f' },
+    dark: { bg: '#1c1717', bar: '#241e1e', line: '#382e2f', ink: '#c6b9ba', muted: '#af9d9e', chipBg: '#3b1c1e', chipInk: '#ffb3b8',
+      segLine: '#433738', segOn: '#3b1c1e', segOnInk: '#ffb3b8', segOnLine: '#723135', segOff: '#241e1e', card: '#241e1e', soft: '#241e1e', softLine: '#382e2f',
       errBg: '#3d1519', errInk: '#ffd2d6', errLine: '#7a2a31', warnBg: '#3a2e12', warnInk: '#f5dfa6', warnLine: '#6d5622',
-      hover: '#332a2c', active: '#4a1d22', ok: '#7bc47f', wait: '#e0a92e', link: '#ff8a93' },
+      hover: '#2d2525', active: '#3b1c1e', ok: '#7bc47f', wait: '#e0a92e', link: '#ff3342' },
   };
   var themeSubs = [];
   function pal() { return PALETTE[document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light']; }
@@ -440,21 +441,21 @@
       bar: { display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: P.bar, borderBottom: '1px solid ' + P.line, minHeight: '48px', boxSizing: 'border-box' },
       dot: function (c) { return { width: '9px', height: '9px', borderRadius: '50%', background: c, flex: 'none' }; },
       chip: { display: 'block', flex: '0 1 auto', minWidth: 0, padding: '5px 10px', borderRadius: '999px', background: P.chipBg, color: P.chipInk, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-      btn: function (on) { return { flex: 'none', marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 11px', border: '1px solid ' + (on ? P.segOn : P.segLine), borderRadius: '8px', font: 'inherit', fontWeight: 600, cursor: 'pointer', background: on ? P.segOn : P.segOff, color: on ? P.segOnInk : P.ink }; },
-      seg: { display: 'inline-flex', flex: 'none', border: '1px solid ' + P.segLine, borderRadius: '8px', overflow: 'hidden' },
-      segBtn: function (on) { return { border: 0, padding: '6px 11px', font: 'inherit', fontWeight: 600, cursor: 'pointer', background: on ? P.segOn : P.segOff, color: on ? P.segOnInk : P.ink }; },
+      btn: function (on) { return { flex: 'none', marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: '6px', height: '32px', padding: '0 11px', border: '1px solid ' + (on ? P.segOnLine : P.segLine), borderRadius: '6px', font: 'inherit', fontWeight: 600, cursor: 'pointer', background: on ? P.segOn : P.segOff, color: on ? P.segOnInk : P.ink }; },
+      seg: { display: 'inline-flex', flex: 'none', height: '32px', boxSizing: 'border-box', border: '1px solid ' + P.segLine, borderRadius: '6px', overflow: 'hidden' },
+      segBtn: function (on) { return { border: 0, padding: '0 11px', font: 'inherit', fontWeight: 600, cursor: 'pointer', background: on ? P.segOn : P.segOff, color: on ? P.segOnInk : P.ink }; },
       link: { color: P.link, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' },
       body: { position: 'relative', flex: 1, display: 'flex', minHeight: 0 },
       stage: { position: 'relative', flex: 1, overflow: 'hidden' },
       msg: { position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', padding: '24px', textAlign: 'center', color: P.muted },
-      panel: function (bg, fg, bd) { return { margin: '8px 12px 0', padding: '10px 12px', borderRadius: '8px', background: bg, color: fg, border: '1px solid ' + bd, maxHeight: '30vh', overflow: 'auto' }; },
+      panel: function (bg, fg, bd) { return { margin: '8px 12px 0', padding: '10px 14px', borderRadius: '10px', background: bg, color: fg, border: '1px solid ' + bd, maxHeight: '30vh', overflow: 'auto' }; },
       side: function (overlay) { return { flex: 'none', width: '250px', overflow: 'auto', background: P.bar, borderRight: '1px solid ' + P.line, boxSizing: 'border-box', padding: '10px 0 16px', position: overlay ? 'absolute' : 'relative', zIndex: 3, top: 0, bottom: 0, left: 0, boxShadow: overlay ? '4px 0 18px rgba(0,0,0,.18)' : 'none' }; },
       sideHead: { display: 'flex', alignItems: 'baseline', gap: '6px', padding: '0 12px 6px', fontWeight: 700 },
       sideHint: { padding: '0 12px 8px', fontSize: '12px', color: P.muted },
       row: function (active, hover, muted) { return { display: 'flex', alignItems: 'flex-start', gap: '9px', width: '100%', padding: '7px 12px', border: 0, borderLeft: '3px solid ' + (active ? RED : 'transparent'), background: active ? P.active : hover ? P.hover : 'transparent', color: muted ? P.muted : P.ink, font: 'inherit', textAlign: 'left', cursor: 'pointer' }; },
       num: function (shared) { return { flex: 'none', minWidth: '22px', height: '22px', lineHeight: '22px', borderRadius: '999px', background: shared ? '#5f5557' : RED, color: '#fff', fontSize: '12px', fontWeight: 700, textAlign: 'center' }; },
       sub: { display: 'block', fontSize: '12px', color: P.muted, marginTop: '2px' },
-      pill: { display: 'inline-block', padding: '2px 8px', border: '1px solid ' + P.segLine, borderRadius: '999px', color: P.link, fontWeight: 600, cursor: 'pointer', textDecoration: 'none' },
+      pill: { display: 'inline-block', padding: '2px 9px', border: '1px solid ' + P.segLine, borderRadius: '6px', color: P.link, fontWeight: 600, cursor: 'pointer', textDecoration: 'none' },
       group: { padding: '12px 12px 4px', fontSize: '11px', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: P.muted },
     };
   }
@@ -710,7 +711,7 @@
           background: P.bg, color: P.ink, font: '14px/1.5 "Be Vietnam Pro",system-ui,sans-serif' } },
           h('div', null, h('strong', null, 'Khung mô phỏng gặp lỗi khi hiển thị.'), h('br'),
             'Vẫn sửa và Lưu bình thường được. Chi tiết: ' + (err && err.message ? err.message : String(err)), h('br'),
-            h('button', { type: 'button', style: { marginTop: '10px', padding: '6px 14px', border: '1px solid ' + P.segLine, borderRadius: '8px',
+            h('button', { type: 'button', style: { marginTop: '10px', padding: '6px 14px', border: '1px solid ' + P.segLine, borderRadius: '6px',
               background: P.segOff, color: P.ink, font: 'inherit', fontWeight: 600, cursor: 'pointer' },
               onClick: function () { self.setState({ result: null, parts: null, note: '', label: '', seo: false }, function () { self.request(); }); } },
             'Thử lại')));
@@ -743,7 +744,9 @@
       return h('div', { style: S.wrap, ref: function (el) { if (el) self.paneW = el.clientWidth; } },
         h('div', { style: S.bar },
           h('span', { style: S.dot(color), title: status }),
-          h('span', { style: { fontWeight: 600, whiteSpace: 'nowrap', flex: 'none' } }, st.label ? status.split(' · ')[0] : status),
+          // Khung hẹp: chữ trạng thái tự rút gọn (…) để nút Các phần / Máy tính / Điện thoại không bị đẩy ra ngoài
+          h('span', { style: { fontWeight: 600, whiteSpace: 'nowrap', flex: '0 1 auto', minWidth: '2em', overflow: 'hidden', textOverflow: 'ellipsis' }, title: status },
+            st.label ? status.split(' · ')[0] : status),
           st.label ? h('span', { style: S.chip, title: st.label }, '✎ ' + st.label) : null,
           hasParts ? h('button', { type: 'button', style: S.btn(st.map), 'aria-pressed': !!st.map, onClick: this.toggleMap,
             title: 'Danh sách mọi phần sửa được của trang này, theo thứ tự từ trên xuống' }, '☰ Các phần (' + st.parts.items.length + ')') : null,
